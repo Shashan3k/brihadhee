@@ -135,6 +135,7 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
             class="contact__form reveal"
             id="enquiry-form"
             data-channel={channel}
+            data-default-inquiry="general"
             data-whatsapp={site.contact.whatsapp.replace(/\D/g, "")}
             data-email={site.contact.email}
             style="--reveal-delay:100ms"
@@ -144,6 +145,25 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
               Fill this in and it opens {channel === "whatsapp" ? "WhatsApp" : "your email app"}
               with the message ready to send.
             </p>
+
+            <div class="field">
+              <label for="enquiry-type">What can we help with?</label>
+              <select id="enquiry-type" name="inquiryType">
+                <option value="general">General enquiry</option>
+                <option value="corporate">Corporate catering</option>
+                <option value="event">Event catering</option>
+              </select>
+            </div>
+
+            <div class="field enquiry-event-field" hidden>
+              <label for="enquiry-date">Event date (optional)</label>
+              <input type="date" id="enquiry-date" name="eventDate" />
+            </div>
+
+            <div class="field enquiry-event-field" hidden>
+              <label for="enquiry-guests">Estimated guests (optional)</label>
+              <input type="number" id="enquiry-guests" name="guestCount" min="1" inputmode="numeric" />
+            </div>
 
             <div class="field">
               <label for="enquiry-name">Your name</label>

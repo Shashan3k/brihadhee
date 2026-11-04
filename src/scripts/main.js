@@ -277,6 +277,25 @@ const enquiryForm = document.getElementById("enquiry-form");
 
 if (enquiryForm) {
   const status = enquiryForm.querySelector(".form__status");
+  const inquiryType = enquiryForm.elements.namedItem("inquiryType");
+  const eventFields = [...enquiryForm.querySelectorAll(".enquiry-event-field")];
+  const setInquiryType = (type) => {
+    if (!inquiryType) return;
+    inquiryType.value = type;
+    eventFields.forEach((field) => {
+      field.hidden = type !== "event";
+    });
+  };
+
+  setInquiryType(enquiryForm.dataset.defaultInquiry || "general");
+  inquiryType?.addEventListener("change", () => setInquiryType(inquiryType.value));
+  document.querySelectorAll("[data-inquiry]").forEach((link) => {
+    link.addEventListener("click", () => {
+      setInquiryType(link.dataset.inquiry);
+      enquiryForm.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+      enquiryForm.querySelector("#enquiry-type")?.focus({ preventScroll: true });
+    });
+  });
 
   enquiryForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -286,7 +305,19 @@ if (enquiryForm) {
     const name = String(data.get("name") || "").trim();
     const phone = String(data.get("phone") || "").trim();
     const message = String(data.get("message") || "").trim();
-    const text = `Enquiry from ${name}${phone ? ` (${phone})` : ""}:\n\n${message}`;
+    const typeLabel = {
+      general: "General enquiry",
+      corporate: "Corporate catering enquiry",
+      event: "Event catering enquiry",
+    }[String(data.get("inquiryType") || "general")];
+    const eventDate = String(data.get("eventDate") || "").trim();
+    const guestCount = String(data.get("guestCount") || "").trim();
+    const details = [
+      typeLabel,
+      eventDate && `Event date: ${eventDate}`,
+      guestCount && `Estimated guests: ${guestCount}`,
+    ].filter(Boolean).join("\n");
+    const text = `Enquiry from ${name}${phone ? ` (${phone})` : ""}\n${details}\n\n${message}`;
 
     if (enquiryForm.dataset.channel === "whatsapp" && enquiryForm.dataset.whatsapp) {
       const url = `https://wa.me/${enquiryForm.dataset.whatsapp}?text=${encodeURIComponent(text)}`;

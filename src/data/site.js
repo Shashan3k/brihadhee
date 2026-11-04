@@ -243,7 +243,28 @@ export const site = {
   },
 
   /* ---- Navigation ----------------------------------------------------- */
+  catering: {
+    dailyVolume: "800–900 people per day [CONFIRM exact figure before publishing]",
+    founders: [],
+    clients: [
+      "Aalam",
+      "Freehand",
+      "Pando",
+      "Bi3 Technologies",
+      "Nestle",
+      "NDR",
+      "Selvarangam Hospitals",
+      "FRUTTA",
+      "Go Khana",
+      "Hunger Box",
+      "Pro Chant",
+      "Prodapt",
+      "Stark Event Management",
+    ],
+  },
+
   navigation: [
+    { label: "Services", href: "#services" },
     { label: "About", href: "#about" },
     { label: "Menu", href: "#menu" },
     { label: "Gallery", href: "#gallery" },
