@@ -1928,6 +1928,15 @@ a.contact__channel:hover {
   opacity: 1;
   transform: none;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .gallery__item img {
+    transform: scale(1.025);
+    transition: transform 1.1s var(--ease);
+  }
+  .gallery__grid.is-in .gallery__item img {
+    transform: scale(1);
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
