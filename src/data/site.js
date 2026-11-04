@@ -49,7 +49,7 @@ export const site = {
   shortDescription:
     "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar East, Chennai — known for customizable dosas, traditional filter coffee and banana-leaf meals.",
   longDescription:
-    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. Guests praise its authentic South Indian food and unique customizable dosas. With warm wooden interiors, a relaxed family-friendly atmosphere and pocket-friendly prices, it suits lunch, dinner and group outings.",
+    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. It serves South Indian favourites including customizable dosas, meals and traditional tumbler drinks.",
 
   /* ---- Contact (all optional — empty hides the control) ---------------- */
   contact: {
@@ -101,7 +101,6 @@ export const site = {
     "Customizable dosas",
     "Vegetarian South Indian",
     "Family-friendly",
-    "Pocket-friendly",
   ],
   // [ADD] 3–5 genuine testimonials (with permission), then delete the empty
   // array. Shape: { quote, name, meta }
@@ -126,7 +125,7 @@ export const site = {
     {
       question: "Does Brihadhee serve filter coffee?",
       answer:
-        "Yes. Filter coffee is served in the traditional steel tumbler and davara.",
+        "Yes. Filter coffee is listed on Brihadhee's menu.",
     },
     {
       question: "What is the address of Brihadhee in Anna Nagar?",
@@ -170,76 +169,76 @@ export const site = {
       src: `${BASE_URL}images/hero.jpg`,
       width: 1600,
       height: 1200,
-      alt: "Inside Brihadhee, the South Indian restaurant in Anna Nagar East",
+      alt: "Crisp South Indian dosa served with sambar and chutneys on a banana leaf",
     },
     about: {
-      src: `${BASE_URL}images/interior.jpg`,
+      src: `${BASE_URL}images/interior-illustration.svg`,
       width: 1200,
       height: 900,
-      alt: "Warm wooden interiors and hanging lamps at Brihadhee",
+      alt: "Illustration of a warm South Indian dining room, not a photograph of Brihadhee",
     },
     signature: {
       src: `${BASE_URL}images/dosa.jpg`,
       width: 1200,
       height: 900,
-      alt: "A crisp dosa served with sambar and chutney",
+      alt: "Crisp dosa served with chutneys",
     },
     coffee: {
       src: `${BASE_URL}images/coffee.jpg`,
       width: 1000,
       height: 1000,
-      alt: "Filter coffee served in a traditional steel tumbler and davara",
+      alt: "Frothy South Indian drink served in a steel tumbler and davara",
     },
     gallery: [
-      {
-        src: `${BASE_URL}images/interior.jpg`,
-        width: 1200,
-        height: 900,
-        alt: "Wooden tables and traditional hanging lamps in the dining room",
-        caption: "The dining room",
-      },
       {
         src: `${BASE_URL}images/dosa.jpg`,
         width: 1200,
         height: 900,
-        alt: "Dosa with chutneys and sides on a steel plate",
-        caption: "Customizable dosas",
+        alt: "Golden dosa served with chutneys on a banana leaf",
+        caption: "Crisp dosa with chutneys",
+      },
+      {
+        src: `${BASE_URL}images/interior-illustration.svg`,
+        width: 1200,
+        height: 900,
+        alt: "Illustration of a South Indian dining room; this is not a photograph of Brihadhee",
+        caption: "Dining room illustration",
       },
       {
         src: `${BASE_URL}images/coffee.jpg`,
         width: 1000,
         height: 1000,
-        alt: "South Indian filter coffee in a steel tumbler and davara",
-        caption: "Filter coffee",
+        alt: "Frothy South Indian drink served in a steel tumbler and davara",
+        caption: "A frothy tumbler drink",
       },
       {
         src: `${BASE_URL}images/meals.jpg`,
         width: 1200,
         height: 900,
-        alt: "South Indian meals served on a banana leaf",
-        caption: "Meals on banana leaf",
+        alt: "South Indian meal served on a round banana leaf",
+        caption: "South Indian meals",
       },
       {
         src: `${BASE_URL}images/tiffin.jpg`,
         width: 1200,
         height: 900,
-        alt: "Breakfast tiffin plates with chutney and sambar",
-        caption: "Breakfast tiffin",
+        alt: "Idiyappam served with coconut milk on a banana leaf",
+        caption: "Idiyappam with coconut milk",
       },
       {
         src: `${BASE_URL}images/sweets.jpg`,
         width: 1200,
         height: 900,
-        alt: "Traditional South Indian dessert served in a small bowl",
-        caption: "Something sweet",
+        alt: "Dessert served in a brass bowl with chocolate sauce poured over it",
+        caption: "Dessert with chocolate sauce",
       },
     ],
     // [ADD] The 29-second video lives in /public/video. Add the file name here
     // (e.g. "/video/brihadhee.mp4") and the gallery card appears automatically.
     video: {
       src: "",
-      poster: `${BASE_URL}images/interior.jpg`,
-      caption: "29-second look inside Brihadhee",
+      poster: `${BASE_URL}images/interior-illustration.svg`,
+      caption: "Restaurant video",
     },
   },
 

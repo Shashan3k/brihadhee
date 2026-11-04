@@ -55,9 +55,7 @@ function New-Placeholder {
     [int]$Width,
     [int]$Height,
     [string]$TopColor,
-    [string]$BottomColor,
-    [string]$Title,
-    [string]$Caption
+    [string]$BottomColor
   )
 
   $path = Join-Path $imagesDir $FileName
@@ -93,33 +91,19 @@ function New-Placeholder {
     }
   }
 
-  # Hairline frame.
+  # Minimal illustration label; visitor-facing art never includes filenames or replacement instructions.
   $frame = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(52, 255, 248, 236), 2)
   $inset = [int]($Width * 0.028)
   $g.DrawRectangle($frame, $inset, $inset, $Width - ($inset * 2), $Height - ($inset * 2))
-
-  $titleFont = Get-Font -Names @("Georgia") -Size ([single]([Math]::Max(26, $Width / 26))) -Style "Bold"
-  $captionFont = Get-Font -Names @("Segoe UI") -Size ([single]([Math]::Max(15, $Width / 52))) -Style "Regular"
-  $sizeFont = Get-Font -Names @("Segoe UI") -Size ([single]([Math]::Max(13, $Width / 64))) -Style "Regular"
-
-  $light = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(242, 255, 248, 236))
-  $muted = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(196, 255, 248, 236))
-
-  $padLeft = [int]($Width * 0.055)
-  $g.DrawString($Title, $titleFont, $light, $padLeft, $Height - [int]($Width / 26) - [int]($Width * 0.09))
-  $g.DrawString($Caption, $captionFont, $muted, $padLeft, $Height - [int]($Width * 0.062))
-
-  $rightAlign = [System.Drawing.StringFormat]::new()
-  $rightAlign.Alignment = [System.Drawing.StringAlignment]::Far
-  $rightAlign.FormatFlags = [System.Drawing.StringFormatFlags]::NoWrap
-  $box = [System.Drawing.RectangleF]::new(0, $inset + 18, $Width - $inset * 2 - 18, 40)
-  $g.DrawString("$Width x $Height", $sizeFont, $muted, $box, $rightAlign)
+  $labelFont = Get-Font -Names @("Segoe UI") -Size ([single]([Math]::Max(14, $Width / 64))) -Style "Regular"
+  $muted = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(220, 255, 248, 236))
+  $label = "Illustration"
+  $labelSize = $g.MeasureString($label, $labelFont)
+  $g.DrawString($label, $labelFont, $muted, ($Width - $labelSize.Width) / 2, $Height - $labelSize.Height - [int]($Height * 0.045))
 
   Save-Jpeg -Bitmap $bitmap -Path $path
 
-  $rightAlign.Dispose()
-  $light.Dispose(); $muted.Dispose()
-  $titleFont.Dispose(); $captionFont.Dispose(); $sizeFont.Dispose()
+  $muted.Dispose(); $labelFont.Dispose()
   $frame.Dispose(); $dot.Dispose(); $bloom.Dispose()
   $gradient.Dispose(); $g.Dispose(); $bitmap.Dispose()
 
@@ -216,21 +200,14 @@ function New-ShareImage {
   Write-Host "  make  og-image.jpg"
 }
 
-Write-Host "Placeholder artwork"
-New-Placeholder -FileName "hero.jpg" -Width 1600 -Height 1200 -TopColor "#6E3416" -BottomColor "#C6551A" `
-  -Title "hero.jpg" -Caption "Replace with a wide shot of the dining room or a dosa spread."
-New-Placeholder -FileName "interior.jpg" -Width 1200 -Height 900 -TopColor "#3A2216" -BottomColor "#8A5A34" `
-  -Title "interior.jpg" -Caption "Replace with the dining room: wooden tables, lamps, open counter."
-New-Placeholder -FileName "dosa.jpg" -Width 1200 -Height 900 -TopColor "#A8460F" -BottomColor "#E0A128" `
-  -Title "dosa.jpg" -Caption "Replace with a close-up of a dosa, chutneys and sambar."
-New-Placeholder -FileName "coffee.jpg" -Width 1000 -Height 1000 -TopColor "#4A2A1A" -BottomColor "#B4682F" `
-  -Title "coffee.jpg" -Caption "Replace with filter coffee in a steel tumbler and davara."
-New-Placeholder -FileName "meals.jpg" -Width 1200 -Height 900 -TopColor "#35502F" -BottomColor "#8AA055" `
-  -Title "meals.jpg" -Caption "Replace with a meals thali served on a banana leaf."
-New-Placeholder -FileName "tiffin.jpg" -Width 1200 -Height 900 -TopColor "#8C390C" -BottomColor "#D0912A" `
-  -Title "tiffin.jpg" -Caption "Replace with a breakfast tiffin plate."
-New-Placeholder -FileName "sweets.jpg" -Width 1200 -Height 900 -TopColor "#7A3411" -BottomColor "#C07A3E" `
-  -Title "sweets.jpg" -Caption "Replace with a South Indian dessert."
+Write-Host "Generating text-free illustration fallbacks"
+New-Placeholder -FileName "hero.jpg" -Width 1600 -Height 1200 -TopColor "#6E3416" -BottomColor "#C6551A"
+New-Placeholder -FileName "interior.jpg" -Width 1200 -Height 900 -TopColor "#3A2216" -BottomColor "#8A5A34"
+New-Placeholder -FileName "dosa.jpg" -Width 1200 -Height 900 -TopColor "#A8460F" -BottomColor "#E0A128"
+New-Placeholder -FileName "coffee.jpg" -Width 1000 -Height 1000 -TopColor "#4A2A1A" -BottomColor "#B4682F"
+New-Placeholder -FileName "meals.jpg" -Width 1200 -Height 900 -TopColor "#35502F" -BottomColor "#8AA055"
+New-Placeholder -FileName "tiffin.jpg" -Width 1200 -Height 900 -TopColor "#8C390C" -BottomColor "#D0912A"
+New-Placeholder -FileName "sweets.jpg" -Width 1200 -Height 900 -TopColor "#7A3411" -BottomColor "#C07A3E"
 New-ShareImage
 
 Write-Host "Icons"

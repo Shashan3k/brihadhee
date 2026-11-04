@@ -1038,6 +1038,7 @@ section[id] {
   border: 1px solid rgba(43, 26, 16, 0.07);
   cursor: zoom-in;
   text-align: left;
+  isolation: isolate;
 }
 .gallery__item:first-child {
   grid-column: span 2;
@@ -1053,12 +1054,13 @@ section[id] {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background: linear-gradient(
     to top,
-    rgba(30, 17, 9, 0.62) 0%,
-    rgba(30, 17, 9, 0) 48%
+    rgba(30, 17, 9, 0.76) 0%,
+    rgba(30, 17, 9, 0.16) 34%,
+    rgba(30, 17, 9, 0) 66%
   );
-  opacity: 0.9;
   pointer-events: none;
 }
 .gallery__item:hover img {
@@ -1066,15 +1068,23 @@ section[id] {
 }
 .gallery__caption {
   position: absolute;
-  left: 0.85rem;
-  right: 0.85rem;
-  bottom: 0.7rem;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.9rem;
   z-index: 1;
-  text-align: left;
-  color: #fff;
+  width: fit-content;
+  max-width: calc(100% - 2rem);
+  padding: 0.42rem 0.7rem;
+  border: 1px solid rgba(255, 253, 247, 0.24);
+  border-radius: 999px;
+  background: rgba(43, 26, 16, 0.62);
+  color: #fffdf7;
   font-size: 0.82rem;
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 1.35;
   letter-spacing: 0.01em;
+  text-wrap: balance;
+  backdrop-filter: blur(8px);
 }
 .gallery__zoom {
   position: absolute;

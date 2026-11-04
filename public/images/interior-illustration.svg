@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Illustration of a South Indian dining room</title>
+  <desc id="desc">A warm, stylized illustration of a dining room with wooden tables and hanging brass lamps. This is an illustration, not a photograph of Brihadhee.</desc>
+  <defs>
+    <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f4dfc1"/><stop offset="1" stop-color="#d9a76b"/></linearGradient>
+    <linearGradient id="wood" x2="0" y2="1"><stop stop-color="#754125"/><stop offset="1" stop-color="#40251b"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#f8d78b" stop-opacity=".9"/><stop offset="1" stop-color="#f8d78b" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="#fbf5e9"/>
+  <rect x="44" y="44" width="1112" height="812" rx="32" fill="url(#wall)"/>
+  <path d="M44 616h1112v208q0 32-32 32H76q-32 0-32-32z" fill="#b77c48"/>
+  <path d="M44 690h1112v134q0 32-32 32H76q-32 0-32-32z" fill="url(#wood)"/>
+  <path d="M96 615h1008" stroke="#8f5e37" stroke-width="10"/>
+  <g opacity=".85" stroke="#8c5a34" stroke-width="7"><path d="M180 120v170M600 100v190M1010 120v170"/></g>
+  <g fill="url(#glow)"><circle cx="180" cy="310" r="150"/><circle cx="600" cy="330" r="180"/><circle cx="1010" cy="310" r="150"/></g>
+  <g fill="#a8460f" stroke="#6e3b24" stroke-width="8"><path d="M145 286h70l-12 27h-46zM565 274h70l-12 29h-46zM975 286h70l-12 27h-46z"/></g>
+  <g fill="#e9b24f"><path d="M155 315h50l-13 38h-24zM575 305h50l-13 42h-24zM985 315h50l-13 38h-24z"/></g>
+  <g fill="url(#wood)"><path d="M130 495h330l-32 36H162zM525 465h330l-32 36H557zM850 510h250l-28 34H878z"/><path d="M165 530v104h18V530m220 0v104h18V530M560 500v134h18V500m220 0v134h18V500m101 44v90h18v-90m143 0v90h18v-90"/></g>
+  <g fill="#ead6b7" opacity=".95"><rect x="170" y="419" width="210" height="18" rx="9"/><rect x="595" y="388" width="192" height="18" rx="9"/><rect x="900" y="442" width="130" height="18" rx="9"/></g>
+  <g fill="#a8460f"><circle cx="270" cy="428" r="8"/><circle cx="691" cy="397" r="8"/><circle cx="964" cy="451" r="8"/></g>
+  <path d="M82 746h1036" stroke="#c9874a" stroke-width="3" opacity=".6"/>
+</svg>

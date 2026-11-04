@@ -100,33 +100,35 @@ JavaScript still see every category. JavaScript only upgrades it to tabs.
 
 ---
 
-## 3. Replace the photos
+## 3. Update the photos
 
-All images live in **`public/images/`**. Drop in a file with the same name and
-the site picks it up — no code changes. Keep the aspect ratio close to the
-recommended size to avoid cropping surprises.
+Production images live in **`public/images/`**. The original WhatsApp photo
+exports are kept outside the deployed folder; copy only selected, optimized
+photos into `public/images/` and update `src/data/site.js` with their actual
+subject, dimensions, alt text and caption. Do not infer a photo's subject from
+its filename.
 
 | File | Used for | Recommended size | Notes |
 |---|---|---|---|
-| `hero.jpg` | Hero image | 1600 × 1200 (4:3) | Most important photo; the rating badge overlaps the bottom-left corner |
-| `interior.jpg` | About + gallery | 1200 × 900 | Dining room, lamps, open counter |
-| `dosa.jpg` | About + gallery | 1200 × 900 | Signature dosa |
-| `coffee.jpg` | About card + gallery | 1000 × 1000 (square) | Tumbler and davara |
-| `meals.jpg` | Gallery | 1200 × 900 | Banana-leaf meal |
-| `tiffin.jpg` | Gallery | 1200 × 900 | Breakfast tiffin |
-| `sweets.jpg` | Gallery | 1200 × 900 | Dessert |
-| `og-image.jpg` | WhatsApp/Facebook/Twitter link preview | 1200 × 630 | Should include the logo/name |
+| `hero.jpg` | Hero image | 1600 × 1200 (4:3) | Use a real restaurant or food photo |
+| `interior-illustration.svg` | About + gallery | 1200 × 900 viewBox | Clearly labeled illustration; not a photo of the restaurant |
+| `dosa.jpg` | About + gallery | 1200 × 900 | Real dosa photo |
+| `coffee.jpg` | About card + gallery | 1000 × 1000 (square) | Real coffee photo |
+| `meals.jpg` | Gallery | 1200 × 900 | Real meal photo |
+| `tiffin.jpg` | Gallery | 1200 × 900 | Real tiffin/dosa photo |
+| `sweets.jpg` | Gallery | 1200 × 900 | Real dessert photo |
+| `og-image.jpg` | WhatsApp/Facebook/Twitter link preview | 1200 × 630 | Brand artwork with the logo/name |
 
 Practical tips:
 
-- Export JPEG at quality ~80, under ~350 KB each. The placeholders are already
-  small; real photos are the biggest factor in page weight.
-- Alt text lives in `src/data/site.js` (`media.*.alt`) — update it to describe
-  the new photos.
-- Width/height attributes come from `media.*.width/height`. If you upload a
-  photo with different proportions, update those numbers too so the page does
-  not shift while loading.
-- To regenerate the placeholder art (only missing files are created):
+- Export JPEG at quality ~80–88 and keep each photo under ~350 KB where possible.
+- Alt text and captions in `src/data/site.js` must describe the actual image. Label
+  artwork as an illustration; never present it as a photo of Brihadhee or a dish.
+- Width/height attributes come from `media.*.width/height`; keep them aligned
+  with the image dimensions to avoid layout shift.
+- Gallery labels are separate HTML captions. Never bake filenames or replacement
+  instructions into the image itself.
+- To regenerate text-free fallback illustrations (only missing files are created):
   ```powershell
   powershell -ExecutionPolicy Bypass -File scripts/generate-placeholders.ps1
   ```
