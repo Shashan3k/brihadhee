@@ -1,0 +1,128 @@
+---
+import { site, hasHours, hasPhone, telHref } from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const { address, hours, amenities } = site;
+
+function formatTime(value) {
+  if (!value) return "";
+  const [h, m] = value.split(":").map(Number);
+  const suffix = h >= 12 ? "pm" : "am";
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
+}
+
+const hoursPayload = JSON.stringify({
+  timeZone: hours.timeZone,
+  days: hours.days,
+});
+---
+
+<section class="section" id="visit" aria-labelledby="visit-title">
+  <div class="container">
+    <div class="section__head">
+      <p class="eyebrow">Visit us</p>
+      <h2 class="section__title" id="visit-title">3rd Avenue, Anna Nagar</h2>
+      <p class="section__lead">
+        We are in W Block, Anna Nagar East — close to Anna Tower and the 3rd
+        Avenue junction. Walk in for lunch or dinner.
+      </p>
+    </div>
+
+    <div class="visit__grid">
+      <div class="visit__card reveal">
+        <div class="visit__block">
+          <p class="visit__label">Address</p>
+          <address class="visit__address">
+            {address.line1}<br />
+            {address.line2}<br />
+            {address.city}{address.postalCode ? `, ${address.postalCode}` : ""}<br />
+            {address.state}
+          </address>
+          <p class="visit__landmarks">
+            {site.landmarks.join(" · ")}
+          </p>
+        </div>
+
+        {
+          hasHours && (
+            <div class="visit__block">
+              <div class="visit__hours-head">
+                <p class="visit__label">Opening hours</p>
+                <span class="status" id="open-status" hidden>
+                  Open now
+                </span>
+              </div>
+              <table class="visit__table">
+                <caption class="visually-hidden">Opening hours for each day</caption>
+                <tbody>
+                  {hours.days.map((row) => (
+                    <tr class="visit__row" data-day={row.day}>
+                      <th scope="row">{row.day}</th>
+                      <td>
+                        {row.open && row.close
+                          ? `${formatTime(row.open)} – ${formatTime(row.close)}`
+                          : "Closed"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        }
+
+        <div class="visit__block">
+          <p class="visit__label">Getting here</p>
+          <div class="visit__actions">
+            <a
+              class="btn btn--primary"
+              href={site.maps.directions}
+              target="_blank"
+              rel="noopener"
+            >
+              <Icon name="navigation" size={17} />
+              Get directions
+            </a>
+            {
+              hasPhone && (
+                <a class="btn btn--ghost" href={telHref}>
+                  <Icon name="phone" size={17} />
+                  Call now
+                </a>
+              )
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="visit__map reveal" style="--reveal-delay:100ms">
+        <iframe
+          src={site.maps.embed}
+          title={`Map showing ${site.name} in Anna Nagar, Chennai`}
+          width="600"
+          height="450"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <ul class="visit__amenities" role="list">
+      {
+        amenities.map((item) => (
+          <li>
+            <strong>{item.label}</strong>
+            <span>{item.detail}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+{
+  hasHours && (
+    <script type="application/json" id="hours-data" set:html={hoursPayload} />
+  )
+}

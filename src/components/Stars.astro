@@ -1,0 +1,15 @@
+---
+import Icon from "./Icon.astro";
+
+const { value = 5, size = 14 } = Astro.props;
+const percent = Math.round(Math.max(0, Math.min(100, (Number(value) / 5) * 100)) * 10) / 10;
+---
+
+<span class="rating__stars" aria-hidden="true" style={`--rating:${percent}%`}>
+  <span class="rating__stars-base">
+    {[0, 1, 2, 3, 4].map(() => <Icon name="star" size={size} />)}
+  </span>
+  <span class="rating__stars-fill">
+    {[0, 1, 2, 3, 4].map(() => <Icon name="star" size={size} />)}
+  </span>
+</span>

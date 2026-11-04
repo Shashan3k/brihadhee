@@ -1,0 +1,61 @@
+---
+import { site } from "../data/site.js";
+import Stars from "./Stars.astro";
+
+const { rating, reviewSummary, reviewHighlights, testimonials } = site;
+---
+
+<section class="section section--tint" id="reviews" aria-labelledby="reviews-title">
+  <div class="container">
+    <div class="section__head">
+      <p class="eyebrow">What diners say</p>
+      <h2 class="section__title" id="reviews-title">Loved for dosas and a relaxed room</h2>
+    </div>
+
+    <div class="reviews__grid">
+      <aside class="review-card on-dark reveal" aria-label="Google rating summary">
+        <p class="review-card__label">{rating.source} rating</p>
+        <p class="review-card__score">
+          <span class="rating__value">{rating.value}</span>
+          <small>out of 5</small>
+        </p>
+        <div class="review-card__stars">
+          <Stars value={rating.value} size={16} />
+        </div>
+        <p class="review-card__count">
+          Based on {rating.count.toLocaleString("en-IN")} {rating.source} reviews
+        </p>
+        <div class="review-card__divider"></div>
+        <p class="review-card__note">
+          Family meals, group outings and kids are all welcome.
+        </p>
+      </aside>
+
+      <div class="reveal" style="--reveal-delay:100ms">
+        <p class="reviews__summary">{reviewSummary}</p>
+
+        <ul class="reviews__highlights" role="list">
+          {reviewHighlights.map((item) => <li>{item}</li>)}
+        </ul>
+
+        {
+          testimonials.length > 0 && (
+            <div class="testimonials">
+              {testimonials.map((item) => (
+                <figure class="testimonial">
+                  <blockquote>
+                    <p>{item.quote}</p>
+                  </blockquote>
+                  <figcaption>
+                    <strong>{item.name}</strong>
+                    {item.meta}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,82 @@
+---
+import { site, hasVideo } from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const { gallery, video } = site.media;
+---
+
+<section class="section" id="gallery" aria-labelledby="gallery-title">
+  <div class="container">
+    <div class="section__head">
+      <p class="eyebrow">Inside Brihadhee</p>
+      <h2 class="section__title" id="gallery-title">Wood, lamps and food on the table</h2>
+      <p class="section__lead">
+        Warm wooden furniture, traditional hanging lamps and dosas arriving hot
+        from the counter.
+      </p>
+    </div>
+
+    <div class="gallery__grid reveal">
+      {
+        gallery.map((image) => (
+          <button
+            class="gallery__item"
+            type="button"
+            data-gallery-item
+            data-src={image.src}
+            data-caption={image.caption}
+            data-alt={image.alt}
+            aria-label={`View larger photo: ${image.caption}`}
+          >
+            <img
+              src={image.src}
+              width={image.width}
+              height={image.height}
+              alt={image.alt}
+              loading="lazy"
+              decoding="async"
+            />
+            <span class="gallery__zoom" aria-hidden="true">
+              <Icon name="expand" size={15} />
+            </span>
+            <span class="gallery__caption">{image.caption}</span>
+          </button>
+        ))
+      }
+
+      {
+        hasVideo && (
+          <div class="gallery__video">
+            <video
+              controls
+              preload="none"
+              poster={video.poster}
+              playsinline
+              aria-label={video.caption}
+            >
+              <source src={video.src} type="video/mp4" />
+            </video>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <div class="lightbox__bar">
+    <span id="lightbox-caption">Photo</span>
+    <div class="lightbox__controls">
+      <button type="button" data-lightbox-prev aria-label="Previous photo">
+        <Icon name="chevronLeft" size={17} />
+      </button>
+      <button type="button" data-lightbox-next aria-label="Next photo">
+        <Icon name="chevronRight" size={17} />
+      </button>
+      <button type="button" data-lightbox-close aria-label="Close photo viewer">
+        <Icon name="close" size={17} />
+      </button>
+    </div>
+  </div>
+  <img id="lightbox-image" src="" alt="" width="1200" height="900" />
+</dialog>

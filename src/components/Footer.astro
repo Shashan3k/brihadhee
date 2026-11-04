@@ -1,0 +1,99 @@
+---
+import {
+  site,
+  hasPhone,
+  hasWhatsApp,
+  hasEmail,
+  hasHours,
+  socialLinks,
+  telHref,
+  whatsappHref,
+  emailHref,
+} from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const year = new Date().getFullYear();
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const address = site.address;
+---
+
+<footer class="site-footer on-dark">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__about">
+        <a class="brand" href="#top" aria-label={`${site.name} — back to top`}>
+          <img
+            class="brand__logo"
+            src={`${base}images/logo.png`}
+            width="594"
+            height="420"
+            alt={site.name}
+          />
+        </a>
+        <p>{site.shortDescription}</p>
+
+        {
+          socialLinks.length > 0 && (
+            <div class="footer__social">
+              {socialLinks.map((link) => (
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${site.name} on ${link.key}`}
+                >
+                  <Icon name={link.key} size={18} />
+                </a>
+              ))}
+            </div>
+          )
+        }
+      </div>
+
+      <nav aria-labelledby="footer-explore">
+        <h2 class="footer__title" id="footer-explore">Explore</h2>
+        <ul class="footer__links" role="list">
+          {site.navigation.map((item) => (
+            <li><a href={item.href}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer__title">Visit</h2>
+        <address class="footer__address">
+          {address.line1}<br />
+          {address.line2}<br />
+          {address.city}{address.postalCode ? `, ${address.postalCode}` : ""}
+        </address>
+        {
+          hasHours && (
+            <p class="footer__hours">{site.hours.summary}</p>
+          )
+        }
+      </div>
+
+      <div>
+        <h2 class="footer__title">Contact</h2>
+        <ul class="footer__links" role="list">
+          {hasPhone && <li><a href={telHref}>{site.contact.phone}</a></li>}
+          {hasWhatsApp && <li><a href={whatsappHref}>WhatsApp</a></li>}
+          {hasEmail && <li><a href={emailHref}>{site.contact.email}</a></li>}
+          <li>
+            <a href={site.maps.directions} target="_blank" rel="noopener">
+              Get directions
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {site.name}. All rights reserved.</p>
+      <p>South Indian restaurant · Anna Nagar East, Chennai</p>
+      <p><a href="#top">Back to top ↑</a></p>
+    </div>
+  </div>
+</footer>

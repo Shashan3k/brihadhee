@@ -1,0 +1,78 @@
+---
+import { site, hasPhone, telHref } from "../data/site.js";
+import Icon from "./Icon.astro";
+import Stars from "./Stars.astro";
+
+const { media, rating } = site;
+---
+
+<section class="hero" id="top">
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <p class="hero__tamil tamil" lang="ta">{site.nameTamil}</p>
+      <h1 class="hero__title">{site.name}</h1>
+      <p class="hero__tagline">{site.tagline}</p>
+      <p class="hero__sub">{site.subTagline}</p>
+
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#menu">
+          <Icon name="utensils" size={18} />
+          View menu
+        </a>
+        <a
+          class="btn btn--ghost"
+          href={site.maps.directions}
+          target="_blank"
+          rel="noopener"
+        >
+          <Icon name="navigation" size={18} />
+          Get directions
+        </a>
+        {
+          hasPhone && (
+            <a class="btn btn--ghost" href={telHref}>
+              <Icon name="phone" size={18} />
+              Call now
+            </a>
+          )
+        }
+      </div>
+
+      <ul class="hero__facts" role="list">
+        <li>South Indian</li>
+        <li>Anna Nagar East, Chennai</li>
+        <li>Dine-in</li>
+        {site.priceGuide && <li>{site.priceGuide}</li>}
+      </ul>
+    </div>
+
+    <div class="hero__media">
+      <figure class="hero__frame">
+        <img
+          src={media.hero.src}
+          width={media.hero.width}
+          height={media.hero.height}
+          alt={media.hero.alt}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </figure>
+      <a
+        class="hero__badge"
+        href={site.maps.directions}
+        target="_blank"
+        rel="noopener"
+        aria-label={`Rated ${rating.value} out of 5 from ${rating.count} ${rating.source} reviews. Open map.`}
+      >
+        <span class="rating">
+          <span class="rating__value">{rating.value}</span>
+          <span>
+            <Stars value={rating.value} />
+            <span class="rating__meta">{rating.count} {rating.source} reviews</span>
+          </span>
+        </span>
+      </a>
+    </div>
+  </div>
+</section>

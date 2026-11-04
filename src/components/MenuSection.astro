@@ -1,0 +1,108 @@
+---
+import menu from "../data/menu.json";
+import Icon from "./Icon.astro";
+
+const { currency, categories, isSample, sampleNotice } = menu;
+const hasNonVeg = categories.some((c) => c.items.some((i) => i.diet === "nonveg"));
+---
+
+<section class="section section--tint" id="menu" aria-labelledby="menu-title">
+  <div class="container">
+    <div class="menu__head">
+      <div class="section__head">
+        <p class="eyebrow">The menu</p>
+        <h2 class="section__title" id="menu-title">
+          Vegetarian dosas, idly and Tamil Nadu meals
+        </h2>
+        <p class="section__lead">
+          Choose from crisp dosas, Tamil Nadu meals, idly, parotta and traditional filter coffee.
+        </p>
+      </div>
+      {
+        isSample && (
+          <p class="menu__note">
+            <Icon name="info" size={15} />
+            <span>{sampleNotice}</span>
+          </p>
+        )
+      }
+    </div>
+
+    <div class="menu" id="menu-widget" data-enhanced="false">
+      <div class="menu__tabs" role="tablist" aria-label="Menu categories">
+        {
+          categories.map((category, index) => (
+            <button
+              class="menu__tab"
+              type="button"
+              role="tab"
+              id={`tab-${category.id}`}
+              aria-controls={`panel-${category.id}`}
+              aria-selected={index === 0 ? "true" : "false"}
+              tabindex={index === 0 ? "0" : "-1"}
+            >
+              {category.name}
+            </button>
+          ))
+        }
+      </div>
+
+      {
+        categories.map((category) => (
+          <div
+            class="menu__panel"
+            id={`panel-${category.id}`}
+            role="tabpanel"
+            aria-labelledby={`tab-${category.id}`}
+            tabindex="0"
+          >
+            <h3 class="menu__panel-title">{category.name}</h3>
+            <p class="menu__blurb">{category.blurb}</p>
+            <div class="menu__grid">
+              {category.items.map((item) => (
+                <article class="dish">
+                  <div class="dish__head">
+                    <span
+                      class:list={["diet", item.diet === "nonveg" && "diet--nonveg"]}
+                      aria-hidden="true"
+                    />
+                    <span class="visually-hidden">
+                      {item.diet === "nonveg" ? "Non-vegetarian" : "Vegetarian"}
+                    </span>
+                    <h4 class="dish__name">{item.name}</h4>
+                    <span class="dish__dots" aria-hidden="true" />
+                    <span class="dish__price">
+                      {currency}{item.price}
+                    </span>
+                  </div>
+                  <p class="dish__desc">{item.description}</p>
+                  {item.tags?.length > 0 && (
+                    <div class="dish__tags">
+                      {item.tags.map((tag) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+
+      <p class="menu__legend">
+        <span><span class="diet" aria-hidden="true"></span> Vegetarian</span>
+        {
+          hasNonVeg && (
+            <span>
+              <span class="diet diet--nonveg" aria-hidden="true" /> Non-vegetarian
+            </span>
+          )
+        }
+        <span>
+          <Icon name="clock" size={14} /> Served all day
+        </span>
+      </p>
+    </div>
+  </div>
+</section>

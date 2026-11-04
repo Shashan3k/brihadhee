@@ -1,0 +1,85 @@
+---
+import { site } from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const { media } = site;
+
+const highlights = [
+  {
+    title: "Dosas you can shape",
+    text: "The kitchen is known for customizable dosas — crisp, freshly made and served with chutneys and sides.",
+  },
+  {
+    title: "Filter coffee, done properly",
+    text: "Poured into the traditional steel tumbler and davara, the way it is meant to be had.",
+  },
+  {
+    title: "Meals on banana leaf",
+    text: "Rice and meals are served on a banana leaf, with the whole table eating together.",
+  },
+];
+---
+
+<section class="section" id="about" aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__body reveal">
+      <p class="eyebrow">Our story</p>
+      <h2 class="section__title" id="about-title">
+        A vegetarian South Indian kitchen in the heart of Anna Nagar
+      </h2>
+      <p class="section__lead">{site.longDescription}</p>
+
+      <p class="dropcap">
+        Walk in and the room sets the tone: warm wooden furniture, a dark wood
+        ceiling, orange and white walls and traditional hanging lamps. The floors
+        carry decorative floral tiles, and the open counter keeps the kitchen in
+        view.
+      </p>
+      <p>
+        Lunch or dinner — the dining room stays relaxed and
+        family-friendly, and prices stay pocket-friendly. It is the kind of place
+        that works for a quick filter coffee as easily as a full family meal.
+      </p>
+
+      <ul class="feature-list" role="list">
+        {
+          highlights.map((item) => (
+            <li>
+              <Icon name="check" />
+              <span>
+                <strong>{item.title}.</strong> {item.text}
+              </span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="about__media reveal" style="--reveal-delay:120ms">
+      <figure class="about__img">
+        <img
+          src={media.about.src}
+          width={media.about.width}
+          height={media.about.height}
+          alt={media.about.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <div class="about__coffee">
+        <img
+          src={media.coffee.src}
+          width={media.coffee.width}
+          height={media.coffee.height}
+          alt={media.coffee.alt}
+          loading="lazy"
+          decoding="async"
+        />
+        <div>
+          <strong>Filter coffee</strong>
+          <span>Steel tumbler and davara, all day.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

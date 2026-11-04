@@ -1,0 +1,195 @@
+---
+import {
+  site,
+  hasPhone,
+  hasWhatsApp,
+  hasEmail,
+  hasHours,
+  telHref,
+  whatsappHref,
+  emailHref,
+} from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const formEnabled = hasWhatsApp || hasEmail;
+const channel = hasWhatsApp ? "whatsapp" : "email";
+const hasChannels = hasPhone || hasWhatsApp || hasEmail;
+---
+
+<section class="section" id="contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="contact__grid">
+      <div class="reveal">
+        <p class="eyebrow">Contact</p>
+        <h2 class="section__title" id="contact-title">Come in, or say hello</h2>
+        <p class="section__lead">
+          Questions about the menu, a table for a group, or a celebration? Reach
+          out — we are happy to help.
+        </p>
+
+        <ul class="contact__channels" role="list">
+          {
+            hasPhone && (
+              <li>
+                <a class="contact__channel" href={telHref}>
+                  <Icon name="phone" />
+                  <span>
+                    <span>Call us</span>
+                    <strong>{site.contact.phone}</strong>
+                  </span>
+                </a>
+              </li>
+            )
+          }
+          {
+            hasWhatsApp && (
+              <li>
+                <a
+                  class="contact__channel"
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Icon name="whatsapp" />
+                  <span>
+                    <span>WhatsApp</span>
+                    <strong>{site.contact.whatsapp}</strong>
+                  </span>
+                </a>
+              </li>
+            )
+          }
+          {
+            hasEmail && (
+              <li>
+                <a class="contact__channel" href={emailHref}>
+                  <Icon name="mail" />
+                  <span>
+                    <span>Email</span>
+                    <strong>{site.contact.email}</strong>
+                  </span>
+                </a>
+              </li>
+            )
+          }
+          {
+            !hasChannels && (
+              <li>
+                <a
+                  class="contact__channel"
+                  href={site.maps.directions}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <Icon name="pin" />
+                  <span>
+                    <span>Find us</span>
+                    <strong>{site.fullAddress}</strong>
+                  </span>
+                </a>
+              </li>
+            )
+          }
+        </ul>
+
+        <p class="contact__note">
+          Walk-ins are welcome. For directions, use the map in
+          <a href="#visit">Visit us</a>.
+        </p>
+      </div>
+
+      {
+        !formEnabled && (
+          <div
+            class="visit__card contact__visit reveal"
+            style="--reveal-delay:100ms"
+          >
+            <p class="visit__label">Plan your visit</p>
+            {hasHours && <p class="contact__hours">{site.hours.summary}</p>}
+            <ul class="visit__amenities" role="list">
+              {site.amenities.map((item) => (
+                <li>
+                  <strong>{item.label}</strong>
+                  <span>{item.detail}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="visit__actions">
+              <a
+                class="btn btn--ghost"
+                href={site.maps.directions}
+                target="_blank"
+                rel="noopener"
+              >
+                <Icon name="navigation" size={17} />
+                Get directions
+              </a>
+            </div>
+          </div>
+        )
+      }
+
+      {
+        formEnabled && (
+          <form
+            class="contact__form reveal"
+            id="enquiry-form"
+            data-channel={channel}
+            data-whatsapp={site.contact.whatsapp.replace(/\D/g, "")}
+            data-email={site.contact.email}
+            style="--reveal-delay:100ms"
+          >
+            <h3>Send an enquiry</h3>
+            <p>
+              Fill this in and it opens {channel === "whatsapp" ? "WhatsApp" : "your email app"}
+              with the message ready to send.
+            </p>
+
+            <div class="field">
+              <label for="enquiry-name">Your name</label>
+              <input
+                type="text"
+                id="enquiry-name"
+                name="name"
+                autocomplete="name"
+                required
+              />
+            </div>
+
+            <div class="field">
+              <label for="enquiry-phone">Phone (optional)</label>
+              <input
+                type="tel"
+                id="enquiry-phone"
+                name="phone"
+                autocomplete="tel"
+                inputmode="tel"
+              />
+            </div>
+
+            <div class="field">
+              <label for="enquiry-message">Message</label>
+              <textarea
+                id="enquiry-message"
+                name="message"
+                required
+                placeholder="Table for six on Saturday evening…"
+              ></textarea>
+            </div>
+
+            <div class="form__foot">
+              <button class="btn btn--primary" type="submit">
+                <Icon name={channel === "whatsapp" ? "whatsapp" : "mail"} size={17} />
+                {channel === "whatsapp" ? "Send on WhatsApp" : "Send by email"}
+              </button>
+              <p class="form__status" role="status" aria-live="polite"></p>
+            </div>
+            <p class="field__hint">
+              Nothing is stored on this website.
+            </p>
+          </form>
+        )
+      }
+    </div>
+  </div>
+</section>

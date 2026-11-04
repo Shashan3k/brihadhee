@@ -1,0 +1,23 @@
+---
+import { site, hasPhone, telHref } from "../data/site.js";
+import Icon from "./Icon.astro";
+---
+
+<div class="callbar" id="callbar" aria-label="Quick actions">
+  <a href="#menu">
+    <Icon name="utensils" size={19} />
+    Menu
+  </a>
+  <a href={site.maps.directions} target="_blank" rel="noopener">
+    <Icon name="navigation" size={19} />
+    Directions
+  </a>
+  {
+    hasPhone && (
+      <a href={telHref}>
+        <Icon name="phone" size={19} />
+        Call
+      </a>
+    )
+  }
+</div>

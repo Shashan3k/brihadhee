@@ -1,0 +1,68 @@
+---
+import { site, hasPhone, telHref } from "../data/site.js";
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+import Icon from "./Icon.astro";
+---
+
+<header class="site-header" id="site-header">
+  <div class="container nav">
+    <a class="brand" href="#top" aria-label={`${site.name} — home`}>
+      <img
+        class="brand__logo"
+        src={`${base}images/logo.png`}
+        width="594"
+        height="420"
+        alt={site.name}
+      />
+    </a>
+
+    <nav class="nav__links" aria-label="Primary">
+      {site.navigation.map((item) => (
+        <a href={item.href}>{item.label}</a>
+      ))}
+    </nav>
+
+    <div class="nav__actions">
+      {
+        hasPhone && (
+          <a class="btn btn--primary btn--sm" href={telHref}>
+            <Icon name="phone" size={16} />
+            <span>Call now</span>
+          </a>
+        )
+      }
+      <button
+        class="nav__toggle"
+        type="button"
+        id="nav-toggle"
+        aria-expanded="false"
+        aria-controls="nav-panel"
+      >
+        <span class="visually-hidden">Open menu</span>
+        <Icon name="menu" class="icon-menu" />
+        <Icon name="close" class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div class="nav__panel" id="nav-panel" hidden>
+    {
+      site.navigation.map((item) => (
+        <a href={item.href}>
+          {item.label}
+          <Icon name="arrowUpRight" size={16} />
+        </a>
+      ))
+    }
+    {
+      hasPhone && (
+        <a class="btn btn--primary" href={telHref}>
+          <Icon name="phone" size={17} />
+          Call {site.contact.phone}
+        </a>
+      )
+    }
+  </div>
+</header>

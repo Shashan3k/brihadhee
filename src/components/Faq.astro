@@ -1,0 +1,35 @@
+---
+import { site } from "../data/site.js";
+
+const { faqs } = site;
+---
+
+{
+  faqs.length > 0 && (
+    <section class="section faq" id="faq" aria-labelledby="faq-title">
+      <div class="container faq__inner">
+        <div class="section__head section__head--center">
+          <p class="eyebrow">Quick answers</p>
+          <h2 class="section__title" id="faq-title">
+            Frequently asked questions
+          </h2>
+          <p class="section__lead">
+            Straight answers about Brihadhee's food, location, hours and dining.
+          </p>
+        </div>
+
+        <div class="faq__list">
+          {faqs.map((item) => (
+            <details class="faq__item">
+              <summary>
+                <span>{item.question}</span>
+                <span class="faq__icon" aria-hidden="true"></span>
+              </summary>
+              <p class="faq__answer">{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

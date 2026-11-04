@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Brihadhee">
+  <rect width="64" height="64" rx="14" fill="#FBF5E9"/>
+  <g fill="#A8460F">
+    <ellipse cx="32" cy="21" rx="9" ry="10"/>
+    <ellipse cx="32" cy="43" rx="9" ry="10"/>
+    <ellipse cx="21" cy="32" rx="10" ry="9"/>
+    <ellipse cx="43" cy="32" rx="10" ry="9"/>
+  </g>
+  <circle cx="32" cy="32" r="3.4" fill="#FBF5E9"/>
+</svg>
