@@ -40,7 +40,7 @@ push(`- Landmarks: ${site.landmarks.join("; ")}`);
 if (site.contact.phone) push(`- Phone: ${site.contact.phone}`);
 if (site.contact.email) push(`- Email: ${site.contact.email}`);
 if (hasHours) push(`- Hours: ${site.hours.summary}`);
-push(`- Known for: customizable dosas, traditional filter coffee, banana-leaf meals`);
+push(`- Menu highlights: dosas, traditional filter coffee, banana-leaf meals`);
 push("");
 
 push("## Pages", "");

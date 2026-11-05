@@ -47,6 +47,7 @@ const HOURS_RE =
   /\b11(?::00)?\s*(?:a\.?m\.?)\s*(?:to|-|–|—|until)\s*11(?::00)?\s*(?:p\.?m\.?)/i;
 
 const CATERING_RE = /\bcater(?:ing|er|ers|s|ed)?\b/i;
+const CUSTOM_DOSA_RE = /\bcustomi[sz](?:e|able|ed)\s+dosas?\b|\bbuild\s+your\s+own\s+dosa\b/i;
 const PAROTTA_KEYWORD_RE = /\b(?:veg\s+)?parotta\s+(?:in\s+)?anna\s+nagar\b/i;
 const PARKING_KEYWORD_RE =
   /\b(?:anna\s+nagar\s+parking|parking\s+(?:in|near)\s+anna\s+nagar|(?:with|free|ample)\s+parking|parking\s+(?:available|facility|facilities))\b/i;
@@ -142,6 +143,9 @@ for (const t of targets) {
     }
     if (cfg.offer_catering === false) {
       flag("unconfirmed-catering", CATERING_RE, "Catering claim while offer_catering is false");
+    }
+    if (cfg.customizable_dosas_confirmed !== true) {
+      flag("unconfirmed-custom-dosa", CUSTOM_DOSA_RE, "Customizable-dosa claim while customizable_dosas_confirmed is not true");
     }
     if (cfg.restaurant_parotta_confirmed !== true) {
       flag("unconfirmed-parotta", PAROTTA_KEYWORD_RE, "Parotta keyword while restaurant_parotta_confirmed is not true");

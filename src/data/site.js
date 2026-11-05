@@ -47,14 +47,14 @@ export const site = {
   nameTamil: "பிரிஹதீ",
   tagline: "Vegetarian South Indian flavours, served the traditional way.",
   subTagline:
-    "Customizable dosas, banana-leaf meals and filter coffee in the heart of Anna Nagar East.",
+    "Dosas, banana-leaf meals and filter coffee in the heart of Anna Nagar East.",
   shortDescription:
-    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar East, Chennai — known for customizable dosas, traditional filter coffee and banana-leaf meals.",
+    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar East, Chennai, serving dosas, traditional filter coffee and banana-leaf meals.",
   // Entity sentence reused on the page body and (with a catering clause) on /catering.
   entitySentence:
     "Brihadhee is a vegetarian South Indian restaurant at W Block, Anna Nagar East, Chennai 600040, near Anna Tower and 3rd Avenue.",
   longDescription:
-    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. It serves South Indian favourites including customizable dosas, meals and traditional tumbler drinks.",
+    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. It serves South Indian favourites including dosas, meals and traditional tumbler drinks.",
 
   /* ---- Contact (all optional — empty hides the control) ---------------- */
   contact: {
@@ -101,9 +101,9 @@ export const site = {
     source: "Google",
   },
   reviewSummary:
-    "Diners describe delicious, authentic South Indian food, unique customizable dosas and a relaxed, family-friendly room.",
+    "Diners describe delicious, authentic South Indian food and a relaxed, family-friendly room.",
   reviewHighlights: [
-    "Customizable dosas",
+    "Dosas and filter coffee",
     "Vegetarian South Indian",
     "Family-friendly",
   ],

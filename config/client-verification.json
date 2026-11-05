@@ -44,6 +44,8 @@
       "on_request"
     ],
     "advance_notice_required": "free text, for example 2 days",
-    "enquiry_channels": "phone and whatsapp as strings; is_different_from_restaurant true or false"
-  }
+    "enquiry_channels": "phone and whatsapp as strings; is_different_from_restaurant true or false",
+    "customizable_dosas_confirmed": "true only after the owner confirms customizable dosas are available now and how they work"
+  },
+  "customizable_dosas_confirmed": null
 }
