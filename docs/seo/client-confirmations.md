@@ -16,6 +16,12 @@ Status key: **Confirmed** (written or recorded answer from the owner) | **Not co
 | Phone and WhatsApp | +91 73587 14113 | Confirmed | brief |
 | Email | brihadhee@gmail.com | Confirmed | brief |
 | Vegetarian South Indian | yes | Confirmed by brief; **owner to confirm in writing** that no non-veg is served (the earlier notes in `Ho.md` left this open) | brief |
+| Meal times | lunch and dinner (exact hours are NOT confirmed) | Confirmed | brief |
+| Dine-in | yes | Confirmed | brief |
+| Family-friendly | yes | Confirmed | brief |
+| Alcohol | not served | Confirmed | brief (an earlier reservation listing also said no) |
+| Known for | filter coffee, banana-leaf meals | Confirmed | brief |
+| Menu items and prices (49 items, all vegetarian) | as in `src/data/menu.json` (from `final menu 13-07-2026.pdf`); prices quoted on the site are computed from it | Confirmed as the current menu; owner to confirm prices are final (item 7) | menu file |
 
 ## B. Needed from the client
 
@@ -43,3 +49,17 @@ Status key: **Confirmed** (written or recorded answer from the owner) | **Not co
 | Allow AI **training** crawlers (GPTBot, ClaudeBot, Google-Extended, CCBot)? Search and user-fetch agents are separate. | Not decided |
 | Show Google rating on the site, with a "last checked" date? | Not decided |
 | Offer WhatsApp enquiry as the only form action, or add a stored form? | Not decided |
+
+## D. How these are enforced in code (AEO build, 2026-11-05)
+
+- Every fact lives in `src/data/facts.js` with `status`, `verifiedOn` and `source`. Reading a **pending** fact with `getFact()` fails the build.
+- Pending today: **hours** (item 2), **price range per person** (item 7), **Google rating and count** (item 13; the rating badge and review card numbers are hidden until confirmed with a date), **customizable dosas** (item 3).
+- `scripts/aeo-lint.mjs` also searches the built HTML for the text of each pending fact (for example "857", "open daily", "customizable dosas") and fails if one appears.
+- To confirm a fact: update `src/data/facts.js` (status, value, `verifiedOn`, `source`), update this file, then run `npm run build && npm run validate`.
+
+### FAQ questions skipped because facts are pending
+| Question | Needs |
+|---|---|
+| What time does Brihadhee open and close? | hours (item 2) |
+| Is Brihadhee open on weekends? | hours (item 2) |
+| What is the price range per person? | price range (item 7) |

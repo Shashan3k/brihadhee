@@ -1,0 +1,58 @@
+﻿query,language,intent,target_page,answer_exists,note
+best dosa in Anna Nagar,en,discovery,/menu/#dosa,no,superlative: the site never claims 'best'; it states dosa prices and items. Earned through third-party mentions (GEO)
+best parotta in Anna Nagar,en,discovery,/#faq-parotta,no,superlative; a parotta answer exists but makes no 'best' claim
+best vegetarian restaurant in Anna Nagar,en,discovery,/#faq-vegetarian,no,superlative; not claimed
+best South Indian restaurant in Anna Nagar,en,discovery,/#faq-known-for,no,superlative; not claimed
+dosa restaurant in Anna Nagar,en,discovery,/#faq-dosa-price,yes,answer gives dosa count and price range
+vegetarian restaurant in Anna Nagar,en,discovery,/#faq-vegetarian,yes,
+veg hotel in Anna Nagar,en,local,/#faq-vegetarian,yes,also a Tanglish FAQ
+South Indian restaurant near Anna Tower,en,local,/#faq-near-anna-tower,yes,
+restaurant near Anna Tower Anna Nagar,en,local,/#faq-near-anna-tower,yes,
+restaurant near Aadhaar Seva Kendra Anna Nagar,en,local,/#faq-location,yes,"landmark is in the supporting sentence, not sentence 1"
+banana leaf meals in Anna Nagar,en,discovery,/#faq-banana-leaf,yes,
+banana leaf meals in Chennai,en,discovery,/#faq-banana-leaf,yes,answer names Chennai
+filter coffee near Anna Tower,en,discovery,/#faq-filter-coffee,no,answer says Anna Nagar East but not Anna Tower; consider adding
+filter coffee in Anna Nagar,en,discovery,/#faq-filter-coffee,yes,
+family lunch in Anna Nagar East,en,discovery,/#faq-family,yes,
+family restaurant in Anna Nagar,en,discovery,/#faq-family,yes,
+affordable South Indian meals in Anna Nagar,en,discovery,/#faq-meal-price,no,'affordable' is not claimed; the answer gives computed meal prices instead
+how much does a meal cost at a South Indian restaurant in Anna Nagar,en,price,/#faq-meal-price,yes,
+dosa price in Anna Nagar restaurant,en,price,/#faq-dosa-price,yes,
+does Brihadhee serve parotta,en,brand,/#faq-parotta,yes,
+parotta dishes in Anna Nagar,en,discovery,/#faq-parotta,yes,lists the six parotta dishes
+kothu parotta in Anna Nagar,en,discovery,/menu/#parotta,yes,Special Kothu Parotta is in the list
+restaurant open now in Anna Nagar,en,hours,/#visit,pending,hours not confirmed
+South Indian restaurant open on Sunday Anna Nagar,en,hours,/#visit,pending,hours not confirmed
+Anna Nagar South Indian restaurant opening hours,en,hours,/#visit,pending,hours not confirmed
+South Indian restaurant near me,en,local,/#faq-location,yes,'near me' depends on the engine's location
+vegetarian restaurant near me,en,local,/#faq-vegetarian,yes,same
+what is Brihadhee,en,brand,/#faq-known-for,yes,
+is Brihadhee vegetarian,en,brand,/#faq-vegetarian,yes,
+Brihadhee Anna Nagar address,en,brand,/#faq-location,yes,
+Brihadhee opening hours,en,brand,/#visit,pending,hours not confirmed
+Brihadhee menu,en,brand,/menu/,yes,
+Brihadhee menu prices,en,brand,/menu/#price-table,yes,
+Brihadhee reviews,en,brand,/#reviews,pending,Google rating and count not confirmed with a date; hidden
+Brihadhee rating,en,brand,/#reviews,pending,same
+Brihadhee phone number,en,brand,/#faq-contact,yes,
+does Brihadhee serve alcohol,en,brand,/#faq-alcohol,yes,
+is Brihadhee family friendly,en,brand,/#faq-family,yes,
+Brihadhee parking,en,brand,,no,parking not confirmed; on the avoid list
+Brihadhee home delivery,en,brand,,no,delivery not confirmed; on the avoid list
+Brihadhee table booking,en,brand,,no,booking not confirmed; on the avoid list
+Brihadhee price range per person,en,brand,,pending,price range per person not confirmed
+Brihadhee customizable dosa,en,brand,,pending,customizable dosas not confirmed
+Brihadhee vs other South Indian restaurants,en,comparison,,no,"comparison content is not published, and no competitor names appear on the site"
+restaurants like Brihadhee,en,comparison,,no,not published
+அண்ணா நகர் சைவ உணவகம்,ta,local,/#faq-ta-veg-restaurant,yes,
+அண்ணா நகரில் சைவ உணவகம் எது,ta,local,/#faq-ta-veg-restaurant,yes,
+அண்ணா நகர் தோசை,ta,discovery,/#faq-dosa-price,no,only the English dosa answer exists
+பிரிஹதீ உணவகம் அண்ணா நகர்,ta,brand,/#faq-ta-veg-restaurant,yes,
+பிரிஹதீ சைவ உணவகமா,ta,brand,/#faq-ta-vegetarian,yes,
+அண்ணா நகர் வாழை இலை சாப்பாடு,ta,discovery,/#faq-banana-leaf,no,only the English banana-leaf answer exists
+Anna Nagar veg hotel,tanglish,local,/#faq-tanglish-veg-hotel,yes,
+Anna Nagar-la nalla veg hotel edhu,tanglish,discovery,/#faq-tanglish-veg-hotel,no,'nalla' (good/best) is a superlative; the site does not claim it
+Brihadhee address enna,tanglish,brand,/#faq-tanglish-address,yes,
+Brihadhee filter coffee irukka,tanglish,brand,/#faq-tanglish-filter-coffee,yes,
+Anna Tower pakkathula veg restaurant,tanglish,local,/#faq-tanglish-veg-hotel,yes,
+Brihadhee timing enna,tanglish,hours,/#visit,pending,hours not confirmed

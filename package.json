@@ -9,7 +9,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "validate": "node scripts/validate-seo-guardrails.js && node scripts/validate-schema.js"
+    "validate": "node scripts/validate-seo-guardrails.js && node scripts/validate-schema.js && node scripts/aeo-lint.mjs"
   },
   "dependencies": {
     "astro": "^7.4.5"

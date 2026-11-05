@@ -1,0 +1,43 @@
+# Terms and claims that must not appear on the site (visible text, title, meta
+# description, llms.txt). One JavaScript regular expression per line, matched
+# case-insensitively. Lines starting with # are comments.
+# Source: the "Keywords to avoid" sections of Key.md and Catering_Keywords.md,
+# plus the AEO rules (no delivery, booking, parking, buffet, franchise,
+# breakfast, non-veg or alcohol claims, no competitor names).
+# Read by scripts/aeo-lint.mjs.
+
+# --- Unconfirmed services (restaurant) ---
+\bparking\b
+\bhome\s+delivery\b
+\bfree\s+delivery\b
+\bonline\s+(?:order|ordering)\b
+\btable\s+(?:booking|reservations?)\b
+\bbook\s+a\s+table\b
+\bbuffet\b
+\bfranchis(?:e|es|ing)\b
+\bbreakfast\b
+
+# --- Non-veg and alcohol claims (the single permitted mention is the FAQ
+# "does not serve alcohol" and its question "Does Brihadhee serve alcohol?",
+# which the negative lookbehinds below allow) ---
+\bveg\s+(?:and|&)\s+non[- ]?veg(?:etarian)?\b
+\bnon[- ]?veg(?:etarian)?\s+(?:dishes|food|items|menu)\s+(?:are\s+)?(?:available|served)\b
+(?<!not\s)(?<!no\s)(?<!Does\s+Brihadhee\s)\bserves?\s+alcohol\b
+\b(?:licen[sc]ed|full)\s+bar\b
+\bbar\s+(?:available|service)\b
+
+# --- Comparison and competitor names (never on the site) ---
+\bvs\.?\s+other\b
+\b(?:Saraswathi|Sindhu|Arusuvai|Geetham|Sangeetha|Gowri\s+Krishnaa?|Bhavyam|Rusi\s+Rasa)\b
+
+# --- Broad or unconfirmed catering head terms (Catering_Keywords.md) ---
+best\s+catering\s+in\s+Chennai
+wedding\s+catering\s+Chennai
+catering\s+services?\s+in\s+Chennai
+bulk\s+catering
+large[- ]scale\s+catering
+mass\s+catering
+non[- ]?veg(?:etarian)?\s+catering
+multi[- ]cuisine\s+catering
+corporate\s+catering
+office\s+lunch\s+catering

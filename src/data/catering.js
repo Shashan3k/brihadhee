@@ -193,66 +193,76 @@ export const serviceAreas = areas;
 export const plannerSection = cateringEnabled && contact.any;
 
 /* ---- FAQ: only confirmed answers, direct answer in sentence 1 ---------- */
-const phoneHint = contact.phone ? ` Call ${contact.phone}.` : "";
 const faq = [];
 const add = (question, answer) => faq.push({ question, answer });
+const KITCHEN = "from its vegetarian South Indian restaurant kitchen in Anna Nagar East, Chennai";
 
 if (cateringEnabled) {
   add(
     "Does Brihadhee offer catering?",
-    "Yes, Brihadhee offers vegetarian South Indian catering from its kitchen in Anna Nagar East."
+    "Yes, Brihadhee offers vegetarian South Indian catering from its restaurant kitchen in Anna Nagar East, Chennai."
   );
   if (formatIds.length) {
     add(
       "What kind of catering does Brihadhee provide?",
-      `Brihadhee provides vegetarian South Indian catering in these formats: ${joinNatural(
+      `Brihadhee provides vegetarian South Indian catering from its Anna Nagar East kitchen in these formats: ${joinNatural(
         formatIds.map((id) => FORMATS[id].label.toLowerCase())
       )}.`
     );
-    add("Is Brihadhee catering vegetarian?", "Yes, Brihadhee catering is vegetarian South Indian.");
+    add(
+      "Is Brihadhee catering vegetarian?",
+      "Yes, Brihadhee catering is vegetarian South Indian food from a vegetarian restaurant in Anna Nagar East, Chennai."
+    );
   }
   if (eventIds.length) {
     add(
       "Which events does Brihadhee cater?",
-      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))}.`
+      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} ${KITCHEN}.`
     );
   }
   if (guestRange) {
     add(
       "How many guests can Brihadhee cater for?",
-      `Brihadhee can cater for ${guestRange.min} to ${guestRange.max} guests.`
+      `Brihadhee can cater for ${guestRange.min} to ${guestRange.max} guests at events ${KITCHEN}.`
     );
   }
   if (areas.length) {
-    add("Does Brihadhee cater outside Anna Nagar?", `Brihadhee caters in ${joinNatural(areas)}.`);
+    add(
+      "Does Brihadhee cater outside Anna Nagar?",
+      `Brihadhee caters in ${joinNatural(areas)} ${KITCHEN}.`
+    );
   }
   if (formatIds.includes("banana_leaf_service")) {
     add(
       "Does Brihadhee provide banana-leaf catering?",
-      "Yes, Brihadhee provides full banana-leaf service for catering."
+      `Yes, Brihadhee provides full banana-leaf service for catering ${KITCHEN}.`
     );
   }
-  if (contact.any) {
+  const channels = [
+    contact.phone && `call ${contact.phone}`,
+    contact.whatsapp && `message ${contact.whatsapp} on WhatsApp`,
+  ].filter(Boolean);
+  if (channels.length) {
     add(
       "How do I book catering with Brihadhee?",
-      `Call or WhatsApp Brihadhee to book catering.${phoneHint}`
+      `To book vegetarian South Indian catering with Brihadhee for your event, ${channels.join(" or ")}.`
     );
   }
   if (advanceNotice) {
     add(
       "How far in advance should I book Brihadhee catering?",
-      `Book Brihadhee catering ${advanceNotice} in advance.`
+      `Brihadhee asks customers to book catering ${advanceNotice} in advance of the event, through its vegetarian South Indian restaurant in Anna Nagar East.`
     );
   }
   if (v.pricing_model === "per_plate") {
     add(
       "What is the catering price per plate at Brihadhee?",
-      "Brihadhee quotes catering per plate, so call or WhatsApp us for the rate for your menu."
+      "Brihadhee quotes catering prices per plate, so call or WhatsApp its Anna Nagar East restaurant for the rate for your menu."
     );
   } else if (v.pricing_model === "on_request") {
     add(
       "What is the catering price per plate at Brihadhee?",
-      "Brihadhee catering prices are on request, so call or WhatsApp us for a quote."
+      "Brihadhee catering prices are on request, so call or WhatsApp its Anna Nagar East restaurant for a quote for your event."
     );
   }
   add(
