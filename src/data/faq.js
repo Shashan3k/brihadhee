@@ -10,7 +10,8 @@
  *    range per person); nothing about delivery, booking, parking, buffet,
  *    breakfast or customizable dosas
  */
-import { getFact, addressLine, landmarkSentence } from "./facts.js";
+import { getFact, factOr, addressLine, landmarkSentence } from "./facts.js";
+import verification from "../../config/client-verification.json";
 import {
   categories,
   category,
@@ -35,6 +36,9 @@ const lunch = category("lunch");
 const beverages = category("beverages");
 const sentence = (...parts) => parts.filter(Boolean).join(" ");
 
+const offers = factOr("offers", []);
+const offerText = (id) => offers.find((o) => o.id === id)?.description ?? "";
+const miniTiffin = offers.find((o) => o.id === "mini-tiffin");
 const otherBeverages = beverages.items.filter((i) => i.name !== filterCoffee.name);
 const exampleDishes = [
   dosa.items[0],
@@ -72,6 +76,64 @@ export const faqItems = [
       `Nearby landmarks are ${landmarkSentence()}.`
     ),
   },
+  {
+    id: "hours",
+    lang: "en",
+    question: `What time does ${name} open and close?`,
+    answer: sentence(
+      `${name} opens at 6:30 AM and closes at 11:00 PM every day of the week, serving ${getFact("mealTimes")} at its ${typeText} in Anna Nagar East.`,
+      miniTiffin ? `Its ${rupees(miniTiffin.price)} Mini Tiffin combo includes ${miniTiffin.description.replace(/ for ₹\d+$/, "").replace(/^[A-Z]/, (c) => c.toLowerCase())}.` : ""
+    ),
+  },
+  {
+    id: "weekends",
+    lang: "en",
+    question: `Is ${name} open on weekends?`,
+    answer: sentence(
+      `Yes, ${name} is open on Saturdays and Sundays from 6:30 AM to 11:00 PM, the same hours as weekdays, on 3rd Avenue, W-Block, Anna Nagar East.`,
+      "The pre-booking discount of up to 40% applies Monday to Thursday only."
+    ),
+  },
+  {
+    id: "price-for-two",
+    lang: "en",
+    question: `How much does a meal at ${name} cost for two?`,
+    answer: sentence(
+      `A meal for two at ${name} costs about ${getFact("priceRange").text}, at its ${typeText} in Anna Nagar East.`,
+      "Exact prices for every dish are listed on the menu page."
+    ),
+  },
+  {
+    id: "offers",
+    lang: "en",
+    question: `Does ${name} have dining offers?`,
+    answer: sentence(
+      `Yes, ${name} offers ${offerText("walk-in")}, and ${offerText("pre-booking")}.`,
+      "Offers were checked on 5 November 2026 and can change, so confirm the current offer in the booking app."
+    ),
+  },
+  {
+    id: "founders",
+    lang: "en",
+    question: `Who founded ${name}?`,
+    answer: sentence(
+      getFact("founders").story,
+      `The restaurant in Anna Nagar East focuses on Tirunelveli and Karaikudi dishes alongside everyday South Indian favourites.`
+    ),
+  },
+  ...(verification.offer_catering === true
+    ? [
+        {
+          id: "catering",
+          lang: "en",
+          question: `Does ${name} do catering for functions?`,
+          answer: sentence(
+            `Yes, ${name} caters pure vegetarian functions across ${getFact("catering").area}, from seemantham and gruhapravesam to boutique weddings, for ${getFact("catering").guests.min} to ${getFact("catering").guests.max.toLocaleString("en-IN")} guests.`,
+            `Live counters include ${joinNames(getFact("catering").liveCounters)}.`
+          ),
+        },
+      ]
+    : []),
   {
     id: "near-anna-tower",
     lang: "en",
@@ -162,7 +224,7 @@ export const faqItems = [
     lang: "en",
     question: `How do I contact ${name}?`,
     answer: sentence(
-      `Contact ${name} on ${phone} by phone or WhatsApp, or by email at ${email}.`,
+      `Contact ${name} by phone on ${phone}, or by email at ${email}, for table questions, offers and catering enquiries.`,
       `The restaurant is at ${addressLine()}.`
     ),
   },
@@ -197,7 +259,8 @@ export const faqItems = [
     lang: "ta-Latn",
     question: `${name} address enna?`,
     answer: sentence(
-      `${name} ${getFact("address").line1}, ${getFact("address").line2}, ${getFact("address").city} ${getFact("address").postalCode}-la irukku, Anna Tower pakkathula.`
+      `${name} 3rd Avenue, W-Block, Anna Nagar East, Chennai ${getFact("address").postalCode}-la irukku, Anna Nagar Tower Park pakkathula.`,
+      `Full address: ${addressLine()}.`
     ),
   },
   {
@@ -219,7 +282,7 @@ export const faqLanguageGroups = {
 
 // Fail the build early if an answer breaks the first-sentence rule.
 for (const item of faqItems) {
-  const first = item.answer.split(/(?<=[.!?])\s+/)[0];
+  const first = item.answer.split(/(?<=[.!?])(?<!\bNo\.)\s+/)[0];
   const words = first.trim().split(/\s+/).length;
   if (words < 15 || words > 35) {
     throw new Error(`[faq] "${item.id}": first sentence is ${words} words (needs 15 to 35): ${first}`);

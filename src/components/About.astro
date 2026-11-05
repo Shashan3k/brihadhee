@@ -1,8 +1,10 @@
 ---
 import { site } from "../data/site.js";
 import Icon from "./Icon.astro";
+import { getFact } from "../data/facts.js";
 
 const { media } = site;
+const founders = getFact("founders");
 
 const highlights = [
   {
@@ -25,7 +27,7 @@ const highlights = [
     <div class="about__body reveal">
       <p class="eyebrow">Our story</p>
       <h2 class="section__title" id="about-title">
-        A vegetarian South Indian kitchen in the heart of Anna Nagar
+        A pure vegetarian kitchen for regional Tamil food in Anna Nagar East
       </h2>
       <p class="section__lead">{site.longDescription}</p>
 
@@ -34,6 +36,7 @@ const highlights = [
         banana-leaf meals to traditional tumbler drinks.
       </p>
       <p>{site.entitySentence}</p>
+      <p>{founders.story}</p>
       <p>
         Browse the photo collection for a closer look at the dishes served at
         Brihadhee in Anna Nagar East.

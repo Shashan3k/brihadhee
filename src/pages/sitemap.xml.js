@@ -7,8 +7,13 @@ export function GET() {
   const urls = [
     { loc: `${site.url}/`, priority: "1.0" },
     { loc: `${site.url}/menu/`, priority: "0.9" },
+    { loc: `${site.url}/best-dosa-parotta-anna-nagar/`, priority: "0.9" },
+    { loc: `${site.url}/nellai-meals-south-indian-veg-anna-nagar/`, priority: "0.8" },
     ...(verification.offer_catering === true
-      ? [{ loc: `${site.url}/catering/`, priority: "0.8" }]
+      ? [
+          { loc: `${site.url}/catering-services-chennai/`, priority: "0.9" },
+          { loc: `${site.url}/event-planner-catering-partner/`, priority: "0.8" },
+        ]
       : []),
   ];
   const entries = urls

@@ -1,10 +1,9 @@
 import { site } from "../data/site.js";
 
 /**
- * robots.txt: everything is public. AI SEARCH and user-fetch agents are listed
- * explicitly so the intent is clear. TRAINING crawlers (GPTBot, ClaudeBot,
- * Google-Extended, CCBot) are deliberately not named: that is an owner decision,
- * see docs/seo/ai-crawler-policy.md. Listing the search agents keeps a future
+ * robots.txt: everything is public. AI search, user-fetch AND training
+ * crawlers are listed explicitly: the owner decided on 2026-11-05 to allow
+ * GPTBot, ClaudeBot and Google-Extended (see docs/seo/ai-crawler-policy.md). Listing the search agents keeps a future
  * blanket rule from blocking them by accident. /catering/ needs no rule of its
  * own: it is crawlable whenever it exists (it is only built when
  * offer_catering is true).
@@ -14,12 +13,15 @@ import { site } from "../data/site.js";
  * be honoured. It takes effect on a custom domain or a user/organisation site.
  */
 const AI_AGENTS = [
+  "GPTBot", // OpenAI training (allowed by owner decision)
   "OAI-SearchBot", // ChatGPT search index
   "ChatGPT-User", // ChatGPT fetching a page for a user
   "PerplexityBot", // Perplexity index
   "Perplexity-User",
+  "ClaudeBot", // Anthropic training (allowed by owner decision)
   "Claude-SearchBot",
   "Claude-User",
+  "Google-Extended", // Gemini use of Google-crawled content (allowed by owner decision)
 ];
 
 export function GET() {

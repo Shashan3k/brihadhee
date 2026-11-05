@@ -3,7 +3,9 @@
 # case-insensitively. Lines starting with # are comments.
 # Source: the "Keywords to avoid" sections of Key.md and Catering_Keywords.md,
 # plus the AEO rules (no delivery, booking, parking, buffet, franchise,
-# breakfast, non-veg or alcohol claims, no competitor names).
+# non-veg or alcohol claims, no competitor names).
+# 2026-11-05: breakfast, pre-booking a table, and Chennai-wide event and
+# wedding catering were confirmed by the owner and removed from this list.
 # Read by scripts/aeo-lint.mjs.
 
 # --- Unconfirmed services (restaurant) ---
@@ -11,11 +13,8 @@
 \bhome\s+delivery\b
 \bfree\s+delivery\b
 \bonline\s+(?:order|ordering)\b
-\btable\s+(?:booking|reservations?)\b
-\bbook\s+a\s+table\b
 \bbuffet\b
 \bfranchis(?:e|es|ing)\b
-\bbreakfast\b
 
 # --- Non-veg and alcohol claims (the single permitted mention is the FAQ
 # "does not serve alcohol" and its question "Does Brihadhee serve alcohol?",
@@ -32,10 +31,7 @@
 
 # --- Broad or unconfirmed catering head terms (Catering_Keywords.md) ---
 best\s+catering\s+in\s+Chennai
-wedding\s+catering\s+Chennai
-catering\s+services?\s+in\s+Chennai
 bulk\s+catering
-large[- ]scale\s+catering
 mass\s+catering
 non[- ]?veg(?:etarian)?\s+catering
 multi[- ]cuisine\s+catering

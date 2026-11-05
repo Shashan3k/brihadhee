@@ -8,7 +8,7 @@
  *  - every <script type="application/ld+json"> parses, has @context/@type
  *  - every { "@id": ... } reference resolves to a node on the same page
  *  - Restaurant entity matches Key.md / site data and is identical on every page
- *  - /catering exists only when offer_catering is true
+ *  - the catering pages exist only when offer_catering is true
  *  - Service: serviceType Catering, provider -> Restaurant @id, areaServed and
  *    telephone only from confirmed config, and NO AggregateRating
  *  - FAQPage: only the 11 target questions, each backed by a confirmed config
@@ -32,7 +32,7 @@ const SITE = {
   name: FACTS.name.value,
   phone: FACTS.phone.value,
   whatsapp: FACTS.whatsapp.value,
-  cuisine: FACTS.cuisine.value,
+  cuisines: FACTS.cuisines.value,
   region: FACTS.address.value.state,
   locality: FACTS.address.value.city,
   postal: FACTS.address.value.postalCode,
@@ -53,17 +53,20 @@ if (existsSync(keyPath)) {
   warnings.push("Key.md not found (gitignored): skipped Key.md comparison.");
 }
 
+// Catering pages (Pillar 2). The flagship page's FAQ must come from this list,
+// and each question must be backed by a confirmed config value.
+const CATERING_PATH = "/catering-services-chennai/";
+const PLANNER_PATH = "/event-planner-catering-partner/";
+const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH];
 const TARGET_QUESTIONS = [
-  "Does Brihadhee offer catering?",
+  "Does Brihadhee offer catering in Chennai?",
   "What kind of catering does Brihadhee provide?",
-  "Is Brihadhee catering vegetarian?",
+  "Is Brihadhee catering pure vegetarian?",
   "Which events does Brihadhee cater?",
   "How many guests can Brihadhee cater for?",
   "Does Brihadhee cater outside Anna Nagar?",
-  "Does Brihadhee provide banana-leaf catering?",
   "How do I book catering with Brihadhee?",
-  "How far in advance should I book Brihadhee catering?",
-  "What is the catering price per plate at Brihadhee?",
+  "How is Brihadhee catering priced?",
   "Where is Brihadhee located?",
 ];
 
@@ -89,11 +92,9 @@ const GATES = {
   [TARGET_QUESTIONS[3]]: () => nonEmpty(cfg.confirmed_events),
   [TARGET_QUESTIONS[4]]: () => Number.isFinite(cfg.min_guests) && Number.isFinite(cfg.max_guests),
   [TARGET_QUESTIONS[5]]: () => nonEmpty(cfg.service_area),
-  [TARGET_QUESTIONS[6]]: () => (cfg.menu_formats ?? []).includes("banana_leaf_service"),
-  [TARGET_QUESTIONS[7]]: () => Boolean(confirmedPhone || confirmedWhatsapp),
-  [TARGET_QUESTIONS[8]]: () => typeof cfg.advance_notice_required === "string" && cfg.advance_notice_required !== "",
-  [TARGET_QUESTIONS[9]]: () => ["per_plate", "on_request"].includes(cfg.pricing_model),
-  [TARGET_QUESTIONS[10]]: () => true, // restaurant fact, confirmed in Key.md
+  [TARGET_QUESTIONS[6]]: () => Boolean(confirmedPhone || confirmedWhatsapp),
+  [TARGET_QUESTIONS[7]]: () => ["per_plate", "on_request"].includes(cfg.pricing_model),
+  [TARGET_QUESTIONS[8]]: () => true, // restaurant fact
 };
 
 /* ---- Helpers ---------------------------------------------------------- */
@@ -147,9 +148,12 @@ for (const file of walk(dist)) {
   pages.push({ name, html, nodes });
 }
 
-const catering = pages.find((p) => p.name === "/catering/");
-if (cfg.offer_catering !== true && catering) err("/catering/", "page was built while offer_catering is not true");
-if (cfg.offer_catering === true && !catering) err("/catering/", "offer_catering is true but the page was not built");
+const catering = pages.find((p) => p.name === CATERING_PATH);
+for (const cp of CATERING_PAGES) {
+  const built = pages.some((p) => p.name === cp);
+  if (cfg.offer_catering !== true && built) err(cp, "page was built while offer_catering is not true");
+  if (cfg.offer_catering === true && !built) err(cp, "offer_catering is true but the page was not built");
+}
 
 /* ---- Per-page structural checks -------------------------------------- */
 for (const { name, html, nodes } of pages) {
@@ -181,12 +185,12 @@ for (const { name, html, nodes } of pages) {
   const r = nodes.find((n) => typeOf(n).includes("Restaurant"));
   if (r) {
     if (r.name !== SITE.name) err(name, `Restaurant.name "${r.name}" != "${SITE.name}"`);
-    if (r.servesCuisine !== SITE.cuisine) err(name, `servesCuisine "${r.servesCuisine}" != "${SITE.cuisine}"`);
+    if (JSON.stringify(r.servesCuisine) !== JSON.stringify(SITE.cuisines)) err(name, `servesCuisine ${JSON.stringify(r.servesCuisine)} != facts.js cuisines`);
     const a = r.address ?? {};
     if (a.addressLocality !== SITE.locality) err(name, `addressLocality "${a.addressLocality}"`);
     if (a.addressRegion !== SITE.region) err(name, `addressRegion "${a.addressRegion}"`);
     if (a.postalCode !== SITE.postal) err(name, `postalCode "${a.postalCode}"`);
-    for (const part of ["W Block", "Anna Nagar East"]) {
+    for (const part of ["W-Block", "3rd Avenue", "Anna Nagar East"]) {
       if (!String(a.streetAddress ?? "").includes(part)) err(name, `streetAddress missing "${part}"`);
     }
     if (digits(r.telephone) !== digits(SITE.phone)) err(name, `telephone ${r.telephone} != site phone ${SITE.phone}`);
@@ -194,7 +198,12 @@ for (const { name, html, nodes } of pages) {
     if (hasKey(r, "aggregateRating")) err(name, "Restaurant carries aggregateRating (self-served)");
     if (KEY) {
       if (KEY.entity && r.name !== KEY.entity) err(name, `name != Key.md entity "${KEY.entity}"`);
-      if (KEY.cuisine && r.servesCuisine.toLowerCase() !== KEY.cuisine.toLowerCase()) err(name, `servesCuisine != Key.md cuisine "${KEY.cuisine}"`);
+      if (KEY.cuisine) {
+        const joined = [].concat(r.servesCuisine).join(" ").toLowerCase();
+        for (const w of KEY.cuisine.toLowerCase().split(/\s+/)) {
+          if (!joined.includes(w)) err(name, `servesCuisine lacks "${w}" from Key.md cuisine "${KEY.cuisine}"`);
+        }
+      }
       if (KEY.location) {
         for (const part of ["W Block", "Anna Nagar East", "Chennai", "Tamil Nadu", "600040"]) {
           if (!KEY.location.includes(part)) warnings.push(`Key.md Location lacks "${part}"`);
@@ -236,7 +245,7 @@ for (const { name, html, nodes } of pages) {
 
   /* Service (catering) */
   for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {
-    if (name !== "/catering/") err(name, "Service schema outside /catering/");
+    if (!CATERING_PAGES.includes(name)) err(name, "Service schema outside the catering pages");
     if (cfg.offer_catering !== true) err(name, "Service emitted while offer_catering is not true");
     if (s.serviceType !== "Catering") err(name, `serviceType "${s.serviceType}" != "Catering"`);
     if (s.provider?.["@id"] !== r?.["@id"]) err(name, "Service.provider does not reference the Restaurant @id");
@@ -249,7 +258,7 @@ for (const { name, html, nodes } of pages) {
       else if (digits(s.telephone) !== digits(confirmedPhone)) err(name, `Service.telephone ${s.telephone} != confirmed ${confirmedPhone}`);
     }
   }
-  if (name === "/catering/" && !nodes.some((n) => typeOf(n).includes("Service"))) err(name, "missing Service schema");
+  if (CATERING_PAGES.includes(name) && !nodes.some((n) => typeOf(n).includes("Service"))) err(name, "missing Service schema");
 
   /* FAQPage */
   for (const f of nodes.filter((n) => typeOf(n).includes("FAQPage"))) {
@@ -262,11 +271,11 @@ for (const { name, html, nodes } of pages) {
       if (!ans.trim()) err(name, `empty answer: ${qn}`);
       if (!text.includes(qn)) err(name, `FAQ question not visible on the page: ${qn}`);
       if (!text.includes(firstSentence(ans))) err(name, `FAQ answer sentence 1 not visible on the page: ${qn}`);
-      if (name === "/catering/") {
-        if (!TARGET_QUESTIONS.includes(qn)) err(name, `FAQ question is not one of the 11 targets: ${qn}`);
+      if (name === CATERING_PATH) {
+        if (!TARGET_QUESTIONS.includes(qn)) err(name, `FAQ question is not one of the catering targets: ${qn}`);
         else if (!GATES[qn]()) err(name, `FAQ question not confirmed in config: ${qn}`);
-        if (qn === TARGET_QUESTIONS[10]) {
-          for (const part of ["W Block, Anna Nagar East", "Chennai, Tamil Nadu 600040", "Anna Tower", "3rd Avenue"]) {
+        if (qn === TARGET_QUESTIONS[8]) {
+          for (const part of ["W-Block", "Anna Nagar East", "Tamil Nadu 600040", "Anna Nagar Tower Park", "3rd Avenue"]) {
             if (!ans.includes(part)) err(name, `location answer missing "${part}"`);
           }
         }
@@ -294,4 +303,4 @@ if (errors.length) {
   process.exit(1);
 }
 const count = pages.reduce((n, p) => n + p.nodes.length, 0);
-console.log(`✔ Schema valid: ${count} JSON-LD node(s) on ${pages.length} page(s)${catering ? " (incl. /catering/)" : ""}`);
+console.log(`✔ Schema valid: ${count} JSON-LD node(s) on ${pages.length} page(s)${catering ? " (incl. catering pages)" : ""}`);

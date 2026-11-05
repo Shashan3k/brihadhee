@@ -1,0 +1,30 @@
+---
+import { FACTS, factOr } from "../data/facts.js";
+
+// Dining offers from facts.js. Offers change, so the checked date is shown.
+const offers = factOr("offers", []);
+const checked = FACTS.offers.verifiedOn;
+const date = checked
+  ? new Date(`${checked}T00:00:00Z`).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })
+  : "";
+const { title = "Value combos and dining offers" } = Astro.props;
+---
+
+{
+  offers.length > 0 && (
+    <section class="section section--tint" id="offers" aria-labelledby="offers-title">
+      <div class="container">
+        <h2 class="section__title" id="offers-title">{title}</h2>
+        <ul class="offers__list" role="list">
+          {offers.map((o) => (
+            <li class="offers__item">
+              <strong>{o.name}</strong>
+              <span>{o.description.charAt(0).toUpperCase() + o.description.slice(1)}.</span>
+            </li>
+          ))}
+        </ul>
+        {date && <p class="offers__note">Offers checked on {date}. Offers can change; confirm the current terms at the restaurant or in the booking app.</p>}
+      </div>
+    </section>
+  )
+}

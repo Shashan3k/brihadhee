@@ -63,3 +63,29 @@ Status key: **Confirmed** (written or recorded answer from the owner) | **Not co
 | What time does Brihadhee open and close? | hours (item 2) |
 | Is Brihadhee open on weekends? | hours (item 2) |
 | What is the price range per person? | price range (item 7) |
+
+## E. Update from the client brief of 2026-11-05 (owner-confirmed)
+
+These replace the earlier values above. All are in `src/data/facts.js` with `verifiedOn: 2026-11-05`.
+
+| Item | New value |
+|---|---|
+| Phone | **+91 94442 24999** (replaces +91 73587 14113 everywhere) |
+| WhatsApp | **Pending**: the brief lists no WhatsApp number, so WhatsApp buttons are hidden |
+| Address (exact wording) | New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Ward 100, Main Road, Anna Nagar East, Chennai, Tamil Nadu 600040. **Match this on the Google Business Profile.** |
+| Hours | Monday to Sunday, 6:30 AM to 11:00 PM |
+| Late-night dining "up to 6:00 AM" | **Pending**: contradicts the 11:00 PM close; not published |
+| Brand names | Brihadhee; also Brihadhee Hotels, Brihadhee Pure Veg Restaurant |
+| Sub-brand | Beyond Curry by Brihadhee (North Indian meal boxes); how they are sold is still unconfirmed |
+| Cuisine | 100% pure vegetarian: South Indian (Tirunelveli and Karaikudi specialties), North Indian, Indo-Chinese |
+| Founders | Rakesh and Eashwer (an auditor and a lawyer by profession) |
+| Price range | ₹200 to ₹400 for two (tiffin); about ₹800 for a family meal; schema `₹₹` |
+| Offers | ₹80 Mini Tiffin; budget tiffin from ₹24; 10% off walk-in dine-in; up to 40% off Monday to Thursday when pre-booked via Swiggy Dineout, EazyDiner or District. Re-check monthly. |
+| Reservations | Yes, via the three booking apps |
+| Customised dosas | Available now (how they are customised is not described yet) |
+| Menu prices | Nellai Special Sodhi Meals ₹299, Karaikudi Paneer Poppers ₹410; added Mini Tiffin ₹80, Kothu Parotta & Lemon Kothu Idiyappam Combo ₹239, Karupatti Ulundhu Kali ₹125 |
+| Signature items without a price | Customised Dosa, Summer in Tenkasi, Butter Biscuit Shake, outdoor filter coffee and tea counter |
+| Catering | Confirmed: seemantham, gruhapravesam, ear piercing, betrothals, boutique weddings, birthdays; 50 to 1,500 guests; Chennai; live counters (customised dosa, Paanai Parotta, Nellai sodhi, Karaikudi Paneer Poppers); white-label or co-branded counters for event planners; per-plate pricing |
+| Catering still pending | prep mode (cooked on site or delivered), staff and clean-up, advance notice, actual per-plate rates |
+| AI training crawlers | Owner decision: allow GPTBot, ClaudeBot, Google-Extended |
+| Still pending | Google rating and count (with date), WhatsApp number, parking |

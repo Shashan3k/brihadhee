@@ -25,12 +25,11 @@ const SCAN_EXT = new Set([".html", ".htm", ".md", ".mdx", ".txt"]);
 /* ---- Rules ------------------------------------------------------------ */
 
 const FORBIDDEN_KEYWORDS = [
+  // 2026-11-05: owner confirmed Chennai-wide event and wedding catering, so
+  // "wedding catering Chennai", "catering services in Chennai" and
+  // "large-scale catering" were removed from this list.
   "best catering in Chennai",
-  "wedding catering Chennai",
-  "catering services in Chennai",
   "bulk catering Chennai",
-  "large-scale catering",
-  "large scale catering",
   "mass catering",
   "non-vegetarian catering",
   "non vegetarian catering",

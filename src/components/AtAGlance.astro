@@ -1,37 +1,43 @@
 ---
-import { getFact, addressLine, landmarkSentence } from "../data/facts.js";
+import { getFact, addressLine } from "../data/facts.js";
 import { site, telHref } from "../data/site.js";
 
-// "Brihadhee at a glance": a definition list of confirmed facts only
-// (hours and price range are pending facts and are not shown).
-const { headingLevel = 2 } = Astro.props;
-const Heading = `h${headingLevel}`;
-const rows = [
-  ["Name", `${getFact("name")} (${getFact("nameTamil")})`],
-  ["Type", getFact("type")],
-  ["Cuisine", getFact("cuisine")],
-  ["Address", addressLine()],
-  ["Landmarks", landmarkSentence()],
-  ["Meal times", getFact("mealTimes")],
-];
+// Summary callout: a visible definition list of confirmed facts, placed near
+// the top of each page so people and answer engines get the essentials in one
+// block. Pages can pass their own rows; the defaults describe the restaurant.
+const {
+  title = "Brihadhee at a glance",
+  rows = [
+    ["Who", `${getFact("name")} (${getFact("nameTamil")}), a ${getFact("typeLong")}`],
+    ["Famous for", getFact("knownFor").join(", ")],
+    ["Cuisine", getFact("cuisine")],
+    ["Location", `${addressLine()}, near ${getFact("landmarks")[0]}`],
+    ["Hours", getFact("hours").summary],
+    ["Price range", getFact("priceRange").text],
+    ["Good for", "breakfast tiffin, family meals, regional Tamil dishes, and pure vegetarian event catering"],
+  ],
+  id = "at-a-glance",
+} = Astro.props;
 ---
 
-<section class="section glance" id="at-a-glance" aria-labelledby="glance-title">
+<section class="section glance" id={id} aria-labelledby={`${id}-title`}>
   <div class="container">
-    <Heading class="section__title" id="glance-title">Brihadhee at a glance</Heading>
-    <dl class="glance__list">
-      {
-        rows.map(([term, value]) => (
-          <div class="glance__row">
-            <dt>{term}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))
-      }
-      <div class="glance__row">
-        <dt>Phone</dt>
-        <dd><a href={telHref}>{site.contact.phone}</a></dd>
-      </div>
-    </dl>
+    <aside class="glance__box" aria-labelledby={`${id}-title`}>
+      <h2 class="glance__title" id={`${id}-title`}>{title}</h2>
+      <dl class="glance__list">
+        {
+          rows.map(([term, value]) => (
+            <div class="glance__row">
+              <dt>{term}</dt>
+              <dd>{value}</dd>
+            </div>
+          ))
+        }
+        <div class="glance__row">
+          <dt>Phone</dt>
+          <dd><a href={telHref}>{site.contact.phone}</a></dd>
+        </div>
+      </dl>
+    </aside>
   </div>
 </section>

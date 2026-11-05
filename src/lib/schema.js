@@ -16,7 +16,9 @@
  * here by hand.
  */
 import { site, hasHours, socialLinks } from "../data/site.js";
-import { getFact, factOr } from "../data/facts.js";
+import { getFact, factOr, FACTS } from "../data/facts.js";
+
+const FACTS_DATE = (key) => FACTS[key].verifiedOn;
 import { faqItems } from "../data/faq.js";
 
 const CONTEXT = "https://schema.org";
@@ -24,7 +26,7 @@ const CONTEXT = "https://schema.org";
 export const ids = {
   restaurant: `${site.url}/#restaurant`,
   website: `${site.url}/#website`,
-  cateringService: `${site.url}/catering/#service`,
+  cateringService: `${site.url}/catering-services-chennai/#service`,
 };
 export const pageUrl = (path) => `${site.url}${path}`;
 export const pageIds = (path) => ({
@@ -48,6 +50,10 @@ export function restaurantSchema() {
         }))
     : [];
   const alternateNames = [getFact("nameTamil"), ...getFact("alternateNames")];
+  const founders = factOr("founders");
+  const offers = factOr("offers", []);
+  const reservations = factOr("acceptsReservations");
+  const subBrand = factOr("subBrand");
 
   return {
     "@context": CONTEXT,
@@ -60,8 +66,8 @@ export function restaurantSchema() {
     image: [site.media.hero.src, site.media.about.src, site.media.signature.src].map(
       (src) => new URL(src, site.url).href
     ),
-    servesCuisine: getFact("cuisine"),
-    ...(factOr("priceRange") ? { priceRange: factOr("priceRange") } : {}),
+    servesCuisine: getFact("cuisines"),
+    ...(site.priceRange ? { priceRange: site.priceRange } : {}),
     currenciesAccepted: "INR",
     address: {
       "@type": "PostalAddress",
@@ -81,6 +87,24 @@ export function restaurantSchema() {
     email: getFact("email"),
     ...(socialLinks.length ? { sameAs: socialLinks.map((s) => s.href) } : {}),
     hasMenu: pageUrl("/menu/"),
+    ...(reservations?.value ? { acceptsReservations: true } : {}),
+    ...(founders
+      ? { founder: founders.names.map((name) => ({ "@type": "Person", name })) }
+      : {}),
+    ...(subBrand
+      ? { subOrganization: { "@type": "Organization", name: subBrand.name, description: subBrand.description } }
+      : {}),
+    ...(offers.length
+      ? {
+          makesOffer: offers.map((o) => ({
+            "@type": "Offer",
+            name: o.name,
+            description: o.description,
+            ...(o.price ? { price: String(o.price), priceCurrency: "INR" } : {}),
+            validFrom: FACTS_DATE("offers"),
+          })),
+        }
+      : {}),
     amenityFeature: [
       ...(getFact("dineIn")
         ? [{ "@type": "LocationFeatureSpecification", name: "Dine-in", value: true }]
@@ -149,9 +173,15 @@ export function cateringServiceSchema({ areas = [], phone = null } = {}) {
     "@type": "Service",
     "@id": ids.cateringService,
     serviceType: "Catering",
-    name: "Vegetarian South Indian catering",
-    url: pageUrl("/catering/"),
+    name: "Brihadhee Pure Veg Event and Wedding Catering",
+    description:
+      "Pure vegetarian catering for family functions, boutique weddings and event management companies, with regional menus and live food counters.",
+    url: pageUrl("/catering-services-chennai/"),
     provider: { "@id": ids.restaurant },
+    audience: [
+      { "@type": "Audience", audienceType: "Families planning functions" },
+      { "@type": "BusinessAudience", audienceType: "Event management companies" },
+    ],
     ...(areas.length
       ? { areaServed: areas.map((name) => ({ "@type": "Place", name })) }
       : {}),
@@ -203,4 +233,47 @@ export function homeSchema({ title, description }) {
     crumbs: HOME_CRUMBS,
     extras: [faqPageSchema("/", faqItems)],
   });
+}
+
+/**
+ * Menu / MenuSection / MenuItem for /menu, generated from menu.json.
+ * Prices come straight from the data (confirmed current on 2026-11-05).
+ * Signature extras without a listed price are MenuItems without an offer.
+ */
+export function menuSchema({ categories, extras = [] }) {
+  return {
+    "@context": CONTEXT,
+    "@type": "Menu",
+    "@id": `${pageUrl("/menu/")}#menu`,
+    name: `${getFact("name")} menu`,
+    inLanguage: site.locale.replace("_", "-"),
+    hasMenuSection: [
+      ...categories.map((c) => ({
+        "@type": "MenuSection",
+        name: c.name,
+        ...(c.blurb ? { description: c.blurb } : {}),
+        hasMenuItem: c.items.map((i) => ({
+          "@type": "MenuItem",
+          name: i.name,
+          ...(i.description ? { description: i.description } : {}),
+          suitableForDiet: "https://schema.org/VegetarianDiet",
+          offers: { "@type": "Offer", price: String(i.price), priceCurrency: "INR" },
+        })),
+      })),
+      ...(extras.length
+        ? [
+            {
+              "@type": "MenuSection",
+              name: "Signature specials",
+              hasMenuItem: extras.map((e) => ({
+                "@type": "MenuItem",
+                name: e.name,
+                description: e.note,
+                suitableForDiet: "https://schema.org/VegetarianDiet",
+              })),
+            },
+          ]
+        : []),
+    ],
+  };
 }

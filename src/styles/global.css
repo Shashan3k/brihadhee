@@ -2800,3 +2800,25 @@ a.contact__channel:hover {
 .menu-page__price { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .menu-page__desc { margin: 0.2rem 0 0; opacity: 0.8; }
 @media (max-width: 640px) { .menu-page__table { display: block; overflow-x: auto; } }
+
+/* ---- inner pages: header, summary box, comparison, dish lists, offers ---- */
+.page-head { padding-top: clamp(7rem, 14vw, 10rem); }
+.page-head__title { max-width: 24ch; }
+.page-head__intro { max-width: 46rem; }
+.page-head__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+.glance__box { border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.25rem, 3vw, 2rem); background: var(--paper); }
+.glance__title { margin: 0; font-size: 1.15rem; }
+.compare__wrap { overflow-x: auto; margin-top: 1.25rem; }
+.compare { width: 100%; border-collapse: collapse; font-size: 0.95rem; min-width: 36rem; }
+.compare caption { text-align: left; font-size: 0.85rem; opacity: 0.75; padding-bottom: 0.5rem; }
+.compare th, .compare td { text-align: left; vertical-align: top; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--line); }
+.compare thead th:nth-child(2), .compare td:first-of-type { font-weight: 600; }
+.compare__note, .offers__note { font-size: 0.85rem; opacity: 0.75; margin-top: 0.75rem; }
+.dish-page__grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); align-items: start; }
+.dish-page__photo img { width: 100%; height: auto; border-radius: var(--radius); }
+.dish-list { display: grid; gap: 0.75rem; margin: 1rem 0 0; padding: 0; list-style: none; }
+.dish-list--cols { grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 0.75rem 2rem; }
+.dish-list span { font-variant-numeric: tabular-nums; }
+.offers__list { display: grid; gap: 0.75rem 2rem; margin: 1rem 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.offers__item strong { display: block; }
+.link-list { margin: 1rem 0 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }

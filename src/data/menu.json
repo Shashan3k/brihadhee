@@ -23,10 +23,12 @@
         },
         {
           "name": "Karaikudi Paneer Poppers",
-          "description": "Paneer seasoned with gunpowder and house-made 65 spices.",
-          "price": 290,
+          "description": "Paneer seasoned with heritage gunpowder and house-made 65 spices.",
+          "price": 410,
           "diet": "veg",
-          "tags": []
+          "tags": [
+            "Signature"
+          ]
         },
         {
           "name": "Madras Bhel Parotta",
@@ -34,6 +36,31 @@
           "price": 245,
           "diet": "veg",
           "tags": []
+        }
+      ]
+    },
+    {
+      "id": "combos",
+      "name": "Tiffin Combos",
+      "blurb": "Value tiffin and kothu combos.",
+      "items": [
+        {
+          "name": "Mini Tiffin",
+          "description": "Pongal, kesari, 2 idlis, masala dosa, vada, sambar and chutneys.",
+          "price": 80,
+          "diet": "veg",
+          "tags": [
+            "Value"
+          ]
+        },
+        {
+          "name": "Kothu Parotta & Lemon Kothu Idiyappam Combo",
+          "description": "Kothu parotta with lemon kothu idiyappam.",
+          "price": 239,
+          "diet": "veg",
+          "tags": [
+            "Combo"
+          ]
         }
       ]
     },
@@ -65,10 +92,12 @@
         },
         {
           "name": "Nellai Special Sodhi Meals",
-          "description": "Rice, sodhi and traditional meal accompaniments.",
-          "price": 240,
+          "description": "Rice, sodhi, sambar, rasam, kuzhambu, mini chapathi, salna, kootu, poriyal, inji thogayal and karupatti ulundhu kali.",
+          "price": 299,
           "diet": "veg",
-          "tags": ["Signature"]
+          "tags": [
+            "Signature"
+          ]
         },
         {
           "name": "Sambar Rice",
@@ -278,14 +307,18 @@
           "description": "Shredded parotta tossed with paneer, mushroom and special masala.",
           "price": 190,
           "diet": "veg",
-          "tags": ["Signature"]
+          "tags": [
+            "Signature"
+          ]
         },
         {
           "name": "Paanai Parotta",
           "description": "Parotta with paneer and mushroom cooked dum-style with salna.",
           "price": 260,
           "diet": "veg",
-          "tags": []
+          "tags": [
+            "Signature"
+          ]
         },
         {
           "name": "Madurai Salna Parotta",
@@ -362,7 +395,9 @@
           "description": "South Indian coffee brewed with a traditional filter.",
           "price": 40,
           "diet": "veg",
-          "tags": ["Signature"]
+          "tags": [
+            "Signature"
+          ]
         },
         {
           "name": "Tea (Plain / Ginger / Elaichi)",
@@ -391,6 +426,22 @@
           "price": 35,
           "diet": "veg",
           "tags": []
+        }
+      ]
+    },
+    {
+      "id": "sweets",
+      "name": "Traditional Sweets",
+      "blurb": "Regional Tamil sweets.",
+      "items": [
+        {
+          "name": "Karupatti Ulundhu Kali",
+          "description": "Black urad dal cooked with palm jaggery (karupatti), a Tirunelveli-style sweet.",
+          "price": 125,
+          "diet": "veg",
+          "tags": [
+            "Signature"
+          ]
         }
       ]
     }

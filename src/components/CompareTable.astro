@@ -1,0 +1,34 @@
+---
+// Semantic comparison table. Brihadhee's column holds confirmed facts only;
+// other columns describe generic categories, never named businesses.
+const { id, title, lead = "", caption, columns, rows, note = "" } = Astro.props;
+---
+
+<section class="section" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <h2 class="section__title" id={`${id}-title`}>{title}</h2>
+    {lead && <p class="section__lead">{lead}</p>}
+    <div class="compare__wrap">
+      <table class="compare">
+        <caption>{caption}</caption>
+        <thead>
+          <tr>
+            <th scope="col">What to compare</th>
+            {columns.map((c) => <th scope="col">{c}</th>)}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((r) => (
+              <tr>
+                <th scope="row">{r[0]}</th>
+                {r.slice(1).map((cell) => <td>{cell}</td>)}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    {note && <p class="compare__note">{note}</p>}
+  </div>
+</section>

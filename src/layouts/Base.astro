@@ -4,7 +4,7 @@ import { homeSchema } from "../lib/schema.js";
 import "../styles/global.css";
 
 const {
-  title = `${site.name} | Vegetarian South Indian Restaurant, Anna Nagar`,
+  title = `${site.name} | Pure Veg Restaurant & Catering, Anna Nagar East`,
   description = site.shortDescription,
   path = "/",
   keywords = site.keywords,
@@ -31,7 +31,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
     <meta name="keywords" content={keywords.join(", ")} />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="geo.region" content="IN-TN" />
-    <meta name="geo.placename" content="Anna Nagar, Chennai" />
+    <meta name="geo.placename" content="Anna Nagar East, Chennai" />
     <meta
       name="geo.position"
       content={`${site.geo.latitude};${site.geo.longitude}`}

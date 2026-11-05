@@ -75,7 +75,8 @@ const decode = (s) =>
     .replace(/&nbsp;/g, " ");
 const norm = (s) => decode(s).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
-const firstSentence = (s) => s.trim().split(/(?<=[.!?])\s+/)[0];
+// "No." in addresses ("New No. W-41") is an abbreviation, not a sentence end.
+const firstSentence = (s) => s.trim().split(/(?<=[.!?])(?<!\bNo\.)\s+/)[0];
 const digits = (s) => String(s).replace(/\D/g, "");
 
 function visibleText(html) {
@@ -213,9 +214,13 @@ for (const p of pages) {
   for (const m of text.matchAll(/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g)) {
     if (m[0].replace(/[.]+$/, "") !== F("email")) err("nap", name, `unexpected email on the page: ${m[0]}`);
   }
-  for (const m of text.matchAll(/W-41/g)) {
-    const around = text.slice(Math.max(0, m.index - 4), m.index + 22);
-    if (!/New W-41 \(Old W-124\)/.test(around)) err("nap", name, `address line written differently: "...${around}..."`);
+  // Door number must always be written exactly as in facts.js (line1 prefix).
+  const doorRe = /W-41\b/g;
+  const door = addr.line1.match(/^.*?W-124/)?.[0] ?? addr.line1;
+  for (const m of text.matchAll(doorRe)) {
+    const start = Math.max(0, m.index - (addr.line1.indexOf("W-41")));
+    const around = text.slice(start, start + door.length);
+    if (around !== door) err("nap", name, `door number written differently: "${text.slice(Math.max(0, m.index - 10), m.index + 25)}"`);
   }
   if (/\b6000\d\d\b/.test(text) && !text.includes(addr.postalCode)) err("nap", name, "postal code differs from 600040");
   for (const m of text.matchAll(/\b6\d{5}\b/g)) {
@@ -238,8 +243,11 @@ for (const p of pages) {
   }
 
   /* 6: superlatives (elements carrying data-claim-source are exempt) */
+  // Question headings are queries, not claims ("Which restaurant serves the
+  // best dosa...?"), so they are exempt; answers and all other copy are not.
   const unsourced = html
-    .replace(/<([a-z0-9]+)\b[^>]*data-claim-source[^>]*>[\s\S]*?<\/\1>/gi, " ");
+    .replace(/<([a-z0-9]+)\b[^>]*data-claim-source[^>]*>[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<h([2-4])\b[^>]*>[^<]*\?<\/h\1>/gi, " ");
   const claimText = visibleText(unsourced) + " " + head;
   for (const m of claimText.matchAll(/\b(best|no\.?\s?1|number\s+one|top[- ]rated|finest|greatest)\b|#1\b/gi)) {
     err("superlatives", name, `superlative "${m[0]}" without a data-claim-source annotation`);
@@ -343,11 +351,11 @@ else {
 
 /* ---- 9: catering gate --------------------------------------------------- */
 if (cfg.offer_catering !== true) {
-  if (pages.some((p) => p.name.startsWith("/catering"))) err("catering_gate", "/catering/", "catering page was built while offer_catering is not true");
-  if (/\/catering/i.test(sitemap)) err("catering_gate", "sitemap.xml", "sitemap lists a catering URL while gated");
+  if (pages.some((p) => /catering/.test(p.name))) err("catering_gate", "catering pages", "a catering page was built while offer_catering is not true");
+  if (/catering/i.test(sitemap)) err("catering_gate", "sitemap.xml", "sitemap lists a catering URL while gated");
   if (/catering/i.test(llms)) err("catering_gate", "llms.txt", "llms.txt mentions catering while gated");
   for (const p of pages) {
-    if (/href="[^"]*\/catering/i.test(p.html)) err("catering_gate", p.name, "page links to /catering while gated");
+    if (/href="[^"]*catering/i.test(p.html)) err("catering_gate", p.name, "page links to a catering page while gated");
     if (/\bcatering\b/i.test(p.text)) err("catering_gate", p.name, "page text mentions catering while gated");
   }
 }

@@ -36,21 +36,21 @@ export const site = {
   /* ---- Identity ------------------------------------------------------- */
   name: getFact("name"),
   nameTamil: getFact("nameTamil"),
-  tagline: "Vegetarian South Indian flavours, served the traditional way.",
+  tagline: "Regional Tamil vegetarian food, from Nellai sodhi to Paanai Parotta.",
   subTagline:
-    "Dosas, banana-leaf meals and filter coffee in the heart of Anna Nagar East.",
+    "Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on 3rd Avenue, Anna Nagar East. Open daily from 6:30 AM.",
   shortDescription:
-    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar East, Chennai, serving dosas, traditional filter coffee and banana-leaf meals.",
-  // Entity sentence reused on the page body and (with a catering clause) on /catering.
+    "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for customised dosas, Paanai Parotta and Nellai Special Sodhi Meals.",
+  // Entity sentence reused on the page body.
   entitySentence:
-    "Brihadhee is a vegetarian South Indian restaurant at W Block, Anna Nagar East, Chennai 600040, near Anna Tower and 3rd Avenue.",
+    "Brihadhee is a pure vegetarian restaurant on 3rd Avenue, W-Block, Anna Nagar East, Chennai 600040, near Anna Nagar Tower Park.",
   longDescription:
-    "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. It serves South Indian favourites including dosas, meals and traditional tumbler drinks.",
+    "Brihadhee is a pure vegetarian restaurant in Anna Nagar East, Chennai, serving South Indian food with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese dishes.",
 
   /* ---- Contact (all optional — empty hides the control) ---------------- */
   contact: {
     phone: getFact("phone"), // enables Call buttons
-    whatsapp: getFact("whatsapp"), // enables WhatsApp enquiry
+    whatsapp: factOr("whatsapp", ""), // enables WhatsApp enquiry
     email: getFact("email"), // enables the enquiry form fallback
   },
 
@@ -92,13 +92,14 @@ export const site = {
   /* ---- Good for / amenities ------------------------------------------- */
   /* Only confirmed details are listed. Add more entries once confirmed. */
   amenities: [
-    { label: "Dine-in", detail: "Lunch and dinner" },
+    { label: "Dine-in", detail: "Breakfast, lunch and dinner" },
+    { label: "Open daily", detail: "6:30 AM to 11:00 PM" },
     { label: "Families welcome", detail: "Kids and group outings" },
     { label: "Alcohol", detail: "Not served" },
-    { label: "Cuisine", detail: "Vegetarian South Indian" },
+    { label: "Cuisine", detail: "100% pure vegetarian" },
   ],
-  priceGuide: "",
-  priceRange: factOr("priceRange", ""),
+  priceGuide: factOr("priceRange")?.text ?? "",
+  priceRange: factOr("priceRange")?.schema ?? "",
 
   /* ---- Social handles (empty hides the link) -------------------------- */
   social: {
@@ -182,18 +183,17 @@ export const site = {
 
   /* ---- Navigation ----------------------------------------------------- */
   navigation: [
-    { label: "Services", href: "#services" },
-    { label: "About", href: "#about" },
-    { label: "Menu", href: "#menu" },
-    { label: "Gallery", href: "#gallery" },
-    { label: "Reviews", href: "#reviews" },
-    { label: "Visit", href: "#visit" },
-    { label: "FAQ", href: "#faq" },
-    { label: "Contact", href: "#contact" },
-    // Only linked once the owner confirms catering (config/client-verification.json).
+    { label: "Menu", href: `${BASE_URL}menu/` },
+    { label: "Dosa & Parotta", href: `${BASE_URL}best-dosa-parotta-anna-nagar/` },
+    { label: "Nellai Meals", href: `${BASE_URL}nellai-meals-south-indian-veg-anna-nagar/` },
     ...(verification.offer_catering === true
-      ? [{ label: "Catering", href: `${BASE_URL}catering/` }]
+      ? [
+          { label: "Catering", href: `${BASE_URL}catering-services-chennai/` },
+          { label: "Event Planners", href: `${BASE_URL}event-planner-catering-partner/` },
+        ]
       : []),
+    { label: "Visit", href: "#visit" },
+    { label: "Contact", href: "#contact" },
   ],
 
   /* ---- SEO ------------------------------------------------------------ */
@@ -203,31 +203,23 @@ export const site = {
   /* Canonical target clusters (see Key.md). Gated terms only appear once the
      owner confirms them in config/client-verification.json. */
   keywords: [
-    "Brihadhee restaurant Anna Nagar",
+    "Brihadhee Anna Nagar",
+    "pure veg restaurant Anna Nagar East",
     "South Indian restaurant Anna Nagar",
-    "vegetarian restaurant Anna Nagar",
     "veg hotel Anna Nagar",
     "அண்ணா நகர் சைவ உணவகம்",
-    "vegetarian South Indian restaurant Chennai",
-    "dosa restaurant Anna Nagar",
+    "customised dosa Anna Nagar",
+    "Paanai Parotta Chennai",
+    "Nellai sodhi meals Chennai",
+    "mini tiffin Anna Nagar",
     "filter coffee Anna Nagar",
-    "family restaurant Anna Nagar East",
-    "banana leaf meals Anna Nagar",
-    "vegetarian dining near 3rd Avenue Anna Nagar",
-    "South Indian restaurant near Anna Tower",
-    "affordable South Indian meals in Anna Nagar",
-    ...(verification.restaurant_parotta_confirmed === true
-      ? ["parotta Anna Nagar", "veg parotta Anna Nagar"]
-      : []),
-    ...(verification.restaurant_parking_available === true
-      ? ["restaurant with parking Anna Nagar"]
-      : []),
+    ...(verification.offer_catering === true ? ["pure veg catering Chennai"] : []),
   ],
   ogImage: {
     src: `${BASE_URL}images/og-image.jpg`,
     width: 1200,
     height: 630,
-    alt: "Brihadhee — vegetarian South Indian restaurant in Anna Nagar, Chennai",
+    alt: "Brihadhee, pure vegetarian restaurant in Anna Nagar East, Chennai",
   },
 };
 

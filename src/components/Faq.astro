@@ -1,29 +1,34 @@
 ---
 import { faqItems, faqLanguageGroups } from "../data/faq.js";
 
-// Same data source as the FAQPage JSON-LD (src/lib/schema.js). Each answer is
-// rendered as one paragraph whose text equals the schema answer exactly.
-const english = faqItems.filter((i) => i.lang === "en");
-const other = faqItems.filter((i) => i.lang !== "en");
+// Visible Q&A. Each page passes the SAME array it gives to faqPageSchema(), so
+// the text in the JSON-LD and on the page cannot drift apart (checked by
+// scripts/aeo-lint.mjs). Questions are <h3> headings; the first paragraph is
+// the direct answer.
+const {
+  items = faqItems,
+  title = "Frequently asked questions",
+  lead = "Straight answers about Brihadhee's food, location, hours and offers.",
+  eyebrow = "Quick answers",
+} = Astro.props;
+const english = items.filter((i) => !i.lang || i.lang === "en");
+const other = items.filter((i) => i.lang && i.lang !== "en");
+const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 ---
 
 {
-  faqItems.length > 0 && (
+  items.length > 0 && (
     <section class="section faq" id="faq" aria-labelledby="faq-title">
       <div class="container faq__inner">
         <div class="section__head section__head--center">
-          <p class="eyebrow">Quick answers</p>
-          <h2 class="section__title" id="faq-title">
-            Frequently asked questions
-          </h2>
-          <p class="section__lead">
-            Straight answers about Brihadhee's food, location and dining.
-          </p>
+          <p class="eyebrow">{eyebrow}</p>
+          <h2 class="section__title" id="faq-title">{title}</h2>
+          {lead && <p class="section__lead">{lead}</p>}
         </div>
 
         <div class="faq__list">
           {english.map((item) => (
-            <details class="faq__item" id={`faq-${item.id}`}>
+            <details class="faq__item" id={`faq-${item.id ?? slug(item.question)}`}>
               <summary>
                 <h3 class="faq__q">{item.question}</h3>
                 <span class="faq__icon" aria-hidden="true" />
@@ -38,7 +43,7 @@ const other = faqItems.filter((i) => i.lang !== "en");
             <p class="faq__group">{faqLanguageGroups.ta}</p>
             <div class="faq__list">
               {other.map((item) => (
-                <details class="faq__item" id={`faq-${item.id}`}>
+                <details class="faq__item" id={`faq-${item.id ?? slug(item.question)}`}>
                   <summary>
                     <h3 class="faq__q" lang={item.lang}>{item.question}</h3>
                     <span class="faq__icon" aria-hidden="true" />

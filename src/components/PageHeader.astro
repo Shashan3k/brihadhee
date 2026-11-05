@@ -1,0 +1,31 @@
+---
+import Icon from "./Icon.astro";
+import { site, telHref, hasPhone } from "../data/site.js";
+
+// Top of every inner page: eyebrow, the single H1, an answer-first intro and
+// the call / directions / menu actions.
+const { eyebrow, h1, intro, menuHref } = Astro.props;
+---
+
+<header class="section page-head" id="top">
+  <div class="container">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1 class="section__title page-head__title">{h1}</h1>
+    {intro && <p class="section__lead page-head__intro">{intro}</p>}
+    <div class="page-head__actions">
+      {hasPhone && (
+        <a class="btn btn--primary" href={telHref}>
+          <Icon name="phone" size={17} /> Call {site.contact.phone}
+        </a>
+      )}
+      <a class="btn btn--ghost" href={site.maps.directions} target="_blank" rel="noopener">
+        <Icon name="navigation" size={17} /> Get directions
+      </a>
+      {menuHref && (
+        <a class="btn btn--ghost" href={menuHref}>
+          <Icon name="utensils" size={17} /> Full menu and prices
+        </a>
+      )}
+    </div>
+  </div>
+</header>

@@ -1,23 +1,35 @@
 {
-  "_readme": "Every value is unconfirmed until the client says otherwise. Do not flip a flag without a written confirmation from the owner. scripts/validate-seo-guardrails.js reads this file.",
-  "offer_catering": false,
-  "confirmed_events": [],
-  "min_guests": null,
-  "max_guests": null,
-  "service_area": [],
-  "menu_formats": [],
+  "_readme": "Owner-confirmed catering and restaurant facts as of 2026-11-05 (client brief). Do not flip a flag without a written confirmation from the owner. scripts/validate-seo-guardrails.js and the catering pages read this file.",
+  "offer_catering": true,
+  "confirmed_events": [
+    "baby_shower",
+    "housewarming",
+    "ear_piercing",
+    "engagement",
+    "wedding",
+    "birthday"
+  ],
+  "min_guests": 50,
+  "max_guests": 1500,
+  "service_area": [
+    "Chennai"
+  ],
+  "menu_formats": [
+    "live_counters",
+    "regional_menus"
+  ],
   "staff_serving_cleanup_included": null,
   "prep_mode": null,
   "advance_notice_required": null,
   "enquiry_channels": {
     "phone": null,
     "whatsapp": null,
-    "is_different_from_restaurant": null
+    "is_different_from_restaurant": false
   },
-  "pricing_model": null,
-  "restaurant_verified_hours": null,
+  "pricing_model": "per_plate",
+  "restaurant_verified_hours": "Monday to Sunday, 6:30 AM to 11:00 PM",
   "restaurant_parking_available": null,
-  "restaurant_parotta_confirmed": null,
+  "restaurant_parotta_confirmed": true,
   "_allowed_values": {
     "confirmed_events": [
       "house_function",
@@ -25,7 +37,9 @@
       "birthday",
       "baby_shower",
       "housewarming",
+      "ear_piercing",
       "engagement",
+      "wedding",
       "small_wedding",
       "small_events"
     ],
@@ -33,7 +47,9 @@
       "south_indian_meals",
       "tiffin",
       "snack_boxes",
-      "banana_leaf_service"
+      "banana_leaf_service",
+      "live_counters",
+      "regional_menus"
     ],
     "prep_mode": [
       "restaurant_delivered",
@@ -47,5 +63,5 @@
     "enquiry_channels": "phone and whatsapp as strings; is_different_from_restaurant true or false",
     "customizable_dosas_confirmed": "true only after the owner confirms customizable dosas are available now and how they work"
   },
-  "customizable_dosas_confirmed": null
+  "customizable_dosas_confirmed": true
 }

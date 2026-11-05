@@ -1,0 +1,89 @@
+---
+/**
+ * Pillar 1 dish-authority page: dosa and parotta in Anna Nagar.
+ * Targets "best dosa / best parotta in Anna Nagar" as a topic without claiming
+ * "best" in copy. All prices and lists are computed from menu.json.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import AtAGlance from "../components/AtAGlance.astro";
+import CompareTable from "../components/CompareTable.astro";
+import Offers from "../components/Offers.astro";
+import Faq from "../components/Faq.astro";
+import { dosaPage as page } from "../data/pages.js";
+import { category, parotta, rupees } from "../lib/menu-facts.js";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
+import { site } from "../data/site.js";
+
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const dosa = category("dosa");
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Dosa and parotta", path: page.path }],
+  extras: [faqPageSchema(page.path, page.faq)],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={base} />
+  <main id="main">
+    <PageHeader eyebrow="Dosa and parotta · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={`${base}menu/`} />
+    <AtAGlance title="Dosa and parotta at Brihadhee: summary" rows={page.glance} />
+
+    <section class="section" id="customised-dosa" aria-labelledby="customised-dosa-title">
+      <div class="container dish-page__grid">
+        <article>
+          <h2 class="section__title" id="customised-dosa-title">Customised dosas and {dosa.count} dosa varieties</h2>
+          <p>
+            Brihadhee makes customised dosas: tell the team how you want your dosa when you order.
+            The menu also lists {dosa.count} dosa varieties from {rupees(dosa.min)} to {rupees(dosa.max)}.
+          </p>
+          <ul class="dish-list" role="list">
+            {dosa.items.map((i) => (
+              <li><strong>{i.name}</strong> <span>{rupees(i.price)}</span><br /><small>{i.description}</small></li>
+            ))}
+          </ul>
+        </article>
+        <figure class="dish-page__photo">
+          <img src={`${base}images/dosa.jpg`} width="1200" height="900" loading="lazy" decoding="async"
+            alt="Golden dosa with coconut chutney and sambar on a banana leaf at Brihadhee, Anna Nagar East" />
+          <figcaption>Dosa from the Brihadhee kitchen, Anna Nagar East</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="parotta" aria-labelledby="parotta-title">
+      <div class="container">
+        <h2 class="section__title" id="parotta-title">Paanai Parotta, kothu parotta and {parotta.count} parotta dishes</h2>
+        <p class="section__lead">
+          Paanai Parotta is Brihadhee's claypot parotta. Parotta dishes range from {rupees(parotta.min)} to {rupees(parotta.max)} on the current menu.
+        </p>
+        <ul class="dish-list dish-list--cols" role="list">
+          {parotta.items.map((i) => (
+            <li><strong>{i.name}</strong> <span>{rupees(i.price)}</span><br /><small>{i.description}</small></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <CompareTable {...page.compare} />
+    <Offers title="Dosa and parotta value: combos and dining offers" />
+    <Faq items={page.faq} title="Dosa and parotta questions" lead="Direct answers about dosa and parotta at Brihadhee, Anna Nagar East." eyebrow="Questions" />
+
+    <section class="section" id="more" aria-labelledby="more-title">
+      <div class="container">
+        <h2 class="section__title" id="more-title">More from Brihadhee</h2>
+        <ul class="link-list" role="list">
+          <li><a href={`${base}menu/`}>Full menu with prices</a></li>
+          <li><a href={`${base}nellai-meals-south-indian-veg-anna-nagar/`}>Nellai Sodhi meals and the ₹80 Mini Tiffin</a></li>
+          <li><a href={`${base}#visit`}>Find us on {site.address.line1}</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={base} />
+</Base>
