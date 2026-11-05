@@ -36,8 +36,7 @@ const hoursPayload = JSON.stringify({
           <address class="visit__address">
             {address.line1}<br />
             {address.line2}<br />
-            {address.city}{address.postalCode ? `, ${address.postalCode}` : ""}<br />
-            {address.state}
+            {address.city}, {address.state}{address.postalCode ? ` ${address.postalCode}` : ""}
           </address>
           <p class="visit__landmarks">
             {site.landmarks.join(" · ")}

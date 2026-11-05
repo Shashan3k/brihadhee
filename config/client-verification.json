@@ -1,0 +1,49 @@
+{
+  "_readme": "Every value is unconfirmed until the client says otherwise. Do not flip a flag without a written confirmation from the owner. scripts/validate-seo-guardrails.js reads this file.",
+  "offer_catering": false,
+  "confirmed_events": [],
+  "min_guests": null,
+  "max_guests": null,
+  "service_area": [],
+  "menu_formats": [],
+  "staff_serving_cleanup_included": null,
+  "prep_mode": null,
+  "advance_notice_required": null,
+  "enquiry_channels": {
+    "phone": null,
+    "whatsapp": null,
+    "is_different_from_restaurant": null
+  },
+  "pricing_model": null,
+  "restaurant_verified_hours": null,
+  "restaurant_parking_available": null,
+  "restaurant_parotta_confirmed": null,
+  "_allowed_values": {
+    "confirmed_events": [
+      "house_function",
+      "pooja",
+      "birthday",
+      "baby_shower",
+      "housewarming",
+      "engagement",
+      "small_wedding",
+      "small_events"
+    ],
+    "menu_formats": [
+      "south_indian_meals",
+      "tiffin",
+      "snack_boxes",
+      "banana_leaf_service"
+    ],
+    "prep_mode": [
+      "restaurant_delivered",
+      "on_site"
+    ],
+    "pricing_model": [
+      "per_plate",
+      "on_request"
+    ],
+    "advance_notice_required": "free text, for example 2 days",
+    "enquiry_channels": "phone and whatsapp as strings; is_different_from_restaurant true or false"
+  }
+}

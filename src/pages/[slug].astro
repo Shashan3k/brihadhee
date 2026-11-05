@@ -1,0 +1,259 @@
+---
+/**
+ * /catering — built ONLY when offer_catering is true in
+ * config/client-verification.json. Every block reads from src/data/catering.js
+ * and is omitted unless the matching flag is confirmed.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Icon from "../components/Icon.astro";
+import { site } from "../data/site.js";
+import {
+  cateringEnabled,
+  meta,
+  opening,
+  entityLine,
+  events,
+  formats,
+  freshlyPrepared,
+  steps,
+  advanceNotice,
+  guests,
+  serviceAreas,
+  plannerSection,
+  faqs,
+  contact,
+  cateringSchema,
+} from "../data/catering.js";
+
+export function getStaticPaths() {
+  return cateringEnabled ? [{ params: { slug: "catering" } }] : [];
+}
+
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+---
+
+<Base
+  title={meta.title}
+  description={meta.description}
+  path="/catering/"
+  keywords={meta.keywords}
+  schema={cateringSchema()}
+>
+  <Nav homeBase={base} />
+  <main id="main">
+    <section class="section catering-hero" id="top">
+      <div class="container">
+        <p class="eyebrow">Catering · Anna Nagar East</p>
+        <h1 class="section__title catering__h1">{meta.h1}</h1>
+        {opening && <p class="section__lead catering__opening">{opening}</p>}
+        {entityLine && <p class="catering__opening">{entityLine}</p>}
+        <p class="catering__tamil tamil" lang="ta">
+          சைவ கேட்டரிங் அண்ணா நகர் · சைவ கேட்டரிங் சென்னை · samayal catering Chennai
+        </p>
+        {
+          contact.any && (
+            <div class="catering__cta">
+              {contact.phone && (
+                <a class="btn btn--primary" href={contact.telHref}>
+                  <Icon name="phone" size={17} /> Call to enquire
+                </a>
+              )}
+              {contact.whatsapp && (
+                <a class="btn btn--ghost" href={contact.whatsappHref} target="_blank" rel="noopener">
+                  <Icon name="whatsapp" size={17} /> WhatsApp
+                </a>
+              )}
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    {
+      events.length > 0 && (
+        <section class="section section--tint" id="events" aria-labelledby="events-title">
+          <div class="container">
+            <h2 class="section__title" id="events-title">Events we cater</h2>
+            <ul class="catering-list" role="list">
+              {events.map((e) => (
+                <li>
+                  <h3>{e.label}</h3>
+                  <p>{e.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      formats.length > 0 && (
+        <section class="section" id="menus" aria-labelledby="menus-title">
+          <div class="container">
+            <h2 class="section__title" id="menus-title">Sample menus</h2>
+            <p class="section__lead">
+              {freshlyPrepared
+                ? "Freshly prepared catering from a restaurant kitchen, in the formats below."
+                : "Catering from a restaurant kitchen, in the formats below."}
+            </p>
+            <ul class="catering-menu" role="list">
+              {formats.map((f) => (
+                <li class="catering-menu__item">
+                  {f.photo ? (
+                    <img
+                      src={`${base}images/${f.photo.file}`}
+                      width="1200"
+                      height="900"
+                      alt={f.photo.alt}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div class="catering-menu__placeholder" role="img" aria-label={f.placeholderAlt}>
+                      Photo to be added
+                    </div>
+                  )}
+                  <h3>{f.label}</h3>
+                  <p>{f.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      steps.length > 0 && (
+        <section class="section section--tint" id="how" aria-labelledby="how-title">
+          <div class="container">
+            <h2 class="section__title" id="how-title">How it works</h2>
+            <ol class="catering-steps">
+              {steps.map((s) => (
+                <li>
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                </li>
+              ))}
+            </ol>
+            {advanceNotice && <p class="catering__note">Please book {advanceNotice} in advance.</p>}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      (guests || serviceAreas.length > 0) && (
+        <section class="section" id="area" aria-labelledby="area-title">
+          <div class="container">
+            <h2 class="section__title" id="area-title">Guest count and area served</h2>
+            {guests && <p class="section__lead">{guests.range}</p>}
+            {guests && guests.examples.length > 0 && (
+              <ul class="catering-chips" role="list">
+                {guests.examples.map((x) => <li>{x}</li>)}
+              </ul>
+            )}
+            {serviceAreas.length > 0 && (
+              <p class="section__lead">We cater in: {serviceAreas.join(", ")}.</p>
+            )}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      plannerSection && (
+        <section class="section section--tint" id="planners" aria-labelledby="planners-title">
+          <div class="container">
+            <h2 class="section__title" id="planners-title">For event planners</h2>
+            <p class="section__lead">
+              Looking for a vegetarian caterer for events in Chennai, a South Indian catering
+              partner in Chennai, or a food partner for small events in Anna Nagar? Contact us
+              directly to discuss your event.
+            </p>
+            <div class="catering__cta">
+              {contact.phone && (
+                <a class="btn btn--primary" href={contact.telHref}>
+                  <Icon name="phone" size={17} /> Call us
+                </a>
+              )}
+              {contact.whatsapp && (
+                <a class="btn btn--ghost" href={contact.whatsappHref} target="_blank" rel="noopener">
+                  <Icon name="whatsapp" size={17} /> WhatsApp us
+                </a>
+              )}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    {
+      faqs.length > 0 && (
+        <section class="section faq" id="faq" aria-labelledby="faq-title">
+          <div class="container faq__inner">
+            <div class="section__head section__head--center">
+              <h2 class="section__title" id="faq-title">Catering questions</h2>
+            </div>
+            <div class="faq__list">
+              {faqs.map((item) => (
+                <details class="faq__item">
+                  <summary>
+                    <span>{item.question}</span>
+                    <span class="faq__icon" aria-hidden="true" />
+                  </summary>
+                  <p class="faq__answer">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+      )
+    }
+
+    <section class="section section--tint" id="contact" aria-labelledby="contact-title">
+      <div class="container">
+        <h2 class="section__title" id="contact-title">Contact</h2>
+        {entityLine && <p>{entityLine}</p>}
+        <address class="catering__address">
+          {site.address.line1}<br />
+          {site.address.line2}<br />
+          {site.address.city}, {site.address.state} {site.address.postalCode}
+          <br /><span>{site.landmarks.join(" · ")}</span>
+        </address>
+        {
+          contact.any && (
+            <div class="catering__cta">
+              {contact.phone && (
+                <a class="btn btn--primary" href={contact.telHref}>
+                  <Icon name="phone" size={17} /> Call {contact.phone}
+                </a>
+              )}
+              {contact.whatsapp && (
+                <a class="btn btn--ghost" href={contact.whatsappHref} target="_blank" rel="noopener">
+                  <Icon name="whatsapp" size={17} /> WhatsApp
+                </a>
+              )}
+            </div>
+          )
+        }
+        <div class="visit__map catering__map">
+          <iframe
+            src={site.maps.embed}
+            title={`Map showing ${site.name} in W Block, Anna Nagar East, Chennai`}
+            width="600"
+            height="450"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={base} />
+</Base>

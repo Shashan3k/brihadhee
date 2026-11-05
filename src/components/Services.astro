@@ -1,17 +1,21 @@
 ---
 import { site } from "../data/site.js";
 import Icon from "./Icon.astro";
+
+const base = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
 ---
 
 <section class="section services" id="services" aria-labelledby="services-title">
   <div class="container">
     <div class="services__intro reveal">
       <div>
-        <p class="eyebrow">Four ways to gather</p>
-        <h2 class="section__title" id="services-title">Made for everyday meals and memorable occasions</h2>
+        <p class="eyebrow">Two ways to enjoy Brihadhee</p>
+        <h2 class="section__title" id="services-title">Made for everyday South Indian meals</h2>
       </div>
       <p class="section__lead">
-        From a table at Brihadhee to daily workplace meals and celebrations, find the right way to bring people together over South Indian food.
+        From a table at Brihadhee to a convenient meal box, find the right way to enjoy South Indian food.
       </p>
     </div>
 
@@ -29,41 +33,20 @@ import Icon from "./Icon.astro";
         <Icon name="sparkle" size={24} class="service__icon" />
         <h3>Value-Meal-Box</h3>
         <p>A convenient, value-focused meal-box concept from the Brihadhee kitchen.</p>
+        <div class="meal-box__photos" aria-label="Value meal box examples">
+          <figure>
+            <img src={`${base}images/meal-box-rice.jpg`} width="1200" height="1200" alt="Meal box with yellow rice and a spiced rice dish" loading="lazy" decoding="async" />
+            <figcaption>Rice meal box</figcaption>
+          </figure>
+          <figure>
+            <img src={`${base}images/meal-box-roti.jpg`} width="1200" height="1200" alt="Meal box with flatbreads and curry" loading="lazy" decoding="async" />
+            <figcaption>Flatbread meal box</figcaption>
+          </figure>
+        </div>
         <span class="service__teaser"><span class="service__dot"></span> More offerings coming soon</span>
         <span class="service__coming">Build Your Own Dosa · Coming soon</span>
       </article>
-
-      <article class="service service--corporate reveal" style="--reveal-delay:140ms">
-        <span class="service__index">03 / FOR WORKPLACES</span>
-        <Icon name="users" size={24} class="service__icon" />
-        <h3>Corporate catering</h3>
-        <p>Reliable daily food service for teams, prepared with restaurant-quality care and consistent standards.</p>
-        <ul class="service__proof" role="list">
-          <li>Restaurant-quality food at catering prices</li>
-          <li>Same professional kitchen and hygiene standards as our restaurant</li>
-          <li>Rigorous quality control</li>
-          <li>Consistent taste and freshness, every day</li>
-        </ul>
-        <a class="service__link" href="#contact" data-inquiry="corporate">Discuss workplace catering <Icon name="arrowRight" size={17} /></a>
-      </article>
-
-      <article class="service service--events reveal" style="--reveal-delay:210ms">
-        <span class="service__index">04 / FOR GATHERINGS</span>
-        <Icon name="leaf" size={24} class="service__icon" />
-        <h3>Event catering</h3>
-        <p>South Indian food for weddings, birthdays, community gatherings and custom bulk requirements.</p>
-        <a class="btn btn--onink service__cta" href="#contact" data-inquiry="event">Get an event quote <Icon name="arrowRight" size={17} /></a>
-      </article>
     </div>
 
-    <div class="services__clients reveal">
-      <div class="services__clients-head">
-        <p class="eyebrow">Workplace catering</p>
-        <h3>Trusted by teams at</h3>
-      </div>
-      <ul class="client-list" role="list" aria-label="Corporate catering clients">
-        {site.catering.clients.map((client) => <li>{client}</li>)}
-      </ul>
-    </div>
   </div>
 </section>

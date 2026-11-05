@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://shashan3k.github.io/brihadhee/sitemap.xml

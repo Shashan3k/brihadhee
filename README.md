@@ -115,6 +115,8 @@ its filename.
 | `dosa.jpg` | About + gallery | 1200 × 900 | Real dosa photo |
 | `coffee.jpg` | About card + gallery | 1000 × 1000 (square) | Real coffee photo |
 | `meals.jpg` | Gallery | 1200 × 900 | Real meal photo |
+| `meal-box-rice.jpg` | Cloud Kitchen | 1200 × 1200 | Supplied meal-box photo, rice and spiced rice |
+| `meal-box-roti.jpg` | Cloud Kitchen | 1200 × 1200 | Supplied meal-box photo, flatbreads and curry |
 | `tiffin.jpg` | Gallery | 1200 × 900 | Real tiffin/dosa photo |
 | `sweets.jpg` | Gallery | 1200 × 900 | Real dessert photo |
 | `og-image.jpg` | WhatsApp/Facebook/Twitter link preview | 1200 × 630 | Brand artwork with the logo/name |

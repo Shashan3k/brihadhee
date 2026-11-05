@@ -10,6 +10,8 @@
  * design code to update the content.
  */
 
+import verification from "../../config/client-verification.json";
+
 const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -48,6 +50,9 @@ export const site = {
     "Customizable dosas, banana-leaf meals and filter coffee in the heart of Anna Nagar East.",
   shortDescription:
     "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar East, Chennai — known for customizable dosas, traditional filter coffee and banana-leaf meals.",
+  // Entity sentence reused on the page body and (with a catering clause) on /catering.
+  entitySentence:
+    "Brihadhee is a vegetarian South Indian restaurant at W Block, Anna Nagar East, Chennai 600040, near Anna Tower and 3rd Avenue.",
   longDescription:
     "Brihadhee is a vegetarian South Indian restaurant in Anna Nagar, Chennai. It serves South Indian favourites including customizable dosas, meals and traditional tumbler drinks.",
 
@@ -172,10 +177,10 @@ export const site = {
       alt: "Crisp South Indian dosa served with sambar and chutneys on a banana leaf",
     },
     about: {
-      src: `${BASE_URL}images/interior-illustration.svg`,
+      src: `${BASE_URL}images/meals.jpg`,
       width: 1200,
       height: 900,
-      alt: "Illustration of a warm South Indian dining room, not a photograph of Brihadhee",
+      alt: "South Indian meal served on a banana leaf with rice, papad and sides",
     },
     signature: {
       src: `${BASE_URL}images/dosa.jpg`,
@@ -196,13 +201,6 @@ export const site = {
         height: 900,
         alt: "Golden dosa served with chutneys on a banana leaf",
         caption: "Crisp dosa with chutneys",
-      },
-      {
-        src: `${BASE_URL}images/interior-illustration.svg`,
-        width: 1200,
-        height: 900,
-        alt: "Illustration of a South Indian dining room; this is not a photograph of Brihadhee",
-        caption: "Dining room illustration",
       },
       {
         src: `${BASE_URL}images/coffee.jpg`,
@@ -237,32 +235,12 @@ export const site = {
     // (e.g. "/video/brihadhee.mp4") and the gallery card appears automatically.
     video: {
       src: "",
-      poster: `${BASE_URL}images/interior-illustration.svg`,
+      poster: `${BASE_URL}images/hero.jpg`,
       caption: "Restaurant video",
     },
   },
 
   /* ---- Navigation ----------------------------------------------------- */
-  catering: {
-    dailyVolume: "800–900 people per day [CONFIRM exact figure before publishing]",
-    founders: [],
-    clients: [
-      "Aalam",
-      "Freehand",
-      "Pando",
-      "Bi3 Technologies",
-      "Nestle",
-      "NDR",
-      "Selvarangam Hospitals",
-      "FRUTTA",
-      "Go Khana",
-      "Hunger Box",
-      "Pro Chant",
-      "Prodapt",
-      "Stark Event Management",
-    ],
-  },
-
   navigation: [
     { label: "Services", href: "#services" },
     { label: "About", href: "#about" },
@@ -272,28 +250,38 @@ export const site = {
     { label: "Visit", href: "#visit" },
     { label: "FAQ", href: "#faq" },
     { label: "Contact", href: "#contact" },
+    // Only linked once the owner confirms catering (config/client-verification.json).
+    ...(verification.offer_catering === true
+      ? [{ label: "Catering", href: `${BASE_URL}catering/` }]
+      : []),
   ],
 
   /* ---- SEO ------------------------------------------------------------ */
   url: "https://shashan3k.github.io/brihadhee",
   locale: "en_IN",
   areaServed: "Anna Nagar, Chennai",
+  /* Canonical target clusters (see Key.md). Gated terms only appear once the
+     owner confirms them in config/client-verification.json. */
   keywords: [
     "Brihadhee restaurant Anna Nagar",
     "South Indian restaurant Anna Nagar",
     "vegetarian restaurant Anna Nagar",
+    "veg hotel Anna Nagar",
+    "அண்ணா நகர் சைவ உணவகம்",
     "vegetarian South Indian restaurant Chennai",
     "dosa restaurant Anna Nagar",
     "filter coffee Anna Nagar",
     "family restaurant Anna Nagar East",
-    "best South Indian restaurant Anna Nagar",
-    "best vegetarian restaurant Anna Nagar",
-    "best dosa in Anna Nagar",
-    "customizable dosa Anna Nagar",
     "banana leaf meals Anna Nagar",
     "vegetarian dining near 3rd Avenue Anna Nagar",
     "South Indian restaurant near Anna Tower",
     "affordable South Indian meals in Anna Nagar",
+    ...(verification.restaurant_parotta_confirmed === true
+      ? ["parotta Anna Nagar", "veg parotta Anna Nagar"]
+      : []),
+    ...(verification.restaurant_parking_available === true
+      ? ["restaurant with parking Anna Nagar"]
+      : []),
   ],
   ogImage: {
     src: `${BASE_URL}images/og-image.jpg`,

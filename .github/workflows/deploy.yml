@@ -27,6 +27,8 @@ jobs:
       - run: npm run build
         env:
           GITHUB_ACTIONS: true
+      - name: SEO guardrails
+        run: npm run validate
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

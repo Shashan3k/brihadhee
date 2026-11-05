@@ -10,7 +10,7 @@ const { media, rating } = site;
   <div class="container hero__grid">
     <div class="hero__copy">
       <p class="hero__tamil tamil" lang="ta">{site.nameTamil}</p>
-      <h1 class="hero__title">{site.name}</h1>
+      <h1 class="hero__title">{site.name}<span class="hero__title-sub">Vegetarian South Indian restaurant in Anna Nagar</span></h1>
       <p class="hero__tagline">{site.tagline}</p>
       <p class="hero__sub">{site.subTagline}</p>
 
@@ -47,32 +47,37 @@ const { media, rating } = site;
     </div>
 
     <div class="hero__media">
-      <figure class="hero__frame">
-        <img
-          src={media.hero.src}
-          width={media.hero.width}
-          height={media.hero.height}
-          alt={media.hero.alt}
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </figure>
-      <a
-        class="hero__badge"
-        href={site.maps.directions}
-        target="_blank"
-        rel="noopener"
-        aria-label={`Rated ${rating.value} out of 5 from ${rating.count} ${rating.source} reviews. Open map.`}
-      >
-        <span class="rating">
-          <span class="rating__value">{rating.value}</span>
-          <span>
-            <Stars value={rating.value} />
-            <span class="rating__meta">{rating.count} {rating.source} reviews</span>
+      <div class="hero-showcase" data-hero-showcase>
+        <div class="hero-showcase__glow" aria-hidden="true"></div>
+        <figure class="hero-showcase__photo">
+          <img
+            src={media.hero.src}
+            width={media.hero.width}
+            height={media.hero.height}
+            alt={media.hero.alt}
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+        <a
+          class="hero-showcase__rating"
+          href={site.maps.directions}
+          target="_blank"
+          rel="noopener"
+          aria-label={`Rated ${rating.value} out of 5 from ${rating.count} ${rating.source} reviews. Open map.`}
+        >
+          <span class="hero-showcase__rating-score">{rating.value}</span>
+          <span class="hero-showcase__rating-copy">
+            <span class="hero-showcase__stars" aria-hidden="true">★★★★★</span>
+            <span>{rating.count} {rating.source} reviews</span>
           </span>
+        </a>
+        <span class="hero-showcase__tag">
+          <span aria-hidden="true">●</span>
+          Anna Nagar East <i>•</i> Freshly made
         </span>
-      </a>
+      </div>
     </div>
   </div>
 </section>

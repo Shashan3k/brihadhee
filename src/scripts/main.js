@@ -2,6 +2,39 @@
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* ---------------- Hero perspective showcase ---------------- */
+const heroShowcase = document.querySelector("[data-hero-showcase]");
+const heroSection = heroShowcase?.closest(".hero");
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+const reducedMotionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+if (heroShowcase && heroSection && finePointer.matches && !reducedMotionPreference.matches) {
+  let frame = 0;
+  let pointerX = 0;
+  let pointerY = 0;
+
+  const updateShowcase = () => {
+    heroShowcase.style.setProperty("--tilt-x", `${(pointerY * -10).toFixed(2)}deg`);
+    heroShowcase.style.setProperty("--tilt-y", `${(pointerX * 10).toFixed(2)}deg`);
+    heroShowcase.style.setProperty("--badge-x", `${(pointerX * 9).toFixed(1)}px`);
+    heroShowcase.style.setProperty("--badge-y", `${(pointerY * 8).toFixed(1)}px`);
+    frame = 0;
+  };
+
+  heroSection.addEventListener("pointermove", (event) => {
+    const bounds = heroSection.getBoundingClientRect();
+    pointerX = Math.max(-1, Math.min(1, ((event.clientX - bounds.left) / bounds.width - 0.5) * 2));
+    pointerY = Math.max(-1, Math.min(1, ((event.clientY - bounds.top) / bounds.height - 0.5) * 2));
+    if (!frame) frame = requestAnimationFrame(updateShowcase);
+  }, { passive: true });
+
+  heroSection.addEventListener("pointerleave", () => {
+    pointerX = 0;
+    pointerY = 0;
+    if (!frame) frame = requestAnimationFrame(updateShowcase);
+  });
+}
+
 /* ---------------- Header + mobile menu ---------------- */
 const header = document.getElementById("site-header");
 const callbar = document.getElementById("callbar");
@@ -307,8 +340,6 @@ if (enquiryForm) {
     const message = String(data.get("message") || "").trim();
     const typeLabel = {
       general: "General enquiry",
-      corporate: "Corporate catering enquiry",
-      event: "Event catering enquiry",
     }[String(data.get("inquiryType") || "general")];
     const eventDate = String(data.get("eventDate") || "").trim();
     const guestCount = String(data.get("guestCount") || "").trim();
