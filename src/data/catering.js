@@ -12,7 +12,7 @@
  */
 import verification from "../../config/client-verification.json";
 import { site } from "./site.js";
-import { cateringPageSchema } from "../lib/schema.js";
+import { pageGraph, cateringServiceSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 
 const v = verification;
 
@@ -282,5 +282,14 @@ export const meta = {
 
 /** Structured data for /catering: confirmed facts only (see src/lib/schema.js). */
 export function cateringSchema() {
-  return cateringPageSchema({ areas, phone: contact.phone, faqs: faq });
+  return pageGraph({
+    path: "/catering/",
+    title: meta.title,
+    description: meta.description,
+    crumbs: [...HOME_CRUMBS, { name: "Catering", path: "/catering/" }],
+    extras: [
+      cateringServiceSchema({ areas, phone: contact.phone }),
+      faqPageSchema("/catering/", faq),
+    ],
+  });
 }

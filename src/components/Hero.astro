@@ -60,19 +60,21 @@ const { media, rating } = site;
             decoding="async"
           />
         </figure>
-        <a
-          class="hero-showcase__rating"
-          href={site.maps.directions}
-          target="_blank"
-          rel="noopener"
-          aria-label={`Rated ${rating.value} out of 5 from ${rating.count} ${rating.source} reviews. Open map.`}
-        >
-          <span class="hero-showcase__rating-score">{rating.value}</span>
-          <span class="hero-showcase__rating-copy">
-            <span class="hero-showcase__stars" aria-hidden="true">★★★★★</span>
-            <span>{rating.count} {rating.source} reviews</span>
-          </span>
-        </a>
+        {rating && (
+          <a
+            class="hero-showcase__rating"
+            href={site.maps.directions}
+            target="_blank"
+            rel="noopener"
+            aria-label={`Rated ${rating.value} out of 5 from ${rating.count} ${rating.source} reviews. Open map.`}
+          >
+            <span class="hero-showcase__rating-score">{rating.value}</span>
+            <span class="hero-showcase__rating-copy">
+              <span class="hero-showcase__stars"><Stars value={rating.value} size={12} /></span>
+              <span>{rating.count} {rating.source} reviews</span>
+            </span>
+          </a>
+        )}
         <span class="hero-showcase__tag">
           <span aria-hidden="true">●</span>
           Anna Nagar East <i>•</i> Freshly made

@@ -94,7 +94,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 
     <script
       type="application/ld+json"
-      set:html={JSON.stringify(schema ?? homeSchema())}
+      set:html={JSON.stringify(schema ?? homeSchema({ title, description }))}
     />
   </head>
   <body>

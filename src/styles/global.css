@@ -2781,3 +2781,22 @@ a.contact__channel:hover {
 .catering-menu__placeholder { display: grid; place-items: center; border: 1px dashed currentColor; opacity: 0.6; font-size: 0.9rem; }
 .catering-chips { grid-template-columns: repeat(auto-fit, minmax(14rem, max-content)); }
 .catering-chips li { padding: 0.4rem 0.9rem; border: 1px solid currentColor; border-radius: 999px; }
+
+/* ---- FAQ headings, at-a-glance ---- */
+.faq__q { margin: 0; font: inherit; }
+.faq__group { margin: 2.5rem 0 1rem; text-align: center; font-weight: 600; opacity: 0.8; }
+.glance__list { display: grid; gap: 0.25rem 2rem; margin: 1.5rem 0 0; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.glance__row { padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
+.glance__row dt { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
+.glance__row dd { margin: 0.2rem 0 0; font-weight: 500; }
+
+/* ---- /menu page ---- */
+.menu-page__head { padding-top: clamp(7rem, 14vw, 10rem); }
+.menu-page__note { font-weight: 600; margin-top: 1rem; }
+.menu-page__table { width: 100%; border-collapse: collapse; margin-top: 1.25rem; font-size: 0.95rem; }
+.menu-page__table th, .menu-page__table td { text-align: left; padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.menu-page__list { display: grid; gap: 1rem 2.5rem; margin: 1.25rem 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.menu-page__row { display: flex; justify-content: space-between; gap: 1rem; margin: 0; }
+.menu-page__price { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.menu-page__desc { margin: 0.2rem 0 0; opacity: 0.8; }
+@media (max-width: 640px) { .menu-page__table { display: block; overflow-x: auto; } }

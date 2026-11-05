@@ -11,24 +11,15 @@
  */
 
 import verification from "../../config/client-verification.json";
+import { getFact, factOr, isConfirmed } from "./facts.js";
 
 const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 
-const address = {
-  line1: "New W-41 (Old W-124), 3rd Avenue",
-  line2: "W Block, Anna Nagar East",
-  city: "Chennai",
-  state: "Tamil Nadu",
-  postalCode: "600040",
-  country: "IN",
-};
+const address = getFact("address");
 
-const geo = {
-  latitude: 13.0879396,
-  longitude: 80.2178246,
-};
+const geo = getFact("geo");
 
 const fullAddress = [
   address.line1,
@@ -43,8 +34,8 @@ const mapPoint = `${geo.latitude},${geo.longitude}`;
 
 export const site = {
   /* ---- Identity ------------------------------------------------------- */
-  name: "Brihadhee",
-  nameTamil: "பிரிஹதீ",
+  name: getFact("name"),
+  nameTamil: getFact("nameTamil"),
   tagline: "Vegetarian South Indian flavours, served the traditional way.",
   subTagline:
     "Dosas, banana-leaf meals and filter coffee in the heart of Anna Nagar East.",
@@ -58,9 +49,9 @@ export const site = {
 
   /* ---- Contact (all optional — empty hides the control) ---------------- */
   contact: {
-    phone: "+91 73587 14113", // enables Call buttons
-    whatsapp: "+917358714113", // enables WhatsApp enquiry
-    email: "brihadhee@gmail.com", // enables the enquiry form fallback
+    phone: getFact("phone"), // enables Call buttons
+    whatsapp: getFact("whatsapp"), // enables WhatsApp enquiry
+    email: getFact("email"), // enables the enquiry form fallback
   },
 
   /* ---- Location ------------------------------------------------------- */
@@ -73,33 +64,20 @@ export const site = {
     directions: `https://www.google.com/maps/dir/?api=1&destination=${mapPoint}`,
     embed: `https://www.google.com/maps?q=${mapPoint}&z=17&output=embed`,
   },
-  landmarks: ["Near Anna Tower", "3rd Avenue & 9th Street", "Near Aadhaar Seva Kendra"],
+  landmarks: getFact("landmarks").map((l) => `Near ${l}`),
 
   /* ---- Hours ---------------------------------------------------------- */
-  /* Owner-provided hours: 11:00 AM – 11:00 PM daily. Still to be confirmed
-     against the Google Business Profile before launch.
-     Set `verified: false` to hide the hours table and Open/Closed badge. */
-  hours: {
-    verified: false,
-    timeZone: "Asia/Kolkata",
-    summary: "Open daily · 11:00 AM – 11:00 PM",
-    days: [
-      { day: "Monday", open: "11:00", close: "23:00" },
-      { day: "Tuesday", open: "11:00", close: "23:00" },
-      { day: "Wednesday", open: "11:00", close: "23:00" },
-      { day: "Thursday", open: "11:00", close: "23:00" },
-      { day: "Friday", open: "11:00", close: "23:00" },
-      { day: "Saturday", open: "11:00", close: "23:00" },
-      { day: "Sunday", open: "11:00", close: "23:00" },
-    ],
-  },
+  /* Hours are a PENDING fact (src/data/facts.js). Until the owner confirms
+     them nothing is rendered. When confirmed, set the fact's value to
+     { timeZone, summary, days: [{ day, open: "HH:MM", close: "HH:MM" }] }. */
+  hours: isConfirmed("hours")
+    ? { verified: true, ...getFact("hours") }
+    : { verified: false, timeZone: "Asia/Kolkata", summary: "", days: [] },
 
   /* ---- Social proof --------------------------------------------------- */
-  rating: {
-    value: 4.2,
-    count: 857,
-    source: "Google",
-  },
+  // Pending fact: shown only once the Google rating and count are confirmed
+  // with a date. Shape: { value, count, source: "Google", checkedOn: "YYYY-MM-DD" }
+  rating: isConfirmed("googleRating") ? getFact("googleRating") : null,
   reviewSummary:
     "Diners describe delicious, authentic South Indian food and a relaxed, family-friendly room.",
   reviewHighlights: [
@@ -111,44 +89,6 @@ export const site = {
   // array. Shape: { quote, name, meta }
   testimonials: [],
 
-  /* ---- Answer-ready FAQs (only confirmed facts) ---------------------- */
-  faqs: [
-    {
-      question: "Is Brihadhee a vegetarian restaurant?",
-      answer: "Yes. Brihadhee serves vegetarian South Indian food.",
-    },
-    {
-      question: "Where is Brihadhee located?",
-      answer:
-        "Brihadhee is at New W-41 (Old W-124), 3rd Avenue, W Block, Anna Nagar East, Chennai, Tamil Nadu 600040.",
-    },
-    {
-      question: "Is Brihadhee family-friendly?",
-      answer:
-        "Yes. Brihadhee welcomes families, children and group outings for lunch and dinner.",
-    },
-    {
-      question: "Does Brihadhee serve filter coffee?",
-      answer:
-        "Yes. Filter coffee is listed on Brihadhee's menu.",
-    },
-    {
-      question: "What is the address of Brihadhee in Anna Nagar?",
-      answer:
-        "New W-41 (Old W-124), 3rd Avenue, W Block, Anna Nagar East, Chennai, Tamil Nadu 600040.",
-    },
-    {
-      question: "Which restaurant near Anna Tower serves South Indian meals?",
-      answer:
-        "Brihadhee is a vegetarian South Indian restaurant near Anna Tower and 3rd Avenue, serving lunch and dinner.",
-    },
-    {
-      question: "Can I find banana leaf meals in Anna Nagar?",
-      answer:
-        "Yes. Brihadhee serves meals on banana leaf at its Anna Nagar East restaurant.",
-    },
-  ],
-
   /* ---- Good for / amenities ------------------------------------------- */
   /* Only confirmed details are listed. Add more entries once confirmed. */
   amenities: [
@@ -158,7 +98,7 @@ export const site = {
     { label: "Cuisine", detail: "Vegetarian South Indian" },
   ],
   priceGuide: "",
-  priceRange: "",
+  priceRange: factOr("priceRange", ""),
 
   /* ---- Social handles (empty hides the link) -------------------------- */
   social: {
@@ -186,27 +126,27 @@ export const site = {
       src: `${BASE_URL}images/dosa.jpg`,
       width: 1200,
       height: 900,
-      alt: "Crisp dosa served with chutneys",
+      alt: "A crisp golden dosa with chutneys and sambar",
     },
     coffee: {
       src: `${BASE_URL}images/coffee.jpg`,
       width: 1000,
       height: 1000,
-      alt: "Frothy South Indian drink served in a steel tumbler and davara",
+      alt: "Steel tumbler and davara holding a frothy South Indian drink",
     },
     gallery: [
       {
         src: `${BASE_URL}images/dosa.jpg`,
         width: 1200,
         height: 900,
-        alt: "Golden dosa served with chutneys on a banana leaf",
+        alt: "Dosa with chutneys served on a banana leaf at the table",
         caption: "Crisp dosa with chutneys",
       },
       {
         src: `${BASE_URL}images/coffee.jpg`,
         width: 1000,
         height: 1000,
-        alt: "Frothy South Indian drink served in a steel tumbler and davara",
+        alt: "Close view of a frothy South Indian drink in a steel tumbler and davara",
         caption: "A frothy tumbler drink",
       },
       {

@@ -1,11 +1,14 @@
 ---
-import { site } from "../data/site.js";
+import { faqItems, faqLanguageGroups } from "../data/faq.js";
 
-const { faqs } = site;
+// Same data source as the FAQPage JSON-LD (src/lib/schema.js). Each answer is
+// rendered as one paragraph whose text equals the schema answer exactly.
+const english = faqItems.filter((i) => i.lang === "en");
+const other = faqItems.filter((i) => i.lang !== "en");
 ---
 
 {
-  faqs.length > 0 && (
+  faqItems.length > 0 && (
     <section class="section faq" id="faq" aria-labelledby="faq-title">
       <div class="container faq__inner">
         <div class="section__head section__head--center">
@@ -14,21 +17,38 @@ const { faqs } = site;
             Frequently asked questions
           </h2>
           <p class="section__lead">
-            Straight answers about Brihadhee's food, location, hours and dining.
+            Straight answers about Brihadhee's food, location and dining.
           </p>
         </div>
 
         <div class="faq__list">
-          {faqs.map((item) => (
-            <details class="faq__item">
+          {english.map((item) => (
+            <details class="faq__item" id={`faq-${item.id}`}>
               <summary>
-                <span>{item.question}</span>
-                <span class="faq__icon" aria-hidden="true"></span>
+                <h3 class="faq__q">{item.question}</h3>
+                <span class="faq__icon" aria-hidden="true" />
               </summary>
               <p class="faq__answer">{item.answer}</p>
             </details>
           ))}
         </div>
+
+        {other.length > 0 && (
+          <>
+            <p class="faq__group">{faqLanguageGroups.ta}</p>
+            <div class="faq__list">
+              {other.map((item) => (
+                <details class="faq__item" id={`faq-${item.id}`}>
+                  <summary>
+                    <h3 class="faq__q" lang={item.lang}>{item.question}</h3>
+                    <span class="faq__icon" aria-hidden="true" />
+                  </summary>
+                  <p class="faq__answer" lang={item.lang}>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </section>
   )

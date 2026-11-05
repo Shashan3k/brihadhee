@@ -1,0 +1,37 @@
+---
+import { getFact, addressLine, landmarkSentence } from "../data/facts.js";
+import { site, telHref } from "../data/site.js";
+
+// "Brihadhee at a glance": a definition list of confirmed facts only
+// (hours and price range are pending facts and are not shown).
+const { headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}`;
+const rows = [
+  ["Name", `${getFact("name")} (${getFact("nameTamil")})`],
+  ["Type", getFact("type")],
+  ["Cuisine", getFact("cuisine")],
+  ["Address", addressLine()],
+  ["Landmarks", landmarkSentence()],
+  ["Meal times", getFact("mealTimes")],
+];
+---
+
+<section class="section glance" id="at-a-glance" aria-labelledby="glance-title">
+  <div class="container">
+    <Heading class="section__title" id="glance-title">Brihadhee at a glance</Heading>
+    <dl class="glance__list">
+      {
+        rows.map(([term, value]) => (
+          <div class="glance__row">
+            <dt>{term}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))
+      }
+      <div class="glance__row">
+        <dt>Phone</dt>
+        <dd><a href={telHref}>{site.contact.phone}</a></dd>
+      </div>
+    </dl>
+  </div>
+</section>

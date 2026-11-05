@@ -1,10 +1,14 @@
 /**
  * /llms.txt: a plain-text, citation-friendly summary of CONFIRMED facts.
- * Generated at build time from src/data/site.js and (for catering) from the
- * gated values in src/data/catering.js, so it can never state more than the
- * pages do. Opening hours are intentionally absent until verified.
+ * Generated at build time from src/data/facts.js (confirmed facts only),
+ * menu.json (computed prices) and, for catering, the gated values in
+ * src/data/catering.js, so it can never state more than the pages do.
+ * Pending facts (hours, price range per person, rating) are absent.
  */
-import { site, hasHours } from "../data/site.js";
+import { site } from "../data/site.js";
+import { getFact, addressLine, landmarkSentence } from "../data/facts.js";
+import { faqItems } from "../data/faq.js";
+import { categories, priceRange, itemCount, allVegetarian } from "../lib/menu-facts.js";
 import {
   cateringEnabled,
   opening,
@@ -16,36 +20,40 @@ import {
   faqs as cateringFaqs,
 } from "../data/catering.js";
 
-const a = site.address;
-const address = `${a.line1}, ${a.line2}, ${a.city}, ${a.state} ${a.postalCode}`;
+const a = getFact("address");
+const name = getFact("name");
 const entity = cateringEnabled
-  ? "a vegetarian South Indian restaurant with a catering service"
-  : "a vegetarian South Indian restaurant";
+  ? `${getFact("type")} with a catering service`
+  : getFact("type");
 
 const lines = [];
 const push = (...l) => lines.push(...l);
 
-push(`# ${site.name}`, "");
+push(`# ${name}`, "");
 push(
-  `> ${site.name} (${site.nameTamil}) is ${entity} at W Block, Anna Nagar East, Chennai ${a.postalCode}, near Anna Tower and 3rd Avenue.`,
+  `> ${name} (${getFact("nameTamil")}) is a ${entity} at W Block, Anna Nagar East, Chennai ${a.postalCode}, near Anna Tower and 3rd Avenue.`,
   ""
 );
 
 push("## Facts", "");
-push(`- Name: ${site.name}`);
+push(`- Name: ${name}`);
 push(`- Type: ${entity}`);
-push(`- Cuisine: Vegetarian South Indian`);
-push(`- Address: ${address}`);
-push(`- Landmarks: ${site.landmarks.join("; ")}`);
-if (site.contact.phone) push(`- Phone: ${site.contact.phone}`);
-if (site.contact.email) push(`- Email: ${site.contact.email}`);
-if (hasHours) push(`- Hours: ${site.hours.summary}`);
-push(`- Menu highlights: dosas, traditional filter coffee, banana-leaf meals`);
+push(`- Cuisine: ${getFact("cuisine")}`);
+push(`- Address: ${addressLine()}`);
+push(`- Landmarks: ${landmarkSentence()}`);
+push(`- Phone and WhatsApp: ${getFact("phone")}`);
+push(`- Email: ${getFact("email")}`);
+push(`- Meal times: ${getFact("mealTimes")}`);
+push(`- Dine-in: ${getFact("dineIn") ? "yes" : "no"}`);
+push(`- Family-friendly: ${getFact("familyFriendly") ? "yes" : "no"}`);
+push(`- Alcohol: ${getFact("alcohol")}`);
+push(`- Known for: ${getFact("knownFor").join(", ")}`);
+push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`);
 push("");
 
 push("## Pages", "");
-push(`- [Home and menu](${site.url}/): vegetarian South Indian restaurant in Anna Nagar, with the full menu`);
-push(`- [Menu](${site.url}/#menu): dosas, idly, Tamil Nadu meals, parotta, beverages`);
+push(`- [Home](${site.url}/): vegetarian South Indian restaurant in Anna Nagar East, with FAQ and location`);
+push(`- [Menu and prices](${site.url}/menu/): every dish with its price, by category`);
 push(`- [Location](${site.url}/#visit): address, landmarks and map`);
 push(`- [FAQ](${site.url}/#faq): short answers about the restaurant`);
 if (cateringEnabled) {
@@ -53,11 +61,13 @@ if (cateringEnabled) {
 }
 push("");
 
-if (site.faqs.length) {
-  push("## Restaurant questions", "");
-  for (const f of site.faqs) push(`- ${f.question} ${f.answer}`);
-  push("");
-}
+push("## Menu price ranges", "");
+for (const c of categories) push(`- ${c.name}: ${priceRange(c)} (${c.count} items)`);
+push("");
+
+push("## Restaurant questions", "");
+for (const f of faqItems.filter((i) => i.lang === "en")) push(`- ${f.question} ${f.answer}`);
+push("");
 
 if (cateringEnabled) {
   push("## Catering", "");

@@ -1,10 +1,13 @@
 import { site } from "../data/site.js";
 
 /**
- * robots.txt: everything is public. AI search and answer crawlers are listed
- * explicitly so the intent is clear and a future blanket rule cannot block them
- * by accident. /catering/ needs no rule of its own: it is crawlable whenever it
- * exists (it is only built when offer_catering is true).
+ * robots.txt: everything is public. AI SEARCH and user-fetch agents are listed
+ * explicitly so the intent is clear. TRAINING crawlers (GPTBot, ClaudeBot,
+ * Google-Extended, CCBot) are deliberately not named: that is an owner decision,
+ * see docs/seo/ai-crawler-policy.md. Listing the search agents keeps a future
+ * blanket rule from blocking them by accident. /catering/ needs no rule of its
+ * own: it is crawlable whenever it exists (it is only built when
+ * offer_catering is true).
  *
  * NOTE: crawlers read robots.txt only from the host root. While the site lives
  * at shashan3k.github.io/brihadhee/, this file is not at the root and will not
@@ -15,10 +18,8 @@ const AI_AGENTS = [
   "ChatGPT-User", // ChatGPT fetching a page for a user
   "PerplexityBot", // Perplexity index
   "Perplexity-User",
-  "ClaudeBot", // Anthropic crawler
   "Claude-SearchBot",
   "Claude-User",
-  "Google-Extended", // controls Gemini use of Google-crawled content
 ];
 
 export function GET() {

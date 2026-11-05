@@ -13,19 +13,28 @@ const { rating, reviewSummary, reviewHighlights, testimonials } = site;
     </div>
 
     <div class="reviews__grid">
-      <aside class="review-card on-dark reveal" aria-label="Google rating summary">
-        <p class="review-card__label">{rating.source} rating</p>
-        <p class="review-card__score">
-          <span class="rating__value">{rating.value}</span>
-          <small>out of 5</small>
-        </p>
-        <div class="review-card__stars">
-          <Stars value={rating.value} size={16} />
-        </div>
-        <p class="review-card__count">
-          Based on {rating.count.toLocaleString("en-IN")} {rating.source} reviews
-        </p>
-        <div class="review-card__divider"></div>
+      <aside class="review-card on-dark reveal" aria-label={rating ? "Google rating summary" : "Guest summary"}>
+        {
+          rating ? (
+            <>
+              <p class="review-card__label">{rating.source} rating</p>
+              <p class="review-card__score">
+                <span class="rating__value">{rating.value}</span>
+                <small>out of 5</small>
+              </p>
+              <div class="review-card__stars">
+                <Stars value={rating.value} size={16} />
+              </div>
+              <p class="review-card__count">
+                Based on {rating.count.toLocaleString("en-IN")} {rating.source} reviews
+                {rating.checkedOn && ` (checked ${rating.checkedOn})`}
+              </p>
+              <div class="review-card__divider"></div>
+            </>
+          ) : (
+            <p class="review-card__label">What guests tell us</p>
+          )
+        }
         <p class="review-card__note">
           Family meals, group outings and kids are all welcome.
         </p>

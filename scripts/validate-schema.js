@@ -16,6 +16,7 @@
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
+import { pathToFileURL } from "node:url";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
@@ -25,21 +26,16 @@ const warnings = [];
 const err = (page, msg) => errors.push(`${page}: ${msg}`);
 
 /* ---- Facts the entity must match -------------------------------------- */
-// Read straight from the source of truth for the site data.
-const siteSrc = readFileSync(join(ROOT, "src", "data", "site.js"), "utf8");
-const pick = (re, label) => {
-  const m = siteSrc.match(re);
-  if (!m) fatal(`Could not read ${label} from src/data/site.js`);
-  return m[1];
-};
+// facts.js is pure ESM, so the validator reads the same source as the site.
+const { FACTS } = await import(pathToFileURL(join(ROOT, "src", "data", "facts.js")).href);
 const SITE = {
-  name: pick(/\bname:\s*"([^"]+)"/, "name"),
-  phone: pick(/phone:\s*"([^"]+)"/, "contact.phone"),
-  whatsapp: pick(/whatsapp:\s*"([^"]+)"/, "contact.whatsapp"),
-  cuisine: "Vegetarian South Indian",
-  region: "Tamil Nadu",
-  locality: "Chennai",
-  postal: "600040",
+  name: FACTS.name.value,
+  phone: FACTS.phone.value,
+  whatsapp: FACTS.whatsapp.value,
+  cuisine: FACTS.cuisine.value,
+  region: FACTS.address.value.state,
+  locality: FACTS.address.value.city,
+  postal: FACTS.address.value.postalCode,
 };
 const digits = (s) => String(s ?? "").replace(/\D/g, "");
 
@@ -208,6 +204,35 @@ for (const { name, html, nodes } of pages) {
   } else {
     err(name, "no Restaurant entity");
   }
+
+  /* WebSite / WebPage / BreadcrumbList */
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+  const ws = nodes.filter((n) => typeOf(n).includes("WebSite"));
+  if (ws.length !== 1) err(name, `expected exactly 1 WebSite node, found ${ws.length}`);
+  const wp = nodes.find((n) => typeOf(n).includes("WebPage"));
+  if (!wp) err(name, "missing WebPage node");
+  else {
+    if (canonical && wp.url !== canonical) err(name, `WebPage.url ${wp.url} != canonical ${canonical}`);
+    if (wp.isPartOf?.["@id"] !== ws[0]?.["@id"]) err(name, "WebPage.isPartOf does not reference the WebSite");
+    if (wp.about?.["@id"] !== r?.["@id"]) err(name, "WebPage.about does not reference the Restaurant");
+    if (!wp.name || !wp.description) err(name, "WebPage missing name or description");
+    const bcId = wp.breadcrumb?.["@id"];
+    const bc = nodes.find((n) => n["@id"] === bcId && typeOf(n).includes("BreadcrumbList"));
+    if (!bc) err(name, "WebPage.breadcrumb does not resolve to a BreadcrumbList");
+    else {
+      const items = bc.itemListElement ?? [];
+      items.forEach((it, i) => {
+        if (it.position !== i + 1) err(name, `breadcrumb position ${it.position} != ${i + 1}`);
+        if (!it.name || !it.item) err(name, "breadcrumb item missing name or item URL");
+      });
+      if (items.at(-1)?.item !== wp.url) err(name, "last breadcrumb does not point at this page");
+    }
+  }
+  if (r?.hasMenu) {
+    if (!pages.some((p) => p.name.endsWith("/menu/"))) err(name, "hasMenu is set but no /menu/ page was built");
+  }
+  if (r && "priceRange" in r && FACTS.priceRange.status !== "confirmed") err(name, "priceRange emitted while the fact is pending");
+  if (r && "openingHoursSpecification" in r && FACTS.hours.status !== "confirmed") err(name, "openingHoursSpecification emitted while hours are pending");
 
   /* Service (catering) */
   for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {

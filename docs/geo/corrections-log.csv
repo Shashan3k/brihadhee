@@ -1,0 +1,3 @@
+date,engine_or_source,url,wrong_fact,correct_fact,fix_applied,feedback_sent_to_engine,status,owner,notes
+2026-11-05,EazyDiner listing,,"FAQ says Brihadhee serves both veg and non-veg food (reported; screenshot not yet taken)","Vegetarian South Indian restaurant (100% vegetarian, pending owner's written confirmation)",none yet,n/a,open - blocked on owner confirmation,,Use dispute template 3a in docs/brihadhee-aeo-ops.md after confirming the exact text on the page
+2026-11-05,Justdial listing,,"Category tags reported to include 'Non Veg Restaurants' (reported; not yet verified by the presence audit)","Vegetarian restaurant / South Indian restaurant categories only",none yet,n/a,open - blocked on owner confirmation,,Use dispute template 3b in docs/brihadhee-aeo-ops.md

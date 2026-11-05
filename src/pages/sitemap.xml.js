@@ -6,6 +6,7 @@ export function GET() {
   const today = new Date().toISOString().slice(0, 10);
   const urls = [
     { loc: `${site.url}/`, priority: "1.0" },
+    { loc: `${site.url}/menu/`, priority: "0.9" },
     ...(verification.offer_catering === true
       ? [{ loc: `${site.url}/catering/`, priority: "0.8" }]
       : []),
