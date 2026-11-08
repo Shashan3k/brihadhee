@@ -1,0 +1,98 @@
+---
+/**
+ * /book-a-table/: how to reserve. Brihadhee takes pre-bookings through partner
+ * apps (Swiggy Dineout, EazyDiner, District), so there is no booking form here:
+ * a form without a confirmed endpoint would lose bookings. Offers come from
+ * entity-truth.ts (owner-confirmed; re-check monthly). Only partner URLs in
+ * FACTS.bookingLinks are linked; the others are named.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import Icon from "../components/Icon.astro";
+import { getFact } from "../data/entity-truth.ts";
+import { pageGraph, HOME_CRUMBS } from "../lib/schema.js";
+import { telHref } from "../data/site.js";
+
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const name = getFact("name");
+const hours = getFact("hours");
+const phone = getFact("phone");
+const offers = getFact("offers");
+const offer = (id) => {
+  const o = offers.find((x) => x.id === id);
+  if (!o) throw new Error(`[book-a-table] offer "${id}" missing in entity-truth.ts`);
+  return o;
+};
+const walkIn = offer("walk-in");
+const preBook = offer("pre-booking");
+const links = getFact("bookingLinks");
+const preBookPct = preBook.description.match(/up to \d+%/)?.[0];
+const walkInPct = walkIn.description.match(/\d+%/)?.[0];
+if (!preBookPct || !walkInPct) throw new Error("[book-a-table] offer percentages not found in entity-truth.ts offers");
+const linked = new Set(links.map((l) => l.label));
+const partners = ["Swiggy Dineout", "EazyDiner", "District"];
+const unlinked = partners.filter((p) => !linked.has(p));
+
+const path = "/book-a-table/";
+const title = `Book a Table at ${name}, Anna Nagar East`;
+const description = `Pre-book a table at ${name}, Anna Nagar East on Swiggy Dineout, EazyDiner or District for ${preBookPct} off Monday to Thursday. Walk-ins get ${walkInPct} off.`;
+const schema = pageGraph({
+  path,
+  title,
+  description,
+  crumbs: [...HOME_CRUMBS, { name: "Book a table", path }],
+});
+---
+
+<Base title={title} description={description} path={path} schema={schema}>
+  <Nav homeBase={base} />
+  <main id="main">
+    <PageHeader
+      eyebrow="Reservations · Anna Nagar East"
+      h1={`Book a table at ${name}, Anna Nagar East`}
+      intro={`You can walk in to ${name} any day from ${hours.short}, and walk-in diners get ${walkInPct} off. Pre-booking on Swiggy Dineout, EazyDiner or District gives ${preBook.description.replace(/ when you pre-book.*$/, "")}.`}
+      menuHref={`${base}menu/`}
+    />
+
+    <section class="section section--tint" id="how-to-book" aria-labelledby="how-title">
+      <div class="container">
+        <h2 class="section__title" id="how-title">How to pre-book a table</h2>
+        <ol class="section__lead">
+          <li>Open Swiggy Dineout, EazyDiner or District and search for "{name}, Anna Nagar East".</li>
+          <li>Choose the date, time and number of guests.</li>
+          <li>Pick the pre-booking offer shown for your slot. The biggest discounts are on Monday to Thursday.</li>
+          <li>Show the booking at the counter when you arrive.</li>
+        </ol>
+        <div class="page-head__actions">
+          {links.map((l) => (
+            <a class="btn btn--primary" href={l.url} target="_blank" rel="noopener" data-event="book_click">
+              <Icon name="clock" size={17} /> Book on {l.label}
+            </a>
+          ))}
+          <a class="btn btn--ghost" href={telHref}>
+            <Icon name="phone" size={17} /> Call {phone}
+          </a>
+        </div>
+        {unlinked.length > 0 && (
+          <p>Also available on {unlinked.join(" and ")}: search for {name} in the app.</p>
+        )}
+      </div>
+    </section>
+
+    <section class="section" id="groups" aria-labelledby="groups-title">
+      <div class="container">
+        <h2 class="section__title" id="groups-title">Large groups and functions</h2>
+        <p class="section__lead">
+          For a large family group, call {phone} before you come so the team can arrange seating. For functions of
+          50 guests or more, see <a href={`${base}catering-services-chennai/`}>{name} catering</a>.
+        </p>
+        <p>
+          {name} is {getFact("dietary")}, family-friendly and serves no alcohol. Price for two: {getFact("priceRange").text}.
+        </p>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={base} />
+</Base>

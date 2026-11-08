@@ -1,0 +1,64 @@
+---
+/**
+ * /privacy/: what the website stores and shares. The analytics paragraph
+ * changes automatically with PUBLIC_GA4_ID. noindex (utility page), so it is
+ * kept out of the sitemap; linked from the footer.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import { getFact, CONTENT_UPDATED } from "../data/entity-truth.ts";
+import { pageGraph, HOME_CRUMBS } from "../lib/schema.js";
+
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const name = getFact("name");
+const email = getFact("email");
+const hasGa4 = /^G-[A-Z0-9]+$/.test((import.meta.env.PUBLIC_GA4_ID ?? "").trim());
+const path = "/privacy/";
+const title = `Privacy Policy | ${name}, Anna Nagar East`;
+const description = `How the ${name} website handles your data: no accounts, no stored enquiries, optional Google Analytics, and the third-party services we link to.`;
+const schema = pageGraph({ path, title, description, crumbs: [...HOME_CRUMBS, { name: "Privacy", path }] });
+---
+
+<Base title={title} description={description} path={path} schema={schema} noindex>
+  <Nav homeBase={base} />
+  <main id="main">
+    <section class="section page-head" id="top">
+      <div class="container">
+        <h1 class="section__title page-head__title">Privacy policy</h1>
+        <p class="section__lead">Last updated {CONTENT_UPDATED}. This page explains what the {name} website stores and shares.</p>
+
+        <h2>What we collect</h2>
+        <p>
+          The website has no accounts and no booking database. When you use the enquiry form, your browser opens
+          WhatsApp or your email app with the message filled in. Nothing is stored on our website; you choose whether
+          to send it.
+        </p>
+
+        <h2>Analytics</h2>
+        {
+          hasGa4 ? (
+            <p>
+              We use Google Analytics 4 to count visits and taps on buttons such as Call, Directions and Book. It
+              records pages viewed, device type and approximate location, and may set cookies. We do not send your
+              name, phone number or messages to Google Analytics. You can block it with your browser's privacy settings
+              or the Google Analytics opt-out add-on.
+            </p>
+          ) : (
+            <p>The website does not currently use analytics or advertising cookies.</p>
+          )
+        }
+
+        <h2>Third-party services</h2>
+        <p>
+          Our pages embed a Google Maps map and link to Google Maps, WhatsApp, EazyDiner, Swiggy Dineout and District.
+          When you open these, their own privacy policies apply.
+        </p>
+
+        <h2>Contact</h2>
+        <p>For any privacy question or a request to delete a message you sent us, email <a href={`mailto:${email}`}>{email}</a>.</p>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={base} />
+</Base>

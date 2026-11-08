@@ -15,7 +15,8 @@ import AtAGlance from "../components/AtAGlance.astro";
 import CompareTable from "../components/CompareTable.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
-import { site } from "../data/site.js";
+import { site, responsive } from "../data/site.js";
+import { getFact } from "../data/entity-truth.ts";
 import {
   cateringEnabled,
   CATERING_PATH,
@@ -84,7 +85,7 @@ const compare = {
 const schema = isPlanner ? plannerSchema() : cateringSchema();
 ---
 
-<Base title={m.title} description={m.description} path={path} keywords={meta.keywords} schema={schema}>
+<Base title={m.title} description={m.description} path={path} schema={schema}>
   <Nav homeBase={base} />
   <main id="main">
     <PageHeader
@@ -142,7 +143,7 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
             {formats.map((f) => (
               <li class="catering-menu__item">
                 {f.photo ? (
-                  <img src={`${base}images/${f.photo.file}`} width="1200" height="900" alt={f.photo.alt} loading="lazy" decoding="async" />
+                  <img {...responsive(f.photo.file.replace(/\.jpg$/, ""), 1200)} sizes="(max-width: 700px) 92vw, 30vw" width="1200" height="900" alt={f.photo.alt} loading="lazy" decoding="async" />
                 ) : (
                   <div class="catering-menu__placeholder" role="img" aria-label={f.placeholderAlt}>Photo to be added</div>
                 )}
@@ -213,7 +214,7 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
             : <a href={`${base}${PLANNER_PATH.slice(1)}`}>Event management company? See the partner page</a>}
         </p>
         <div class="visit__map catering__map">
-          <iframe src={site.maps.embed} title={`Map showing ${site.name} in W-Block, Anna Nagar East, Chennai`} width="600" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+          <iframe src={site.maps.embed} title={`Map showing ${site.name} on ${getFact("street")}, Chennai`} width="600" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
         </div>
       </div>
     </section>

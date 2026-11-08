@@ -1,7 +1,7 @@
 ---
-import { FACTS, factOr } from "../data/facts.js";
+import { FACTS, factOr } from "../data/entity-truth.ts";
 
-// Dining offers from facts.js. Offers change, so the checked date is shown.
+// Dining offers from entity-truth.ts. Offers change, so the checked date is shown.
 const offers = factOr("offers", []);
 const checked = FACTS.offers.verifiedOn;
 const date = checked

@@ -1,8 +1,11 @@
 ---
 import { site, hasHours, hasPhone, telHref } from "../data/site.js";
 import Icon from "./Icon.astro";
+import { getFact } from "../data/entity-truth.ts";
 
 const { address, hours, amenities } = site;
+const street = getFact("street");
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 
 function formatTime(value) {
   if (!value) return "";
@@ -22,10 +25,10 @@ const hoursPayload = JSON.stringify({
   <div class="container">
     <div class="section__head">
       <p class="eyebrow">Visit us</p>
-      <h2 class="section__title" id="visit-title">3rd Avenue, Anna Nagar</h2>
+      <h2 class="section__title" id="visit-title">{street.split(", W-Block")[0]}, Anna Nagar East</h2>
       <p class="section__lead">
-        We are in W Block, Anna Nagar East — close to Anna Tower and the 3rd
-        Avenue junction. Walk in for lunch or dinner.
+        We are on {street}, near Anna Nagar Tower Park. Open daily {getFact("hours").short}.
+        <a href={`${base}about/`}>Directions, timings and map</a>.
       </p>
     </div>
 

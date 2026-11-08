@@ -1,0 +1,102 @@
+---
+/**
+ * /about/: who runs Brihadhee, where it is, when it is open, how to get there.
+ * Primary intent: brand + location + hours ("brihadhee address", "brihadhee
+ * timings", "pure veg restaurant near Anna Nagar Tower"). All facts come from
+ * entity-truth.ts.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import AtAGlance from "../components/AtAGlance.astro";
+import Faq from "../components/Faq.astro";
+import Icon from "../components/Icon.astro";
+import { getFact, addressLine, landmarkSentence } from "../data/entity-truth.ts";
+import { aboutFaq } from "../data/faq.js";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
+import { site, telHref } from "../data/site.js";
+
+const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+const name = getFact("name");
+const street = getFact("street");
+const hours = getFact("hours");
+const founders = getFact("founders");
+const path = "/about/";
+const title = `About ${name}: Address, Timings & Directions`;
+const description = `${name} is a pure vegetarian restaurant on ${street}, Chennai, near Anna Nagar Tower Park. Open daily ${hours.short}.`;
+const fmt = (t) => {
+  const [h, m] = t.split(":").map(Number);
+  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
+};
+const schema = pageGraph({
+  path,
+  title,
+  description,
+  crumbs: [...HOME_CRUMBS, { name: "About and location", path }],
+  extras: [faqPageSchema(path, aboutFaq)],
+});
+---
+
+<Base title={title} description={description} path={path} schema={schema}>
+  <Nav homeBase={base} />
+  <main id="main">
+    <PageHeader
+      eyebrow="About · Anna Nagar East"
+      h1={`About ${name}: location, timings and directions`}
+      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near Anna Nagar Tower Park. It is open every day from ${hours.short}.`}
+      menuHref={`${base}menu/`}
+    />
+    <AtAGlance />
+
+    <section class="section" id="story" aria-labelledby="story-title">
+      <div class="container">
+        <h2 class="section__title" id="story-title">Who runs {name}</h2>
+        <p class="section__lead">{founders.story}</p>
+        <p class="tamil" lang="ta">{getFact("nameTamil")}: அண்ணா நகர் கிழக்கு, சுத்த சைவ உணவகம்.</p>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="find-us" aria-labelledby="find-us-title">
+      <div class="container dish-page__grid">
+        <div>
+          <h2 class="section__title" id="find-us-title">Address and directions</h2>
+          <address class="catering__address">
+            {site.address.line1}<br />
+            {site.address.line2}<br />
+            {site.address.city}, {site.address.state} {site.address.postalCode}
+          </address>
+          <p>Landmarks: {landmarkSentence()}.</p>
+          <div class="page-head__actions">
+            <a class="btn btn--primary" href={getFact("mapUrl")} target="_blank" rel="noopener">
+              <Icon name="navigation" size={17} /> Open in Google Maps
+            </a>
+            <a class="btn btn--ghost" href={telHref}>
+              <Icon name="phone" size={17} /> Call {getFact("phone")}
+            </a>
+          </div>
+        </div>
+        <div class="visit__map">
+          <iframe src={site.maps.embed} title={`Map showing ${name} on ${street}, Chennai`} width="600" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="hours" aria-labelledby="hours-title">
+      <div class="container">
+        <h2 class="section__title" id="hours-title">Opening hours</h2>
+        <table class="menu-page__table">
+          <caption class="visually-hidden">{name} opening hours for each day</caption>
+          <tbody>
+            {hours.days.map((d) => (
+              <tr><th scope="row">{d.day}</th><td>{fmt(d.open)} to {fmt(d.close)}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <Faq items={aboutFaq} title="Location and timing questions" lead="" eyebrow="Questions" />
+  </main>
+  <Footer homeBase={base} />
+</Base>

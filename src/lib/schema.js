@@ -12,11 +12,11 @@
  * Menu / MenuItem (menu prices are not confirmed final), openingHoursSpecification
  * and priceRange (pending facts: they appear only once confirmed).
  *
- * Facts come from src/data/facts.js through src/data/site.js; nothing is typed
+ * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
-import { site, hasHours, socialLinks } from "../data/site.js";
-import { getFact, factOr, FACTS } from "../data/facts.js";
+import { site, hasHours, assetUrl } from "../data/site.js";
+import { getFact, factOr, FACTS, CONTENT_UPDATED } from "../data/entity-truth.ts";
 
 const FACTS_DATE = (key) => FACTS[key].verifiedOn;
 import { faqItems } from "../data/faq.js";
@@ -54,6 +54,7 @@ export function restaurantSchema() {
   const offers = factOr("offers", []);
   const reservations = factOr("acceptsReservations");
   const subBrand = factOr("subBrand");
+  const sameAs = factOr("sameAs", []);
 
   return {
     "@context": CONTEXT,
@@ -64,7 +65,7 @@ export function restaurantSchema() {
     description: site.shortDescription,
     url: `${site.url}/`,
     image: [site.media.hero.src, site.media.about.src, site.media.signature.src].map(
-      (src) => new URL(src, site.url).href
+      (src) => assetUrl(src)
     ),
     servesCuisine: getFact("cuisines"),
     ...(site.priceRange ? { priceRange: site.priceRange } : {}),
@@ -83,16 +84,17 @@ export function restaurantSchema() {
       longitude: site.geo.longitude,
     },
     ...(hours.length ? { openingHoursSpecification: hours } : {}),
+    hasMap: getFact("mapUrl"),
     telephone: e164(getFact("phone")),
     email: getFact("email"),
-    ...(socialLinks.length ? { sameAs: socialLinks.map((s) => s.href) } : {}),
+    ...(sameAs.length ? { sameAs } : {}),
     hasMenu: pageUrl("/menu/"),
     ...(reservations?.value ? { acceptsReservations: true } : {}),
     ...(founders
       ? { founder: founders.names.map((name) => ({ "@type": "Person", name })) }
       : {}),
     ...(subBrand
-      ? { subOrganization: { "@type": "Organization", name: subBrand.name, description: subBrand.description } }
+      ? { brand: { "@type": "Brand", name: subBrand.name, description: subBrand.description } }
       : {}),
     ...(offers.length
       ? {
@@ -146,6 +148,7 @@ export function webPageSchemas({ path, title, description, crumbs }) {
     isPartOf: { "@id": ids.website },
     about: { "@id": ids.restaurant },
     breadcrumb: { "@id": pid.breadcrumb },
+    dateModified: CONTENT_UPDATED,
   };
   const breadcrumb = {
     "@context": CONTEXT,
@@ -236,7 +239,7 @@ export function homeSchema({ title, description }) {
 }
 
 /**
- * Menu / MenuSection / MenuItem for /menu, generated from menu.json.
+ * Menu / MenuSection / MenuItem for /menu, generated from menu-canonical.ts.
  * Prices come straight from the data (confirmed current on 2026-11-05).
  * Signature extras without a listed price are MenuItems without an offer.
  */

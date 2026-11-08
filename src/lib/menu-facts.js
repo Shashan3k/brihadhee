@@ -1,11 +1,11 @@
 /**
- * Facts computed from src/data/menu.json at build time. Copy and schema that
- * quote prices or lists use these helpers, so a price change in menu.json
+ * Facts computed from src/data/menu-canonical.ts at build time. Copy and schema that
+ * quote prices or lists use these helpers, so a price change in menu-canonical.ts
  * changes the text everywhere. Never type these numbers by hand.
  */
-import menu from "../data/menu.json";
+import { MENU, CURRENCY } from "../data/menu-canonical.ts";
 
-const currency = menu.currency ?? "₹";
+const currency = CURRENCY;
 export const rupees = (n) => `${currency}${n}`;
 
 const byPrice = (a, b) => a.price - b.price;
@@ -28,7 +28,7 @@ function categoryFacts(cat) {
   };
 }
 
-export const categories = menu.categories.map(categoryFacts);
+export const categories = MENU.map(categoryFacts);
 export const category = (id) => {
   const c = categories.find((x) => x.id === id);
   if (!c) throw new Error(`[menu-facts] no menu category "${id}"`);
@@ -64,7 +64,7 @@ export const parotta = summarise(findItems(/parotta/i));
 export const meals = summarise(findItems(/\bmeals\b/i));
 export const filterCoffee = (() => {
   const hit = allItems.find((i) => /^filter coffee$/i.test(i.name));
-  if (!hit) throw new Error('[menu-facts] "Filter Coffee" not found in menu.json');
+  if (!hit) throw new Error('[menu-facts] "Filter Coffee" not found in menu-canonical.ts');
   return hit;
 })();
 

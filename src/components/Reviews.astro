@@ -1,19 +1,27 @@
 ---
+/**
+ * Reviews. No paraphrased or unattributed quotes: testimonials render only
+ * when the owner adds real, dated, permissioned entries to site.testimonials,
+ * and the rating card only when googleRating is confirmed in entity-truth.ts.
+ * Until then this is an honest empty state that sends guests to Google.
+ */
 import { site } from "../data/site.js";
+import { getFact } from "../data/entity-truth.ts";
 import Stars from "./Stars.astro";
 
-const { rating, reviewSummary, reviewHighlights, testimonials } = site;
+const { rating, testimonials } = site;
+const mapUrl = getFact("mapUrl");
 ---
 
 <section class="section section--tint" id="reviews" aria-labelledby="reviews-title">
   <div class="container">
     <div class="section__head">
-      <p class="eyebrow">What diners say</p>
-      <h2 class="section__title" id="reviews-title">Loved for dosas and a relaxed room</h2>
+      <p class="eyebrow">Reviews</p>
+      <h2 class="section__title" id="reviews-title">Read or leave a review of {site.name}</h2>
     </div>
 
     <div class="reviews__grid">
-      <aside class="review-card on-dark reveal" aria-label={rating ? "Google rating summary" : "Guest summary"}>
+      <aside class="review-card on-dark reveal" aria-label={rating ? "Google rating summary" : "Where to find reviews"}>
         {
           rating ? (
             <>
@@ -29,26 +37,19 @@ const { rating, reviewSummary, reviewHighlights, testimonials } = site;
                 Based on {rating.count.toLocaleString("en-IN")} {rating.source} reviews
                 {rating.checkedOn && ` (checked ${rating.checkedOn})`}
               </p>
-              <div class="review-card__divider"></div>
             </>
           ) : (
-            <p class="review-card__label">What guests tell us</p>
+            <p class="review-card__label">Reviews live on Google Maps</p>
           )
         }
         <p class="review-card__note">
-          Family meals, group outings and kids are all welcome.
+          <a href={mapUrl} target="_blank" rel="noopener">Open {site.name} on Google Maps</a>
         </p>
       </aside>
 
       <div class="reveal" style="--reveal-delay:100ms">
-        <p class="reviews__summary">{reviewSummary}</p>
-
-        <ul class="reviews__highlights" role="list">
-          {reviewHighlights.map((item) => <li>{item}</li>)}
-        </ul>
-
         {
-          testimonials.length > 0 && (
+          testimonials.length > 0 ? (
             <div class="testimonials">
               {testimonials.map((item) => (
                 <figure class="testimonial">
@@ -62,6 +63,11 @@ const { rating, reviewSummary, reviewHighlights, testimonials } = site;
                 </figure>
               ))}
             </div>
+          ) : (
+            <p class="reviews__lead">
+              Ate with us recently? A short review on Google Maps that names the dish you had helps other
+              families find {site.name}.
+            </p>
           )
         }
       </div>

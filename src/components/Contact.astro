@@ -134,6 +134,7 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
           <form
             class="contact__form reveal"
             id="enquiry-form"
+            data-event="enquiry_submit"
             data-channel={channel}
             data-default-inquiry="general"
             data-whatsapp={site.contact.whatsapp.replace(/\D/g, "")}

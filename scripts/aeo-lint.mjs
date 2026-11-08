@@ -10,7 +10,7 @@
  *   2. NAP: name, address, phone and email identical on every page and in schema
  *   3. Every FAQ question is followed by a paragraph of 15 to 60 words whose
  *      first sentence is 15 to 35 words, and the answer names "Brihadhee"
- *   4. No pending fact is rendered (probes from src/data/facts.js)
+ *   4. No pending fact is rendered (probes from src/data/entity-truth.ts)
  *   5. No phrase from docs/seo/avoid-terms.txt
  *   6. No "best", "No.1" or "top-rated" claim without a data-claim-source annotation
  *   7. Every image has non-empty, non-repeating alt text (lightbox image and
@@ -28,9 +28,10 @@ const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
 const REPORT = join(ROOT, "docs", "seo", "aeo-lint-report.md");
 
-const { FACTS, pendingFacts } = await import(pathToFileURL(join(ROOT, "src", "data", "facts.js")).href);
+const { FACTS, pendingFacts } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 const cfg = JSON.parse(readFileSync(join(ROOT, "config", "client-verification.json"), "utf8"));
-const menu = JSON.parse(readFileSync(join(ROOT, "src", "data", "menu.json"), "utf8"));
+const { MENU } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
+const menu = { categories: MENU };
 
 if (!existsSync(dist)) {
   console.error(`✖ ${dist} not found. Run \`npm run build\` first.`);
@@ -116,7 +117,9 @@ for (const file of walk(dist)) {
     const nodes = [];
     for (const [i, b] of [...html.matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)].entries()) {
       try {
-        nodes.push(...[].concat(JSON.parse(b[1])));
+        const parsed = JSON.parse(b[1]);
+        if (parsed && parsed["@graph"]) nodes.push(...parsed["@graph"].map((n) => ({ "@context": parsed["@context"], ...n })));
+        else nodes.push(...[].concat(parsed));
       } catch (e) {
         err("jsonld", name, `JSON-LD block ${i + 1} is not valid JSON: ${e.message}`);
       }
@@ -214,7 +217,7 @@ for (const p of pages) {
   for (const m of text.matchAll(/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g)) {
     if (m[0].replace(/[.]+$/, "") !== F("email")) err("nap", name, `unexpected email on the page: ${m[0]}`);
   }
-  // Door number must always be written exactly as in facts.js (line1 prefix).
+  // Door number must always be written exactly as in entity-truth.ts (line1 prefix).
   const doorRe = /W-41\b/g;
   const door = addr.line1.match(/^.*?W-124/)?.[0] ?? addr.line1;
   for (const m of text.matchAll(doorRe)) {
@@ -295,7 +298,7 @@ for (const p of pages) {
   if (name === "/menu/") {
     const total = menu.categories.reduce((n, c) => n + c.items.length, 0);
     const got = (html.match(/class="menu-page__item"/g) ?? []).length;
-    if (got !== total) err("no_js", name, `menu page lists ${got} items in HTML but menu.json has ${total}`);
+    if (got !== total) err("no_js", name, `menu page lists ${got} items in HTML but menu-canonical.ts has ${total}`);
     for (const c of menu.categories) {
       if (!html.includes(`id="${c.id}"`)) err("no_js", name, `menu category section "${c.id}" missing from the HTML`);
     }
@@ -303,7 +306,7 @@ for (const p of pages) {
   if (name === "/") {
     const total = menu.categories.reduce((n, c) => n + c.items.length, 0);
     const got = (html.match(/class="dish"/g) ?? []).length;
-    if (got !== total) err("no_js", name, `home menu has ${got} dishes in HTML but menu.json has ${total}`);
+    if (got !== total) err("no_js", name, `home menu has ${got} dishes in HTML but menu-canonical.ts has ${total}`);
   }
 }
 

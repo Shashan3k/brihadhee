@@ -7,8 +7,12 @@ site: no framework runtime, no backend, no third-party services.
 - **Stack:** Astro 7, hand-written CSS with design tokens, ~4 KB of vanilla JS
 - **Sections:** hero, about, menu, gallery + lightbox, reviews, visit (map +
   live open/closed indicator), contact, footer
-- **Content:** one config file (`src/data/site.js`) plus a menu file
-  (`src/data/menu.json`). No design code needs touching.
+- **Content:** business facts in `src/data/entity-truth.ts` (single source of
+  truth), menu and prices in `src/data/menu-canonical.ts` (from the menu PDF).
+  `src/data/site.js` reads from them. No design code needs touching.
+- **Strategy docs:** `docs/strategy/competitor-attack-plan.md` (competitors,
+  positioning, 90-day plan, KPIs) and `docs/strategy/gbp-update-guide.md`
+  (Google Business Profile, step by step). Owner checklist: `docs/owner-todo.md`.
 
 ---
 
@@ -19,9 +23,64 @@ Requires **Node 22.23+** (Astro 7).
 ```bash
 npm install
 npm run dev       # http://localhost:4321
-npm run build     # static output in dist/
+npm run build     # astro build + all quality gates (fails on any problem)
 npm run preview   # serve the built site locally
 ```
+
+### Quality gates (run automatically by `npm run build`)
+
+| Command | What it fails on |
+|---|---|
+| `npm run check:facts` | An unconfirmed fact or placeholder (TODO, undefined, null, "500+ varieties", "parking"…) in any HTML, llms.txt, robots.txt, sitemap or menu.json. Unconfirmed facts in `entity-truth.ts` also make `getFact()` throw, so `astro build` itself stops first |
+| `npm run check:seo` | Invalid or mismatched JSON-LD, FAQ text not matching the page, NAP differences, missing/duplicate titles or descriptions, not exactly one H1, wrong canonical, sitemap vs noindex mismatches, orphan pages, robots.txt sitemap line, non-reciprocal hreflang |
+| `npm run check:links` | A broken internal link, asset or #anchor. `npm run check:links:external` also requests external links (warnings only) |
+
+`npm run build:site` builds without the gates (for quick local previews only).
+
+### Environment variables (set in Vercel → Settings → Environment Variables)
+
+See `.env.example`. All are optional; the site works without them.
+
+| Variable | What it does |
+|---|---|
+| `PUBLIC_GA4_ID` | Google Analytics 4 measurement ID (`G-XXXXXXX`). Unset = no analytics and the privacy page says so |
+| `INDEXNOW_KEY` | IndexNow key (8–128 letters, numbers or dashes). Builds `/<key>.txt` and lets `npm run indexnow` ping Bing/Yandex |
+
+### Confirming a new fact
+
+1. Get the owner's written confirmation.
+2. In `src/data/entity-truth.ts`, change the fact from `unverified(...)` to `verified(value, "source", "YYYY-MM-DD")`.
+3. Record it in `docs/seo-baseline.md` (section 6) and tick it in `docs/owner-todo.md`.
+4. Run `npm run build`. If copy elsewhere still needs the fact, the gates tell you where.
+
+### Changing a price or adding a dish
+
+Edit `src/data/menu-canonical.ts` (prices must match the latest menu PDF). Every price on the site, the schema, llms.txt and menu.json updates from that file. Update the GBP menu the same day (`docs/strategy/gbp-update-guide.md`, step J).
+
+### Adding a dish page or guide
+
+1. Create `src/pages/<path>.astro` by copying `src/pages/book-a-table.astro` (simple page) or `src/pages/about.astro` (page with FAQ).
+2. Use only `getFact()` values and `menu-facts.js` helpers, never hand-typed prices or hours.
+3. Add the URL to `src/pages/sitemap.xml.js` and link to it from at least one other page (the orphan check fails otherwise).
+4. Q&As go in `src/data/faq.js` or `src/data/pages.js` through `qa()`, one page per question.
+5. `npm run build`, then request indexing in Search Console (`docs/search-console-setup.md`).
+
+### Publishing
+
+Push to `main`. Vercel builds www.brihadhee.com (it runs `npm run build`, so a failed gate blocks the deploy) and GitHub Actions (`.github/workflows/check.yml`) runs the same build and checks on every push and pull request. Nothing is published to GitHub Pages. After a deploy with new or changed pages, run `INDEXNOW_KEY=… npm run indexnow` (or pass paths: `npm run indexnow -- /menu/`).
+
+### UTM links for outside profiles
+
+Use these exact links so Google Analytics can tell where visits come from:
+
+| Where | Link |
+|---|---|
+| Google Business Profile website | `https://www.brihadhee.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp_profile` |
+| GBP menu link | `https://www.brihadhee.com/menu/?utm_source=google&utm_medium=organic&utm_campaign=gbp_menu` |
+| GBP reservation link | `https://www.brihadhee.com/book-a-table/?utm_source=google&utm_medium=organic&utm_campaign=gbp_booking` |
+| Instagram bio | `https://www.brihadhee.com/?utm_source=instagram&utm_medium=social&utm_campaign=bio` |
+| Swiggy / Zomato / District / EazyDiner "website" fields | `https://www.brihadhee.com/?utm_source=<platform>&utm_medium=referral&utm_campaign=listing` |
+| YouTube descriptions | `https://www.brihadhee.com/?utm_source=youtube&utm_medium=video&utm_campaign=<video-slug>` |
 
 ---
 
@@ -167,30 +226,21 @@ The build is plain static files in `dist/`. Any static host works.
 - Framework preset: **Astro** — build `npm run build`, output `dist`.
 - No server functions are used, so everything is served as static files.
 
-### GitHub Pages
+### GitHub Pages: do not use
 
-1. Push the repository to GitHub.
-2. Settings → Pages → Source: **GitHub Actions**, then use the official
-   `withastro/action` workflow.
-3. Project pages (`username.github.io/repo`) are served from a sub-path. This
-   site references assets with root-absolute paths (`/images/…`, `/fonts/…`),
-   so either:
-   - use a **custom domain** (recommended, and best for local SEO), or
-   - set `base: "/repo-name"` in `astro.config.mjs` and change the image/font
-     paths in `src/data/site.js`, `src/styles/global.css` and `src/layouts/Base.astro`.
+An old copy was published at `shashan3k.github.io/brihadhee`, which competed with
+www.brihadhee.com in search. The workflow no longer deploys there. Keep Pages
+switched off (Settings > Pages > Source: None) so only the custom domain is public.
 
 ### Before you publish
 
-Update the live domain in **all four** places:
-
-1. `site.url` in `src/data/site.js`
-2. `site` in `astro.config.mjs`
-3. `Sitemap:` line in `public/robots.txt`
-4. `<loc>` in `public/sitemap.xml`
+The live domain is `https://www.brihadhee.com`. It is set in two places: `SITE_ORIGIN` in `src/data/entity-truth.ts` (canonical, schema, sitemap, robots, llms, menu.json) and `site` in `astro.config.mjs`. robots.txt, sitemaps, llms files and menu.json are generated at build time; never hand-edit them.
 
 ---
 
 ## 5. What to check before launch
+
+> The current, owner-specific list lives in `docs/owner-todo.md`. The list below is the original launch checklist.
 
 - [ ] Phone, WhatsApp and email added (`site.js`)
 - [ ] Opening hours verified (and any afternoon break handled)

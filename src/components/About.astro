@@ -1,7 +1,7 @@
 ---
 import { site } from "../data/site.js";
 import Icon from "./Icon.astro";
-import { getFact } from "../data/facts.js";
+import { getFact } from "../data/entity-truth.ts";
 
 const { media } = site;
 const founders = getFact("founders");
@@ -60,6 +60,8 @@ const highlights = [
       <figure class="about__img">
         <img
           src={media.about.src}
+          srcset={media.about.srcset}
+          sizes="(max-width: 900px) 92vw, 45vw"
           width={media.about.width}
           height={media.about.height}
           alt={media.about.alt}
@@ -70,6 +72,8 @@ const highlights = [
       <div class="about__coffee">
         <img
           src={media.coffee.src}
+          srcset={media.coffee.srcset}
+          sizes="160px"
           width={media.coffee.width}
           height={media.coffee.height}
           alt={media.coffee.alt}

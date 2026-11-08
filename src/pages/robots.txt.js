@@ -13,6 +13,8 @@ import { site } from "../data/site.js";
  * be honoured. It takes effect on a custom domain or a user/organisation site.
  */
 const AI_AGENTS = [
+  "Googlebot", // Google Search, AI Overviews and AI Mode
+  "Bingbot", // Bing, Copilot and DuckDuckGo results
   "GPTBot", // OpenAI training (allowed by owner decision)
   "OAI-SearchBot", // ChatGPT search index
   "ChatGPT-User", // ChatGPT fetching a page for a user
@@ -30,7 +32,7 @@ export function GET() {
     "Allow: /",
     "",
     ...AI_AGENTS.flatMap((ua) => [`User-agent: ${ua}`, "Allow: /", ""]),
-    `Sitemap: ${site.url}/sitemap.xml`,
+    `Sitemap: ${site.url}/sitemap-index.xml`,
     "",
   ].join("\n");
   return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8" } });

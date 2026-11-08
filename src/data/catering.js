@@ -1,6 +1,6 @@
 /**
  * Catering content (Pillar 2), derived from config/client-verification.json
- * and the confirmed `catering` fact in src/data/facts.js. Every block is
+ * and the confirmed `catering` fact in src/data/entity-truth.ts. Every block is
  * empty/null unless its flag is confirmed, and the page renders nothing for it.
  *
  * Allowed values (see config/client-verification.json `_allowed_values`):
@@ -15,7 +15,11 @@
  */
 import verification from "../../config/client-verification.json";
 import { site } from "./site.js";
-import { getFact, factOr } from "./facts.js";
+import { getFact, factOr } from "./entity-truth.ts";
+import { qa } from "../lib/answers.js";
+
+const STREET = getFact("street");
+const PV = "100% pure vegetarian";
 import { pageGraph, cateringServiceSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 
 const v = verification;
@@ -115,7 +119,7 @@ export const opening = eventIds.length
   : null;
 
 export const entityLine = cateringEnabled
-  ? "Brihadhee is a pure vegetarian restaurant and caterer on 3rd Avenue, W-Block, Anna Nagar East, Chennai 600040, near Anna Nagar Tower Park."
+  ? `Brihadhee is a pure vegetarian restaurant and caterer on ${STREET}, Chennai ${getFact("address").postalCode}, near Anna Nagar Tower Park.`
   : null;
 
 export const events = eventIds.map((id) => ({ label: EVENTS[id].label, text: EVENTS[id].text }));
@@ -171,67 +175,70 @@ export const plannerSection = cateringEnabled && contact.any;
 
 /* ---- FAQ (flagship page): direct answer first, 40 to 60 words ---------- */
 const faq = [];
-const add = (question, answer) => faq.push({ question, answer });
+const add = (question, answer) => faq.push(qa(question, answer));
 const addr = () =>
   `${site.address.line1}, ${site.address.line2}, ${site.address.city}, ${site.address.state} ${site.address.postalCode}`;
 
 if (cateringEnabled) {
+  const G = guestRange ? `${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : "your guests";
+  const AREA = joinNatural(areas);
+  const PHONE = contact.phone;
   add(
     "Does Brihadhee offer catering in Chennai?",
-    `Yes, Brihadhee offers pure vegetarian event and function catering across ${joinNatural(areas)} from its restaurant kitchen in Anna Nagar East. ` +
-      `It caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))}${guestRange ? `, for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`
+    `Yes, Brihadhee offers ${PV} event and function catering across ${AREA} for ${G}, from its restaurant kitchen on ${STREET}. ` +
+      `It caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))}.`
   );
   if (formatIds.length) {
     add(
       "What kind of catering does Brihadhee provide?",
-      `Brihadhee provides pure vegetarian catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, prepared by its Anna Nagar East kitchen. ` +
-        (liveCounters.length ? `Live counters include ${joinNatural(liveCounters)}, and menus can mix South Indian, North Indian and Indo-Chinese dishes.` : "")
+      `Brihadhee provides ${PV} catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, prepared by its kitchen on ${STREET}, for ${G}. ` +
+        (liveCounters.length ? `The ${liveCounters.length} live counters are ${joinNatural(liveCounters)}.` : "")
     );
     add(
       "Is Brihadhee catering pure vegetarian?",
-      "Yes, Brihadhee catering is 100% pure vegetarian, from the same kitchen as its pure vegetarian restaurant in Anna Nagar East, Chennai. " +
-        "Menus can include Tirunelveli and Karaikudi specialties, North Indian and Indo-Chinese dishes, with no non-vegetarian items."
+      `Yes, Brihadhee catering is ${PV}, cooked by the same team as its pure vegetarian restaurant on ${STREET}, for events of ${G}. ` +
+        "Menus can mix Tirunelveli and Karaikudi specialties with North Indian and Indo-Chinese dishes, all without meat, egg or fish."
     );
   }
   if (eventIds.length) {
     add(
       "Which events does Brihadhee cater?",
-      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} in ${joinNatural(areas)}, from its pure vegetarian kitchen in Anna Nagar East. ` +
-        "Families can book directly, and event management companies can book Brihadhee as their catering partner."
+      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} across ${AREA}, with ${PV} menus from its kitchen on ${STREET}. ` +
+        `Events can range from ${G}.`
     );
   }
   if (guestRange) {
     add(
       "How many guests can Brihadhee cater for?",
-      `Brihadhee can cater for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests, which covers home functions, mid-size halls and boutique weddings in ${joinNatural(areas)}. ` +
-        "Live counters for dosa, parotta and Nellai sodhi can be added to the menu for any of these events."
+      `Brihadhee can cater for ${G}, from home functions to boutique weddings in ${AREA}, with ${PV} food from its kitchen on ${STREET}. ` +
+        "Live counters for dosa, parotta and Nellai sodhi can be added to any of these events."
     );
   }
   if (areas.length) {
     add(
       "Does Brihadhee cater outside Anna Nagar?",
-      `Yes, Brihadhee caters events across ${joinNatural(areas)}, not only in Anna Nagar, from its restaurant kitchen on 3rd Avenue, W-Block, Anna Nagar East. ` +
-        "Tell the team your venue and date when you call, and they will confirm the menu and per-plate price."
+      `Yes, Brihadhee caters events across ${AREA}, not only in Anna Nagar, from its ${PV} restaurant kitchen on ${STREET}, for ${G}. ` +
+        "Tell the team your venue and date, and they will confirm the menu and per-plate price."
     );
   }
   if (contact.any) {
     add(
       "How do I book catering with Brihadhee?",
-      `To book pure vegetarian catering with Brihadhee, call ${contact.phone} with your event type, date, venue and number of guests. ` +
-        "The team will suggest a regional menu and live counters, then confirm the per-plate price and the booking with you."
+      `To book ${PV} catering with Brihadhee, call ${PHONE} with your event type, date, venue and number of guests, from ${G}. ` +
+        `The team at the restaurant on ${STREET} will suggest a menu and live counters, then confirm the per-plate price.`
     );
   }
   if (v.pricing_model === "per_plate") {
     add(
       "How is Brihadhee catering priced?",
-      `Brihadhee prices catering per plate, quoted for the menu and live counters you choose, so you know the full cost before you confirm. ` +
-        `Call ${contact.phone ?? "the restaurant"} with your guest count and menu to get the per-plate quote for your event.`
+      `Brihadhee prices its ${PV} catering per plate, quoted for the menu and live counters you choose, so you know the full cost before you confirm. ` +
+        `Call ${PHONE} or visit the restaurant on ${STREET} for a quote for your event.`
     );
   }
   add(
     "Where is Brihadhee located?",
     `Brihadhee is at ${addr()}, near Anna Nagar Tower Park. ` +
-      "Families and event planners can visit the restaurant to taste the menu before booking catering for their function."
+      `Families and event planners can eat at the ${PV} restaurant before booking catering for their function.`
   );
 }
 export const faqs = faq;
@@ -239,31 +246,29 @@ export const faqs = faq;
 /* ---- FAQ (event planner page) ----------------------------------------- */
 const plannerFaq = [];
 if (cateringEnabled) {
+  const G = guestRange ? `${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : "your guests";
+  const AREA = joinNatural(areas);
   plannerFaq.push(
-    {
-      question: "Which pure veg caterer in Chennai works with event managers on boutique functions?",
-      answer:
-        `Brihadhee, a pure vegetarian restaurant in Anna Nagar East, works with event management companies across ${joinNatural(areas)} on boutique functions and weddings for ${guestRange ? `${fmt(guestRange.min)} to ${fmt(guestRange.max)}` : "your"} guests. ` +
-        `It offers ${joinNatural(plannerModels)}, regional menus and per-plate pricing.`,
-    },
-    {
-      question: "Can Brihadhee run white-label or co-branded live counters for my event company?",
-      answer:
-        `Yes, Brihadhee runs ${joinNatural(plannerModels)} for event management companies, so the counter can carry your brand or both brands. ` +
-        `Counters include ${joinNatural(liveCounters)}, cooked by the Brihadhee kitchen team at the venue.`,
-    },
-    {
-      question: "Why do event planners choose a boutique caterer like Brihadhee?",
-      answer:
-        "Event planners choose Brihadhee for menus that can be customised for each client, live counters for dosa, parotta and Nellai sodhi, and per-plate pricing quoted before booking. " +
-        "Planners deal directly with the Brihadhee team, from the first menu call to the event day.",
-    },
-    {
-      question: "How do event managers start a catering partnership with Brihadhee?",
-      answer:
-        `Event managers can start a partnership with Brihadhee by calling ${contact.phone ?? "the restaurant"} with an upcoming event, guest count and venue. ` +
-        "The team will propose a regional menu, live counters and per-plate pricing for the event, and confirm the booking with you.",
-    }
+    qa(
+      "Which pure veg caterer in Chennai works with event managers on boutique functions?",
+      `Brihadhee, a ${PV} restaurant on ${STREET}, works with event management companies across ${AREA} on boutique functions and weddings for ${G}. ` +
+        `It offers ${joinNatural(plannerModels)}, regional menus and per-plate pricing.`
+    ),
+    qa(
+      "Can Brihadhee run white-label or co-branded live counters for my event company?",
+      `Yes, Brihadhee runs ${joinNatural(plannerModels)} for event management companies, cooked by the team from its ${PV} kitchen on ${STREET}. ` +
+        `The ${liveCounters.length} counters are ${joinNatural(liveCounters)}.`
+    ),
+    qa(
+      "Why do event planners choose a boutique caterer like Brihadhee?",
+      `Event planners choose Brihadhee for ${PV} menus customised for each client, live counters for dosa, parotta and Nellai sodhi, and per-plate pricing for ${G}. ` +
+        `Planners deal directly with the team at the restaurant on ${STREET}.`
+    ),
+    qa(
+      "How do event managers start a catering partnership with Brihadhee?",
+      `Event managers can start a partnership with Brihadhee by calling ${contact.phone ?? "the restaurant"} with an upcoming event, guest count and venue. ` +
+        `The team at the ${PV} restaurant on ${STREET} will propose a menu, live counters and per-plate pricing.`
+    )
   );
 }
 export const plannerFaqs = plannerFaq;
@@ -271,23 +276,13 @@ export const plannerFaqs = plannerFaq;
 /* ---- Page metadata ----------------------------------------------------- */
 export const meta = {
   title: "Pure Veg Event Catering in Chennai | Brihadhee, Anna Nagar",
-  description: `Pure vegetarian catering by Brihadhee, Anna Nagar East: seemantham, gruhapravesam, ear piercing, betrothals, boutique weddings and birthdays${guestRange ? `, ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}, with live dosa and parotta counters.`,
+  description: `Pure veg catering by Brihadhee for seemantham, gruhapravesam, weddings and birthdays${guestRange ? `, ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}, with live dosa counters.`,
   h1: "Pure Vegetarian Event and Wedding Catering in Chennai",
-  keywords: [
-    "Brihadhee catering",
-    "pure veg catering Chennai",
-    "vegetarian catering Anna Nagar",
-    "seemantham catering Chennai",
-    "gruhapravesam catering Chennai",
-    "live dosa counter catering Chennai",
-    "சைவ கேட்டரிங் சென்னை",
-    "சைவ கேட்டரிங் அண்ணா நகர்",
-  ],
 };
 
 export const plannerMeta = {
   title: "Catering Partner for Event Planners in Chennai | Brihadhee",
-  description: `Brihadhee partners with event management companies in Chennai: white-label or co-branded live counters, regional pure veg menus and per-plate pricing${guestRange ? ` for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`,
+  description: `Brihadhee partners with Chennai event planners: white-label or co-branded live counters and pure veg menus${guestRange ? ` for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`,
   h1: "Pure Veg Catering Partner for Event Management Companies in Chennai",
 };
 

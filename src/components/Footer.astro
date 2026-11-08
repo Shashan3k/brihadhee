@@ -11,6 +11,14 @@ import {
   emailHref,
 } from "../data/site.js";
 import Icon from "./Icon.astro";
+import { getFact } from "../data/entity-truth.ts";
+
+// Confirmed listings only (entity-truth.ts). Swiggy, Zomato, District and Justdial
+// are added here once the owner confirms each URL.
+const listings = [
+  { label: "Google Maps", href: getFact("mapUrl") },
+  ...getFact("bookingLinks").map((b) => ({ label: `Book on ${b.label}`, href: b.url })),
+];
 
 const { homeBase = "" } = Astro.props;
 const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
@@ -28,7 +36,7 @@ const address = site.address;
         <a class="brand" href={link("#top")} aria-label={`${site.name} — back to top`}>
           <img
             class="brand__logo"
-            src={`${base}images/logo.png`}
+            src={`${base}images/logo.webp`}
             width="594"
             height="420"
             alt={site.name}
@@ -60,6 +68,8 @@ const address = site.address;
           {site.navigation.map((item) => (
             <li><a href={link(item.href)}>{item.label}</a></li>
           ))}
+          <li><a href={`${base}book-a-table/`}>Book a Table</a></li>
+          <li><a href={`${base}privacy/`}>Privacy</a></li>
         </ul>
       </nav>
 
@@ -84,10 +94,13 @@ const address = site.address;
           {hasWhatsApp && <li><a href={whatsappHref}>WhatsApp</a></li>}
           {hasEmail && <li><a href={emailHref}>{site.contact.email}</a></li>}
           <li>
-            <a href={site.maps.directions} target="_blank" rel="noopener">
+            <a href={site.maps.directions} target="_blank" rel="noopener" data-event="directions_click">
               Get directions
             </a>
           </li>
+          {listings.map((l) => (
+            <li><a href={l.href} target="_blank" rel="noopener">{l.label}</a></li>
+          ))}
         </ul>
       </div>
     </div>
@@ -95,6 +108,7 @@ const address = site.address;
     <div class="footer__bottom">
       <p>© {year} {site.name}. All rights reserved.</p>
       <p>South Indian restaurant · Anna Nagar East, Chennai</p>
+      <p>Also searched as Brihadhi, Brihadee, Bruhadhee, Brahadhee</p>
       <p><a href={link("#top")}>Back to top ↑</a></p>
     </div>
   </div>

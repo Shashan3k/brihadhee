@@ -1,14 +1,17 @@
 ---
 /**
- * /menu: a crawlable, JavaScript-free HTML menu generated from menu.json.
+ * /menu: a crawlable, JavaScript-free HTML menu generated from menu-canonical.ts.
  * Every price, count and range is computed from the data (src/lib/menu-facts.js).
  */
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import AtAGlance from "../components/AtAGlance.astro";
-import { getFact, factOr } from "../data/facts.js";
-import { pageGraph, menuSchema, HOME_CRUMBS } from "../lib/schema.js";
+import Faq from "../components/Faq.astro";
+import { menuFaq } from "../data/faq.js";
+import { getFact } from "../data/entity-truth.ts";
+import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
+import { pageGraph, menuSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import {
   categories,
   category,
@@ -24,18 +27,18 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   : `${import.meta.env.BASE_URL}/`;
 
 const name = getFact("name");
-const extras = factOr("signatureExtras", []);
+const extras = UNPRICED_SIGNATURES;
 const dosa = category("dosa");
 const beverages = category("beverages");
 
-const title = `${name} Menu and Prices | Vegetarian South Indian, Anna Nagar`;
+const title = `${name} Menu and Prices | Pure Veg, Anna Nagar East`;
 const description = `${name} menu with prices: ${dosa.count} dosa varieties from ${rupees(dosa.min)} to ${rupees(dosa.max)}, meals, idly, parotta and beverages from ${rupees(beverages.min)}. Anna Nagar East, Chennai.`;
 const schema = pageGraph({
   path: "/menu/",
   title,
   description,
   crumbs: [...HOME_CRUMBS, { name: "Menu", path: "/menu/" }],
-  extras: [menuSchema({ categories, extras })],
+  extras: [menuSchema({ categories, extras }), faqPageSchema("/menu/", menuFaq)],
 });
 ---
 
@@ -127,6 +130,8 @@ const schema = pageGraph({
         </div>
       </section>
     )}
+
+    <Faq items={menuFaq} title="Menu questions" lead="" eyebrow="Questions" />
 
     <AtAGlance />
   </main>

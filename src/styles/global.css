@@ -6,7 +6,7 @@
 /* ---------- Fonts (self-hosted) ---------- */
 @font-face {
   font-family: "Fraunces";
-  src: url("../../public/fonts/fraunces-latin.woff2") format("woff2");
+  src: url("../assets/fonts/fraunces-latin.woff2") format("woff2");
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -16,7 +16,7 @@
 }
 @font-face {
   font-family: "Fraunces";
-  src: url("../../public/fonts/fraunces-latin-italic.woff2") format("woff2");
+  src: url("../assets/fonts/fraunces-latin-italic.woff2") format("woff2");
   font-weight: 400 600;
   font-style: italic;
   font-display: swap;
@@ -26,7 +26,7 @@
 }
 @font-face {
   font-family: "Instrument Sans";
-  src: url("../../public/fonts/instrument-sans-latin.woff2") format("woff2");
+  src: url("../assets/fonts/instrument-sans-latin.woff2") format("woff2");
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -36,7 +36,7 @@
 }
 @font-face {
   font-family: "Noto Sans Tamil";
-  src: url("../../public/fonts/noto-sans-tamil-tamil.woff2") format("woff2");
+  src: url("../assets/fonts/noto-sans-tamil-tamil.woff2") format("woff2");
   font-weight: 400 700;
   font-style: normal;
   font-display: swap;
@@ -1146,7 +1146,8 @@ section[id] {
     transform: translateY(0) scale(1);
   }
 }
-.menu[data-enhanced="true"] .menu__panel-title {
+.menu[data-enhanced="true"] .menu__panel-title,
+.js .menu[data-enhanced="false"] .menu__panel-title {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1155,7 +1156,8 @@ section[id] {
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.menu[data-enhanced="true"] .menu__blurb {
+.menu[data-enhanced="true"] .menu__blurb,
+.js .menu[data-enhanced="false"] .menu__blurb {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1562,6 +1564,12 @@ section[id] {
   font-size: 1.4em;
   line-height: 0;
   vertical-align: -0.12em;
+}
+.reviews__lead {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--ink-2);
+  max-width: 34rem;
 }
 .reviews__highlights {
   display: flex;
@@ -2762,6 +2770,7 @@ a.contact__channel:hover {
   letter-spacing: 0;
   line-height: 1.35;
 }
+.hero__title-sub::first-letter { text-transform: uppercase; }
 
 /* ---- /catering page ---- */
 .catering-hero { padding-top: clamp(7rem, 14vw, 10rem); }
@@ -2785,7 +2794,7 @@ a.contact__channel:hover {
 /* ---- FAQ headings, at-a-glance ---- */
 .faq__q { margin: 0; font: inherit; }
 .faq__group { margin: 2.5rem 0 1rem; text-align: center; font-weight: 600; opacity: 0.8; }
-.glance__list { display: grid; gap: 0.25rem 2rem; margin: 1.5rem 0 0; grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
+.glance__list { display: grid; gap: 0.25rem 2rem; margin: 1.5rem 0 0; grid-template-columns: repeat(auto-fit, minmax(min(18rem, 100%), 1fr)); }
 .glance__row { padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
 .glance__row dt { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
 .glance__row dd { margin: 0.2rem 0 0; font-weight: 500; }
@@ -2822,3 +2831,13 @@ a.contact__channel:hover {
 .offers__list { display: grid; gap: 0.75rem 2rem; margin: 1rem 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
 .offers__item strong { display: block; }
 .link-list { margin: 1rem 0 0; padding-left: 1.1rem; display: grid; gap: 0.4rem; }
+
+/* ---- Load performance (2026-11-08) ----
+ * 1. With JS on, show only the first menu panel from the first paint, so the
+ *    tab script does not trigger a full relayout when it starts.
+ */
+.js .menu[data-enhanced="false"] .menu__panel ~ .menu__panel {
+  display: none;
+}
+
+

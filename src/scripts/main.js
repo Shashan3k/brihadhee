@@ -46,7 +46,7 @@ const onScroll = () => {
   header?.classList.toggle("is-scrolled", y > 8);
   callbar?.classList.toggle("is-visible", y > 420);
 };
-onScroll();
+requestAnimationFrame(onScroll); // first check after the first frame, so it does not force an early layout
 window.addEventListener("scroll", onScroll, { passive: true });
 
 if (navToggle && navPanel) {
@@ -361,5 +361,35 @@ if (enquiryForm) {
       window.location.href = url;
       if (status) status.textContent = "Opening your email app…";
     }
+  });
+}
+
+/* ---------------- Analytics (GA4, only when PUBLIC_GA4_ID is set) ----------------
+ * One delegated listener. An explicit data-event="name" wins; otherwise the
+ * event is inferred from the link: tel: -> call_click, wa.me -> whatsapp_click,
+ * Google Maps -> directions_click, booking partners -> book_click, delivery
+ * apps -> order_click. Forms with data-event fire that event on submit.
+ * Menu tabs carry data-event="menu_filter_use". No personal data is sent.
+ */
+function inferEvent(el) {
+  if (el.dataset.event) return el.dataset.event;
+  const href = el.getAttribute("href") || "";
+  if (href.startsWith("tel:")) return "call_click";
+  if (/wa\.me|api\.whatsapp\.com/.test(href)) return "whatsapp_click";
+  if (/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(href)) return "directions_click";
+  if (/eazydiner\.com|\/dineout|district\.in/.test(href)) return "book_click";
+  if (/swiggy\.com|zomato\.com/.test(href)) return "order_click";
+  return "";
+}
+if (typeof window.gtag === "function") {
+  document.addEventListener("click", (e) => {
+    const el = e.target instanceof Element ? e.target.closest("a[href], [data-event]") : null;
+    if (!el || el.tagName === "FORM") return;
+    const name = inferEvent(el);
+    if (name) window.gtag("event", name, { link_text: (el.textContent || "").trim().slice(0, 60), page_path: location.pathname });
+  });
+  document.addEventListener("submit", (e) => {
+    const form = e.target;
+    if (form instanceof HTMLFormElement && form.dataset.event) window.gtag("event", form.dataset.event, { page_path: location.pathname });
   });
 }

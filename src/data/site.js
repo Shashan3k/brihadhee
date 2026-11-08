@@ -11,11 +11,23 @@
  */
 
 import verification from "../../config/client-verification.json";
-import { getFact, factOr, isConfirmed } from "./facts.js";
+import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl } from "./entity-truth.ts";
 
 const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
+
+/**
+ * Responsive WebP for a photo in public/images (see scripts/optimize-images.mjs):
+ * returns { src, srcset } for <img>. `width` is the full-size pixel width.
+ */
+export function responsive(name, width) {
+  const widths = [480, 800].filter((w) => w < width);
+  return {
+    src: `${BASE_URL}images/${name}.webp`,
+    srcset: [...widths.map((w) => `${BASE_URL}images/${name}-${w}.webp ${w}w`), `${BASE_URL}images/${name}.webp ${width}w`].join(", "),
+  };
+}
 
 const address = getFact("address");
 
@@ -38,12 +50,12 @@ export const site = {
   nameTamil: getFact("nameTamil"),
   tagline: "Regional Tamil vegetarian food, from Nellai sodhi to Paanai Parotta.",
   subTagline:
-    "Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on 3rd Avenue, Anna Nagar East. Open daily from 6:30 AM.",
+    `Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}. Open daily from ${getFact("hours").short.split(" to ")[0]}.`,
   shortDescription:
     "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for customised dosas, Paanai Parotta and Nellai Special Sodhi Meals.",
   // Entity sentence reused on the page body.
   entitySentence:
-    "Brihadhee is a pure vegetarian restaurant on 3rd Avenue, W-Block, Anna Nagar East, Chennai 600040, near Anna Nagar Tower Park.",
+    `${getFact("name")} is a pure vegetarian restaurant on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}.`,
   longDescription:
     "Brihadhee is a pure vegetarian restaurant in Anna Nagar East, Chennai, serving South Indian food with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese dishes.",
 
@@ -67,7 +79,7 @@ export const site = {
   landmarks: getFact("landmarks").map((l) => `Near ${l}`),
 
   /* ---- Hours ---------------------------------------------------------- */
-  /* Hours are a PENDING fact (src/data/facts.js). Until the owner confirms
+  /* Hours are a verified fact (src/data/entity-truth.ts). Until the owner confirms
      them nothing is rendered. When confirmed, set the fact's value to
      { timeZone, summary, days: [{ day, open: "HH:MM", close: "HH:MM" }] }. */
   hours: isConfirmed("hours")
@@ -78,22 +90,15 @@ export const site = {
   // Pending fact: shown only once the Google rating and count are confirmed
   // with a date. Shape: { value, count, source: "Google", checkedOn: "YYYY-MM-DD" }
   rating: isConfirmed("googleRating") ? getFact("googleRating") : null,
-  reviewSummary:
-    "Diners describe delicious, authentic South Indian food and a relaxed, family-friendly room.",
-  reviewHighlights: [
-    "Dosas and filter coffee",
-    "Vegetarian South Indian",
-    "Family-friendly",
-  ],
-  // [ADD] 3–5 genuine testimonials (with permission), then delete the empty
-  // array. Shape: { quote, name, meta }
+  // Real, dated, permissioned reviews only (never paraphrased or unattributed).
+  // Shape: { quote, name, meta } where meta is e.g. " · Google review, 2026-11-20"
   testimonials: [],
 
   /* ---- Good for / amenities ------------------------------------------- */
   /* Only confirmed details are listed. Add more entries once confirmed. */
   amenities: [
     { label: "Dine-in", detail: "Breakfast, lunch and dinner" },
-    { label: "Open daily", detail: "6:30 AM to 11:00 PM" },
+    { label: "Open daily", detail: getFact("hours").short },
     { label: "Families welcome", detail: "Kids and group outings" },
     { label: "Alcohol", detail: "Not served" },
     { label: "Cuisine", detail: "100% pure vegetarian" },
@@ -103,7 +108,7 @@ export const site = {
 
   /* ---- Social handles (empty hides the link) -------------------------- */
   social: {
-    instagram: "", // handle unconfirmed
+    instagram: "https://www.instagram.com/brihadhee", // owner brief 2026-11-08
     facebook: "", // [ADD] full URL
   },
 
@@ -112,60 +117,60 @@ export const site = {
      the recommended pixel sizes. */
   media: {
     hero: {
-      src: `${BASE_URL}images/hero.jpg`,
+      ...responsive("hero", 1600),
       width: 1600,
       height: 1200,
       alt: "Crisp South Indian dosa served with sambar and chutneys on a banana leaf",
     },
     about: {
-      src: `${BASE_URL}images/meals.jpg`,
+      ...responsive("meals", 1200),
       width: 1200,
       height: 900,
       alt: "South Indian meal served on a banana leaf with rice, papad and sides",
     },
     signature: {
-      src: `${BASE_URL}images/dosa.jpg`,
+      ...responsive("dosa", 1200),
       width: 1200,
       height: 900,
       alt: "A crisp golden dosa with chutneys and sambar",
     },
     coffee: {
-      src: `${BASE_URL}images/coffee.jpg`,
+      ...responsive("coffee", 1000),
       width: 1000,
       height: 1000,
       alt: "Steel tumbler and davara holding a frothy South Indian drink",
     },
     gallery: [
       {
-        src: `${BASE_URL}images/dosa.jpg`,
+        ...responsive("dosa", 1200),
         width: 1200,
         height: 900,
         alt: "Dosa with chutneys served on a banana leaf at the table",
         caption: "Crisp dosa with chutneys",
       },
       {
-        src: `${BASE_URL}images/coffee.jpg`,
+        ...responsive("coffee", 1000),
         width: 1000,
         height: 1000,
         alt: "Close view of a frothy South Indian drink in a steel tumbler and davara",
         caption: "A frothy tumbler drink",
       },
       {
-        src: `${BASE_URL}images/meals.jpg`,
+        ...responsive("meals", 1200),
         width: 1200,
         height: 900,
         alt: "South Indian meal served on a round banana leaf",
         caption: "South Indian meals",
       },
       {
-        src: `${BASE_URL}images/tiffin.jpg`,
+        ...responsive("tiffin", 1200),
         width: 1200,
         height: 900,
         alt: "Idiyappam served with coconut milk on a banana leaf",
         caption: "Idiyappam with coconut milk",
       },
       {
-        src: `${BASE_URL}images/sweets.jpg`,
+        ...responsive("sweets", 1200),
         width: 1200,
         height: 900,
         alt: "Dessert served in a brass bowl with chocolate sauce poured over it",
@@ -192,29 +197,15 @@ export const site = {
           { label: "Event Planners", href: `${BASE_URL}event-planner-catering-partner/` },
         ]
       : []),
-    { label: "Visit", href: "#visit" },
+    { label: "About", href: `${BASE_URL}about/` },
     { label: "Contact", href: "#contact" },
   ],
 
   /* ---- SEO ------------------------------------------------------------ */
-  url: "https://shashan3k.github.io/brihadhee",
+  // Canonical origin for canonical, og:url, schema @ids, sitemap and llms files.
+  url: SITE_ORIGIN,
   locale: "en_IN",
   areaServed: "Anna Nagar, Chennai",
-  /* Canonical target clusters (see Key.md). Gated terms only appear once the
-     owner confirms them in config/client-verification.json. */
-  keywords: [
-    "Brihadhee Anna Nagar",
-    "pure veg restaurant Anna Nagar East",
-    "South Indian restaurant Anna Nagar",
-    "veg hotel Anna Nagar",
-    "அண்ணா நகர் சைவ உணவகம்",
-    "customised dosa Anna Nagar",
-    "Paanai Parotta Chennai",
-    "Nellai sodhi meals Chennai",
-    "mini tiffin Anna Nagar",
-    "filter coffee Anna Nagar",
-    ...(verification.offer_catering === true ? ["pure veg catering Chennai"] : []),
-  ],
   ogImage: {
     src: `${BASE_URL}images/og-image.jpg`,
     width: 1200,
@@ -244,4 +235,7 @@ export const whatsappHref = hasWhatsApp
 
 export const emailHref = hasEmail ? `mailto:${site.contact.email}` : "";
 
-export const ogImageUrl = new URL(site.ogImage.src, site.url).href;
+/** Absolute canonical URL for a local asset src (strips the build base path). */
+export const assetUrl = (src) => absoluteUrl(`/${src.startsWith(BASE_URL) ? src.slice(BASE_URL.length) : src.replace(/^\//, "")}`);
+
+export const ogImageUrl = assetUrl(site.ogImage.src);

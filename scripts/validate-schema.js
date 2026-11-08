@@ -26,8 +26,8 @@ const warnings = [];
 const err = (page, msg) => errors.push(`${page}: ${msg}`);
 
 /* ---- Facts the entity must match -------------------------------------- */
-// facts.js is pure ESM, so the validator reads the same source as the site.
-const { FACTS } = await import(pathToFileURL(join(ROOT, "src", "data", "facts.js")).href);
+// entity-truth.ts is importable by Node (type stripping), so the validator reads the same source as the site.
+const { FACTS } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 const SITE = {
   name: FACTS.name.value,
   phone: FACTS.phone.value,
@@ -140,7 +140,10 @@ for (const file of walk(dist)) {
   blocks.forEach((b, i) => {
     try {
       const parsed = JSON.parse(b[1]);
-      nodes.push(...[].concat(parsed));
+      if (parsed && parsed["@graph"]) {
+        if (parsed["@context"] !== "https://schema.org") err(name, "@graph block without @context https://schema.org");
+        nodes.push(...parsed["@graph"].map((n) => ({ "@context": parsed["@context"], ...n })));
+      } else nodes.push(...[].concat(parsed));
     } catch (e) {
       err(name, `JSON-LD block ${i + 1} is not valid JSON: ${e.message}`);
     }
@@ -240,8 +243,8 @@ for (const { name, html, nodes } of pages) {
   if (r?.hasMenu) {
     if (!pages.some((p) => p.name.endsWith("/menu/"))) err(name, "hasMenu is set but no /menu/ page was built");
   }
-  if (r && "priceRange" in r && FACTS.priceRange.status !== "confirmed") err(name, "priceRange emitted while the fact is pending");
-  if (r && "openingHoursSpecification" in r && FACTS.hours.status !== "confirmed") err(name, "openingHoursSpecification emitted while hours are pending");
+  if (r && "priceRange" in r && FACTS.priceRange.status !== "verified") err(name, "priceRange emitted while the fact is pending");
+  if (r && "openingHoursSpecification" in r && FACTS.hours.status !== "verified") err(name, "openingHoursSpecification emitted while hours are pending");
 
   /* Service (catering) */
   for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {

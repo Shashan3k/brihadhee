@@ -1,0 +1,28 @@
+name: Build and check
+
+# The live site is served by Vercel at https://www.brihadhee.com.
+# This workflow used to publish a second copy to GitHub Pages
+# (shashan3k.github.io/brihadhee), which competed with the custom domain.
+# It now only builds and runs the fact, SEO and link checks.
+# After this lands, also turn Pages off: repo Settings > Pages > Source: None.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build

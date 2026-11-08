@@ -1,0 +1,487 @@
+/**
+ * Canonical menu: the single source for every dish name, description and price
+ * shown on the site, in JSON-LD, in llms files and in the verify scripts.
+ *
+ * Price source of truth: the menu PDF "final menu 13-07-2026.pdf" (owner decision
+ * 2026-11-06). Exceptions confirmed by the owner although not in the PDF:
+ * Mini Tiffin (₹80) and the Kothu Parotta & Lemon Kothu Idiyappam Combo (₹239).
+ * Items in the PDF that are not transcribed here yet (Indo-Chinese, Veg 65, Poori,
+ * Sodhi Idly, Podi Idli, signature drinks) are omitted until checked by hand.
+ */
+
+export type Diet = "veg";
+export interface MenuItem {
+  name: string;
+  description: string;
+  price: number; // INR, verified
+  diet: Diet;
+  tags: string[];
+}
+export interface MenuCategory {
+  id: string;
+  name: string;
+  blurb: string;
+  items: MenuItem[];
+}
+export interface UnpricedSignature {
+  name: string;
+  note: string;
+  source: string;
+}
+
+export const MENU_SOURCE = "final menu 13-07-2026.pdf (owner-confirmed price source, 2026-11-06)";
+export const CURRENCY = "₹";
+
+export const MENU: MenuCategory[] = [
+  {
+    "id": "starters",
+    "name": "Starters",
+    "blurb": "Small plates and South Indian favourites.",
+    "items": [
+      {
+        "name": "Gun Powder Idly",
+        "description": "Crispy mini idlis coated in milagai podi.",
+        "price": 245,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Poricha Salna Idly",
+        "description": "Idly fried with 65 mix and tossed in salna.",
+        "price": 255,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Karaikudi Paneer Poppers",
+        "description": "Fresh paneer seasoned with heritage gunpowder and house-made 65 spices, fried crisp.",
+        "price": 290,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      },
+      {
+        "name": "Madras Bhel Parotta",
+        "description": "Parotta pieces with Madras-style mixture and salna.",
+        "price": 245,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "combos",
+    "name": "Tiffin Combos",
+    "blurb": "Value tiffin and kothu combos.",
+    "items": [
+      {
+        "name": "Mini Tiffin",
+        "description": "Pongal, kesari, 2 idlis, masala dosa, vada, sambar and chutneys.",
+        "price": 80,
+        "diet": "veg",
+        "tags": [
+          "Value"
+        ]
+      },
+      {
+        "name": "Kothu Parotta & Lemon Kothu Idiyappam Combo",
+        "description": "Kothu parotta with lemon kothu idiyappam.",
+        "price": 239,
+        "diet": "veg",
+        "tags": [
+          "Combo"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "lunch",
+    "name": "Lunch & Meals",
+    "blurb": "Traditional Tamil Nadu meals and comforting rice dishes.",
+    "items": [
+      {
+        "name": "Mini Meals",
+        "description": "A mini South Indian meal.",
+        "price": 140,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Limited TN Meals",
+        "description": "Rice with sambar, rasam, kuzhambu, kootu, poriyal and accompaniments.",
+        "price": 150,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Executive TN Meals (Unlimited)",
+        "description": "Unlimited Tamil Nadu-style meals with rice and traditional accompaniments.",
+        "price": 205,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Nellai Special Sodhi Meals",
+        "description": "Rice, sodhi, sambar, rasam, kuzhambu of the day, mini chapathi, salna, kootu, poriyal, thogayal, buttermilk, pickle, appalam, karuppati ulundhu kali and banana.",
+        "price": 240,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      },
+      {
+        "name": "Sambar Rice",
+        "description": "South Indian rice cooked with sambar and house masalas.",
+        "price": 105,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Variety Rice",
+        "description": "Flavorful rice preparations seasoned with traditional spices.",
+        "price": 105,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Curd Rice",
+        "description": "Rice blended with curd and tempering.",
+        "price": 105,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "dosa",
+    "name": "Dosa Varieties",
+    "blurb": "Classic dosas, crisp roasts and wholesome grain varieties.",
+    "items": [
+      {
+        "name": "Kal Dosa (2 pcs)",
+        "description": "Thick, soft dosas served with chutney and sambar.",
+        "price": 95,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Plain Dosa",
+        "description": "Classic South Indian dosa, crisp and golden.",
+        "price": 100,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ghee Roast",
+        "description": "Thin, crispy dosa roasted with ghee.",
+        "price": 150,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ghee Podi Dosa",
+        "description": "Crispy dosa coated with spicy podi and ghee.",
+        "price": 160,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Rava Dosa",
+        "description": "Crisp semolina dosa with spices.",
+        "price": 125,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ghee Masala Dosa",
+        "description": "Dosa filled with potato masala and finished with ghee.",
+        "price": 170,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ragi Dosa",
+        "description": "Finger millet dosa.",
+        "price": 140,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Navadhaniya Dosa",
+        "description": "Nine-grain dosa.",
+        "price": 145,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Madurai Malli Dosa",
+        "description": "Dosa topped with fresh coriander paste.",
+        "price": 160,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Pesarattu Dosa",
+        "description": "Southern-style green gram dosa.",
+        "price": 135,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Onion Podi Uthappam",
+        "description": "Uthappam layered with onions and podi masala.",
+        "price": 170,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "idly",
+    "name": "Idly & Idiyappam",
+    "blurb": "Steamed favourites, served with traditional accompaniments.",
+    "items": [
+      {
+        "name": "Idly (2 pcs)",
+        "description": "Soft steamed rice cakes served with chutney and sambar.",
+        "price": 50,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Idly Upma",
+        "description": "Upma made from soft, crumbled idlis.",
+        "price": 175,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ghee Sambar Idly (2 pcs)",
+        "description": "Idlis soaked in hot sambar and drizzled with ghee.",
+        "price": 130,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Ghee Mini Sambar Idly (14 pcs)",
+        "description": "Bite-sized idlis dipped in sambar and ghee.",
+        "price": 100,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Tomato Kothu Idly",
+        "description": "Idly scrambled with tangy tomato thokku.",
+        "price": 110,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Tawa Thokku Podi Idly",
+        "description": "Pan-fried idlis with onion-tomato thokku, podi and ghee.",
+        "price": 150,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Idiyappam with Coconut Milk",
+        "description": "Soft string hoppers served with sweet coconut milk.",
+        "price": 90,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Lemon Kothu Idiyappam",
+        "description": "Idiyappam tossed with lemon and curry leaves.",
+        "price": 160,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Tomato Kothu Idiyappam",
+        "description": "Idiyappam scrambled with tangy tomato masala.",
+        "price": 170,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Idiyappam Sodhi",
+        "description": "Soft string hoppers dipped in traditional coconut milk stew.",
+        "price": 180,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "parotta",
+    "name": "Parotta & Chapathi",
+    "blurb": "Flaky parotta and comforting South Indian salna.",
+    "items": [
+      {
+        "name": "Chapathi Salna (2 pcs)",
+        "description": "Soft chapathis served with vegetable salna.",
+        "price": 100,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Parotta Salna (2 pcs)",
+        "description": "Flaky parottas served with salna and thokku.",
+        "price": 120,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Special Kothu Parotta",
+        "description": "Shredded parotta tossed with paneer, mushroom and special masala.",
+        "price": 190,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      },
+      {
+        "name": "Paanai Parotta",
+        "description": "Parotta with paneer and mushroom cooked dum-style with salna.",
+        "price": 260,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      },
+      {
+        "name": "Madurai Salna Parotta",
+        "description": "Parottas served with spicy Madurai-style salna.",
+        "price": 200,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Chilli Parotta",
+        "description": "Shredded parotta tossed with onions, capsicum and sauces.",
+        "price": 220,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Special Kothu Chapathi",
+        "description": "Shredded chapathi tossed with paneer, mushroom and special masala.",
+        "price": 190,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "gravies",
+    "name": "Indian Gravies",
+    "blurb": "Rich vegetarian gravies with regional flavours.",
+    "items": [
+      {
+        "name": "Aloo Gobi Masala",
+        "description": "Potato and cauliflower in spiced onion-tomato masala.",
+        "price": 295,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Nilgiris Dum Aloo",
+        "description": "Potatoes cooked in Nilgiris-style green masala.",
+        "price": 295,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Paneer Butter Masala",
+        "description": "Paneer simmered in rich tomato gravy.",
+        "price": 315,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kaalan Chukka Gravy",
+        "description": "Mushroom cooked in Chettinad chukka masala.",
+        "price": 315,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Chettinadu Paneer Gravy",
+        "description": "Paneer in spicy Chettinad-style gravy.",
+        "price": 315,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "beverages",
+    "name": "Beverages",
+    "blurb": "Traditional hot drinks and filter coffee.",
+    "items": [
+      {
+        "name": "Filter Coffee",
+        "description": "South Indian coffee brewed with a traditional filter.",
+        "price": 40,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      },
+      {
+        "name": "Tea (Plain / Ginger / Elaichi)",
+        "description": "Tea brewed with milk and a touch of sweetness.",
+        "price": 40,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Lemon Tea",
+        "description": "Black tea with lemon, served hot.",
+        "price": 35,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Plain Milk",
+        "description": "Milk served hot or cold.",
+        "price": 40,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Black Coffee",
+        "description": "Strong coffee brewed without milk.",
+        "price": 35,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "sweets",
+    "name": "Traditional Sweets",
+    "blurb": "Regional Tamil sweets.",
+    "items": [
+      {
+        "name": "Karuppati Ulundhu Kali",
+        "description": "Black urad dal cooked with palm jaggery (karuppatti), a Tirunelveli-style sweet.",
+        "price": 250,
+        "diet": "veg",
+        "tags": [
+          "Signature"
+        ]
+      }
+    ]
+  }
+];
+
+/** Signature items whose price is not verified: shown by name only, never with a price. */
+export const UNPRICED_SIGNATURES: UnpricedSignature[] = [
+  { name: "Customised Dosa", note: "dosa made to your choice at the table", source: "owner brief 2026-11-05" },
+  { name: "Summer in Tenkasi", note: "Brihadhee signature drink", source: "menu PDF (price not transcribed)" },
+  { name: "Butter Biscuit Smoothie", note: "Brihadhee signature drink", source: "menu PDF (price not transcribed)" },
+  { name: "Outdoor filter coffee and tea counter", note: "dedicated counter at the restaurant", source: "owner brief 2026-11-05" },
+];

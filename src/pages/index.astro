@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getFact } from "../data/entity-truth.ts";
 import Nav from "../components/Nav.astro";
 import Hero from "../components/Hero.astro";
 import Services from "../components/Services.astro";
@@ -17,7 +18,7 @@ import CallBar from "../components/CallBar.astro";
 import KolamDivider from "../components/KolamDivider.astro";
 ---
 
-<Base>
+<Base ogDescription={`Dosas made your way, claypot Paanai Parotta, Nellai sodhi meals and filter coffee. Pure veg, open daily ${getFact("hours").short}, 3rd Avenue, Anna Nagar East.`}>
   <Nav />
   <main id="main">
     <Hero />

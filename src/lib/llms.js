@@ -1,14 +1,15 @@
 /**
  * Builds /llms.txt (summary) and /llms-full.txt (everything in one hop) from
- * the same sources the pages use: facts.js (confirmed facts only), menu.json
+ * the same sources the pages use: entity-truth.ts (verified facts only), menu-canonical.ts
  * (computed prices), the page Q&A arrays and the gated catering data.
  * Pending facts (Google rating, WhatsApp number, late-night offer) never appear.
  */
 import { site } from "../data/site.js";
-import { getFact, factOr, FACTS, addressLine, landmarkSentence } from "../data/facts.js";
+import { getFact, factOr, FACTS, addressLine, landmarkSentence } from "../data/entity-truth.ts";
 import { faqItems } from "../data/faq.js";
 import { dosaPage, nellaiPage } from "../data/pages.js";
 import { categories, priceRange, itemCount, allVegetarian, rupees } from "./menu-facts.js";
+import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
   cateringEnabled,
   CATERING_PATH,
@@ -38,7 +39,7 @@ export function buildLlms({ full = false } = {}) {
 
   push(`# ${name}${full ? " (full reference)" : ""}`, "");
   push(
-    `> ${name} (${getFact("nameTamil")}), also known as ${getFact("alternateNames").join(" and ")}, is a ${getFact("typeLong")} on 3rd Avenue, W-Block, Anna Nagar East, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}. Open daily 6:30 AM to 11:00 PM.`,
+    `> ${name} (${getFact("nameTamil")}), also known as ${getFact("alternateNames").join(" and ")}, is a ${getFact("typeLong")} on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}. ${getFact("hours").summary}.`,
     ""
   );
 
@@ -61,11 +62,14 @@ export function buildLlms({ full = false } = {}) {
   if (founders) push(`- Founders: ${founders.story}`);
   if (sub) push(`- Sub-brand: ${sub.name} (${sub.description})`);
   push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`);
+  push(`- Not to be confused with: Brihadeeswarar Temple, Thanjavur (a temple, not connected to this restaurant)`);
   push("");
 
   push("## Pages", "");
   push(`- [Home](${u("/")}): restaurant and catering overview, hours, location, FAQ`);
   push(`- [Menu and prices](${u("/menu/")}): every dish with its price`);
+  push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
+  push(`- [About and location](${u("/about/")}): founders, address, timings, map and directions`);
   push(`- [Dosa and parotta](${u(dosaPage.path)}): customised dosas, Paanai Parotta, kothu parotta`);
   push(`- [Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Karupatti Ulundhu Kali, Mini Tiffin`);
   if (cateringEnabled) {
@@ -92,7 +96,7 @@ export function buildLlms({ full = false } = {}) {
       for (const i of c.items) push(`- ${i.name}: ${rupees(i.price)}. ${i.description}`);
       push("");
     }
-    const extras = factOr("signatureExtras", []);
+    const extras = UNPRICED_SIGNATURES;
     if (extras.length) {
       push("### Signature specials (price at the restaurant)", "");
       for (const e of extras) push(`- ${e.name}: ${e.note}`);
