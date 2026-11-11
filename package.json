@@ -17,7 +17,9 @@
     "check:links:external": "node scripts/check-links.mjs dist --external",
     "indexnow": "node scripts/indexnow.mjs",
     "validate": "npm run check",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify-seo-aeo-geo.mjs",
+    "verify:lighthouse": "node scripts/verify-seo-aeo-geo.mjs --lighthouse"
   },
   "dependencies": {
     "astro": "^7.4.5"

@@ -1,5 +1,7 @@
 # Google Business Profile (GBP) update guide: Brihadhee
 
+> **Updated 2026-11-11** for the client's direction (lunch and dinner only, 11 AM to 11 PM, no breakfast or tiffin, Build Your Own Dosa, corporate catering) and the new menu (`new menu.pdf`). If any line here disagrees with `src/data/entity-truth.ts` or `src/data/menu-canonical.ts`, those files win.
+
 Prepared 2026-11-08 for the owner and marketing team. Do the steps **in order**. Sign in at business.google.com (or search "Brihadhee" in Google while signed in as the owner and use the edit panel). Write every change, with the date, in `docs/geo/presence-audit.csv`.
 
 **Golden rule:** change a field only when the value is confirmed in `src/data/entity-truth.ts`. A wrong value hurts more than an empty one.
@@ -29,9 +31,9 @@ Agreed values (owner-confirmed, from `entity-truth.ts`). Correct every platform 
 | Name | Brihadhee | Apple Maps: "Brihadhee Pure Veg Restaurant"; Justdial: "Beyond Curry By Brihadhee" only |
 | Address | New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Main Road, Anna Nagar East, Chennai 600040 | Bing (no door number); Swiggy ("Plot No.41, 3Road Avenue"); Apple ("124, Block W"); Justdial ("18th Main Road") |
 | Phone | +91 94442 24999 | **GBP** and Bing show 073587 14113 |
-| Hours | Monday to Sunday, 6:30 AM to 11:00 PM | Zomato, District, Apple: 11 AM–11 PM; Magicpin: 11:30 AM–2 PM; Justdial: till 10:45 PM |
+| Hours | **11:00 AM to 11:00 PM**, lunch and dinner only (open days to be confirmed) | Zomato, District, Apple: 11 AM–11 PM; Magicpin: 11:30 AM–2 PM; Justdial: till 10:45 PM |
 | Veg status | 100% pure vegetarian | **EazyDiner says "veg and non veg"** |
-| Price for two | ₹200–₹400 for tiffin; about ₹800 for a family meal | Swiggy ₹800; Zomato/District/Magicpin ₹200; Justdial ₹450 (these are close enough if the description explains both) |
+| Price for two | Not a marketing angle (client). Listings disagree (Swiggy ₹800; Zomato/District/Magicpin ₹200; Justdial ₹450): leave GBP's price range as Google shows it until the owner gives one figure | |
 | Parking | **Not confirmed** | Swiggy says "Parking available"; EazyDiner says no parking. Owner must decide, then fix both |
 | Cuisines | South Indian, Tirunelveli, Karaikudi, North Indian, Indo-Chinese, pure vegetarian | Fine |
 
@@ -52,11 +54,11 @@ Keep exactly **Brihadhee** (sentence case or capitals, as on the signboard). Do 
 - **Primary: South Indian restaurant** (keep; it is already set and ranking). Do not switch the primary category during the first 90 days; a switch can drop rankings for weeks.
 - **Secondary (add only these, if they appear in Google's dropdown):**
   1. Vegetarian restaurant (confirmed: 100% pure veg)
-  2. Breakfast restaurant (confirmed: opens 6:30 AM, tiffin)
+  2. ~~Breakfast restaurant~~: **do not add**. No breakfast service (client, 2026-11-11)
   3. Family restaurant (confirmed: family-friendly)
   4. Caterer (confirmed: catering 50–1,500 guests)
   5. Indian restaurant
-  6. Dosa restaurant / Tiffin centre, **only if Google offers that exact category**
+  6. Dosa restaurant, **only if Google offers that exact category** (not "Tiffin centre": tiffin positioning is retired)
 - Skip "Chinese restaurant", "North Indian restaurant" and "Chettinad restaurant" for now; they dilute the pure veg South Indian signal. Revisit after day 90.
 - Week 1 task: from a Chennai phone, check the primary categories of the top 5 results for "pure veg restaurant Anna Nagar" and "South Indian restaurant Anna Nagar" and write them in `docs/geo/competitor-benchmark.csv`. If most winners use "Vegetarian restaurant" as primary, discuss a test with the owner after day 90.
 
@@ -93,8 +95,8 @@ Why UTM tags: they let Google Analytics show exactly how many visits come from t
 
 ## F. Hours
 
-- Regular hours: **Monday to Sunday, 6:30 AM to 11:00 PM.**
-- "More hours" (breakfast, lunch, dinner, takeaway): add only if the owner gives exact times (for example, "Breakfast 6:30 AM to 11:30 AM"). Not confirmed yet.
+- Regular hours: **11:00 AM to 11:00 PM** on the days the owner confirms (ask which days it opens).
+- "More hours": lunch and dinner only if the owner gives exact times. Never add breakfast.
 - **Special hours:** before every festival (Karthigai Deepam, Christmas, New Year, Pongal, Tamil New Year, Deepavali), set special hours or confirm "open as usual". Google shows a warning on profiles with uncertain holiday hours.
 - Do not publish the "up to 6 AM late-night" idea: it contradicts the 11 PM close.
 
@@ -102,15 +104,15 @@ Why UTM tags: they let Google Analytics show exactly how many visits come from t
 
 Paste exactly:
 
-> Brihadhee is a 100% pure vegetarian South Indian restaurant on 3rd Avenue, W-Block, Anna Nagar East, Chennai, near Anna Nagar Tower Park. We are known for customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, with Tirunelveli (Nellai) and Karaikudi specialities. Breakfast starts at 6:30 AM with our Mini Tiffin combo for ₹80, and we serve lunch and dinner until 11 PM, every day. Families are welcome. Pre-book a table through Swiggy Dineout, EazyDiner or District. We also cater functions in Chennai for 50 to 1,500 guests, with live dosa, parotta and Nellai sodhi counters. Call +91 94442 24999.
+> Brihadhee is a 100% pure vegetarian South Indian restaurant on 3rd Avenue, W-Block, Anna Nagar East, Chennai, near Anna Nagar Tower Park. We are known for our Build Your Own Dosa (choose a batter, toppings, a stuffing and a garnish), Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, with Tirunelveli (Nellai) and Karaikudi specialities. We serve lunch and dinner from 11 AM to 11 PM. Families are welcome. Pre-book a table through Swiggy Dineout, EazyDiner or District. We also run daily corporate catering for more than 1,000 people, and end-to-end catering for weddings, birthdays and get-togethers in Chennai. Call +91 94442 24999.
 
-Rules kept: no "best", no "No. 1", no "500+", no parking, no links (Google rejects URLs in descriptions), no keyword lists. Re-check monthly: if the Mini Tiffin price changes, update this text the same day.
+Rules kept: no "best", no "No. 1", no "500+", no breakfast or tiffin, no parking, no links (Google rejects URLs in descriptions), no keyword lists. Re-check monthly and whenever the menu changes.
 
 ## H. Services
 
 Add (under "Services" or the restaurant service options Google shows):
 - Dine-in ✔ (confirmed)
-- Breakfast, Lunch, Dinner ✔ (confirmed)
+- Lunch, Dinner ✔ (confirmed). Breakfast ✘ (not served; untick it if Google shows it)
 - Table reservations ✔ (pre-booking via Swiggy Dineout, EazyDiner, District)
 - Catering ✔ (confirmed, 50–1,500 guests, Chennai)
 - Filter coffee ✔ (on the menu)
@@ -124,7 +126,7 @@ Tick only what is true. Re-check every quarter.
 | Attribute | Set to | Status |
 |---|---|---|
 | Dine-in | Yes | Confirmed |
-| Serves breakfast / lunch / dinner | Yes | Confirmed |
+| Serves lunch / dinner | Yes; breakfast No | Confirmed 2026-11-11 |
 | Vegetarian options / Vegetarian | Yes | Confirmed (100% veg) |
 | Good for kids / Family-friendly | Yes | Confirmed |
 | Accepts reservations | Yes | Confirmed (partner pre-booking) |
@@ -140,12 +142,12 @@ Tick only what is true. Re-check every quarter.
 
 ## J. Menu
 
-1. In GBP, open **Menu → Edit menu**. Create 9 sections, same as the website: Starters, Tiffin Combos, Lunch & Meals, Dosa Varieties, Idly & Idiyappam, Parotta & Chapathi, Indian Gravies, Beverages, Traditional Sweets.
+1. In GBP, open **Menu → Edit menu**. Create the same 12 sections as the website menu (`src/data/menu-canonical.ts`, from `new menu.pdf`): Starters, Lunch, Dine-in Combos (lunch only), Dosa Variety, Idly & Mini Idly, Idiyappam, Parotta & Chapathi, Rice, Indian Breads, Indian Gravies, Beverages, Brihadhee Signatures, plus a Build Your Own Dosa section.
 2. Enter every item with its price from `final menu 13-07-2026.pdf` (59 items; the list is in `src/data/menu-canonical.ts` and on www.brihadhee.com/menu/). One plain description line each, for example:
-   - Mini Tiffin, ₹80: pongal, kesari, 2 idlis, masala dosa, vada, sambar and chutneys.
+   - Kothu Parotta & Lemon Kothu Idiyappam Combo, ₹179 (lunch only).
    - Nellai Special Sodhi Meals, ₹240: Tirunelveli-style vegetarian meal with sodhi.
    - Paanai Parotta, ₹260: signature parotta served in a clay pot.
-3. Add a photo to the top 10 items (Mini Tiffin, Nellai Special Sodhi Meals, Paanai Parotta, Ghee Roast, Ghee Podi Dosa, Idiyappam Sodhi, Special Kothu Parotta, Karaikudi Paneer Poppers, Karuppatti Ulundhu Kali, Filter Coffee).
+3. Add a photo to the top 10 items (a Build Your Own Dosa chef's suggestion, Nellai Special Sodhi Meals, Paanai Parotta, Ghee Roast, Ghee Podi Dosa, Idiyappam Sodhi, Special Kothu Parotta, Special Pottalam Parotta, Karaikudi Paneer Poppers, Filter Coffee).
 4. Set the menu link (step E).
 5. When pottalam parotta and the signature drinks (Summer in Tenkasi, Butter Biscuit Smoothie) get confirmed prices, add them on GBP and the website the same day.
 6. Monthly: compare GBP menu, website menu, Swiggy and Zomato menus. Remove discontinued items everywhere.
@@ -158,21 +160,21 @@ Tick only what is true. Re-check every quarter.
 
 ## L. Photos: 30 in the first 30 days, then 2–3 a week
 
-Real photos only. No AI-generated food. No customer faces without permission. Natural light. File names describe the photo (for example `brihadhee-mini-tiffin-plate.jpg`). Location data inside the photo (EXIF) does not help rankings; Google strips it. Upload from the owner account so they show as "By owner".
+Real photos only. No AI-generated food. No customer faces without permission. Natural light. File names describe the photo (for example `brihadhee-build-your-own-dosa.jpg`). Location data inside the photo (EXIF) does not help rankings; Google strips it. Upload from the owner account so they show as "By owner".
 
 | Set | Shots |
 |---|---|
 | Logo and cover | Logo (square, 720×720); cover = best dish spread or the storefront |
 | Exterior (5) | Daytime storefront, evening storefront with lights, signboard close-up, entrance, view from the 3rd Avenue corner |
 | Interior (4) | Family tables, group area, counter, outdoor filter coffee counter |
-| Dishes (15) | Mini Tiffin, Nellai Special Sodhi Meals, Paanai Parotta, Ghee Roast, Ghee Podi Dosa, Madurai Malli Dosa, Navadhaniya Dosa, Idiyappam Sodhi, Ghee Mini Sambar Idly, Special Kothu Parotta, Madurai Salna Parotta, Karaikudi Paneer Poppers, Executive TN Meals, Karuppatti Ulundhu Kali, Filter Coffee |
-| Action (4) | Dosa on the tawa, customised dosa being made, coffee pour, live counter at a function (with host permission) |
+| Dishes (15) | Build Your Own Dosa (chef's suggestion), Nellai Special Sodhi Meals, Paanai Parotta, Ghee Roast, Ghee Podi Dosa, Madurai Malli Dosa, Special Pottalam Parotta, Idiyappam Sodhi, Ghee Mini Sambar Idly, Special Kothu Parotta, Madurai Salna Parotta, Karaikudi Paneer Poppers, Executive TN Meals, Karuppatti Ulundhu Kali, Filter Coffee |
+| Action (4) | Dosa on the tawa, Build Your Own Dosa being made, coffee pour, live counter at a function (with host permission) |
 | People (2) | Staff at work (with permission), founders (optional) |
 | Menu (1) | Current menu card |
 
 ## M. Videos (10 short clips, 15–30 seconds)
 
-1. A dosa being made on the tawa. 2. A customised dosa from choice to plate. 3. Mini Tiffin being plated. 4. Nellai Sodhi meal being served. 5. Filter coffee pouring. 6. Walking in from the street to the table. 7. Morning breakfast rush at 6:30–8 AM. 8. A family table (with permission). 9. Takeaway packing (only if takeaway is confirmed). 10. Behind the scenes in the kitchen (if the owner agrees).
+1. A dosa being made on the tawa. 2. Build Your Own Dosa from choice to plate. 3. A Dine-in Combo at lunch. 4. Nellai Sodhi meal being served. 5. Filter coffee pouring. 6. Walking in from the street to the table. 7. The lunch rush. 8. A family table (with permission). 9. Takeaway packing (only if takeaway is confirmed). 10. Behind the scenes in the kitchen (if the owner agrees).
 
 ## N. Google Posts: 1–2 a week (4–6 a month)
 
@@ -180,13 +182,13 @@ Each post: one real photo, 100–200 words, "Anna Nagar East" once, one button. 
 
 | Week | Post | Button |
 |---|---|---|
-| 1 | Breakfast from 6:30 AM: the ₹80 Mini Tiffin (what's on the plate) | Call |
+| 1 | Build Your Own Dosa: pick a batter (from ₹120), toppings, a stuffing and a garnish | Call |
 | 2 | Pre-book Monday to Thursday and save up to 40% (Offer post with start and end dates) | Book |
 | 3 | Nellai Special Sodhi Meals: what a Tirunelveli meal is | Learn more → /menu/ |
 | 4 | Live dosa and parotta counters for home functions, 50 to 1,500 guests | Call |
 
 Example post (week 1):
-> Breakfast at Brihadhee starts at 6:30 AM every day. Our Mini Tiffin plate is ₹80: pongal, kesari, 2 idlis, a masala dosa, vada, sambar and chutneys. Everything is 100% pure vegetarian. Find us on 3rd Avenue, W-Block, Anna Nagar East, near Anna Nagar Tower Park. Call +91 94442 24999.
+> Build your own dosa at Brihadhee: pick one of 5 batters, from Golden Hour (classic rice, ₹120) to Pink Sea (beetroot and navadhaniyam, ₹145), then add toppings, a stuffing and a garnish. Or order a chef's suggestion such as Mylapore Maama (₹180). Everything is 100% pure vegetarian. Find us on 3rd Avenue, W-Block, Anna Nagar East, near Anna Nagar Tower Park, 11 AM to 11 PM. Call +91 94442 24999.
 
 Do not post reviews or testimonials. Do not post offers you cannot honour. Offer posts need real dates.
 
@@ -196,22 +198,22 @@ Google has been reducing the Q&A section on Maps in favour of AI answers drawn f
 
 | # | Question | Answer |
 |---|---|---|
-| 1 | Is Brihadhee pure vegetarian? | Yes. Brihadhee is a 100% pure vegetarian restaurant. No meat, egg or fish is cooked or served. Our menu covers South Indian tiffin, dosas, Tamil Nadu meals, parotta, North Indian gravies and filter coffee, with Tirunelveli (Nellai) and Karaikudi specialities. |
-| 2 | What are your timings? | We are open every day, Monday to Sunday, from 6:30 AM to 11:00 PM, serving breakfast, lunch and dinner. Breakfast starts at 6:30 AM with our ₹80 Mini Tiffin. Please check this profile for special hours on festival days. |
+| 1 | Is Brihadhee pure vegetarian? | Yes. Brihadhee is a 100% pure vegetarian restaurant. No meat, egg or fish is cooked or served. Our menu covers dosas, Build Your Own Dosa, Tamil Nadu meals, parotta, North Indian gravies and filter coffee, with Tirunelveli (Nellai) and Karaikudi specialities. |
+| 2 | What are your timings? | We are open from 11 AM to 11 PM and serve lunch and dinner. We do not serve breakfast. Please check this profile for special hours on festival days. |
 | 3 | Where exactly are you? | New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Main Road, Anna Nagar East, Chennai 600040. We are near Anna Nagar Tower Park and the 3rd Avenue and 9th Street junction. Tap Directions on this profile for the route. |
-| 4 | What is the Mini Tiffin? | Our Mini Tiffin is an ₹80 breakfast plate with pongal, kesari, 2 idlis, a masala dosa, vada, sambar and chutneys. It is a good way to try several South Indian tiffin items in one plate. Prices can change, so check our menu page. |
-| 5 | Do you make customised dosas? | Yes. You can ask for your dosa to be customised. Our menu also lists 11 dosas, from Kal Dosa (₹95) to Ghee Masala Dosa (₹170), including Navadhaniya, Ragi, Pesarattu and Madurai Malli dosa. |
+| 4 | Do you serve breakfast? | No. Brihadhee serves lunch and dinner only, from 11 AM to 11 PM. |
+| 5 | Can I build my own dosa? | Yes. Pick one of 5 batters (₹120 to ₹145), then add toppings, a stuffing and a garnish, or order one of 10 chef's suggestions (₹180 to ₹260). Our menu also lists 8 classic dosas, from Kal Dosa (₹100) to Ghee Masala Dosa (₹175). |
 | 6 | What is Nellai Sodhi meals? | Nellai Special Sodhi Meals (₹240) is our Tirunelveli-style vegetarian meal served with sodhi, a mild coconut-milk stew from the Nellai region. We also serve Idiyappam Sodhi (₹180) for a lighter plate. |
 | 7 | Can I book a table? | Yes. Pre-book on Swiggy Dineout, EazyDiner or District and get up to 40% off from Monday to Thursday. Walk-in guests get 10% off on dine-in. For a large group, please call +91 94442 24999. |
 | 8 | Do you have offers? | Walk-in dine-in guests get 10% off. Pre-booking through Swiggy Dineout, EazyDiner or District gives up to 40% off from Monday to Thursday. Offers can change, so please check before you visit. |
-| 9 | How much does it cost for two? | Tiffin for two costs about ₹200 to ₹400. A full family meal costs about ₹800. Menu prices range from ₹35 for lemon tea to ₹315 for our paneer gravies. |
+| 9 | What do dishes cost? | Menu prices run from ₹35 (lemon tea, black coffee) to ₹315 (paneer gravies), before 5% GST. Lunch meals are ₹150 to ₹240. |
 | 10 | Is it good for families? | Yes. Brihadhee is family-friendly, 100% pure vegetarian and serves no alcohol. Families often order the Executive TN Meals, dosas and the Ghee Mini Sambar Idly (14 pieces) for children. |
 | 11 | Do you serve filter coffee? | Yes. Filter coffee is ₹40. We also serve tea (plain, ginger or elaichi), lemon tea, black coffee and plain milk. |
-| 12 | What are your specialities? | We are known for customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, along with Karaikudi Paneer Poppers and Karuppatti Ulundhu Kali, a traditional palm-jaggery sweet. |
+| 12 | What are your specialities? | We are known for Build Your Own Dosa, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, along with Karaikudi Paneer Poppers and Karuppatti Ulundhu Kali, a traditional palm-jaggery sweet. |
 | 13 | What is Paanai Parotta? | Paanai Parotta (₹260) is our signature parotta dish served in a clay pot (paanai). (Chef to confirm the exact description before posting.) |
 | 14 | Do you serve alcohol? | No. Brihadhee does not serve alcohol. |
 | 15 | Do you do catering? | Yes. We cater pure vegetarian functions across Chennai for 50 to 1,500 guests, including baby showers, housewarmings, ear-piercing ceremonies, engagements, weddings and birthdays. Pricing is per plate, quoted for each menu. Call +91 94442 24999. |
-| 16 | What live counters do you offer for events? | Customised Dosa, Paanai Parotta, Nellai Sodhi and Karaikudi Paneer Poppers live counters. Event planners can book them as white-label or co-branded counters. |
+| 16 | What live counters do you offer for events? | Build Your Own Dosa, Paanai Parotta, Nellai Sodhi and Karaikudi Paneer Poppers live counters. Event planners can book them as white-label or co-branded counters. |
 | 17 | What do you serve for lunch? | Mini Meals (₹140), Limited TN Meals (₹150), Executive TN Meals Unlimited (₹205), Nellai Special Sodhi Meals (₹240), and sambar, variety and curd rice (₹105 each). |
 | 18 | Who runs Brihadhee? | Brihadhee was founded by Rakesh and Eashwer, an auditor and a lawyer by profession, out of a shared passion for authentic regional Tamil vegetarian food. |
 | 19 | What is Beyond Curry by Brihadhee? | Beyond Curry by Brihadhee is our North Indian meal-box brand. (Owner to add how to order before posting.) |
@@ -280,8 +282,8 @@ Google ended Business Messages (chat) on GBP in 2024, so there is no chat to swi
 1. Confirm the phone number to show (+91 94442 24999, and whether 73587 14113 still works).
 2. Add the website with the UTM link.
 3. Fix the address and check the pin at the entrance.
-4. Set hours Monday to Sunday, 6:30 AM to 11 PM, and holiday hours for the next festival.
-5. Add secondary categories (Vegetarian restaurant, Breakfast restaurant, Family restaurant, Caterer, Indian restaurant).
+4. Set hours 11 AM to 11 PM on the days the owner confirms, and holiday hours for the next festival.
+5. Add secondary categories (Vegetarian restaurant, Family restaurant, Caterer, Indian restaurant). Not Breakfast restaurant.
 6. Paste the description from step G.
 7. Tick the confirmed attributes; leave parking, delivery and accessibility off until confirmed.
 8. Build the 59-item menu with prices.

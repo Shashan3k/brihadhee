@@ -4,7 +4,7 @@ name: Build and check
 # This workflow used to publish a second copy to GitHub Pages
 # (shashan3k.github.io/brihadhee), which competed with the custom domain.
 # It now only builds and runs the fact, SEO and link checks.
-# After this lands, also turn Pages off: repo Settings > Pages > Source: None.
+# GitHub Pages was turned off on 2026-11-11.
 
 on:
   push:
@@ -26,3 +26,6 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      # End-to-end SEO / AEO / GEO gate: raw HTML, entity and menu accuracy, schema,
+      # links, and a preview-server status check (Lighthouse runs locally only).
+      - run: npm run verify

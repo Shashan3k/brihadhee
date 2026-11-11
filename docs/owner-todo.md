@@ -4,7 +4,7 @@ Updated 2026-11-08. When you confirm an item, send it in writing (WhatsApp or em
 
 ## A. Already confirmed (no action, shown for reference)
 
-Name Brihadhee · Tamil name பிரிஹதீ · 100% pure vegetarian · New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Ward 100, Main Road, Anna Nagar East, Chennai 600040 · phone +91 94442 24999 · open Monday to Sunday 6:30 AM to 11:00 PM · ₹200–₹400 for two (tiffin), about ₹800 family meal · menu prices from `final menu 13-07-2026.pdf` · Mini Tiffin ₹80, budget tiffin from ₹24, Kothu combo ₹239 · offers: 10% walk-in, up to 40% pre-booking Mon–Thu · pre-booking on Swiggy Dineout, EazyDiner, District · catering 50–1,500 guests, Chennai, live counters, per-plate pricing · founders Rakesh and Eashwer · Beyond Curry by Brihadhee (North Indian meal boxes) · no alcohol · family-friendly · EazyDiner page URL and Instagram @brihadhee (from your brief, 2026-11-08) · locality: "Anna Nagar East" in the address, schema and GBP; "Anna Nagar" in body copy.
+Name Brihadhee · Tamil name பிரிஹதீ · 100% pure vegetarian · New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Ward 100, Main Road, Anna Nagar East, Chennai 600040 · phone +91 94442 24999 · open 11 AM to 11 PM, lunch and dinner only (updated 2026-11-11; which days it opens is still to confirm) · menu and prices from `new menu.pdf` (2026-11-11), including Build Your Own Dosa (5 batters, toppings, stuffings, garnishes, 10 chef's suggestions) · corporate catering for 1,000+ people a day and end-to-end event catering (2026-11-11) · breakfast, tiffin and the Mini Tiffin are retired · offers: 10% walk-in, up to 40% pre-booking Mon–Thu · pre-booking on Swiggy Dineout, EazyDiner, District · catering 50–1,500 guests, Chennai, live counters, per-plate pricing · founders Rakesh and Eashwer · Beyond Curry by Brihadhee (North Indian meal boxes) · no alcohol · family-friendly · EazyDiner page URL and Instagram @brihadhee (from your brief, 2026-11-08) · locality: "Anna Nagar East" in the address, schema and GBP; "Anna Nagar" in body copy.
 
 ## B. Facts we need from you (priority order)
 
@@ -13,9 +13,9 @@ Name Brihadhee · Tamil name பிரிஹதீ · 100% pure vegetarian · Ne
 | 1 | **Which phone should Google show?** Your Google profile shows 073587 14113; the site and most listings use 94442 24999. Is 73587 14113 still answered? | Wrong phone on Google = lost calls | GBP, Bing, website |
 | 2 | **WhatsApp number** for enquiries (if any), and who will reply within a working day | Turns on WhatsApp buttons and the enquiry form's WhatsApp option | Website, GBP social link |
 | 3 | **Parking:** is there parking? Where, how many cars/bikes, free or paid? | Swiggy says "Parking available", EazyDiner says no. We must fix one | Website FAQ, GBP attribute, listings |
-| 4 | **"500+ dosa varieties":** how is it counted? Please send the list of batters, fillings, podis and toppings for the customised dosa | Biggest marketing claim; can't use it without proof | Dosa page, positioning, GBP |
-| 5 | **Customised dosa:** what can a guest choose (exact options)? | Needed for the customised dosa page and FAQ | Dosa page |
-| 6 | **Pottalam parotta:** is it on the menu? Price and description? 68 Google reviews mention it, but it is not in the menu PDF | Proven demand, missing page | Menu, dish page, GBP menu |
+| 4 | ~~"500+ dosa varieties"~~ **Answered 2026-11-11:** replaced by Build Your Own Dosa; the claim is not used | | |
+| 5 | ~~Customised dosa options~~ **Answered 2026-11-11:** the Build Your Own Dosa options are on page 1 of `new menu.pdf` and on the site | | |
+| 6 | ~~Pottalam parotta~~ **Answered 2026-11-11:** Special Pottalam Parotta, ₹230, is on the new menu. Please send a one-line description | | Menu, dish page |
 | 7 | **Swiggy and Zomato delivery store links** (if you deliver), and which "Order online" partner the Google button should open | Order page and delivery FAQ | /order/, GBP |
 | 8 | **Swiggy Dineout and District booking page links** (we have EazyDiner only) | More booking buttons | /book-a-table/ |
 | 9 | **Takeaway:** available? Any packing charge? | GBP service option | GBP, website |

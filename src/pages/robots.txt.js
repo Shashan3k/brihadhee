@@ -8,9 +8,8 @@ import { site } from "../data/site.js";
  * own: it is crawlable whenever it exists (it is only built when
  * offer_catering is true).
  *
- * NOTE: crawlers read robots.txt only from the host root. While the site lives
- * at shashan3k.github.io/brihadhee/, this file is not at the root and will not
- * be honoured. It takes effect on a custom domain or a user/organisation site.
+ * Served at the host root of https://www.brihadhee.com (Vercel), so crawlers
+ * honour it. GitHub Pages was turned off on 2026-11-11.
  */
 const AI_AGENTS = [
   "Googlebot", // Google Search, AI Overviews and AI Mode
