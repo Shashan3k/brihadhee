@@ -44,6 +44,7 @@ See `.env.example`. All are optional; the site works without them.
 | Variable | What it does |
 |---|---|
 | `PUBLIC_GA4_ID` | Google Analytics 4 measurement ID (`G-XXXXXXX`). Unset = no analytics and the privacy page says so |
+| `PUBLIC_META_PIXEL_ID` | Meta Pixel ID (digits only) for Instagram/Facebook ads. Sends PageView plus Contact (call, WhatsApp), FindLocation, Schedule and Lead (enquiry form). Unset = no Meta tracking and the privacy page says so |
 | `INDEXNOW_KEY` | IndexNow key (8–128 letters, numbers or dashes). Builds `/<key>.txt` and lets `npm run indexnow` ping Bing/Yandex |
 
 ### Confirming a new fact

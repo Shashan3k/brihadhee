@@ -364,13 +364,39 @@ if (enquiryForm) {
   });
 }
 
-/* ---------------- Analytics (GA4, only when PUBLIC_GA4_ID is set) ----------------
+/* ---------------- Analytics (GA4 and Meta Pixel, each only when its ID is set) ----------------
  * One delegated listener. An explicit data-event="name" wins; otherwise the
  * event is inferred from the link: tel: -> call_click, wa.me -> whatsapp_click,
  * Google Maps -> directions_click, booking partners -> book_click, delivery
  * apps -> order_click. Forms with data-event fire that event on submit.
  * Menu tabs carry data-event="menu_filter_use". No personal data is sent.
+ *
+ * The same names map to Meta standard events (META_EVENTS) so ads can optimise
+ * for them. Events without a mapping (menu_filter_use) are not sent to Meta.
  */
+const META_EVENTS = {
+  call_click: ["Contact", { content_name: "call" }],
+  whatsapp_click: ["Contact", { content_name: "whatsapp" }],
+  directions_click: ["FindLocation", {}],
+  book_click: ["Schedule", {}],
+  order_click: ["Contact", { content_name: "order" }],
+  enquiry_submit: ["Lead", { content_name: "website enquiry form" }],
+};
+function trackMeta(name) {
+  const mapped = META_EVENTS[name];
+  if (mapped && typeof window.fbq === "function") window.fbq("track", mapped[0], mapped[1]);
+}
+if (typeof window.fbq === "function") {
+  document.addEventListener("click", (e) => {
+    const el = e.target instanceof Element ? e.target.closest("a[href], [data-event]") : null;
+    if (!el || el.tagName === "FORM") return;
+    trackMeta(inferEvent(el));
+  });
+  // Fires only after the browser's own validation passes (the form uses reportValidity on submit).
+  enquiryForm?.addEventListener("submit", () => {
+    if (enquiryForm.checkValidity()) trackMeta(enquiryForm.dataset.event || "");
+  });
+}
 function inferEvent(el) {
   if (el.dataset.event) return el.dataset.event;
   const href = el.getAttribute("href") || "";

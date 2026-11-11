@@ -18,6 +18,10 @@ const {
 const ga4Id = (import.meta.env.PUBLIC_GA4_ID ?? "").trim();
 const hasGa4 = /^G-[A-Z0-9]+$/.test(ga4Id);
 
+// Meta Pixel loads only when PUBLIC_META_PIXEL_ID is set (Vercel env var). Unset = no Meta tracking at all.
+const metaPixelId = (import.meta.env.PUBLIC_META_PIXEL_ID ?? "").trim();
+const hasMetaPixel = /^\d{10,20}$/.test(metaPixelId);
+
 const canonical = `${site.url}${path}`;
 
 // One JSON-LD @graph per page: a single @context, nodes linked by stable @ids.
@@ -98,6 +102,22 @@ const base = import.meta.env.BASE_URL.endsWith("/")
             };
             window.gtag("js", new Date());
             window.gtag("config", ga4Id);
+          </script>
+        </>
+      )
+    }
+
+    {
+      hasMetaPixel && (
+        <>
+          <script is:inline define:vars={{ metaPixelId }}>
+            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+            n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+            n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+            t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+            document,'script','https://connect.facebook.net/en_US/fbevents.js');
+            window.fbq("init", metaPixelId);
+            window.fbq("track", "PageView");
           </script>
         </>
       )
