@@ -22,7 +22,8 @@ import { pathToFileURL } from "node:url";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
-const BASE = process.env.GITHUB_ACTIONS === "true" ? "/brihadhee" : "";
+// GitHub Pages (base "/brihadhee") was turned off on 2026-11-11; every build uses the root.
+const BASE = "";
 const { SITE_ORIGIN } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 const SKIP = new Set(["404.html"]); // not indexable by design
 

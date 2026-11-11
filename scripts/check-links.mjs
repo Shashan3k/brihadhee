@@ -17,7 +17,8 @@ const ROOT = resolve(import.meta.dirname, "..");
 const args = process.argv.slice(2);
 const external = args.includes("--external");
 const dist = resolve(args.find((a) => !a.startsWith("--")) ?? join(ROOT, "dist"));
-const BASE = process.env.GITHUB_ACTIONS === "true" ? "/brihadhee" : "";
+// GitHub Pages (base "/brihadhee") was turned off on 2026-11-11; every build uses the root.
+const BASE = "";
 const { SITE_ORIGIN } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 
 const decode = (s) => s.replace(/&amp;/g, "&").replace(/&#39;/g, "'").replace(/&quot;/g, '"');
