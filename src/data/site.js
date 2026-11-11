@@ -50,7 +50,7 @@ export const site = {
   nameTamil: getFact("nameTamil"),
   tagline: "Regional Tamil vegetarian food, from Nellai sodhi to Paanai Parotta.",
   subTagline:
-    `Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}. Open daily from ${getFact("hours").short.split(" to ")[0]}.`,
+    `Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}.`,
   shortDescription:
     "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for customised dosas, Paanai Parotta and Nellai Special Sodhi Meals.",
   // Entity sentence reused on the page body.
@@ -97,13 +97,11 @@ export const site = {
   /* ---- Good for / amenities ------------------------------------------- */
   /* Only confirmed details are listed. Add more entries once confirmed. */
   amenities: [
-    { label: "Dine-in", detail: "Breakfast, lunch and dinner" },
-    { label: "Open daily", detail: getFact("hours").short },
+    { label: "Dine-in", detail: "Lunch and dinner" },
     { label: "Families welcome", detail: "Kids and group outings" },
     { label: "Alcohol", detail: "Not served" },
     { label: "Cuisine", detail: "100% pure vegetarian" },
   ],
-  priceGuide: factOr("priceRange")?.text ?? "",
   priceRange: factOr("priceRange")?.schema ?? "",
 
   /* ---- Social handles (empty hides the link) -------------------------- */
@@ -163,7 +161,7 @@ export const site = {
         caption: "South Indian meals",
       },
       {
-        ...responsive("tiffin", 1200),
+        ...responsive("idiyappam", 1200),
         width: 1200,
         height: 900,
         alt: "Idiyappam served with coconut milk on a banana leaf",

@@ -15,16 +15,17 @@ import Icon from "../components/Icon.astro";
 import { getFact, addressLine, landmarkSentence } from "../data/entity-truth.ts";
 import { aboutFaq } from "../data/faq.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { site, telHref } from "../data/site.js";
+import { site, telHref, hasHours } from "../data/site.js";
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const name = getFact("name");
 const street = getFact("street");
-const hours = getFact("hours");
+const hours = site.hours;
+const phone = getFact("phone");
 const founders = getFact("founders");
 const path = "/about/";
-const title = `About ${name}: Address, Timings & Directions`;
-const description = `${name} is a pure vegetarian restaurant on ${street}, Chennai, near Anna Nagar Tower Park. Open daily ${hours.short}.`;
+const title = `About ${name}: Address & Directions, Anna Nagar East`;
+const description = `${name}, pure veg restaurant on ${street}, near Anna Nagar Tower Park: address, map, directions and phone (${phone}).`;
 const fmt = (t) => {
   const [h, m] = t.split(":").map(Number);
   return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
@@ -43,8 +44,8 @@ const schema = pageGraph({
   <main id="main">
     <PageHeader
       eyebrow="About · Anna Nagar East"
-      h1={`About ${name}: location, timings and directions`}
-      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near Anna Nagar Tower Park. It is open every day from ${hours.short}.`}
+      h1={`About ${name}: location and directions`}
+      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near Anna Nagar Tower Park, serving ${getFact("mealTimes")}.`}
       menuHref={`${base}menu/`}
     />
     <AtAGlance />
@@ -85,18 +86,25 @@ const schema = pageGraph({
     <section class="section" id="hours" aria-labelledby="hours-title">
       <div class="container">
         <h2 class="section__title" id="hours-title">Opening hours</h2>
-        <table class="menu-page__table">
-          <caption class="visually-hidden">{name} opening hours for each day</caption>
-          <tbody>
-            {hours.days.map((d) => (
-              <tr><th scope="row">{d.day}</th><td>{fmt(d.open)} to {fmt(d.close)}</td></tr>
-            ))}
-          </tbody>
-        </table>
+        {hasHours ? (
+          <table class="menu-page__table">
+            <caption class="visually-hidden">{name} opening hours for each day</caption>
+            <tbody>
+              {hours.days.map((d) => (
+                <tr><th scope="row">{d.day}</th><td>{fmt(d.open)} to {fmt(d.close)}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p class="section__lead">
+            {name} serves {getFact("mealTimes")}. Opening hours are being updated, so call <a href={telHref}>{phone}</a> or check
+            the <a href={getFact("mapUrl")} rel="noopener">Google Maps listing</a> before you visit.
+          </p>
+        )}
       </div>
     </section>
 
-    <Faq items={aboutFaq} title="Location and timing questions" lead="" eyebrow="Questions" />
+    <Faq items={aboutFaq} title="Location and visiting questions" lead="" eyebrow="Questions" />
   </main>
   <Footer homeBase={base} />
 </Base>

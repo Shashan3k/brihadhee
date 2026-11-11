@@ -39,7 +39,7 @@ export function buildLlms({ full = false } = {}) {
 
   push(`# ${name}${full ? " (full reference)" : ""}`, "");
   push(
-    `> ${name} (${getFact("nameTamil")}), also known as ${getFact("alternateNames").join(" and ")}, is a ${getFact("typeLong")} on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}. ${getFact("hours").summary}.`,
+    `> ${name} (${getFact("nameTamil")}), also known as ${getFact("alternateNames").join(" and ")}, is a ${getFact("typeLong")} on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}, serving ${getFact("mealTimes")}.`,
     ""
   );
 
@@ -53,9 +53,9 @@ export function buildLlms({ full = false } = {}) {
   push(`- Serves diners from: ${getFact("nearbyAreas").join(", ")}`);
   push(`- Phone: ${getFact("phone")}`);
   push(`- Email: ${getFact("email")}`);
-  push(`- Hours: ${getFact("hours").summary}`);
+  push(`- Hours: being updated; call ${getFact("phone")} for today's hours`);
   push(`- Meal times: ${getFact("mealTimes")}`);
-  push(`- Price range: ${getFact("priceRange").text}`);
+  push(`- Price level: ${getFact("priceRange").schema}; dish prices are listed on the menu page`);
   push(`- Reservations: ${getFact("acceptsReservations").how}`);
   push(`- Alcohol: ${getFact("alcohol")}`);
   push(`- Known for: ${getFact("knownFor").join(", ")}`);
@@ -69,9 +69,9 @@ export function buildLlms({ full = false } = {}) {
   push(`- [Home](${u("/")}): restaurant and catering overview, hours, location, FAQ`);
   push(`- [Menu and prices](${u("/menu/")}): every dish with its price`);
   push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
-  push(`- [About and location](${u("/about/")}): founders, address, timings, map and directions`);
+  push(`- [About and location](${u("/about/")}): founders, address, map and directions`);
   push(`- [Dosa and parotta](${u(dosaPage.path)}): customised dosas, Paanai Parotta, kothu parotta`);
-  push(`- [Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Karupatti Ulundhu Kali, Mini Tiffin`);
+  push(`- [Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Karupatti Ulundhu Kali, pure veg lunch`);
   if (cateringEnabled) {
     push(`- [Catering](${u(CATERING_PATH)}): pure vegetarian event and wedding catering in Chennai`);
     push(`- [Event planner partner](${u(PLANNER_PATH)}): catering partner for event management companies`);

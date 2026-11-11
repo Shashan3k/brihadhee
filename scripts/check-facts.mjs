@@ -11,6 +11,8 @@
  *     and a bare "null" shown as page text.
  *  2. Probes of every UNVERIFIED fact in src/data/entity-truth.ts (for example
  *     "500 varieties", "parking", the old WhatsApp number, "late night").
+ *  2b. RETIRED_TERMS from entity-truth.ts: positioning the client ruled out
+ *     (breakfast, tiffin, Mini Tiffin, "500 varieties", cheap/budget).
  *  3. JSON files: no null or placeholder values, except fields listed in
  *     ALLOWED_NULL (an unpriced dish has price null on purpose).
  *
@@ -28,7 +30,7 @@ if (!existsSync(dist)) {
   console.error(`✖ check:facts: ${dist} not found. Run astro build first.`);
   process.exit(1);
 }
-const { pendingFacts } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
+const { pendingFacts, RETIRED_TERMS } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 
 const SCAN = new Set([".html", ".txt", ".xml", ".json", ".webmanifest"]);
 const PLACEHOLDERS = [
@@ -93,6 +95,10 @@ for (const file of files) {
     }
   }
   for (const { re, label } of PLACEHOLDERS) if (re.test(text)) errors.push(`${rel}: ${label}`);
+  for (const { re, why } of RETIRED_TERMS) {
+    const m = text.match(re);
+    if (m) errors.push(`${rel}: retired positioning "${m[0]}" appears (${why}; client direction 2026-11-11)`);
+  }
   for (const f of pending) {
     for (const probe of f.probes) {
       const m = text.match(probe);

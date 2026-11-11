@@ -3,8 +3,9 @@
  * shown on the site, in JSON-LD, in llms files and in the verify scripts.
  *
  * Price source of truth: the menu PDF "final menu 13-07-2026.pdf" (owner decision
- * 2026-11-06). Exceptions confirmed by the owner although not in the PDF:
- * Mini Tiffin (₹80) and the Kothu Parotta & Lemon Kothu Idiyappam Combo (₹239).
+ * 2026-11-06). Exception confirmed by the owner although not in the PDF:
+ * the Kothu Parotta & Lemon Kothu Idiyappam Combo (₹239). The ₹80 morning combo
+ * was removed on 2026-11-11 (client direction W11 to W13: no morning service).
  * Items in the PDF that are not transcribed here yet (Indo-Chinese, Veg 65, Poori,
  * Sodhi Idly, Podi Idli, signature drinks) are omitted until checked by hand.
  */
@@ -72,18 +73,9 @@ export const MENU: MenuCategory[] = [
   },
   {
     "id": "combos",
-    "name": "Tiffin Combos",
-    "blurb": "Value tiffin and kothu combos.",
+    "name": "Combos",
+    "blurb": "Kothu parotta and idiyappam on one plate.",
     "items": [
-      {
-        "name": "Mini Tiffin",
-        "description": "Pongal, kesari, 2 idlis, masala dosa, vada, sambar and chutneys.",
-        "price": 80,
-        "diet": "veg",
-        "tags": [
-          "Value"
-        ]
-      },
       {
         "name": "Kothu Parotta & Lemon Kothu Idiyappam Combo",
         "description": "Kothu parotta with lemon kothu idiyappam.",

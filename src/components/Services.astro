@@ -29,9 +29,9 @@ const cateringOn = verification.offer_catering === true && Boolean(cat);
         <span class="service__index">01 / DINE IN</span>
         <Icon name="utensils" size={24} class="service__icon" />
         <h3>Restaurant</h3>
-        <p>Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and the ₹{getFact("offers").find((o) => o.id === "mini-tiffin")?.price} Mini Tiffin, open daily from {getFact("hours").short.split(" to ")[0]}.</p>
+        <p>Customised dosas, Paanai Parotta and Nellai Special Sodhi Meals, served for {getFact("mealTimes")}.</p>
         <a class="service__link" href={`${base}best-dosa-parotta-anna-nagar/`}>Dosa and parotta <Icon name="arrowRight" size={17} /></a>
-        <a class="service__link" href={`${base}nellai-meals-south-indian-veg-anna-nagar/`}>Nellai meals and tiffin <Icon name="arrowRight" size={17} /></a>
+        <a class="service__link" href={`${base}nellai-meals-south-indian-veg-anna-nagar/`}>Nellai meals and lunch <Icon name="arrowRight" size={17} /></a>
       </article>
 
       <article class="service service--cloud reveal" style="--reveal-delay:70ms">

@@ -27,7 +27,8 @@
     "is_different_from_restaurant": false
   },
   "pricing_model": "per_plate",
-  "restaurant_verified_hours": "Monday to Sunday, 6:30 AM to 11:00 PM",
+  "restaurant_verified_hours": null,
+  "_restaurant_verified_hours_note": "Set to null on 2026-11-11: client direction (W11 to W13) retired the 6:30 AM opening. Fill in once the owner confirms the new hours, and update hours in src/data/entity-truth.ts at the same time.",
   "restaurant_parking_available": null,
   "restaurant_parotta_confirmed": true,
   "_allowed_values": {

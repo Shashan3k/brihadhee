@@ -1,7 +1,7 @@
 ---
 /**
  * Pillar 1 regional-specialty page: Nellai (Tirunelveli) sodhi meals,
- * Karupatti Ulundhu Kali, Karaikudi dishes and the Mini Tiffin.
+ * Karupatti Ulundhu Kali, Karaikudi dishes and the lunch meals (lunch page).
  * Prices come from menu-canonical.ts; offers from entity-truth.ts.
  */
 import Base from "../layouts/Base.astro";
@@ -55,19 +55,20 @@ const schema = pageGraph({
 
     <section class="section section--tint" id="specialties" aria-labelledby="specialties-title">
       <div class="container">
-        <h2 class="section__title" id="specialties-title">Regional specialties and breakfast</h2>
+        <h2 class="section__title" id="specialties-title">Regional specialties and lunch meals</h2>
         <ul class="dish-list dish-list--cols" role="list">
           <li><strong>{m.kali.name}</strong> <span>{rupees(m.kali.price)}</span><br /><small>{m.kali.description}</small></li>
           <li><strong>{m.poppers.name}</strong> <span>{rupees(m.poppers.price)}</span><br /><small>{m.poppers.description}</small></li>
-          <li><strong>Mini Tiffin</strong> <span>{rupees(m.mini.price)}</span><br /><small>{m.mini.description.replace(/ for ₹\d+$/, "")}.</small></li>
+          {m.lunch.items.filter((i) => i.name !== m.sodhiMeals.name).slice(0, 3).map((i) => (
+            <li><strong>{i.name}</strong> <span>{rupees(i.price)}</span><br /><small>{i.description}</small></li>
+          ))}
           <li><strong>{m.combo.name}</strong> <span>{rupees(m.combo.price)}</span><br /><small>{m.combo.description}</small></li>
         </ul>
-        <p class="section__lead">Breakfast is served from {getFact("hours").short.split(" to ")[0]}, and {m.budget.description}.</p>
       </div>
     </section>
 
     <Offers />
-    <Faq items={page.faq} title="Nellai meals and tiffin questions" lead="Direct answers about Tirunelveli and Karaikudi dishes at Brihadhee." eyebrow="Questions" />
+    <Faq items={page.faq} title="Nellai meals and lunch questions" lead="Direct answers about Tirunelveli and Karaikudi dishes at Brihadhee." eyebrow="Questions" />
 
     <section class="section" id="more" aria-labelledby="more-title">
       <div class="container">

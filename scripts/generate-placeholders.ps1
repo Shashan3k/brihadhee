@@ -206,7 +206,7 @@ New-Placeholder -FileName "interior.jpg" -Width 1200 -Height 900 -TopColor "#3A2
 New-Placeholder -FileName "dosa.jpg" -Width 1200 -Height 900 -TopColor "#A8460F" -BottomColor "#E0A128"
 New-Placeholder -FileName "coffee.jpg" -Width 1000 -Height 1000 -TopColor "#4A2A1A" -BottomColor "#B4682F"
 New-Placeholder -FileName "meals.jpg" -Width 1200 -Height 900 -TopColor "#35502F" -BottomColor "#8AA055"
-New-Placeholder -FileName "tiffin.jpg" -Width 1200 -Height 900 -TopColor "#8C390C" -BottomColor "#D0912A"
+New-Placeholder -FileName "idiyappam.jpg" -Width 1200 -Height 900 -TopColor "#8C390C" -BottomColor "#D0912A"
 New-Placeholder -FileName "sweets.jpg" -Width 1200 -Height 900 -TopColor "#7A3411" -BottomColor "#C07A3E"
 New-ShareImage
 

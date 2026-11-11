@@ -63,7 +63,7 @@ const FORMATS = {
   tiffin: {
     label: "Tiffin",
     text: "Tiffin for events, such as idiyappam and dosa.",
-    photo: { file: "tiffin.jpg", alt: "Idiyappam served with coconut milk on a banana leaf, from the Brihadhee kitchen" },
+    photo: { file: "idiyappam.jpg", alt: "Idiyappam served with coconut milk on a banana leaf, from the Brihadhee kitchen" },
   },
   snack_boxes: {
     label: "Snack boxes",

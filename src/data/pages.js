@@ -12,8 +12,6 @@ import { category, findItems, parotta, rupees, priceRange, summarise, allItems }
 const name = getFact("name");
 const STREET = getFact("street");
 const PV = "100% pure vegetarian";
-const hours = getFact("hours");
-const opensAt = hours.short.split(" to ")[0];
 const postal = getFact("address").postalCode;
 const offers = getFact("offers");
 const offer = (id) => {
@@ -37,9 +35,7 @@ const idiyappamSodhi = item("Idiyappam Sodhi");
 const kali = item("Karuppati Ulundhu Kali");
 const poppers = item("Karaikudi Paneer Poppers");
 const kothu = findItems(/kothu parotta/i).filter((i) => i.name !== combo.name)[0];
-const mini = offer("mini-tiffin");
-const budget = offer("budget-tiffin");
-const miniItems = mini.description.replace(/ for ₹\d+$/, "");
+const lunch = category("lunch");
 const sodhiParts = sodhiMeals.description.replace(/\.$/, "");
 
 /* ---- /best-dosa-parotta-anna-nagar ------------------------------------ */
@@ -56,7 +52,7 @@ export const dosaPage = {
     ["Parotta", `${parotta.count} dishes, ${priceRange(parotta)}`],
     ["Combo", `${combo.name}, ${rupees(combo.price)}`],
     ["Location", `${STREET}, Chennai ${postal}`],
-    ["Hours", hours.summary],
+    ["Meals", getFact("mealTimes")],
   ],
   faq: [
     qa(
@@ -67,7 +63,7 @@ export const dosaPage = {
     qa(
       "Where can I get Paanai Parotta in Chennai?",
       `You can get Paanai Parotta (claypot parotta) at ${name}, the ${PV} restaurant on ${STREET}, Chennai, for ${rupees(paanai.price)}. ` +
-        `It is ${lc(paanai.description)}, and the restaurant is open daily from ${hours.short}.`
+        `It is ${lc(paanai.description)}, and it is one of the dishes the restaurant is known for.`
     ),
     qa(
       `What is a customised dosa at ${name}?`,
@@ -93,7 +89,7 @@ export const dosaPage = {
     columns: [`${name}, Anna Nagar East`, "Typical large vegetarian chain", "Typical cafe-style diner"],
     rows: [
       ["Regional signature dishes", `Paanai Parotta, ${sodhiMeals.name}, ${kali.name}`, "Usually one standard menu across outlets", "Usually a short menu of snacks and drinks"],
-      ["Tiffin combo price", `Mini Tiffin ${rupees(mini.price)}: ${lc(miniItems)}`, "Varies by outlet", "Varies"],
+      ["Kothu combo", `${combo.name}, ${rupees(combo.price)}`, "Varies by outlet", "Varies"],
       ["Customised dosa", "Yes", "Varies", "Varies"],
       ["Dine-in discounts", `${offer("walk-in").description}; ${offer("pre-booking").description}`, "Varies by outlet and booking app", "Varies"],
       ["Cafe-style favourites", "Karaikudi Paneer Poppers, Butter Biscuit Smoothie, Summer in Tenkasi, outdoor filter coffee and tea counter", "Varies", "Usually the main focus"],
@@ -105,18 +101,18 @@ export const dosaPage = {
 /* ---- /nellai-meals-south-indian-veg-anna-nagar ------------------------- */
 export const nellaiPage = {
   path: "/nellai-meals-south-indian-veg-anna-nagar/",
-  title: `Nellai Sodhi Meals & Mini Tiffin in Anna Nagar | ${name}`,
-  description: `Nellai Special Sodhi Meals (${rupees(sodhiMeals.price)}), ${kali.name} and the ${rupees(mini.price)} Mini Tiffin at ${name}, pure veg, Anna Nagar East. Open from ${opensAt}.`,
-  h1: "Nellai Sodhi meals and regional South Indian vegetarian food in Anna Nagar",
-  intro: `${name} serves Tirunelveli (Nellai) and Karaikudi dishes at its ${PV} restaurant on ${STREET}: the ${sodhiMeals.name}, a Nellai virundhu-style meal, at ${rupees(sodhiMeals.price)}, ${kali.name} at ${rupees(kali.price)}, and the ${rupees(mini.price)} Mini Tiffin from ${opensAt}.`,
+  title: `Nellai Sodhi Meals & Veg Lunch in Anna Nagar | ${name}`,
+  description: `Nellai Special Sodhi Meals (${rupees(sodhiMeals.price)}), Tamil Nadu meals (${priceRange(lunch)}) and ${kali.name} for lunch at ${name}, pure veg, Anna Nagar East.`,
+  h1: "Nellai sodhi meals and pure veg lunch in Anna Nagar",
+  intro: `${name} serves Tirunelveli (Nellai) and Karaikudi dishes for lunch at its ${PV} restaurant on ${STREET}: the ${sodhiMeals.name}, a Nellai virundhu-style meal, at ${rupees(sodhiMeals.price)}, Tamil Nadu meals from ${rupees(lunch.min)}, and ${kali.name} at ${rupees(kali.price)}.`,
   glance: [
     ["Who", `${name}, a ${PV} restaurant in Anna Nagar East`],
     ["Regional focus", "Tirunelveli (Nellai) and Karaikudi"],
     ["Signature meal", `${sodhiMeals.name}, ${rupees(sodhiMeals.price)}`],
     ["Sweet", `${kali.name}, ${rupees(kali.price)}`],
-    ["Breakfast", `Mini Tiffin ${rupees(mini.price)}; ${budget.description}`],
+    ["Lunch", `${lunch.count} meals and rice dishes, ${priceRange(lunch)}`],
     ["Location", `${STREET}, Chennai ${postal}`],
-    ["Hours", hours.summary],
+    ["Meals", getFact("mealTimes")],
   ],
   sodhi: {
     name: sodhiMeals.name,
@@ -127,7 +123,7 @@ export const nellaiPage = {
     qa(
       "Where can I get Nellai meals in Chennai?",
       `${name} serves the ${sodhiMeals.name} for ${rupees(sodhiMeals.price)} at its ${PV} restaurant on ${STREET}, Chennai. ` +
-        `The Tirunelveli-style meal comes with rice, sodhi, sambar, rasam, kootu, poriyal and ${lc(kali.name)}, and the restaurant opens at ${opensAt}.`
+        `The Tirunelveli-style meal comes with rice, sodhi, sambar, rasam, kootu, poriyal and ${lc(kali.name)}.`
     ),
     qa(
       `What is in the Nellai Special Sodhi Meals at ${name}?`,
@@ -135,9 +131,9 @@ export const nellaiPage = {
         `It is served at the ${PV} restaurant on ${STREET}.`
     ),
     qa(
-      "What is the best budget mini tiffin for breakfast in Anna Nagar East?",
-      `${name}'s Mini Tiffin costs ${rupees(mini.price)} and includes ${lc(miniItems)}, served from ${opensAt} at its ${PV} restaurant on ${STREET}. ` +
-        `Budget tiffin options start from ${rupees(budget.price)}.`
+      "Where can I get a pure veg lunch in Anna Nagar East?",
+      `${name} serves a ${PV} lunch on ${STREET}, with ${lunch.count} meals and rice dishes from ${rupees(lunch.min)} to ${rupees(lunch.max)}. ` +
+        `The ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) is the regional signature; ${list(lunch.names.filter((n) => n !== sodhiMeals.name).slice(0, 2))} are simpler options.`
     ),
     qa(
       "What is sodhi?",
@@ -153,4 +149,4 @@ export const nellaiPage = {
 };
 
 export const STREET_LINE = STREET;
-export const signatureMenu = { paanai, combo, sodhiMeals, kali, poppers, idiyappamSodhi, mini, budget, dosa, parotta: summarise(parotta.items) };
+export const signatureMenu = { paanai, combo, sodhiMeals, kali, poppers, idiyappamSodhi, lunch, dosa, parotta: summarise(parotta.items) };

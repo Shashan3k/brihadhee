@@ -17,7 +17,6 @@ import { telHref } from "../data/site.js";
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const name = getFact("name");
-const hours = getFact("hours");
 const phone = getFact("phone");
 const offers = getFact("offers");
 const offer = (id) => {
@@ -52,7 +51,7 @@ const schema = pageGraph({
     <PageHeader
       eyebrow="Reservations · Anna Nagar East"
       h1={`Book a table at ${name}, Anna Nagar East`}
-      intro={`You can walk in to ${name} any day from ${hours.short}, and walk-in diners get ${walkInPct} off. Pre-booking on Swiggy Dineout, EazyDiner or District gives ${preBook.description.replace(/ when you pre-book.*$/, "")}.`}
+      intro={`You can walk in to ${name} for ${getFact("mealTimes")}, and walk-in diners get ${walkInPct} off. Pre-booking on Swiggy Dineout, EazyDiner or District gives ${preBook.description.replace(/ when you pre-book.*$/, "")}.`}
       menuHref={`${base}menu/`}
     />
 
@@ -89,7 +88,7 @@ const schema = pageGraph({
           50 guests or more, see <a href={`${base}catering-services-chennai/`}>{name} catering</a>.
         </p>
         <p>
-          {name} is {getFact("dietary")}, family-friendly and serves no alcohol. Price for two: {getFact("priceRange").text}.
+          {name} is {getFact("dietary")}, family-friendly and serves no alcohol. Every dish price is on the <a href={`${base}menu/`}>menu page</a>.
         </p>
       </div>
     </section>

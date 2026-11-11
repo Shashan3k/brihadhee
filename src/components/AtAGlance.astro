@@ -12,9 +12,9 @@ const {
     ["Famous for", getFact("knownFor").join(", ")],
     ["Cuisine", getFact("cuisine")],
     ["Location", `${addressLine()}, near ${getFact("landmarks")[0]}`],
-    ["Hours", getFact("hours").summary],
-    ["Price range", getFact("priceRange").text],
-    ["Good for", "breakfast tiffin, family meals, regional Tamil dishes, and pure vegetarian event catering"],
+    ["Meals", `${getFact("mealTimes")}, dine-in`],
+    ["Hours", "being updated; call for today's hours"],
+    ["Good for", "lunch, dinner, family meals, regional Tamil dishes, and pure vegetarian event catering"],
   ],
   id = "at-a-glance",
 } = Astro.props;

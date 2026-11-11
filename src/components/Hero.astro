@@ -4,7 +4,7 @@ import Icon from "./Icon.astro";
 import Stars from "./Stars.astro";
 import { getFact } from "../data/entity-truth.ts";
 
-const hours = getFact("hours");
+const mealTimes = getFact("mealTimes");
 const street = getFact("street");
 
 const { media, rating } = site;
@@ -44,7 +44,7 @@ const { media, rating } = site;
 
       <ul class="hero__facts" role="list">
         <li>100% pure veg</li>
-        <li>Open daily {hours.short}</li>
+        <li>{mealTimes.charAt(0).toUpperCase() + mealTimes.slice(1)}</li>
         <li>{street.split(", Anna Nagar East")[0]}</li>
         <li>Dine-in and catering</li>
       </ul>

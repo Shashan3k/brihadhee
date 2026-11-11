@@ -39,6 +39,9 @@ export interface Geo {
   latitude: number;
   longitude: number;
 }
+export interface PriceRange {
+  schema: string;
+}
 export interface Hours {
   timeZone: string;
   summary: string;
@@ -64,6 +67,8 @@ export interface Catering {
 const BRIEF = "owner brief recorded in the repo, 2026-11-05";
 const D5 = "2026-11-05";
 const D6 = "2026-11-06";
+const D11 = "2026-11-11";
+const CLIENT = "client direction W11 to W13 (SEO_RANKING_STRATEGY.md), 2026-11-11";
 
 function verified<T>(value: T, source: string = BRIEF, verifiedOn: string = D5): Fact<T> {
   return { value, status: "verified", verifiedOn, source };
@@ -77,7 +82,7 @@ const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 /** Canonical production origin (owner, 2026-11-06). No trailing slash. */
 export const SITE_ORIGIN = "https://www.brihadhee.com";
 /** Date the site content was last reviewed; used for dateModified and sitemap lastmod. */
-export const CONTENT_UPDATED = D6;
+export const CONTENT_UPDATED = D11;
 
 export const FACTS = {
   /* ---- Identity ---------------------------------------------------------- */
@@ -127,18 +132,14 @@ export const FACTS = {
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
 
   /* ---- Service ----------------------------------------------------------- */
-  hours: verified<Hours>(
-    {
-      timeZone: "Asia/Kolkata",
-      summary: "Open daily, 6:30 AM to 11:00 PM",
-      short: "6:30 AM to 11:00 PM",
-      opens: "06:30",
-      closes: "23:00",
-      days: DAYS.map((day) => ({ day, open: "06:30", close: "23:00" })),
-    },
-    "owner brief; original reservation listing (Ho.md)"
+  /* Client direction (W11 to W13, recorded in SEO_RANKING_STRATEGY.md, 2026-11-11): the
+   * 6:30 AM opening and breakfast service are retired. Hours stay unverified (never
+   * rendered) until the owner confirms the new daily times, Sunday and last order. */
+  hours: unverified<Hours>(
+    "current opening hours: the 6:30 AM opening is retired; confirm daily opening and closing times, Sunday and the last-order time",
+    [/\b0?6[:.]30\b/]
   ),
-  mealTimes: verified("breakfast, lunch and dinner"),
+  mealTimes: verified("lunch and dinner", CLIENT, D11),
   dineIn: verified(true),
   familyFriendly: verified(true, "owner brief; Google profile notes (Ho.md)"),
   alcohol: verified("not served", "owner brief; reservation listing (Ho.md)"),
@@ -149,14 +150,9 @@ export const FACTS = {
     "master brief from the Brihadhee team, 2026-11-08",
     "2026-11-08"
   ),
-  priceRange: verified({
-    schema: "₹₹",
-    text: "₹200 to ₹400 for two for tiffin, and about ₹800 for a full family meal",
-  }),
+  priceRange: verified({ schema: "₹₹" }, "owner brief; Zomato, District and EazyDiner list about ₹200 for two"),
   offers: verified<Offer[]>(
     [
-      { id: "mini-tiffin", name: "Mini Tiffin combo", price: 80, description: "Pongal, kesari, 2 idlis, masala dosa, vada, sambar and chutneys for ₹80" },
-      { id: "budget-tiffin", name: "Budget tiffin options", price: 24, description: "budget tiffin options from ₹24" },
       { id: "walk-in", name: "Walk-in dine-in discount", description: "10% off for walk-in dine-in" },
       {
         id: "pre-booking",
@@ -164,8 +160,8 @@ export const FACTS = {
         description: "up to 40% off Monday to Thursday when you pre-book a table through Swiggy Dineout, EazyDiner or District",
       },
     ],
-    "owner brief 2026-11-05; Mini Tiffin and budget tiffin kept by owner decision 2026-11-06 (offers change; re-check monthly)",
-    D6
+    "owner brief 2026-11-05; Mini Tiffin and budget tiffin retired by client direction 2026-11-11 (offers change; re-check monthly)",
+    D11
   ),
   knownFor: verified(["customised dosas", "Paanai Parotta", "Nellai Special Sodhi Meals", "filter coffee"]),
   customizableDosas: verified(true),
@@ -197,9 +193,26 @@ export const FACTS = {
     [/\b6(?::00)?\s*a\.?m\.?\b(?!\s*(?:to|–|-))/i, /late[- ]night/i]
   ),
   dosaVarietyCount500: unverified<number>("the '500+ dosa varieties' claim; the menu lists 11 dosa items", [/\b500\s*\+?\s*(?:varieties|types|kinds)/i]),
+  costForTwo: unverified<string>(
+    "the cost for two: listings disagree (Swiggy Dineout ₹800; Zomato, District and EazyDiner ₹200)",
+    [/\bfor two\b/i]
+  ),
 };
 
 export type FactKey = keyof typeof FACTS;
+
+/**
+ * Positioning the client has ruled out (W11 to W13, 2026-11-11). These words must not
+ * appear in any title, heading, meta description, copy, schema or llms file.
+ * scripts/check-facts.mjs fails the build if one slips into public output.
+ */
+export const RETIRED_TERMS: { re: RegExp; why: string }[] = [
+  { re: /\bbreakfast\b/i, why: "breakfast service is retired" },
+  { re: /\btiffins?\b/i, why: "tiffin and Mini Tiffin positioning is retired" },
+  { re: /\b500\s*\+?\s*(?:dosa\s+)?(?:varieties|types|kinds)\b/i, why: "'500 varieties' is not a client claim" },
+  { re: /\b(?:cheap|budget|pocket[- ]friendly)\b/i, why: "price-led positioning is ruled out" },
+  { re: /\bvalue combos?\b/i, why: "price-led positioning is ruled out" },
+];
 
 /* ---- Accessors ------------------------------------------------------------ */
 
