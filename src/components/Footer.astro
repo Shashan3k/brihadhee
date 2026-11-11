@@ -4,7 +4,7 @@ import {
   hasPhone,
   hasWhatsApp,
   hasEmail,
-  hasHours,
+  hasHoursText,
   socialLinks,
   telHref,
   whatsappHref,
@@ -81,7 +81,7 @@ const address = site.address;
           {address.city}, {address.state}{address.postalCode ? ` ${address.postalCode}` : ""}
         </address>
         {
-          hasHours && (
+          hasHoursText && (
             <p class="footer__hours">{site.hours.summary}</p>
           )
         }

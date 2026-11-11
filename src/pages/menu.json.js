@@ -1,6 +1,6 @@
 import { site } from "../data/site.js";
 import { getFact, CONTENT_UPDATED } from "../data/entity-truth.ts";
-import { MENU, MENU_SOURCE, UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
+import { MENU, MENU_SOURCE, MENU_NOTES, UNPRICED_SIGNATURES, BUILD_YOUR_OWN_DOSA } from "../data/menu-canonical.ts";
 
 /**
  * /menu.json: machine-readable menu for AI agents, aggregators and apps.
@@ -29,7 +29,9 @@ export function GET() {
     lastUpdated: CONTENT_UPDATED,
     priceSource: MENU_SOURCE,
     itemCount: items.length,
+    notes: Object.values(MENU_NOTES),
     items,
+    buildYourOwnDosa: BUILD_YOUR_OWN_DOSA,
     signaturesWithoutPrice: UNPRICED_SIGNATURES.map((s) => ({ name: s.name, note: s.note, price: null })),
   };
   return new Response(JSON.stringify(body, null, 2), {

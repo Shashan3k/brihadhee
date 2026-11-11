@@ -35,8 +35,8 @@ const FORBIDDEN_KEYWORDS = [
   "non vegetarian catering",
   "multi-cuisine catering",
   "multi cuisine catering",
-  "corporate catering",
-  "office lunch catering",
+  // 2026-11-11: corporate and office catering are now a client service (keyword plan,
+  // client W13), so "corporate catering" and "office lunch catering" are allowed.
 ];
 
 const COMPETITORS = ["Saraswathi", "Sindhu", "Arusuvai"];

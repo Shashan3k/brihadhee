@@ -1,20 +1,25 @@
 /**
  * Canonical menu: the single source for every dish name, description and price
- * shown on the site, in JSON-LD, in llms files and in the verify scripts.
+ * shown on the site, in JSON-LD, in llms files, menu.json and the verify scripts.
  *
- * Price source of truth: the menu PDF "final menu 13-07-2026.pdf" (owner decision
- * 2026-11-06). Exception confirmed by the owner although not in the PDF:
- * the Kothu Parotta & Lemon Kothu Idiyappam Combo (₹239). The ₹80 morning combo
- * was removed on 2026-11-11 (client direction W11 to W13: no morning service).
- * Items in the PDF that are not transcribed here yet (Indo-Chinese, Veg 65, Poori,
- * Sodhi Idly, Podi Idli, signature drinks) are omitted until checked by hand.
+ * Source: "new menu.pdf" (client, received 2026-11-11; image-only, transcribed by
+ * hand from both pages and checked column by column). It replaces "final menu
+ * 13-07-2026.pdf" and the brief prices. Notes printed on the menu:
+ *   - prices exclude 5% GST; parcel charges are extra
+ *   - preparation can take up to 10 minutes
+ *   - Dine-in Combos are available only for lunch
+ *   - the chef's-hat icon marks a chef's special (tag "Chef's special")
+ *   - the menu spells "Pannai Parotta" and "Phulkha"; the site uses "Paanai" and
+ *     "Phulka", and expands "Spl" to "Special"
+ * Descriptions: kept from the previous menu where the dish is unchanged; new dishes
+ * have an empty description until the owner supplies one (none are invented).
  */
 
 export type Diet = "veg";
 export interface MenuItem {
   name: string;
   description: string;
-  price: number; // INR, verified
+  price: number; // INR, before 5% GST
   diet: Diet;
   tags: string[];
 }
@@ -29,22 +34,79 @@ export interface UnpricedSignature {
   note: string;
   source: string;
 }
+export interface ByoOption {
+  name: string;
+  note?: string;
+  price: number;
+}
+export interface ByoStep {
+  step: number;
+  name: string;
+  options: ByoOption[];
+}
+export interface ByoSuggestion {
+  name: string;
+  price: number; // printed price (not always the sum of the parts)
+  build: string[];
+}
 
-export const MENU_SOURCE = "final menu 13-07-2026.pdf (owner-confirmed price source, 2026-11-06)";
+export const MENU_SOURCE = "new menu.pdf (client, 2026-11-11)";
 export const CURRENCY = "₹";
+export const MENU_NOTES = {
+  gst: "Prices exclude 5% GST.",
+  parcel: "Parcel charges are extra.",
+  prep: "Preparation can take up to 10 minutes.",
+};
 
 export const MENU: MenuCategory[] = [
   {
     "id": "starters",
     "name": "Starters",
-    "blurb": "Small plates and South Indian favourites.",
+    "blurb": "",
     "items": [
       {
-        "name": "Gun Powder Idly",
-        "description": "Crispy mini idlis coated in milagai podi.",
-        "price": 245,
+        "name": "Madras Style Veg 65 (Gobi)",
+        "description": "Golden-fried cauliflower coated in signature 65 spices.",
+        "price": 230,
         "diet": "veg",
         "tags": []
+      },
+      {
+        "name": "Madras Style Veg 65 (Paneer)",
+        "description": "Golden-fried paneer coated in signature 65 spices.",
+        "price": 260,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Indo Chinese Dry Manchurian (Gobi)",
+        "description": "",
+        "price": 270,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Indo Chinese Dry Manchurian (Paneer)",
+        "description": "",
+        "price": 290,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Karaikudi Paneer Poppers",
+        "description": "Fresh paneer seasoned with heritage gunpowder and house-made 65 spices, fried crisp.",
+        "price": 280,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Madras Bhel Parotta",
+        "description": "Parotta pieces with Madras-style mixture and salna.",
+        "price": 245,
+        "diet": "veg",
+        "tags": [
+          "Chef's special"
+        ]
       },
       {
         "name": "Poricha Salna Idly",
@@ -54,51 +116,51 @@ export const MENU: MenuCategory[] = [
         "tags": []
       },
       {
-        "name": "Karaikudi Paneer Poppers",
-        "description": "Fresh paneer seasoned with heritage gunpowder and house-made 65 spices, fried crisp.",
-        "price": 290,
-        "diet": "veg",
-        "tags": [
-          "Signature"
-        ]
-      },
-      {
-        "name": "Madras Bhel Parotta",
-        "description": "Parotta pieces with Madras-style mixture and salna.",
+        "name": "Gun Powder Idly",
+        "description": "Crispy mini idlis coated in milagai podi.",
         "price": 245,
         "diet": "veg",
         "tags": []
-      }
-    ]
-  },
-  {
-    "id": "combos",
-    "name": "Combos",
-    "blurb": "Kothu parotta and idiyappam on one plate.",
-    "items": [
+      },
       {
-        "name": "Kothu Parotta & Lemon Kothu Idiyappam Combo",
-        "description": "Kothu parotta with lemon kothu idiyappam.",
-        "price": 239,
+        "name": "Kanthari Nei Varuval (Paneer)",
+        "description": "",
+        "price": 290,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kanthari Nei Varuval (Kalaan)",
+        "description": "",
+        "price": 280,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kongu Nei Varuval (Paneer)",
+        "description": "",
+        "price": 290,
         "diet": "veg",
         "tags": [
-          "Combo"
+          "Chef's special"
+        ]
+      },
+      {
+        "name": "Kongu Nei Varuval (Kalaan)",
+        "description": "",
+        "price": 280,
+        "diet": "veg",
+        "tags": [
+          "Chef's special"
         ]
       }
     ]
   },
   {
     "id": "lunch",
-    "name": "Lunch & Meals",
-    "blurb": "Traditional Tamil Nadu meals and comforting rice dishes.",
+    "name": "Lunch",
+    "blurb": "Tamil Nadu meals, served at lunch.",
     "items": [
-      {
-        "name": "Mini Meals",
-        "description": "A mini South Indian meal.",
-        "price": 140,
-        "diet": "veg",
-        "tags": []
-      },
       {
         "name": "Limited TN Meals",
         "description": "Rice with sambar, rasam, kuzhambu, kootu, poriyal and accompaniments.",
@@ -119,27 +181,55 @@ export const MENU: MenuCategory[] = [
         "price": 240,
         "diet": "veg",
         "tags": [
-          "Signature"
+          "Chef's special"
         ]
       },
       {
-        "name": "Sambar Rice",
-        "description": "South Indian rice cooked with sambar and house masalas.",
-        "price": 105,
+        "name": "Karuppatti Ulundhu Kali",
+        "description": "Black urad dal cooked with palm jaggery (karuppatti), a Tirunelveli-style sweet.",
+        "price": 100,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "combos",
+    "name": "Dine-in Combos",
+    "blurb": "Available only for lunch.",
+    "items": [
+      {
+        "name": "Veg Fried Rice & Gobi Manchurian Combo",
+        "description": "",
+        "price": 199,
         "diet": "veg",
         "tags": []
       },
       {
-        "name": "Variety Rice",
-        "description": "Flavorful rice preparations seasoned with traditional spices.",
-        "price": 105,
+        "name": "Naan (1 pc) & Paneer Butter Masala Combo",
+        "description": "",
+        "price": 199,
         "diet": "veg",
         "tags": []
       },
       {
-        "name": "Curd Rice",
-        "description": "Rice blended with curd and tempering.",
-        "price": 105,
+        "name": "Phulka (3 pcs) & Dal Tadka Combo",
+        "description": "",
+        "price": 129,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Phulka (3 pcs) & Paneer Butter Masala Combo",
+        "description": "",
+        "price": 179,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kothu Parotta & Lemon Kothu Idiyappam Combo",
+        "description": "Kothu parotta with lemon kothu idiyappam.",
+        "price": 179,
         "diet": "veg",
         "tags": []
       }
@@ -147,83 +237,62 @@ export const MENU: MenuCategory[] = [
   },
   {
     "id": "dosa",
-    "name": "Dosa Varieties",
-    "blurb": "Classic dosas, crisp roasts and wholesome grain varieties.",
+    "name": "Dosa Variety",
+    "blurb": "",
     "items": [
       {
         "name": "Kal Dosa (2 pcs)",
         "description": "Thick, soft dosas served with chutney and sambar.",
-        "price": 95,
+        "price": 100,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Plain Dosa",
         "description": "Classic South Indian dosa, crisp and golden.",
-        "price": 100,
+        "price": 105,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Ghee Roast",
         "description": "Thin, crispy dosa roasted with ghee.",
-        "price": 150,
+        "price": 155,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Ghee Podi Dosa",
         "description": "Crispy dosa coated with spicy podi and ghee.",
-        "price": 160,
+        "price": 165,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Rava Dosa",
         "description": "Crisp semolina dosa with spices.",
-        "price": 125,
+        "price": 130,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Ghee Masala Dosa",
         "description": "Dosa filled with potato masala and finished with ghee.",
-        "price": 170,
-        "diet": "veg",
-        "tags": []
-      },
-      {
-        "name": "Ragi Dosa",
-        "description": "Finger millet dosa.",
-        "price": 140,
-        "diet": "veg",
-        "tags": []
-      },
-      {
-        "name": "Navadhaniya Dosa",
-        "description": "Nine-grain dosa.",
-        "price": 145,
+        "price": 175,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Madurai Malli Dosa",
         "description": "Dosa topped with fresh coriander paste.",
-        "price": 160,
-        "diet": "veg",
-        "tags": []
-      },
-      {
-        "name": "Pesarattu Dosa",
-        "description": "Southern-style green gram dosa.",
-        "price": 135,
+        "price": 165,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Onion Podi Uthappam",
         "description": "Uthappam layered with onions and podi masala.",
-        "price": 170,
+        "price": 175,
         "diet": "veg",
         "tags": []
       }
@@ -231,8 +300,8 @@ export const MENU: MenuCategory[] = [
   },
   {
     "id": "idly",
-    "name": "Idly & Idiyappam",
-    "blurb": "Steamed favourites, served with traditional accompaniments.",
+    "name": "Idly & Mini Idly",
+    "blurb": "",
     "items": [
       {
         "name": "Idly (2 pcs)",
@@ -242,42 +311,65 @@ export const MENU: MenuCategory[] = [
         "tags": []
       },
       {
+        "name": "Tossed Podi Idli (Garlic, Curry Leaves or Peanut)",
+        "description": "Idlis tossed in your choice of garlic, curry leaves or peanut podi.",
+        "price": 175,
+        "diet": "veg",
+        "tags": []
+      },
+      {
         "name": "Idly Upma",
         "description": "Upma made from soft, crumbled idlis.",
-        "price": 175,
+        "price": 135,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Ghee Sambar Idly (2 pcs)",
         "description": "Idlis soaked in hot sambar and drizzled with ghee.",
-        "price": 130,
+        "price": 105,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Ghee Mini Sambar Idly (14 pcs)",
         "description": "Bite-sized idlis dipped in sambar and ghee.",
-        "price": 100,
+        "price": 115,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Tomato Kothu Idly",
         "description": "Idly scrambled with tangy tomato thokku.",
-        "price": 110,
+        "price": 170,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Tawa Thokku Podi Idly",
         "description": "Pan-fried idlis with onion-tomato thokku, podi and ghee.",
-        "price": 150,
+        "price": 155,
         "diet": "veg",
         "tags": []
       },
       {
-        "name": "Idiyappam with Coconut Milk",
+        "name": "Sodhi Idly",
+        "description": "Hot idly dipped in a traditional coconut milk stew.",
+        "price": 180,
+        "diet": "veg",
+        "tags": [
+          "Chef's special"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "idiyappam",
+    "name": "Idiyappam",
+    "blurb": "",
+    "items": [
+      {
+        "name": "Idiyappam Coconut Milk",
         "description": "Soft string hoppers served with sweet coconut milk.",
         "price": 90,
         "diet": "veg",
@@ -287,6 +379,13 @@ export const MENU: MenuCategory[] = [
         "name": "Lemon Kothu Idiyappam",
         "description": "Idiyappam tossed with lemon and curry leaves.",
         "price": 160,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kothu Idiyappam (Paneer or Mushroom)",
+        "description": "",
+        "price": 220,
         "diet": "veg",
         "tags": []
       },
@@ -302,19 +401,21 @@ export const MENU: MenuCategory[] = [
         "description": "Soft string hoppers dipped in traditional coconut milk stew.",
         "price": 180,
         "diet": "veg",
-        "tags": []
+        "tags": [
+          "Chef's special"
+        ]
       }
     ]
   },
   {
     "id": "parotta",
     "name": "Parotta & Chapathi",
-    "blurb": "Flaky parotta and comforting South Indian salna.",
+    "blurb": "",
     "items": [
       {
         "name": "Chapathi Salna (2 pcs)",
         "description": "Soft chapathis served with vegetable salna.",
-        "price": 100,
+        "price": 105,
         "diet": "veg",
         "tags": []
       },
@@ -328,39 +429,142 @@ export const MENU: MenuCategory[] = [
       {
         "name": "Special Kothu Parotta",
         "description": "Shredded parotta tossed with paneer, mushroom and special masala.",
-        "price": 190,
+        "price": 195,
         "diet": "veg",
-        "tags": [
-          "Signature"
-        ]
+        "tags": []
       },
       {
         "name": "Paanai Parotta",
-        "description": "Parotta with paneer and mushroom cooked dum-style with salna.",
-        "price": 260,
+        "description": "Parotta layered with rich salna, paneer and mushroom, slow-cooked in a sealed pot (dum style).",
+        "price": 270,
         "diet": "veg",
-        "tags": [
-          "Signature"
-        ]
+        "tags": []
       },
       {
         "name": "Madurai Salna Parotta",
         "description": "Parottas served with spicy Madurai-style salna.",
-        "price": 200,
+        "price": 210,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Chilli Parotta",
         "description": "Shredded parotta tossed with onions, capsicum and sauces.",
-        "price": 220,
+        "price": 230,
         "diet": "veg",
         "tags": []
       },
       {
         "name": "Special Kothu Chapathi",
         "description": "Shredded chapathi tossed with paneer, mushroom and special masala.",
-        "price": 190,
+        "price": 195,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Special Pottalam Parotta",
+        "description": "",
+        "price": 230,
+        "diet": "veg",
+        "tags": [
+          "Chef's special"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rice",
+    "name": "Rice",
+    "blurb": "",
+    "items": [
+      {
+        "name": "Paneer Fried Rice",
+        "description": "",
+        "price": 245,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Mushroom Fried Rice",
+        "description": "",
+        "price": 245,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Paneer Schezwan Fried Rice",
+        "description": "",
+        "price": 275,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Mushroom Schezwan Fried Rice",
+        "description": "",
+        "price": 275,
+        "diet": "veg",
+        "tags": []
+      }
+    ]
+  },
+  {
+    "id": "breads",
+    "name": "Indian Breads",
+    "blurb": "",
+    "items": [
+      {
+        "name": "Naan (Plain)",
+        "description": "",
+        "price": 70,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Naan (Butter)",
+        "description": "",
+        "price": 90,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Naan (Garlic)",
+        "description": "",
+        "price": 100,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Roti (Plain)",
+        "description": "",
+        "price": 60,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Roti (Butter)",
+        "description": "",
+        "price": 80,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Roti (Garlic)",
+        "description": "",
+        "price": 90,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Phulka (Plain)",
+        "description": "",
+        "price": 45,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Phulka (Ghee)",
+        "description": "",
+        "price": 55,
         "diet": "veg",
         "tags": []
       }
@@ -369,7 +573,7 @@ export const MENU: MenuCategory[] = [
   {
     "id": "gravies",
     "name": "Indian Gravies",
-    "blurb": "Rich vegetarian gravies with regional flavours.",
+    "blurb": "",
     "items": [
       {
         "name": "Aloo Gobi Masala",
@@ -404,28 +608,28 @@ export const MENU: MenuCategory[] = [
         "description": "Paneer in spicy Chettinad-style gravy.",
         "price": 315,
         "diet": "veg",
-        "tags": []
+        "tags": [
+          "Chef's special"
+        ]
       }
     ]
   },
   {
     "id": "beverages",
     "name": "Beverages",
-    "blurb": "Traditional hot drinks and filter coffee.",
+    "blurb": "",
     "items": [
       {
         "name": "Filter Coffee",
         "description": "South Indian coffee brewed with a traditional filter.",
-        "price": 40,
+        "price": 45,
         "diet": "veg",
-        "tags": [
-          "Signature"
-        ]
+        "tags": []
       },
       {
-        "name": "Tea (Plain / Ginger / Elaichi)",
-        "description": "Tea brewed with milk and a touch of sweetness.",
-        "price": 40,
+        "name": "Tea",
+        "description": "Tea brewed with milk.",
+        "price": 45,
         "diet": "veg",
         "tags": []
       },
@@ -453,27 +657,286 @@ export const MENU: MenuCategory[] = [
     ]
   },
   {
-    "id": "sweets",
-    "name": "Traditional Sweets",
-    "blurb": "Regional Tamil sweets.",
+    "id": "signatures",
+    "name": "Brihadhee Signatures",
+    "blurb": "Signature drinks.",
     "items": [
       {
-        "name": "Karuppati Ulundhu Kali",
-        "description": "Black urad dal cooked with palm jaggery (karuppatti), a Tirunelveli-style sweet.",
-        "price": 250,
+        "name": "Butter Biscuit Smoothie",
+        "description": "",
+        "price": 215,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Summer in Tenkasi",
+        "description": "",
+        "price": 195,
         "diet": "veg",
         "tags": [
-          "Signature"
+          "Chef's special"
         ]
+      },
+      {
+        "name": "Salem Mango Milkshake",
+        "description": "",
+        "price": 195,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Meltdown in Madras",
+        "description": "",
+        "price": 135,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "The Filter Kaapi Shake",
+        "description": "",
+        "price": 165,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Kaapi Affogato",
+        "description": "",
+        "price": 105,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Salted Caramel Iced Latte",
+        "description": "",
+        "price": 145,
+        "diet": "veg",
+        "tags": []
+      },
+      {
+        "name": "Salted Caramel Filter Macchiato",
+        "description": "",
+        "price": 95,
+        "diet": "veg",
+        "tags": []
       }
     ]
   }
 ];
 
+/** Build Your Own Dosa: pick a batter, then toppings, a stuffing and a garnish (page 1 of the menu). */
+export const BUILD_YOUR_OWN_DOSA: { steps: ByoStep[]; suggestions: ByoSuggestion[] } = {
+  "steps": [
+    {
+      "step": 1,
+      "name": "Batter",
+      "options": [
+        {
+          "name": "Golden Hour",
+          "note": "Classic rice batter",
+          "price": 120
+        },
+        {
+          "name": "Midnight Sky",
+          "note": "Activated charcoal",
+          "price": 140
+        },
+        {
+          "name": "Pink Sea",
+          "note": "Beetroot & Navadhaniyam",
+          "price": 145
+        },
+        {
+          "name": "Monsoon Forest",
+          "note": "Spinach & Pesarattu",
+          "price": 140
+        },
+        {
+          "name": "Terracotta Canyon",
+          "note": "Ragi",
+          "price": 135
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "name": "Topping",
+      "options": [
+        {
+          "name": "Garlic Podi",
+          "price": 25
+        },
+        {
+          "name": "Curry Leaves Podi",
+          "price": 25
+        },
+        {
+          "name": "Peanut Podi",
+          "price": 25
+        },
+        {
+          "name": "Thenga Poondu Podi",
+          "price": 40
+        },
+        {
+          "name": "Small Onion",
+          "price": 15
+        },
+        {
+          "name": "Cheese",
+          "price": 30
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "name": "Stuffing",
+      "options": [
+        {
+          "name": "Potato Masala",
+          "price": 30
+        },
+        {
+          "name": "Paneer Chettinadu",
+          "price": 60
+        },
+        {
+          "name": "Mushroom Truffle",
+          "price": 65
+        },
+        {
+          "name": "Tomato Thokku",
+          "price": 35
+        }
+      ]
+    },
+    {
+      "step": 4,
+      "name": "Garnish",
+      "options": [
+        {
+          "name": "Gingelly Oil",
+          "price": 15
+        },
+        {
+          "name": "Butter",
+          "price": 25
+        },
+        {
+          "name": "Ghee",
+          "price": 30
+        },
+        {
+          "name": "Refined Oil",
+          "price": 5
+        },
+        {
+          "name": "Chilli Oil",
+          "price": 20
+        }
+      ]
+    }
+  ],
+  "suggestions": [
+    {
+      "name": "The Godfather",
+      "price": 255,
+      "build": [
+        "Monsoon Forest",
+        "Cheese",
+        "Mushroom Truffle",
+        "Chilli Oil"
+      ]
+    },
+    {
+      "name": "Coimbatore Mappillai",
+      "price": 215,
+      "build": [
+        "Golden Hour",
+        "Thenga Poondu Podi",
+        "Tomato Thokku",
+        "Ghee"
+      ]
+    },
+    {
+      "name": "Mylapore Maama",
+      "price": 180,
+      "build": [
+        "Golden Hour",
+        "Potato Masala",
+        "Ghee"
+      ]
+    },
+    {
+      "name": "Gym Bro",
+      "price": 230,
+      "build": [
+        "Monsoon Forest",
+        "Peanut Podi",
+        "Paneer Chettinadu",
+        "Refined Oil"
+      ]
+    },
+    {
+      "name": "Poison Ivy",
+      "price": 250,
+      "build": [
+        "Monsoon Forest",
+        "Curry Leaves Podi",
+        "Mushroom Truffle",
+        "Chilli Oil"
+      ]
+    },
+    {
+      "name": "Burma Vyapari",
+      "price": 240,
+      "build": [
+        "Terracotta Canyon",
+        "Small Onion",
+        "Paneer Chettinadu",
+        "Ghee"
+      ]
+    },
+    {
+      "name": "The Dark Knight",
+      "price": 230,
+      "build": [
+        "Midnight Sky",
+        "Mushroom Truffle",
+        "Butter"
+      ]
+    },
+    {
+      "name": "Zamindar",
+      "price": 260,
+      "build": [
+        "Pink Sea",
+        "Garlic Podi",
+        "Paneer Chettinadu",
+        "Ghee"
+      ]
+    },
+    {
+      "name": "Sleeper Cell",
+      "price": 200,
+      "build": [
+        "Golden Hour",
+        "Garlic Podi",
+        "Tomato Thokku",
+        "Chilli Oil"
+      ]
+    },
+    {
+      "name": "Shaolin Monk",
+      "price": 215,
+      "build": [
+        "Terracotta Canyon",
+        "Peanut Podi",
+        "Tomato Thokku",
+        "Chilli Oil"
+      ]
+    }
+  ]
+};
+
 /** Signature items whose price is not verified: shown by name only, never with a price. */
-export const UNPRICED_SIGNATURES: UnpricedSignature[] = [
-  { name: "Customised Dosa", note: "dosa made to your choice at the table", source: "owner brief 2026-11-05" },
-  { name: "Summer in Tenkasi", note: "Brihadhee signature drink", source: "menu PDF (price not transcribed)" },
-  { name: "Butter Biscuit Smoothie", note: "Brihadhee signature drink", source: "menu PDF (price not transcribed)" },
-  { name: "Outdoor filter coffee and tea counter", note: "dedicated counter at the restaurant", source: "owner brief 2026-11-05" },
-];
+export const UNPRICED_SIGNATURES: UnpricedSignature[] = [];

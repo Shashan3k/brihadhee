@@ -67,6 +67,7 @@ export interface Catering {
 const BRIEF = "owner brief recorded in the repo, 2026-11-05";
 const D5 = "2026-11-05";
 const D6 = "2026-11-06";
+const KW = "keyword plan from the Brihadhee team (client W11 to W13), revised 2026-11-11";
 const D11 = "2026-11-11";
 const CLIENT = "client direction W11 to W13 (SEO_RANKING_STRATEGY.md), 2026-11-11";
 
@@ -132,12 +133,26 @@ export const FACTS = {
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
 
   /* ---- Service ----------------------------------------------------------- */
-  /* Client direction (W11 to W13, recorded in SEO_RANKING_STRATEGY.md, 2026-11-11): the
-   * 6:30 AM opening and breakfast service are retired. Hours stay unverified (never
-   * rendered) until the owner confirms the new daily times, Sunday and last order. */
-  hours: unverified<Hours>(
-    "current opening hours: the 6:30 AM opening is retired; confirm daily opening and closing times, Sunday and the last-order time",
-    [/\b0?6[:.]30\b/]
+  /* Client direction (W11, keyword plan 2026-11-11): open 11 AM to 11 PM, lunch and
+   * dinner only. The 6:30 AM opening and breakfast are retired (see RETIRED_TERMS).
+   * Which DAYS it opens is not confirmed yet, so `days` stays empty: no day-by-day
+   * table, no "open on Sundays" claim and no openingHoursSpecification until
+   * `openDays` is verified. */
+  hours: verified<Hours>(
+    {
+      timeZone: "Asia/Kolkata",
+      summary: "Open 11:00 AM to 11:00 PM",
+      short: "11:00 AM to 11:00 PM",
+      opens: "11:00",
+      closes: "23:00",
+      days: [],
+    },
+    KW,
+    D11
+  ),
+  openDays: unverified<string[]>(
+    "which days of the week the restaurant is open (daily, or closed on any day), and the last-order time",
+    [/\bopen (?:daily|every day|all (?:7|seven) days|on sundays?)\b/i]
   ),
   mealTimes: verified("lunch and dinner", CLIENT, D11),
   dineIn: verified(true),
@@ -163,17 +178,22 @@ export const FACTS = {
     "owner brief 2026-11-05; Mini Tiffin and budget tiffin retired by client direction 2026-11-11 (offers change; re-check monthly)",
     D11
   ),
-  knownFor: verified(["customised dosas", "Paanai Parotta", "Nellai Special Sodhi Meals", "filter coffee"]),
+  knownFor: verified(["build-your-own dosas", "Paanai Parotta", "Nellai Special Sodhi Meals", "filter coffee"], KW, D11),
   customizableDosas: verified(true),
 
   /* ---- Catering ---------------------------------------------------------- */
   catering: verified<Catering>({
     guests: { min: 50, max: 1500 },
     area: "Chennai",
-    liveCounters: ["Customised Dosa", "Paanai Parotta", "Nellai Sodhi", "Karaikudi Paneer Poppers"],
+    liveCounters: ["Build Your Own Dosa", "Paanai Parotta", "Nellai Sodhi", "Karaikudi Paneer Poppers"],
     plannerModels: ["white-label live counters", "co-branded live counters"],
     pricing: "per-plate pricing, quoted for each menu",
   }),
+  /** End-to-end event service (client W13): menu planning, cooking, service and setup. */
+  eventService: verified("end-to-end service: menu planning, cooking, serving and setup", KW, D11),
+  /** Corporate catering (client W13). Client names and headcounts need the client's permission. */
+  corporateCatering: verified({ dailyCovers: 1000, description: "daily corporate and office catering" }, KW, D11),
+  corporateClients: unverified<string[]>("permission to name corporate clients and show their headcounts"),
 
   /* ---- Unverified: null until the owner confirms ------------------------- */
   /** Owner-supplied profiles only. Add Google Business Profile, Swiggy, Zomato, District,
@@ -212,6 +232,7 @@ export const RETIRED_TERMS: { re: RegExp; why: string }[] = [
   { re: /\b500\s*\+?\s*(?:dosa\s+)?(?:varieties|types|kinds)\b/i, why: "'500 varieties' is not a client claim" },
   { re: /\b(?:cheap|budget|pocket[- ]friendly)\b/i, why: "price-led positioning is ruled out" },
   { re: /\bvalue combos?\b/i, why: "price-led positioning is ruled out" },
+  { re: /\b0?6[:.]30\s*a\.?m\b/i, why: "the 6:30 AM opening is retired (open 11 AM to 11 PM)" },
 ];
 
 /* ---- Accessors ------------------------------------------------------------ */

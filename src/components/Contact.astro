@@ -4,7 +4,7 @@ import {
   hasPhone,
   hasWhatsApp,
   hasEmail,
-  hasHours,
+  hasHoursText,
   telHref,
   whatsappHref,
   emailHref,
@@ -105,7 +105,7 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
             style="--reveal-delay:100ms"
           >
             <p class="visit__label">Plan your visit</p>
-            {hasHours && <p class="contact__hours">{site.hours.summary}</p>}
+            {hasHoursText && <p class="contact__hours">{site.hours.summary}</p>}
             <ul class="visit__amenities" role="list">
               {site.amenities.map((item) => (
                 <li>

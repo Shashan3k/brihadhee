@@ -7,10 +7,11 @@ import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import AtAGlance from "../components/AtAGlance.astro";
+import BuildYourOwnDosa from "../components/BuildYourOwnDosa.astro";
 import Faq from "../components/Faq.astro";
 import { menuFaq } from "../data/faq.js";
 import { getFact } from "../data/entity-truth.ts";
-import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
+import { UNPRICED_SIGNATURES, BUILD_YOUR_OWN_DOSA } from "../data/menu-canonical.ts";
 import { pageGraph, menuSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import {
   categories,
@@ -20,6 +21,7 @@ import {
   priceRange,
   rupees,
   currencySymbol,
+  menuNotes,
 } from "../lib/menu-facts.js";
 
 const base = import.meta.env.BASE_URL.endsWith("/")
@@ -38,7 +40,7 @@ const schema = pageGraph({
   title,
   description,
   crumbs: [...HOME_CRUMBS, { name: "Menu", path: "/menu/" }],
-  extras: [menuSchema({ categories, extras }), faqPageSchema("/menu/", menuFaq)],
+  extras: [menuSchema({ categories, extras, byo: BUILD_YOUR_OWN_DOSA }), faqPageSchema("/menu/", menuFaq)],
 });
 ---
 
@@ -53,13 +55,15 @@ const schema = pageGraph({
           {name} is a {getFact("type")} in Anna Nagar East, Chennai.
           This page lists all {itemCount} dishes on the current menu{allVegetarian ? ", every one of them vegetarian" : ""}.
         </p>
-        <p class="menu-page__note">Prices as listed on the current menu, in {currencySymbol === "₹" ? "Indian rupees (₹)" : currencySymbol}.</p>
+        <p class="menu-page__note">Prices in {currencySymbol === "₹" ? "Indian rupees (₹)" : currencySymbol}, as on the current menu. {menuNotes.gst} {menuNotes.parcel} {menuNotes.prep}</p>
         <p>
           <a href={`${base}#visit`}>Visit us</a> ·
           <a href={`${base}#contact`}>Contact</a>
         </p>
       </div>
     </section>
+
+    <BuildYourOwnDosa />
 
     <section class="section section--tint" id="price-table" aria-labelledby="price-table-title">
       <div class="container">

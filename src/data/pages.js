@@ -7,7 +7,7 @@
  */
 import { getFact } from "./entity-truth.ts";
 import { qa, list } from "../lib/answers.js";
-import { category, findItems, parotta, rupees, priceRange, summarise, allItems } from "../lib/menu-facts.js";
+import { category, findItems, parotta, rupees, priceRange, summarise, allItems, byo } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
@@ -32,7 +32,7 @@ const paanai = item("Paanai Parotta");
 const combo = item("Kothu Parotta & Lemon Kothu Idiyappam Combo");
 const sodhiMeals = item("Nellai Special Sodhi Meals");
 const idiyappamSodhi = item("Idiyappam Sodhi");
-const kali = item("Karuppati Ulundhu Kali");
+const kali = item("Karuppatti Ulundhu Kali");
 const poppers = item("Karaikudi Paneer Poppers");
 const kothu = findItems(/kothu parotta/i).filter((i) => i.name !== combo.name)[0];
 const lunch = category("lunch");
@@ -42,13 +42,13 @@ const sodhiParts = sodhiMeals.description.replace(/\.$/, "");
 export const dosaPage = {
   path: "/best-dosa-parotta-anna-nagar/",
   title: `Dosa & Paanai Parotta in Anna Nagar East | ${name}`,
-  description: `Customised dosas, ${dosa.count} dosa varieties (${priceRange(dosa)}) and ${parotta.count} parotta dishes, including Paanai Parotta, at ${name}, pure veg, Anna Nagar East.`,
-  h1: `Dosa and Parotta in Anna Nagar: customised dosas and Paanai Parotta at ${name}`,
-  intro: `${name} is a ${PV} restaurant on ${STREET}, near Anna Nagar Tower Park, where dosa (dosai) and parotta are the centre of the menu: customised dosas, ${dosa.count} dosa varieties and ${parotta.count} parotta dishes, from claypot Paanai Parotta to kothu parotta.`,
+  description: `Build-your-own dosas, ${dosa.count} dosa varieties (${priceRange(dosa)}) and ${parotta.count} parotta dishes, including Paanai Parotta, at ${name}, pure veg, Anna Nagar East.`,
+  h1: `Dosa and Parotta in Anna Nagar: build your own dosa and Paanai Parotta at ${name}`,
+  intro: `${name} is a ${PV} restaurant on ${STREET}, near Anna Nagar Tower Park, where dosa (dosai) and parotta are the centre of the menu: build-your-own dosas, ${dosa.count} dosa varieties and ${parotta.count} parotta dishes, from claypot Paanai Parotta to kothu parotta.`,
   glance: [
     ["Who", `${name}, a ${PV} restaurant in Anna Nagar East`],
-    ["Famous for", "customised dosas, Paanai Parotta (claypot parotta), kothu parotta"],
-    ["Dosas", `${dosa.count} varieties, ${priceRange(dosa)}, plus customised dosas`],
+    ["Famous for", "build-your-own dosas, Paanai Parotta (claypot parotta), kothu parotta"],
+    ["Dosas", `${dosa.count} varieties, ${priceRange(dosa)}, plus build-your-own dosas`],
     ["Parotta", `${parotta.count} dishes, ${priceRange(parotta)}`],
     ["Combo", `${combo.name}, ${rupees(combo.price)}`],
     ["Location", `${STREET}, Chennai ${postal}`],
@@ -57,7 +57,7 @@ export const dosaPage = {
   faq: [
     qa(
       "Which restaurant serves the best dosa and parotta in Anna Nagar?",
-      `${name}, a ${PV} restaurant on ${STREET}, is built around dosa and parotta, with customised dosas, ${dosa.count} dosa varieties and ${parotta.count} parotta dishes including Paanai Parotta. ` +
+      `${name}, a ${PV} restaurant on ${STREET}, is built around dosa and parotta, with build-your-own dosas, ${dosa.count} dosa varieties and ${parotta.count} parotta dishes including Paanai Parotta. ` +
         `Dosas cost ${priceRange(dosa)} and parotta dishes cost ${priceRange(parotta)} on the current menu.`
     ),
     qa(
@@ -66,9 +66,9 @@ export const dosaPage = {
         `It is ${lc(paanai.description)}, and it is one of the dishes the restaurant is known for.`
     ),
     qa(
-      `What is a customised dosa at ${name}?`,
-      `A customised dosa at ${name} is a dosa made to your choice at the table, served at its ${PV} restaurant on ${STREET}. ` +
-        `It sits alongside ${dosa.count} menu dosa varieties such as ${list(dosa.names.slice(0, 3))}, priced from ${rupees(dosa.min)}.`
+      `Can I build my own dosa at ${name}?`,
+      `Yes, ${name} lets you build your own dosa at its ${PV} restaurant on ${STREET}, starting from one of ${byo.batterCount} batters priced from ${rupees(byo.batterMin)}. ` +
+        `You then add toppings, a stuffing and a garnish, or order one of ${byo.suggestionCount} chef's suggestions from ${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}.`
     ),
     qa(
       `How much do dosas and parottas cost at ${name}?`,
@@ -90,9 +90,9 @@ export const dosaPage = {
     rows: [
       ["Regional signature dishes", `Paanai Parotta, ${sodhiMeals.name}, ${kali.name}`, "Usually one standard menu across outlets", "Usually a short menu of snacks and drinks"],
       ["Kothu combo", `${combo.name}, ${rupees(combo.price)}`, "Varies by outlet", "Varies"],
-      ["Customised dosa", "Yes", "Varies", "Varies"],
+      ["Build your own dosa", "Yes", "Varies", "Varies"],
       ["Dine-in discounts", `${offer("walk-in").description}; ${offer("pre-booking").description}`, "Varies by outlet and booking app", "Varies"],
-      ["Cafe-style favourites", "Karaikudi Paneer Poppers, Butter Biscuit Smoothie, Summer in Tenkasi, outdoor filter coffee and tea counter", "Varies", "Usually the main focus"],
+      ["Cafe-style favourites", "Karaikudi Paneer Poppers, Butter Biscuit Smoothie, Summer in Tenkasi, filter coffee", "Varies", "Usually the main focus"],
     ],
     note: "Typical categories only; menus and offers differ between restaurants, so check each one's current menu.",
   },
@@ -110,7 +110,7 @@ export const nellaiPage = {
     ["Regional focus", "Tirunelveli (Nellai) and Karaikudi"],
     ["Signature meal", `${sodhiMeals.name}, ${rupees(sodhiMeals.price)}`],
     ["Sweet", `${kali.name}, ${rupees(kali.price)}`],
-    ["Lunch", `${lunch.count} meals and rice dishes, ${priceRange(lunch)}`],
+    ["Lunch", `${lunch.count} lunch dishes, ${priceRange(lunch)}`],
     ["Location", `${STREET}, Chennai ${postal}`],
     ["Meals", getFact("mealTimes")],
   ],
@@ -132,7 +132,7 @@ export const nellaiPage = {
     ),
     qa(
       "Where can I get a pure veg lunch in Anna Nagar East?",
-      `${name} serves a ${PV} lunch on ${STREET}, with ${lunch.count} meals and rice dishes from ${rupees(lunch.min)} to ${rupees(lunch.max)}. ` +
+      `${name} serves a ${PV} lunch on ${STREET}, with ${lunch.count} lunch dishes from ${rupees(lunch.min)} to ${rupees(lunch.max)}. ` +
         `The ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) is the regional signature; ${list(lunch.names.filter((n) => n !== sodhiMeals.name).slice(0, 2))} are simpler options.`
     ),
     qa(

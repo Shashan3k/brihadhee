@@ -2841,3 +2841,13 @@ a.contact__channel:hover {
 }
 
 
+
+/* ---- Build Your Own Dosa ---- */
+.byo__steps { display: grid; gap: 1.25rem 2rem; margin: 1.5rem 0 0; padding: 0; list-style: none; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.byo__step-title { margin: 0 0 0.5rem; font-size: 1.1rem; }
+.byo__options, .byo__suggestions { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.45rem; }
+.byo__option, .byo__row { display: flex; justify-content: space-between; gap: 1rem; margin: 0; }
+.byo__price { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.byo__subhead { margin: 2rem 0 0.75rem; font-size: 1.15rem; }
+.byo__suggestions { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem 2rem; }
+.byo__build { margin: 0.15rem 0 0; opacity: 0.8; font-size: 0.92rem; }

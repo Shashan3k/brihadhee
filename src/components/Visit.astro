@@ -27,7 +27,7 @@ const hoursPayload = JSON.stringify({
       <p class="eyebrow">Visit us</p>
       <h2 class="section__title" id="visit-title">{street.split(", W-Block")[0]}, Anna Nagar East</h2>
       <p class="section__lead">
-        We are on {street}, near Anna Nagar Tower Park, serving {getFact("mealTimes")}. Call {getFact("phone")} for today's hours.
+        We are on {street}, near Anna Nagar Tower Park, serving {getFact("mealTimes")}, {getFact("hours").short}.
         <a href={`${base}about/`}>Directions and map</a>.
       </p>
     </div>

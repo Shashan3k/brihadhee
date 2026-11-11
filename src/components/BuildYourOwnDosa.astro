@@ -1,0 +1,48 @@
+---
+/**
+ * Build Your Own Dosa: the four steps and the chef's suggestions, exactly as on
+ * page 1 of the menu (src/data/menu-canonical.ts). Static HTML, no JavaScript.
+ */
+import { byo, rupees } from "../lib/menu-facts.js";
+
+const { id = "build-your-own-dosa", headingLevel = 2 } = Astro.props;
+const H = `h${headingLevel}`;
+const Sub = `h${headingLevel + 1}`;
+---
+
+<section class="section byo" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container">
+    <H class="section__title" id={`${id}-title`}>Build Your Own Dosa</H>
+    <p class="section__lead">
+      Pick one batter, then add any toppings, a stuffing and a garnish. Batters start at {rupees(byo.batterMin)}; each add-on is priced separately.
+    </p>
+    <ol class="byo__steps">
+      {byo.steps.map((s) => (
+        <li class="byo__step">
+          <Sub class="byo__step-title">{s.step}. {s.name}</Sub>
+          <ul class="byo__options" role="list">
+            {s.options.map((o) => (
+              <li class="byo__option">
+                <span>
+                  <strong>{o.name}</strong>
+                  {o.note && <small> ({o.note})</small>}
+                </span>
+                <span class="byo__price">{s.step === 1 ? rupees(o.price) : `+${rupees(o.price)}`}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ol>
+
+    <Sub class="byo__subhead">Chef's suggestions</Sub>
+    <ul class="byo__suggestions" role="list">
+      {byo.suggestions.map((d) => (
+        <li class="byo__suggestion">
+          <p class="byo__row"><strong>{d.name}</strong> <span class="byo__price">{rupees(d.price)}</span></p>
+          <p class="byo__build">{d.build.join(", ")}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

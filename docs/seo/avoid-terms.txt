@@ -35,5 +35,4 @@ bulk\s+catering
 mass\s+catering
 non[- ]?veg(?:etarian)?\s+catering
 multi[- ]cuisine\s+catering
-corporate\s+catering
-office\s+lunch\s+catering
+# 2026-11-11: corporate and office catering are now a client service, removed from this list.

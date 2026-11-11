@@ -9,6 +9,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import PageHeader from "../components/PageHeader.astro";
 import AtAGlance from "../components/AtAGlance.astro";
+import BuildYourOwnDosa from "../components/BuildYourOwnDosa.astro";
 import CompareTable from "../components/CompareTable.astro";
 import Offers from "../components/Offers.astro";
 import Faq from "../components/Faq.astro";
@@ -34,13 +35,14 @@ const schema = pageGraph({
     <PageHeader eyebrow="Dosa and parotta · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={`${base}menu/`} />
     <AtAGlance title="Dosa and parotta at Brihadhee: summary" rows={page.glance} />
 
-    <section class="section" id="customised-dosa" aria-labelledby="customised-dosa-title">
+    <BuildYourOwnDosa />
+
+    <section class="section" id="dosa-variety" aria-labelledby="dosa-variety-title">
       <div class="container dish-page__grid">
         <article>
-          <h2 class="section__title" id="customised-dosa-title">Customised dosas and {dosa.count} dosa varieties</h2>
+          <h2 class="section__title" id="dosa-variety-title">{dosa.count} dosa varieties</h2>
           <p>
-            Brihadhee makes customised dosas: tell the team how you want your dosa when you order.
-            The menu also lists {dosa.count} dosa varieties from {rupees(dosa.min)} to {rupees(dosa.max)}.
+            Alongside build-your-own, the menu lists {dosa.count} dosa varieties from {rupees(dosa.min)} to {rupees(dosa.max)}.
           </p>
           <ul class="dish-list" role="list">
             {dosa.items.map((i) => (

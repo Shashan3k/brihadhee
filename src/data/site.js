@@ -50,9 +50,9 @@ export const site = {
   nameTamil: getFact("nameTamil"),
   tagline: "Regional Tamil vegetarian food, from Nellai sodhi to Paanai Parotta.",
   subTagline:
-    `Customised dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}.`,
+    `Build-your-own dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}, ${getFact("hours").short}.`,
   shortDescription:
-    "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for customised dosas, Paanai Parotta and Nellai Special Sodhi Meals.",
+    "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for build-your-own dosas, Paanai Parotta and Nellai sodhi meals.",
   // Entity sentence reused on the page body.
   entitySentence:
     `${getFact("name")} is a pure vegetarian restaurant on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}.`,
@@ -217,7 +217,10 @@ export const site = {
 export const hasPhone = Boolean(site.contact.phone);
 export const hasWhatsApp = Boolean(site.contact.whatsapp);
 export const hasEmail = Boolean(site.contact.email);
+/** Day-by-day hours (table, Open/Closed badge, openingHoursSpecification). Needs openDays verified. */
 export const hasHours = site.hours.verified && site.hours.days.length > 0;
+/** Opening time range is known (shown as text even before the days are confirmed). */
+export const hasHoursText = site.hours.verified && Boolean(site.hours.summary);
 export const hasVideo = Boolean(site.media.video.src);
 export const socialLinks = Object.entries(site.social)
   .filter(([, href]) => Boolean(href))

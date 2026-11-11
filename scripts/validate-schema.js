@@ -67,6 +67,8 @@ const TARGET_QUESTIONS = [
   "Does Brihadhee cater outside Anna Nagar?",
   "How do I book catering with Brihadhee?",
   "How is Brihadhee catering priced?",
+  "Does Brihadhee do corporate catering?",
+  "Does Brihadhee provide end-to-end event catering?",
   "Where is Brihadhee located?",
 ];
 
@@ -94,7 +96,9 @@ const GATES = {
   [TARGET_QUESTIONS[5]]: () => nonEmpty(cfg.service_area),
   [TARGET_QUESTIONS[6]]: () => Boolean(confirmedPhone || confirmedWhatsapp),
   [TARGET_QUESTIONS[7]]: () => ["per_plate", "on_request"].includes(cfg.pricing_model),
-  [TARGET_QUESTIONS[8]]: () => true, // restaurant fact
+  [TARGET_QUESTIONS[8]]: () => FACTS.corporateCatering?.status === "verified",
+  [TARGET_QUESTIONS[9]]: () => FACTS.eventService?.status === "verified",
+  [TARGET_QUESTIONS[10]]: () => true, // restaurant fact
 };
 
 /* ---- Helpers ---------------------------------------------------------- */
@@ -277,7 +281,7 @@ for (const { name, html, nodes } of pages) {
       if (name === CATERING_PATH) {
         if (!TARGET_QUESTIONS.includes(qn)) err(name, `FAQ question is not one of the catering targets: ${qn}`);
         else if (!GATES[qn]()) err(name, `FAQ question not confirmed in config: ${qn}`);
-        if (qn === TARGET_QUESTIONS[8]) {
+        if (qn === TARGET_QUESTIONS[10]) {
           for (const part of ["W-Block", "Anna Nagar East", "Tamil Nadu 600040", "Anna Nagar Tower Park", "3rd Avenue"]) {
             if (!ans.includes(part)) err(name, `location answer missing "${part}"`);
           }

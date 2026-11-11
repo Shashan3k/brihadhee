@@ -8,7 +8,7 @@ import { site } from "../data/site.js";
 import { getFact, factOr, FACTS, addressLine, landmarkSentence } from "../data/entity-truth.ts";
 import { faqItems } from "../data/faq.js";
 import { dosaPage, nellaiPage } from "../data/pages.js";
-import { categories, priceRange, itemCount, allVegetarian, rupees } from "./menu-facts.js";
+import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes } from "./menu-facts.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
   cateringEnabled,
@@ -53,7 +53,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- Serves diners from: ${getFact("nearbyAreas").join(", ")}`);
   push(`- Phone: ${getFact("phone")}`);
   push(`- Email: ${getFact("email")}`);
-  push(`- Hours: being updated; call ${getFact("phone")} for today's hours`);
+  push(`- Hours: ${getFact("hours").short}, lunch and dinner only (which days it opens is not confirmed yet)`);
   push(`- Meal times: ${getFact("mealTimes")}`);
   push(`- Price level: ${getFact("priceRange").schema}; dish prices are listed on the menu page`);
   push(`- Reservations: ${getFact("acceptsReservations").how}`);
@@ -70,7 +70,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- [Menu and prices](${u("/menu/")}): every dish with its price`);
   push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
   push(`- [About and location](${u("/about/")}): founders, address, map and directions`);
-  push(`- [Dosa and parotta](${u(dosaPage.path)}): customised dosas, Paanai Parotta, kothu parotta`);
+  push(`- [Dosa and parotta](${u(dosaPage.path)}): build-your-own dosas, Paanai Parotta, kothu parotta`);
   push(`- [Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Karupatti Ulundhu Kali, pure veg lunch`);
   if (cateringEnabled) {
     push(`- [Catering](${u(CATERING_PATH)}): pure vegetarian event and wedding catering in Chennai`);
@@ -85,7 +85,17 @@ export function buildLlms({ full = false } = {}) {
     push(`- Offers checked on ${FACTS.offers.verifiedOn}; they can change.`, "");
   }
 
+  push("## Build Your Own Dosa", "");
+  push(`Pick one of ${byo.batterCount} batters (${byo.batterNames.join(", ")}) from ${rupees(byo.batterMin)}, then add toppings, a stuffing and a garnish. ${byo.suggestionCount} chef's suggestions cost ${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}.`);
+  if (full) {
+    push("");
+    for (const st of byo.steps) push(`- ${st.step}. ${st.name}: ${st.options.map((o) => `${o.name}${o.note ? ` (${o.note})` : ""} ${rupees(o.price)}`).join("; ")}`);
+    for (const d of byo.suggestions) push(`- Chef's suggestion ${d.name}: ${rupees(d.price)} (${d.build.join(", ")})`);
+  }
+  push("");
+
   push("## Menu price ranges", "");
+  push(`${menuNotes.gst} ${menuNotes.parcel}`);
   for (const c of categories) push(`- ${c.name}: ${priceRange(c)} (${c.count} items)`);
   push("");
 
@@ -124,6 +134,10 @@ export function buildLlms({ full = false } = {}) {
     if (serviceAreas.length) push(`- Area served: ${serviceAreas.join(", ")}`);
     if (formats.length) push(`- Formats: ${formats.map((f) => f.label).join(", ")}`);
     if (liveCounters.length) push(`- Live counters: ${liveCounters.join(", ")}`);
+    const corp = factOr("corporateCatering", null);
+    if (corp) push(`- Corporate catering: ${corp.description}, more than ${corp.dailyCovers} people every day`);
+    const evs = factOr("eventService", null);
+    if (evs) push(`- Event service: ${evs}`);
     if (plannerModels.length) push(`- For event planners: ${plannerModels.join(", ")}`);
     if (pricingText) push(`- Pricing: ${pricingText}`);
     if (cateringContact.phone) push(`- Catering phone: ${cateringContact.phone}`);

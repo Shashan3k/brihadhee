@@ -29,7 +29,7 @@ const cateringOn = verification.offer_catering === true && Boolean(cat);
         <span class="service__index">01 / DINE IN</span>
         <Icon name="utensils" size={24} class="service__icon" />
         <h3>Restaurant</h3>
-        <p>Customised dosas, Paanai Parotta and Nellai Special Sodhi Meals, served for {getFact("mealTimes")}.</p>
+        <p>Build-your-own dosas, Paanai Parotta and Nellai Special Sodhi Meals, served for {getFact("mealTimes")}.</p>
         <a class="service__link" href={`${base}best-dosa-parotta-anna-nagar/`}>Dosa and parotta <Icon name="arrowRight" size={17} /></a>
         <a class="service__link" href={`${base}nellai-meals-south-indian-veg-anna-nagar/`}>Nellai meals and lunch <Icon name="arrowRight" size={17} /></a>
       </article>
@@ -55,8 +55,8 @@ const cateringOn = verification.offer_catering === true && Boolean(cat);
         <article class="service service--events reveal" style="--reveal-delay:140ms">
           <span class="service__index">03 / FUNCTIONS</span>
           <Icon name="leaf" size={24} class="service__icon" />
-          <h3>Event and wedding catering</h3>
-          <p>Seemantham, gruhapravesam, ear piercing, betrothals, boutique weddings and birthdays, for {cat.guests.min} to {cat.guests.max.toLocaleString("en-IN")} guests across {cat.area}.</p>
+          <h3>Corporate and event catering</h3>
+          <p>Daily corporate catering for more than {getFact("corporateCatering").dailyCovers.toLocaleString("en-IN")} people, and end-to-end catering for weddings, birthdays, get-togethers and family functions, for {cat.guests.min} to {cat.guests.max.toLocaleString("en-IN")} guests across {cat.area}.</p>
           <a class="btn btn--onink service__cta" href={`${base}catering-services-chennai/`}>Catering details <Icon name="arrowRight" size={17} /></a>
         </article>
       )}

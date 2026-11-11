@@ -97,8 +97,8 @@ const schema = pageGraph({
           </table>
         ) : (
           <p class="section__lead">
-            {name} serves {getFact("mealTimes")}. Opening hours are being updated, so call <a href={telHref}>{phone}</a> or check
-            the <a href={getFact("mapUrl")} rel="noopener">Google Maps listing</a> before you visit.
+            {name} is open from {getFact("hours").short}, serving {getFact("mealTimes")} only. To check whether it is open on a
+            particular day, call <a href={telHref}>{phone}</a> or see the <a href={getFact("mapUrl")} rel="noopener">Google Maps listing</a>.
           </p>
         )}
       </div>

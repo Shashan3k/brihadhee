@@ -148,3 +148,30 @@ Sources: `facts.js` = `src/data/facts.js` (client brief, 2026-11-05); `PDF` = `f
 | Run `npx @canonry/aeo-audit@7` | Yes: run on 2026-11-06, results in section 5 |
 | Google Maps screenshot | Pending |
 | Turn off the GitHub Pages deploy | No: keep it running. Both builds will declare `https://www.brihadhee.com` as canonical, so the github.io copy consolidates to www instead of competing |
+
+## 8. Facts updated from the keyword plan (2026-11-11)
+
+Source: `keyword.md`, revised 11 November 2026 (client conversations W11 to W13). Applied in `src/data/entity-truth.ts`, `menu-canonical.ts` and `config/client-verification.json`.
+
+| Fact | Before | Now | Status |
+|---|---|---|---|
+| Hours | Hidden (6:30 AM retired in commit 938800a) | **11:00 AM to 11:00 PM**, shown on every page and in llms files | verified |
+| Open days, last order | Not shown | Still not shown: no day table, no Sunday claim, no `openingHoursSpecification` | unverified (`openDays`) |
+| Meal periods | Lunch and dinner | Unchanged; breakfast, tiffin and 6:30 AM stay blocked by `RETIRED_TERMS` | verified |
+| Dosa positioning | "Customised dosa" | **Build your own dosa** (page, Q&A, live counter, menu signature) | verified; "thousands of combinations" not used until approved |
+| Corporate catering | Banned (old client decision) | **Daily corporate and office catering, more than 1,000 people every day**; ban lifted in guardrails and avoid list | verified; client names and headcounts unverified (`corporateClients`) |
+| Event catering | Events list | Adds **get-togethers** and **end-to-end service** (menu planning, cooking, serving, setup) | verified |
+| Filter coffee counter | Claimed | Removed (keyword plan marks it "confirm it is current") | unverified |
+| Pure veg | Verified | Unchanged; keyword plan still lists it as a client question | verified (owner brief + menu PDF), reconfirm |
+| Marwari / Jain / no onion no garlic | n/a | Not on the site yet: only in `keyword.md` until the kitchen level is confirmed | unverified |
+
+## 9. New menu (2026-11-11)
+
+Price source of truth is now **`new menu.pdf`** (identical file to `table  menu.pdf`; image-only, transcribed by hand and checked column by column). It replaces `final menu 13-07-2026.pdf` and the brief prices. Canonical data: `src/data/menu-canonical.ts`.
+
+- 80 dishes in 12 sections: Starters, Lunch, Dine-in Combos (lunch only), Dosa Variety, Idly & Mini Idly, Idiyappam, Parotta & Chapathi, Rice, Indian Breads, Indian Gravies, Beverages, Brihadhee Signatures. Dishes with two or three prices (Gobi/Paneer, Plain/Butter/Garlic) are listed as separate items.
+- Build Your Own Dosa: 5 batters (₹120 to ₹145), 6 toppings, 4 stuffings, 5 garnishes, 10 chef's suggestions (₹180 to ₹260). Shown on `/menu/` and the dosa page, in Menu JSON-LD, `menu.json` and the llms files.
+- Removed (not on the new menu): Mini Meals, Sambar Rice, Variety Rice, Curd Rice, Ragi Dosa, Navadhaniya Dosa, Pesarattu Dosa.
+- Notable price changes: Karaikudi Paneer Poppers ₹280, Karuppatti Ulundhu Kali ₹100, Paanai Parotta ₹270, Kothu Parotta & Lemon Kothu Idiyappam Combo ₹179, Filter Coffee ₹45.
+- Menu notes now shown: prices exclude 5% GST, parcel charges extra, preparation up to 10 minutes.
+- **To confirm with the owner:** Coimbatore Mappillai is printed at ₹215 but its parts add up to ₹225 (site shows the printed ₹215). The menu spells "Pannai Parotta" and "Phulkha"; the site uses "Paanai" and "Phulka". New dishes have no description yet.

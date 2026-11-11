@@ -7,7 +7,8 @@
     "ear_piercing",
     "engagement",
     "wedding",
-    "birthday"
+    "birthday",
+    "get_together"
   ],
   "min_guests": 50,
   "max_guests": 1500,
@@ -27,8 +28,8 @@
     "is_different_from_restaurant": false
   },
   "pricing_model": "per_plate",
-  "restaurant_verified_hours": null,
-  "_restaurant_verified_hours_note": "Set to null on 2026-11-11: client direction (W11 to W13) retired the 6:30 AM opening. Fill in once the owner confirms the new hours, and update hours in src/data/entity-truth.ts at the same time.",
+  "restaurant_verified_hours": "11:00 AM to 11:00 PM (client W11, keyword plan 2026-11-11); open days not yet confirmed",
+  "_restaurant_verified_hours_note": "2026-11-11: client confirmed 11 AM to 11 PM, lunch and dinner only (keyword plan). The 6:30 AM opening stays retired. Which days it opens is still unconfirmed (entity-truth.ts openDays).",
   "restaurant_parking_available": null,
   "restaurant_parotta_confirmed": true,
   "_allowed_values": {
@@ -42,7 +43,8 @@
       "engagement",
       "wedding",
       "small_wedding",
-      "small_events"
+      "small_events",
+      "get_together"
     ],
     "menu_formats": [
       "south_indian_meals",

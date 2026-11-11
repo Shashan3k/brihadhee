@@ -11,7 +11,8 @@
  *   prep_mode:        restaurant_delivered | on_site
  *   pricing_model:    per_plate | on_request
  *
- * Guardrail: no corporate or office-lunch vendor content (client decision).
+ * Corporate catering (daily office catering, 1,000+ people a day) is a client service
+ * since 2026-11-11 (keyword plan, client W13). Client names need permission first.
  */
 import verification from "../../config/client-verification.json";
 import { site } from "./site.js";
@@ -41,6 +42,7 @@ const EVENTS = {
   wedding: { label: "Boutique weddings", inline: "boutique weddings", text: "Boutique and mid-size weddings, with regional menus and live counters." },
   small_wedding: { label: "Small weddings", inline: "small weddings", text: "Small weddings with a regional vegetarian menu." },
   birthday: { label: "Birthday parties", inline: "birthday parties", text: "Birthday parties at home or at a hall, including live dosa counters." },
+  get_together: { label: "Get-togethers", inline: "get-togethers", text: "Family get-togethers and private parties, at home or at a venue." },
   small_events: { label: "Small events", inline: "small events", text: "Small functions and get-togethers." },
 };
 
@@ -173,6 +175,10 @@ export const serviceAreas = areas;
 
 export const plannerSection = cateringEnabled && contact.any;
 
+/* Corporate catering and the end-to-end event service (verified facts). */
+export const corporate = cateringEnabled ? factOr("corporateCatering", null) : null;
+export const eventService = cateringEnabled ? factOr("eventService", null) : null;
+
 /* ---- FAQ (flagship page): direct answer first, 40 to 60 words ---------- */
 const faq = [];
 const add = (question, answer) => faq.push(qa(question, answer));
@@ -235,6 +241,16 @@ if (cateringEnabled) {
         `Call ${PHONE} or visit the restaurant on ${STREET} for a quote for your event.`
     );
   }
+  add(
+    "Does Brihadhee do corporate catering?",
+    `Yes, Brihadhee runs daily corporate and office catering in ${AREA}, serving more than ${fmt(corporate?.dailyCovers ?? 1000)} people every day with ${PV} food from its kitchen on ${STREET}. ` +
+      `Companies can call ${PHONE} for menus and per-plate pricing for their teams.`
+  );
+  add(
+    "Does Brihadhee provide end-to-end event catering?",
+    `Yes, Brihadhee provides end-to-end event catering, covering ${eventService ? eventService.replace(/^end-to-end service: /, "") : "menu planning, cooking and serving"}, for ${G} with ${PV} food from its kitchen on ${STREET}. ` +
+      `It covers birthdays, weddings, get-togethers and family functions.`
+  );
   add(
     "Where is Brihadhee located?",
     `Brihadhee is at ${addr()}, near Anna Nagar Tower Park. ` +

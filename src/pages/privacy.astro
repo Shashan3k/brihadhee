@@ -17,7 +17,7 @@ const hasGa4 = /^G-[A-Z0-9]+$/.test((import.meta.env.PUBLIC_GA4_ID ?? "").trim()
 const hasMetaPixel = /^\d{10,20}$/.test((import.meta.env.PUBLIC_META_PIXEL_ID ?? "").trim());
 const path = "/privacy/";
 const title = `Privacy Policy | ${name}, Anna Nagar East`;
-const description = `How the ${name} website handles your data: no accounts, no stored enquiries, optional Google Analytics and Meta Pixel, and the third-party services we link to.`;
+const description = `How the ${name} website handles your data: no accounts, no stored enquiries, optional Google Analytics and Meta Pixel, and linked third-party services.`;
 const schema = pageGraph({ path, title, description, crumbs: [...HOME_CRUMBS, { name: "Privacy", path }] });
 ---
 

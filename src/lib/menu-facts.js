@@ -3,7 +3,7 @@
  * quote prices or lists use these helpers, so a price change in menu-canonical.ts
  * changes the text everywhere. Never type these numbers by hand.
  */
-import { MENU, CURRENCY } from "../data/menu-canonical.ts";
+import { MENU, CURRENCY, BUILD_YOUR_OWN_DOSA, MENU_NOTES } from "../data/menu-canonical.ts";
 
 const currency = CURRENCY;
 export const rupees = (n) => `${currency}${n}`;
@@ -74,3 +74,24 @@ export const joinNames = (names) =>
     : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
 
 export const currencySymbol = currency;
+
+/* ---- Build Your Own Dosa (page 1 of the menu) ---------------------------- */
+export const byo = (() => {
+  const steps = BUILD_YOUR_OWN_DOSA.steps;
+  const step = (n) => steps.find((s) => s.name.toLowerCase() === n);
+  const batters = step("batter").options;
+  const sugg = [...BUILD_YOUR_OWN_DOSA.suggestions].sort((a, b) => a.price - b.price);
+  return {
+    steps,
+    suggestions: BUILD_YOUR_OWN_DOSA.suggestions,
+    batterCount: batters.length,
+    batterMin: Math.min(...batters.map((b) => b.price)),
+    batterNames: batters.map((b) => b.name),
+    counts: Object.fromEntries(steps.map((s) => [s.name.toLowerCase(), s.options.length])),
+    suggestionCount: sugg.length,
+    suggestionMin: sugg[0].price,
+    suggestionMax: sugg[sugg.length - 1].price,
+    cheapestSuggestion: sugg[0],
+  };
+})();
+export const menuNotes = MENU_NOTES;

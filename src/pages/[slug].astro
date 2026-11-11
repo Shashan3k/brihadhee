@@ -5,7 +5,7 @@
  *   /catering-services-chennai/       flagship: families and functions
  *   /event-planner-catering-partner/  event management companies
  * Every block reads from src/data/catering.js and is omitted unless confirmed.
- * No corporate / office-lunch vendor content (client decision).
+ * Corporate catering (1,000+ people a day) is shown on the flagship page; client names need permission.
  */
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
@@ -40,6 +40,8 @@ import {
   cateringSchema,
   plannerSchema,
   joinNatural,
+  corporate,
+  eventService,
 } from "../data/catering.js";
 
 export function getStaticPaths() {
@@ -63,6 +65,7 @@ const glance = [
   ["Guests", guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "On enquiry"],
   ["Area served", serviceAreas.join(", ")],
   ["Live counters", liveCounters.join(", ")],
+  ...(corporate ? [["Corporate", `more than ${corporate.dailyCovers.toLocaleString("en-IN")} people served every day`]] : []),
   ["Pricing", pricingText ?? "On enquiry"],
   ...(isPlanner ? [["For event planners", plannerModels.join(", ")]] : []),
 ];
@@ -131,6 +134,18 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
             <li><h3>Regional menus</h3><p>Menus built around Tirunelveli and Karaikudi dishes, customised for each of your clients.</p></li>
             <li><h3>Per-plate pricing</h3><p>{pricingText}, so you can quote your client before booking.</p></li>
           </ul>
+        </div>
+      </section>
+    )}
+
+    {!isPlanner && corporate && (
+      <section class="section" id="corporate" aria-labelledby="corporate-title">
+        <div class="container">
+          <h2 class="section__title" id="corporate-title">Corporate and office catering</h2>
+          <p class="section__lead">
+            Brihadhee runs daily corporate catering across {joinNatural(serviceAreas)}, serving more than {corporate.dailyCovers.toLocaleString("en-IN")} people every day with 100% pure vegetarian food from its kitchen on {getFact("street")}.
+          </p>
+          {eventService && <p>For events, the service is end to end: {eventService.replace(/^end-to-end service: /, "")}.</p>}
         </div>
       </section>
     )}

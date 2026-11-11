@@ -178,7 +178,7 @@ export function cateringServiceSchema({ areas = [], phone = null } = {}) {
     serviceType: "Catering",
     name: "Brihadhee Pure Veg Event and Wedding Catering",
     description:
-      "Pure vegetarian catering for family functions, boutique weddings and event management companies, with regional menus and live food counters.",
+      "Pure vegetarian catering for corporate offices, family functions, weddings and event management companies, with regional menus, live food counters and end-to-end event service.",
     url: pageUrl("/catering-services-chennai/"),
     provider: { "@id": ids.restaurant },
     audience: [
@@ -243,7 +243,7 @@ export function homeSchema({ title, description }) {
  * Prices come straight from the data (confirmed current on 2026-11-05).
  * Signature extras without a listed price are MenuItems without an offer.
  */
-export function menuSchema({ categories, extras = [] }) {
+export function menuSchema({ categories, extras = [], byo = null }) {
   return {
     "@context": CONTEXT,
     "@type": "Menu",
@@ -263,6 +263,39 @@ export function menuSchema({ categories, extras = [] }) {
           offers: { "@type": "Offer", price: String(i.price), priceCurrency: "INR" },
         })),
       })),
+      ...(byo
+        ? [
+            {
+              "@type": "MenuSection",
+              name: "Build Your Own Dosa",
+              description: "Pick one batter, then add toppings, a stuffing and a garnish.",
+              hasMenuSection: [
+                ...byo.steps.map((s) => ({
+                  "@type": "MenuSection",
+                  name: `${s.step}. ${s.name}`,
+                  hasMenuItem: s.options.map((o) => ({
+                    "@type": "MenuItem",
+                    name: o.name,
+                    ...(o.note ? { description: o.note } : {}),
+                    suitableForDiet: "https://schema.org/VegetarianDiet",
+                    offers: { "@type": "Offer", price: String(o.price), priceCurrency: "INR" },
+                  })),
+                })),
+                {
+                  "@type": "MenuSection",
+                  name: "Chef's suggestions",
+                  hasMenuItem: byo.suggestions.map((d) => ({
+                    "@type": "MenuItem",
+                    name: d.name,
+                    description: d.build.join(", "),
+                    suitableForDiet: "https://schema.org/VegetarianDiet",
+                    offers: { "@type": "Offer", price: String(d.price), priceCurrency: "INR" },
+                  })),
+                },
+              ],
+            },
+          ]
+        : []),
       ...(extras.length
         ? [
             {

@@ -18,6 +18,7 @@ import {
   findItems,
   priceRange,
   rupees,
+  summarise,
 } from "../lib/menu-facts.js";
 
 const name = getFact("name");
@@ -40,6 +41,8 @@ const longDate = (iso) =>
 
 const dosa = category("dosa");
 const idly = category("idly");
+const idiyappam = category("idiyappam");
+const idlyAll = summarise([...idly.items, ...idiyappam.items]);
 const beverages = category("beverages");
 const paanai = item("Paanai Parotta");
 const sodhi = item("Nellai Special Sodhi Meals");
@@ -59,7 +62,7 @@ export const faqItems = [
   ),
   qa(
     `What should I order at ${name}?`,
-    `${name}, the ${PV} restaurant on ${street}, is known for customised dosas, Paanai Parotta (${rupees(paanai.price)}), the ${sodhi.name} (${rupees(sodhi.price)}) and filter coffee (${rupees(filterCoffee.price)}). ` +
+    `${name}, the ${PV} restaurant on ${street}, is known for build-your-own dosas, Paanai Parotta (${rupees(paanai.price)}), the ${sodhi.name} (${rupees(sodhi.price)}) and filter coffee (${rupees(filterCoffee.price)}). ` +
       `For lunch, start with the ${sodhi.name}, a Tirunelveli-style meal built around sodhi.`,
     { id: "what-to-order" }
   ),
@@ -127,14 +130,14 @@ export const aboutFaq = [
 export const menuFaq = [
   qa(
     `What is on the ${name} menu?`,
-    `The ${name} menu lists ${itemCount} ${PV} dishes in ${categories.length} sections, from ${dosa.count} dosa varieties and kothu combos to meals, parotta and sweets, served on ${street}. ` +
+    `The ${name} menu lists ${itemCount} ${PV} dishes in ${categories.length} sections, from build-your-own dosas and ${dosa.count} dosa varieties to lunch meals, parotta, breads and gravies, served on ${street}. ` +
       `Prices run from ${rupees(minPrice)} to ${rupees(maxPrice)}.`,
     { id: "menu-overview" }
   ),
   qa(
     `Does ${name} serve filter coffee?`,
     `Yes, ${name} serves filter coffee for ${rupees(filterCoffee.price)} at its ${PV} restaurant on ${street}, along with ${list(otherDrinks)}. ` +
-      `The restaurant also has an outdoor filter coffee and tea counter.`,
+      `Filter coffee is served from ${getFact("hours").short}, with lunch and dinner.`,
     { id: "filter-coffee" }
   ),
   qa(
@@ -145,8 +148,8 @@ export const menuFaq = [
   ),
   qa(
     `Which idly and idiyappam dishes does ${name} serve?`,
-    `${name} serves ${idly.count} idly and idiyappam dishes (${priceRange(idly)}) at its ${PV} restaurant on ${street}, alongside ${dosa.count} dosa varieties. ` +
-      `They include ${list(idly.names.slice(0, 3))}.`,
+    `${name} serves ${idly.count} idly dishes and ${idiyappam.count} idiyappam dishes (${priceRange(idlyAll)}) at its ${PV} restaurant on ${street}, alongside ${dosa.count} dosa varieties. ` +
+      `They include ${list([idly.names[0], idly.names[1], idiyappam.names[0]])}.`,
     { id: "idly-idiyappam" }
   ),
 ];
