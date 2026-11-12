@@ -18,6 +18,7 @@ import { ROUTES } from "./site.js";
 import { claimQuestion, list } from "../lib/answers.js";
 import { category, allItems, rupees } from "../lib/menu-facts.js";
 import { cateringEnabled, guests, liveCounters, corporate } from "./catering.js";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
 
 const name = getFact("name");
 const { open: OPEN, close: CLOSE, range: HOURS } = openingTimes();
@@ -112,7 +113,7 @@ export const nellaiGuide = {
             title: "Nellai Food at Your Function",
             answer: `${name}'s event catering brings Nellai cooking to functions across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}.`,
             paras: [
-              `See [pure veg event catering in Chennai](${ROUTES.eventCatering}) for weddings, birthdays and family functions, where one team handles menu planning, cooking, serving and setup.` +
+              `See [${CATERING_DIET} event catering in Chennai](${ROUTES.eventCatering}) for weddings, birthdays and family functions, where one team handles menu planning, cooking, serving and setup.` +
                 (corporate
                   ? ` Offices can add a weekly Nellai Special Sodhi Meals day through [corporate catering](${ROUTES.corporateCatering}), which serves more than ${num(corporate.dailyCovers)} people every day.`
                   : ""),

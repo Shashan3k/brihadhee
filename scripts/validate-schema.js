@@ -28,6 +28,8 @@ const err = (page, msg) => errors.push(`${page}: ${msg}`);
 /* ---- Facts the entity must match -------------------------------------- */
 // entity-truth.ts is importable by Node (type stripping), so the validator reads the same source as the site.
 const { FACTS } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
+// Catering says "vegetarian" until the owner answers Q20 (config/seo-gates.ts).
+const { CATERING_DIET } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 const SITE = {
   name: FACTS.name.value,
   phone: FACTS.phone.value,
@@ -58,7 +60,8 @@ if (existsSync(keyPath)) {
 const CATERING_PATH = "/catering-services-chennai/";
 const PLANNER_PATH = "/event-planner-catering-partner/";
 const CORPORATE_PATH = "/corporate-catering-chennai/";
-const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH, CORPORATE_PATH];
+const SMALL_FUNCTIONS_PATH = "/small-function-catering-chennai/";
+const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH, CORPORATE_PATH, SMALL_FUNCTIONS_PATH];
 /* Questions allowed on the event catering page, each gated on a confirmed value.
  * One Q&A per route: corporate questions live on /corporate-catering-chennai/
  * and the location question on /about/ (src/lib/answers.js qaRoute). */
@@ -81,7 +84,7 @@ const GATES = {
   "Does Brihadhee do wedding and event catering?": () => cfg.offer_catering === true && nonEmpty(cfg.confirmed_events),
   "Does Brihadhee provide end-to-end event catering?": () => FACTS.eventService?.status === "verified",
   "What kind of catering does Brihadhee provide?": () => nonEmpty(cfg.menu_formats),
-  "Is Brihadhee catering pure vegetarian?": () => nonEmpty(cfg.menu_formats),
+  [`Is Brihadhee catering ${CATERING_DIET}?`]: () => nonEmpty(cfg.menu_formats),
   "Which events does Brihadhee cater?": () => nonEmpty(cfg.confirmed_events),
   "Does Brihadhee cater outside Anna Nagar?": () => nonEmpty(cfg.service_area),
   "How do I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
@@ -93,6 +96,7 @@ const SERVICE_TYPES = {
   [CATERING_PATH]: "Event catering",
   [PLANNER_PATH]: "Event catering",
   [CORPORATE_PATH]: "Corporate catering",
+  [SMALL_FUNCTIONS_PATH]: "Event catering",
 };
 
 /* ---- Helpers ---------------------------------------------------------- */

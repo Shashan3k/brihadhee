@@ -2877,6 +2877,10 @@ a.contact__channel:hover {
   margin-top: 0;
   margin-bottom: 1.1rem;
 }
+/* Home H1 wraps the brand line and the category line (Hero.astro). */
+.hero__heading { margin: 0; font: inherit; letter-spacing: inherit; }
+.hero__heading .hero__title { display: block; font-family: var(--ff-display); }
+.hero__hours { margin: -0.4rem 0 1rem; font-weight: 600; letter-spacing: 0.01em; }
 @media (min-width: 860px) {
   .content__items {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2983,4 +2987,13 @@ a.contact__channel:hover {
   .nav__links { gap: 0; }
   .nav__links a, .nav__group > summary { padding-inline: 0.4rem; font-size: 0.8rem; }
   .nav__actions .btn--sm span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}
+
+/* Gated spoke drafts (config/seo-gates.ts): visible only in dev / SEO_GATES_PREVIEW builds. */
+.draft-banner {
+  padding: 0.85rem 0;
+  background: #fff3cd;
+  color: #5c4400;
+  border-bottom: 1px solid #e6c766;
+  font-size: 0.95rem;
 }

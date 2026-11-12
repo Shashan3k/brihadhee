@@ -12,6 +12,7 @@
 
 import verification from "../../config/client-verification.json";
 import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl } from "./entity-truth.ts";
+import { CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
 
 const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
@@ -35,6 +36,13 @@ export const ROUTES = {
   whatsNew: "/whats-new/",
   seasonal: "/seasonal/karthigai-ayyappa-pure-veg/",
   nellaiGuide: "/guides/what-are-nellai-meals/",
+  /* 12 Nov keyword plan spokes (section 6). The gated one is built only when its
+     gate in config/seo-gates.ts is on (or as a noindex draft in dev/preview). */
+  smallFunctions: "/small-function-catering-chennai/",
+  cateringQuote: "/catering-quote-chennai/",
+  familyDining: "/family-dining-anna-nagar/",
+  faq: "/faq/",
+  noOnionNoGarlic: "/no-onion-no-garlic-anna-nagar/",
 };
 /** Site-relative href for a route (respects the build base path). */
 export const href = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;
@@ -220,11 +228,14 @@ export const site = {
             children: [
               ...(isConfirmed("corporateCatering") ? [{ label: "Corporate Catering", href: href(ROUTES.corporateCatering) }] : []),
               { label: "Event Catering", href: href(ROUTES.eventCatering) },
+              { label: `Small Functions (${CATERING_MIN_GUESTS}+ Guests)`, href: href(ROUTES.smallFunctions) },
+              { label: "Get a Catering Quote", href: href(ROUTES.cateringQuote) },
               { label: "Event Planner Partner", href: href(ROUTES.plannerPartner) },
             ],
           },
         ]
       : []),
+    ...(ENABLE_NO_ONION_NO_GARLIC_CLUSTER ? [{ label: "No Onion, No Garlic", href: href(ROUTES.noOnionNoGarlic) }] : []),
     { label: "Visit & Contact", href: href(ROUTES.about) },
   ],
 
@@ -264,6 +275,23 @@ export const whatsappHref = hasWhatsApp
   : "";
 
 export const emailHref = hasEmail ? `mailto:${site.contact.email}` : "";
+
+/**
+ * Phone and WhatsApp for the page being rendered. The catering pages set
+ * Astro.locals.contact to the catering numbers (src/pages/[slug].astro); every
+ * other page gets the restaurant's. Used by the header call button, page header,
+ * summary box, mobile CTA bar and the quote forms. The footer always shows the
+ * restaurant's own NAP.
+ */
+export const restaurantContact = {
+  phone: site.contact.phone,
+  whatsapp: site.contact.whatsapp,
+  telHref,
+  whatsappHref,
+  hasPhone,
+  hasWhatsApp,
+};
+export const pageContact = (astro) => astro?.locals?.contact ?? restaurantContact;
 
 /** Google Maps directions from a named place (origin) to the restaurant. */
 export const directionsFrom = (origin) =>

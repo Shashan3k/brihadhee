@@ -11,6 +11,8 @@ const {
   title = "Frequently asked questions",
   lead = "Straight answers about Brihadhee's food, location, hours and offers.",
   eyebrow = "Quick answers",
+  moreHref = "", // optional link to the /faq/ hub
+  moreLabel = "All Brihadhee questions and answers",
 } = Astro.props;
 const english = items.filter((i) => !i.lang || i.lang === "en");
 const other = items.filter((i) => i.lang && i.lang !== "en");
@@ -39,6 +41,8 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
             </details>
           ))}
         </div>
+
+        {moreHref && <p class="faq__updated"><a href={moreHref}>{moreLabel}</a></p>}
 
         {other.length > 0 && (
           <>

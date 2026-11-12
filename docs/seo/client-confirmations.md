@@ -181,3 +181,11 @@ Recorded in `src/data/entity-truth.ts` with source `B2B` and `verifiedOn: 2026-1
 | Q&A rules | One Q&A per route; the full address only in the first Q&A on each page; a visible "Last updated: Month YYYY" line from `CONTENT_UPDATED` | `src/lib/answers.js` `qaRoute()`, `scripts/aeo-lint.mjs` check 12 |
 | Schema | One opening-hours node (every day, 11:00 to 23:00); no `makesOffer`; no ratings or reviews; `dateModified` on WebPage, FAQPage and Article only (it is not a Restaurant property); Service `Event catering` (with an offer catalogue: wedding, birthday, family function) and `Corporate catering`, `areaServed` Chennai | `src/lib/schema.js` |
 | Still pending (seasonal page says "ask the team") | Cooking without onion and garlic on request (`noOnionGarlic`); Ayyappa pooja or bhajan catering (`poojaCatering`, also add `pooja` to `confirmed_events`); a Karthigai seasonal menu or offer (`karthigaiSpecial`). Each has a build probe, so the claim cannot appear until the fact is verified | `src/data/entity-truth.ts` |
+
+## J. Phone numbers (owner direction, 2026-11-12)
+
+| Item | Value | Where |
+|---|---|---|
+| Restaurant phone and WhatsApp | **+91 73587 14113** on every page, in the Restaurant schema, the footer and llms.txt (replaces +91 94442 24999 as the main number) | `entity-truth.ts` `phone`, `whatsapp` |
+| Catering phone and WhatsApp | **+91 94442 24999** on the catering pages only (event, corporate, event planner, small functions, quote): header call button, page header, summary, mobile CTA bar, forms, FAQ answers and the catering Service schema. The footer keeps the restaurant number as the site-wide NAP | `config/client-verification.json` `enquiry_channels` (`is_different_from_restaurant: true`); `pageContact()` in `src/data/site.js` |
+| To confirm | That +91 73587 14113 takes WhatsApp (the WhatsApp buttons now use it) | |

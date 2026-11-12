@@ -9,7 +9,7 @@
  *   variant: "corporate" | "event" | "general"   (sets the hidden formType and wording)
  */
 import Icon from "./Icon.astro";
-import { site, hasWhatsApp, whatsappHref, hasPhone, telHref } from "../data/site.js";
+import { pageContact } from "../data/site.js";
 import { FORM_TYPES, HEADCOUNTS, SOURCES, HONEYPOT } from "../lib/lead.js";
 
 const {
@@ -21,6 +21,7 @@ const {
   headingLevel = 2,
 } = Astro.props;
 const H = `h${headingLevel}`;
+const { phone, whatsapp, hasPhone, hasWhatsApp, telHref, whatsappHref } = pageContact(Astro);
 const org = variant === "corporate" ? "Company name" : variant === "event" ? "Event type (wedding, birthday, housewarming…)" : "Company / Event type";
 const dateLabel = variant === "corporate" ? "Preferred start date" : "Service date";
 const waText = encodeURIComponent(
@@ -42,12 +43,12 @@ const f = (name) => `${id}-${name}`;
       <div class="catering__cta">
         {hasWhatsApp && (
           <a class="btn btn--primary" href={`${whatsappHref}?text=${waText}`} target="_blank" rel="noopener" data-event="click_whatsapp">
-            <Icon name="whatsapp" size={17} /> WhatsApp {site.contact.whatsapp}
+            <Icon name="whatsapp" size={17} /> WhatsApp {whatsapp}
           </a>
         )}
         {hasPhone && (
           <a class="btn btn--ghost" href={telHref} data-event="click_call">
-            <Icon name="phone" size={17} /> Call {site.contact.phone}
+            <Icon name="phone" size={17} /> Call {phone}
           </a>
         )}
       </div>

@@ -1,5 +1,5 @@
 ---
-import { site, hasPhone, telHref } from "../data/site.js";
+import { site, pageContact } from "../data/site.js";
 const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
@@ -7,6 +7,7 @@ import Icon from "./Icon.astro";
 
 // On sub-pages (e.g. /catering) in-page anchors must point back to the home page.
 const { homeBase = "" } = Astro.props;
+const { phone, hasPhone, telHref } = pageContact(Astro);
 const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
 ---
 
@@ -85,7 +86,7 @@ const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
       hasPhone && (
         <a class="btn btn--primary" href={telHref}>
           <Icon name="phone" size={17} />
-          Call {site.contact.phone}
+          Call {phone}
         </a>
       )
     }

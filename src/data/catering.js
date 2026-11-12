@@ -20,9 +20,13 @@ import { site } from "./site.js";
 import { getFact, factOr } from "./entity-truth.ts";
 import { qa, qaRoute } from "../lib/answers.js";
 import { taCorporate } from "./faq-ta.js";
+import { CATERING_DIET, ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS } from "../../config/seo-gates.ts";
 
 const STREET = getFact("street");
 const PV = "100% pure vegetarian";
+/** Catering diet word: "vegetarian" until the owner answers Q20 (config/seo-gates.ts). */
+const CD = CATERING_DIET;
+const CDcap = CD.charAt(0).toUpperCase() + CD.slice(1);
 import { pageGraph, cateringServiceSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 
 const v = verification;
@@ -37,9 +41,12 @@ const liveCounters = cat?.liveCounters ?? [];
 
 const EVENTS = {
   house_function: { label: "House functions", inline: "house functions", text: "Family functions at home, with a regional vegetarian menu." },
-  pooja: { label: "Pooja", inline: "poojas", text: "Pooja and religious functions with a pure vegetarian menu." },
-  baby_shower: { label: "Seemantham (baby shower)", inline: "seemantham (baby shower)", text: "Seemantham and valaikaapu functions, with traditional South Indian dishes." },
-  housewarming: { label: "Gruhapravesam (housewarming)", inline: "gruhapravesam (housewarming)", text: "Gruhapravesam catering with a traditional pure vegetarian spread." },
+  pooja: { label: "Pooja", inline: "poojas", text: `Pooja functions with a ${CD} menu.` },
+  /* "Seemantham" is a Brahmin-function term, gated by Q23 (config/seo-gates.ts); valaikaapu is the general Tamil word. */
+  baby_shower: ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS
+    ? { label: "Seemantham (baby shower)", inline: "seemantham (baby shower)", text: "Seemantham and valaikaapu functions, with traditional South Indian dishes." }
+    : { label: "Valaikaapu (baby shower)", inline: "valaikaapu (baby shower)", text: "Valaikaapu and baby shower functions, with traditional South Indian dishes." },
+  housewarming: { label: "Gruhapravesam (housewarming)", inline: "gruhapravesam (housewarming)", text: `Gruhapravesam catering with a traditional ${CD} spread.` },
   ear_piercing: { label: "Ear piercing ceremonies", inline: "ear piercing ceremonies", text: "Ear piercing (kaadhu kuthu) functions for family and guests." },
   engagement: { label: "Betrothals and engagements", inline: "betrothals", text: "Betrothal and engagement functions, with live counters if you want them." },
   wedding: { label: "Boutique weddings", inline: "boutique weddings", text: "Boutique and mid-size weddings, with regional menus and live counters." },
@@ -108,18 +115,20 @@ export const contact = {
   telHref: phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : "",
   whatsappHref: whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : "",
   any: Boolean(phone || whatsapp),
+  hasPhone: Boolean(phone),
+  hasWhatsApp: Boolean(whatsapp),
 };
 
 /* ---- Section data (null/empty = section hidden) ----------------------- */
 
 export const opening = eventIds.length
-  ? `Brihadhee provides pure vegetarian catering for ${joinNatural(
+  ? `Brihadhee provides ${CD} catering for ${joinNatural(
       eventIds.map((id) => EVENTS[id].inline)
     )} across ${joinNatural(areas.length ? areas : ["Chennai"])}, from its kitchen in Anna Nagar East.`
   : null;
 
 export const entityLine = cateringEnabled
-  ? `Brihadhee is a pure vegetarian restaurant and caterer on ${STREET}, Chennai ${getFact("address").postalCode}, near Anna Nagar Tower Park.`
+  ? `Brihadhee is a pure vegetarian restaurant on ${STREET}, Chennai ${getFact("address").postalCode}, near Anna Nagar Tower Park. Its kitchen also does ${CD} catering for functions and offices.`
   : null;
 
 export const events = eventIds.map((id) => ({ label: EVENTS[id].label, text: EVENTS[id].text }));
@@ -193,31 +202,31 @@ if (cateringEnabled) {
   if (eventIds.length) {
     add(
       "Does Brihadhee do wedding and event catering?",
-      `Yes, Brihadhee does ${PV} wedding and event catering across ${AREA} for ${G}, from boutique weddings and betrothals to birthdays, housewarmings and family get-togethers. ` +
-        `Its kitchen is at ${addr()}.`
+      `Yes, Brihadhee does ${CD} wedding and event catering across ${AREA} for ${G}, from boutique weddings and betrothals to birthdays, housewarmings and family get-togethers. ` +
+        `Its ${PV} kitchen is at ${addr()}.`
     );
   }
   add(
     "Does Brihadhee provide end-to-end event catering?",
-    `Yes, Brihadhee provides end-to-end event catering, covering ${eventService ? eventService.replace(/^end-to-end service: /, "") : "menu planning, cooking and serving"}, for ${G} with ${PV} food from its kitchen in ${NEAR}. ` +
+    `Yes, Brihadhee provides end-to-end event catering, covering ${eventService ? eventService.replace(/^end-to-end service: /, "") : "menu planning, cooking and serving"}, for ${G} with ${CD} food from its ${PV} kitchen in ${NEAR}. ` +
       `One team handles the function from menu to service.`
   );
   if (formatIds.length) {
     add(
       "What kind of catering does Brihadhee provide?",
-      `Brihadhee provides ${PV} catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, prepared by its kitchen in ${NEAR}, for ${G}. ` +
+      `Brihadhee provides ${CD} catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, prepared by its ${PV} restaurant kitchen in ${NEAR}, for ${G}. ` +
         (liveCounters.length ? `The ${liveCounters.length} live counters are ${joinNatural(liveCounters)}.` : "")
     );
     add(
-      "Is Brihadhee catering pure vegetarian?",
-      `Yes, Brihadhee catering is ${PV}, cooked by the same team as its pure vegetarian restaurant in ${NEAR}, for events of ${G}. ` +
-        "Menus can mix Tirunelveli and Karaikudi specialties with North Indian and Indo-Chinese dishes, all without meat, egg or fish."
+      `Is Brihadhee catering ${CD}?`,
+      `Yes, Brihadhee catering is ${CD}, cooked by the same team and in the same ${PV} kitchen as its restaurant in ${NEAR}, for events of ${G}. ` +
+        "Menus can mix Tirunelveli and Karaikudi specialties with North Indian and Indo-Chinese dishes, and no meat, egg or fish is cooked in the kitchen."
     );
   }
   if (eventIds.length) {
     add(
       "Which events does Brihadhee cater?",
-      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} across ${AREA}, with ${PV} menus from its kitchen in ${NEAR}. ` +
+      `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} across ${AREA}, with ${CD} menus from its ${PV} kitchen in ${NEAR}. ` +
         `Events can range from ${G}.`
     );
   }
@@ -231,15 +240,15 @@ if (cateringEnabled) {
   if (contact.any) {
     add(
       "How do I book catering with Brihadhee?",
-      `To book ${PV} catering with Brihadhee, send the quote form on this page, or call or WhatsApp ${PHONE} with your event, date, venue and guest count, from ${G}. ` +
-        `The team in ${NEAR} will suggest a menu and live counters, then confirm the per-plate price.`
+      `To book ${CD} catering with Brihadhee, send the quote form on this page, or call or WhatsApp ${PHONE} with your event, date, venue and guest count, from ${G}. ` +
+        `The team at its ${PV} restaurant in ${NEAR} will suggest a menu and live counters, then confirm the per-plate price.`
     );
   }
   if (v.pricing_model === "per_plate") {
     add(
       "How is Brihadhee catering priced?",
-      `Brihadhee prices its ${PV} catering per plate, quoted for the menu and live counters you choose, so you know the full cost before you confirm. ` +
-        `Call ${PHONE} or visit the restaurant in ${NEAR} for a quote for your event.`
+      `Brihadhee prices its ${CD} catering per plate, quoted for the menu and live counters you choose, so you know the full cost before you confirm. ` +
+        `Call ${PHONE} or visit its ${PV} restaurant in ${NEAR} for a quote for your event.`
     );
   }
 }
@@ -252,8 +261,8 @@ if (cateringEnabled) {
   const AREA = joinNatural(areas);
   plannerFaq.push(
     qa(
-      "Which pure veg caterer in Chennai works with event managers on boutique functions?",
-      `Brihadhee, a ${PV} restaurant and caterer, works with event management companies across ${AREA} on boutique functions and weddings for ${G}. ` +
+      `Which ${CD} caterer in Chennai works with event managers on boutique functions?`,
+      `Brihadhee, the ${PV} restaurant in ${NEAR}, works with event management companies across ${AREA} as a ${CD} caterer for boutique functions and weddings for ${G}. ` +
         `Its kitchen is at ${addr()}.`
     ),
     qa(
@@ -263,8 +272,8 @@ if (cateringEnabled) {
     ),
     qa(
       "Why do event planners choose a boutique caterer like Brihadhee?",
-      `Event planners choose Brihadhee for ${PV} menus customised for each client, live counters for dosa, parotta and Nellai sodhi, and per-plate pricing for ${G}. ` +
-        `Planners deal directly with the team at the restaurant in ${NEAR}.`
+      `Event planners choose Brihadhee for ${CD} menus customised for each client, live counters for dosa, parotta and Nellai sodhi, and per-plate pricing for ${G}. ` +
+        `Planners deal directly with the team at its ${PV} restaurant in ${NEAR}.`
     ),
     qa(
       "How do event managers start a catering partnership with Brihadhee?",
@@ -284,8 +293,8 @@ export const meta = {
 
 export const plannerMeta = {
   title: "Catering Partner for Event Planners in Chennai | Brihadhee",
-  description: `Brihadhee partners with Chennai event planners: white-label or co-branded live counters and pure veg menus${guestRange ? ` for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`,
-  h1: "Pure Veg Catering Partner for Event Management Companies in Chennai",
+  description: `Brihadhee partners with Chennai event planners: white-label or co-branded live counters and ${CD} menus${guestRange ? ` for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`,
+  h1: `${CDcap} Catering Partner for Event Management Companies in Chennai`,
 };
 
 /** Structured data for the catering pages: confirmed facts only. */
@@ -296,9 +305,11 @@ const eventCatalog = [
   eventIds.includes("birthday") && { name: "Birthday catering", description: EVENTS.birthday.text },
   eventIds.some((id) => FAMILY_EVENTS.includes(id)) && {
     name: "Family function catering",
-    description: `Pure vegetarian catering for ${joinNatural(eventIds.filter((id) => FAMILY_EVENTS.includes(id)).map((id) => EVENTS[id].inline))}.`,
+    description: `${CDcap} catering for ${joinNatural(eventIds.filter((id) => FAMILY_EVENTS.includes(id)).map((id) => EVENTS[id].inline))}.`,
   },
 ].filter(Boolean);
+
+export { eventCatalog, eventIds, EVENTS, guestRange };
 
 export function cateringSchema() {
   return pageGraph({
@@ -306,7 +317,7 @@ export function cateringSchema() {
     title: meta.title,
     description: meta.description,
     crumbs: [...HOME_CRUMBS, { name: "Catering", path: CATERING_PATH }],
-    extras: [cateringServiceSchema({ areas, phone: contact.phone, serviceType: "Event catering", offerCatalog: eventCatalog }), faqPageSchema(CATERING_PATH, faqs)],
+    extras: [cateringServiceSchema({ areas, phone: contact.phone, serviceType: "Event catering", offerCatalog: eventCatalog, guests: guestRange }), faqPageSchema(CATERING_PATH, faqs)],
   });
 }
 
@@ -327,7 +338,7 @@ export function plannerSchema() {
         path: PLANNER_PATH,
         serviceType: "Event catering",
         name: "Brihadhee Catering Partner for Event Planners",
-        description: "Pure vegetarian live counters and regional menus for event management companies in Chennai, white-label or co-branded, with per-plate pricing.",
+        description: `${CDcap} live counters and regional menus for event management companies in Chennai, white-label or co-branded, with per-plate pricing.`,
         audience: [{ "@type": "BusinessAudience", audienceType: "Event management companies" }],
       }),
       faqPageSchema(PLANNER_PATH, plannerFaqs),
@@ -358,17 +369,17 @@ const hasService = (re) => corpServices.some((x) => re.test(x));
 export const corporateEnabled = Boolean(cateringEnabled && corporate);
 
 export const corporateMeta = {
-  title: "Pure Veg Corporate Catering in Chennai | Brihadhee",
-  description: `Pure veg corporate catering in Chennai, serving ${DAILY ?? "1,000+"} people every day. Daily office lunches, bulk meals and corporate events. Request a quote today.`,
-  h1: "Pure Veg Corporate Catering in Chennai",
+  title: `${CDcap} Corporate Catering in Chennai | Brihadhee`,
+  description: `${CDcap} corporate catering in Chennai from Brihadhee, serving ${DAILY ?? "1,000+"} people every day: daily office lunches, bulk meals and corporate events.`,
+  h1: `${CDcap} Corporate Catering in Chennai`,
 };
 
 export const corporatePage = corporateEnabled
   ? {
       path: CORPORATE_PATH,
-      intro: `Brihadhee runs ${PV} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day from its restaurant kitchen on ${STREET}: daily office lunches, bulk lunch orders, employee meal programmes and office events.`,
+      intro: `Brihadhee runs ${CD} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day from the ${PV} kitchen of its restaurant on ${STREET}: daily office lunches, bulk lunch orders, employee meal programmes and office events.`,
       glance: [
-        ["Who", `Brihadhee, a ${PV} restaurant and caterer on ${STREET}`],
+        ["Who", `Brihadhee, a ${PV} restaurant on ${STREET} with a ${CD} catering service`],
         ["Scale", `more than ${fmt(corporate.dailyCovers)} people served every day`],
         ["Services", corpServices.join(", ")],
         ["Areas", joinNatural(corpAreas)],
@@ -378,7 +389,7 @@ export const corporatePage = corporateEnabled
       scale: {
         id: "scale",
         title: `Serving ${DAILY} People Every Day Across Chennai`,
-        lead: `Brihadhee cooks for more than ${fmt(corporate.dailyCovers)} people every day, so its kitchen is built for daily office volume. Every meal is ${PV} and cooked by the same team that runs the restaurant on ${STREET}.`,
+        lead: `Brihadhee cooks for more than ${fmt(corporate.dailyCovers)} people every day, so its kitchen is built for daily office volume. Every meal is ${CD}, cooked in the same ${PV} kitchen and by the same team that runs the restaurant on ${STREET}.`,
         items: [
           {
             title: "Daily Capacity and Scale",
@@ -393,7 +404,7 @@ export const corporatePage = corporateEnabled
       services: {
         id: "services",
         title: "Corporate Catering Services",
-        lead: `Brihadhee offers four corporate catering services, all ${PV}: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
+        lead: `Brihadhee offers four corporate catering services, all ${CD}: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
         tint: true,
         items: [
           hasService(/daily office lunch/) && {
@@ -416,7 +427,7 @@ export const corporatePage = corporateEnabled
       },
       menus: {
         id: "menus",
-        title: "Sample Pure Veg Corporate Menus",
+        title: `Sample ${CDcap} Corporate Menus`,
         lead: "These sample menus are built from dishes Brihadhee already serves at its restaurant; your final menu, portions and per-plate price are agreed with your team before the trial week.",
         items: [
           {
@@ -463,17 +474,17 @@ export const corporatePage = corporateEnabled
       faq: qaRoute(CORPORATE_PATH, [
         qa(
           "Does Brihadhee do corporate catering?",
-          `Yes, Brihadhee does ${PV} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day with daily office lunches, bulk meals, employee meal programmes and office events. ` +
-            `Its kitchen is at ${addr()}.`
+          `Yes, Brihadhee does ${CD} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day with daily office lunches, bulk meals, employee meal programmes and office events. ` +
+            `Its ${PV} kitchen is at ${addr()}.`
         ),
         qa(
           "How many people can Brihadhee cater for?",
-          `Brihadhee caters for more than ${fmt(corporate.dailyCovers)} people every day through its corporate catering, and for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "large groups of"} guests at a single wedding, birthday or family function, all ${PV}. ` +
-            `Every meal comes from its restaurant kitchen in ${NEAR}, Chennai.`
+          `Brihadhee caters for more than ${fmt(corporate.dailyCovers)} people every day through its corporate catering, and for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "large groups of"} guests at a single wedding, birthday or family function. ` +
+            `Every meal comes from its ${PV} restaurant kitchen in ${NEAR}, Chennai.`
         ),
         qa(
-          "Which caterers in Chennai supply pure veg office lunches every day?",
-          `Brihadhee, a ${PV} restaurant and caterer in ${NEAR}, supplies daily office lunches across Chennai to ${corpAreas.length} areas, from Guindy and Ambattur Industrial Estate to the OMR IT corridor. ` +
+          `Which caterers in Chennai supply ${CD} office lunches every day?`,
+          `Brihadhee, the ${PV} restaurant in ${NEAR}, supplies daily ${CD} office lunches across Chennai to ${corpAreas.length} areas, from Guindy and Ambattur Industrial Estate to the OMR IT corridor. ` +
             `Lunches rotate through a set menu cycle agreed with each office.`
         ),
         qa(
@@ -493,7 +504,7 @@ export const corporatePage = corporateEnabled
         ),
         qa(
           "Does Brihadhee deliver corporate lunches to OMR and Tidel Park?",
-          `Yes, Brihadhee delivers ${PV} corporate lunches to offices on OMR, including Tidel Park, Taramani, Perungudi, Sholinganallur and Siruseri, from its kitchen in ${NEAR}. ` +
+          `Yes, Brihadhee delivers ${CD} corporate lunches to offices on OMR, including Tidel Park, Taramani, Perungudi, Sholinganallur and Siruseri, from its ${PV} kitchen in ${NEAR}. ` +
             `It serves more than ${fmt(corporate.dailyCovers)} people every day across ${corpAreas.length} Chennai areas.`
         ),
         qa(
@@ -503,7 +514,7 @@ export const corporatePage = corporateEnabled
         ),
         qa(
           "Can Brihadhee cater office parties and corporate events in Chennai?",
-          `Yes, Brihadhee caters office parties and corporate events across Chennai with ${PV} menus from its kitchen in ${NEAR}, including live counters. ` +
+          `Yes, Brihadhee caters office parties and corporate events across Chennai with ${CD} menus from its ${PV} kitchen in ${NEAR}, including live counters. ` +
             `Counters include ${joinNatural(liveCounters)}, for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests.`
         ),
         ...taCorporate,
@@ -523,8 +534,8 @@ export function corporateSchema() {
         phone: contact.phone,
         path: CORPORATE_PATH,
         serviceType: "Corporate catering",
-        name: "Brihadhee Pure Veg Corporate Catering",
-        description: `Pure vegetarian corporate catering in Chennai for more than ${fmt(corporate.dailyCovers)} people a day: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
+        name: `Brihadhee ${CDcap} Corporate Catering`,
+        description: `${CDcap} corporate catering in Chennai for more than ${fmt(corporate.dailyCovers)} people a day: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
         audience: [{ "@type": "BusinessAudience", audienceType: "Companies, HR and office administration teams" }],
       }),
       faqPageSchema(CORPORATE_PATH, corporatePage.faq),
@@ -540,7 +551,7 @@ export const endToEnd = cateringEnabled && eventService
       title: "What End-to-End Catering Includes",
       lead: `End-to-end catering from Brihadhee means one team handles ${eventService.replace(/^end-to-end service: /, "")} for your function, for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests across Chennai.`,
       items: [
-        steps4.includes("menu planning") && { title: "Menu planning", text: "Choose a regional menu with the team: Tirunelveli and Karaikudi dishes, South Indian meals, North Indian and Indo-Chinese options, and the live counters you want, all pure vegetarian." },
+        steps4.includes("menu planning") && { title: "Menu planning", text: `Choose a regional menu with the team: Tirunelveli and Karaikudi dishes, South Indian meals, North Indian and Indo-Chinese options, and the live counters you want, all ${CD}.` },
         steps4.includes("cooking") && { title: "Cooking", text: `The food is cooked by the team that runs the restaurant on ${STREET}, from the same recipes guests eat there.` },
         steps4.includes("serving") && { title: "Serving", text: "Brihadhee's team serves your guests at the function and runs the live counters." },
         steps4.includes("setup") && { title: "Setup", text: "The team sets up the serving area and counters at your venue before guests arrive." },

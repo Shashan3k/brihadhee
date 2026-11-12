@@ -1,6 +1,7 @@
 ---
 import { getFact, addressLine } from "../data/entity-truth.ts";
-import { site, telHref } from "../data/site.js";
+import { site, pageContact } from "../data/site.js";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
 
 // Summary callout: a visible definition list of confirmed facts, placed near
 // the top of each page so people and answer engines get the essentials in one
@@ -14,10 +15,11 @@ const {
     ["Location", `${addressLine()}, near ${getFact("landmarks")[0]}`],
     ["Meals", `${getFact("mealTimes")}, dine-in`],
     ["Hours", getFact("hours").short],
-    ["Good for", "lunch, dinner, family meals, regional Tamil dishes, and pure vegetarian event catering"],
+    ["Good for", `lunch, dinner, family meals, regional Tamil dishes, and ${CATERING_DIET} event catering`],
   ],
   id = "at-a-glance",
 } = Astro.props;
+const { phone, telHref } = pageContact(Astro);
 ---
 
 <section class="section glance" id={id} aria-labelledby={`${id}-title`}>
@@ -35,7 +37,7 @@ const {
         }
         <div class="glance__row">
           <dt>Phone</dt>
-          <dd><a href={telHref}>{site.contact.phone}</a></dd>
+          <dd><a href={telHref}>{phone}</a></dd>
         </div>
       </dl>
     </aside>

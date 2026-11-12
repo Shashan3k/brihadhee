@@ -11,9 +11,30 @@ export const FORM_TYPES = {
   corporate: "Corporate catering",
   event: "Event catering",
   general: "General enquiry",
+  quote: "Catering quote",
 };
 
-export const HEADCOUNTS = ["Under 50", "50 to 100", "100 to 300", "300 to 600", "600 to 1,000", "1,000 to 1,500", "1,500+"];
+/** Catering minimum (client, Wf call). Must equal CATERING_MIN_GUESTS in config/seo-gates.ts
+ *  (scripts/verify-seo-compliance.ts checks it); kept as a literal so this file has no imports. */
+export const QUOTE_MIN_GUESTS = 50;
+export const QUOTE_MAX_GUESTS = 20000;
+
+/** No band under the 50-guest minimum (keyword plan section 7). */
+export const HEADCOUNTS = ["50 to 100", "100 to 300", "300 to 600", "600 to 1,000", "1,000 to 1,500", "1,500+"];
+
+/* ---- Quote builder (/catering-quote-chennai/) ----------------------------------
+ * The fields the client asked for on the Wf call: event type, lunch or dinner,
+ * occasion, headcount, the spend in mind, must-have dishes and whether service is
+ * needed. No per-plate rupee figure appears anywhere: the spend options are tiers. */
+export const QUOTE_EVENT_TYPES = ["Corporate", "Wedding", "Birthday", "Small function / get-together"];
+export const QUOTE_MEALS = ["Lunch", "Dinner"];
+export const QUOTE_SPEND = [
+  "Simple meal",
+  "Festive spread",
+  "Grand spread with live counters",
+  "Not sure yet: suggest options",
+];
+export const QUOTE_SERVICE = ["Yes, with serving staff", "No, food only"];
 
 export const SOURCES = [
   "Google Search",
@@ -38,6 +59,24 @@ export const FIELDS = {
   source: { label: "How did you hear about us?", max: 60, required: false },
   message: { label: "Anything else", max: 1000, required: false },
 };
+
+/** Fields of the quote builder (formType "quote"). */
+export const QUOTE_FIELDS = {
+  name: { label: "Name", max: 80, required: true },
+  phone: { label: "Phone", max: 20, required: true },
+  email: { label: "Email", max: 120, required: false },
+  eventType: { label: "Event type", max: 40, required: true, oneOf: QUOTE_EVENT_TYPES },
+  meal: { label: "Lunch or dinner", max: 10, required: true, oneOf: QUOTE_MEALS },
+  occasion: { label: "Occasion", max: 120, required: false },
+  guests: { label: "Guests", max: 6, required: true },
+  date: { label: "Event date", max: 10, required: false },
+  location: { label: "Venue area in Chennai", max: 120, required: true },
+  spend: { label: "Spend in mind", max: 60, required: false, oneOf: QUOTE_SPEND },
+  mustHave: { label: "Must-have dishes", max: 600, required: false },
+  service: { label: "Serving staff", max: 40, required: true, oneOf: QUOTE_SERVICE },
+};
+
+const fieldsFor = (formType) => (formType === "quote" ? QUOTE_FIELDS : FIELDS);
 
 /** Seconds a person needs at minimum to fill the form; faster posts are bots. */
 export const MIN_FILL_SECONDS = 3;
@@ -72,12 +111,19 @@ export function validateLead(input, { now = Date.now() } = {}) {
   if (!Number.isFinite(started) || now - started < MIN_FILL_SECONDS * 1000) return { ok: false, spam: true, errors: {} };
 
   const lead = {};
-  for (const [key, f] of Object.entries(FIELDS)) {
+  lead.formType = Object.hasOwn(FORM_TYPES, input.formType) ? input.formType : "general";
+  for (const [key, f] of Object.entries(fieldsFor(lead.formType))) {
     lead[key] = clean(input[key], f.max);
     if (f.required && !lead[key]) errors[key] = `${f.label} is required`;
+    else if (lead[key] && f.oneOf && !f.oneOf.includes(lead[key])) errors[key] = `Choose a ${f.label.toLowerCase()} option`;
   }
-
-  lead.formType = Object.hasOwn(FORM_TYPES, input.formType) ? input.formType : "general";
+  if (lead.formType === "quote" && lead.guests) {
+    const n = Number(lead.guests);
+    if (!Number.isInteger(n)) errors.guests = "Enter the number of guests";
+    else if (n < QUOTE_MIN_GUESTS) errors.guests = `Brihadhee caters functions from ${QUOTE_MIN_GUESTS} guests`;
+    else if (n > QUOTE_MAX_GUESTS) errors.guests = "Enter the number of guests";
+    else lead.guests = String(n);
+  }
 
   if (lead.phone) {
     const d = phoneDigits(lead.phone);
@@ -103,8 +149,27 @@ export function leadSummary(lead) {
   return [
     `${FORM_TYPES[lead.formType]} enquiry from the website (${lead.page})`,
     "",
-    ...Object.entries(FIELDS)
+    ...Object.entries(fieldsFor(lead.formType))
       .filter(([key]) => lead[key])
       .map(([key, f]) => `${f.label}: ${lead[key]}`),
   ].join("\n");
+}
+
+/** Email subject line for a lead. */
+export function leadSubject(lead) {
+  const size = lead.formType === "quote" ? `${lead.guests} guests` : lead.headcount;
+  return `${FORM_TYPES[lead.formType]}: ${lead.name}, ${size} (${lead.location})`;
+}
+
+/**
+ * WhatsApp message for the quote builder, used when ENABLE_LIVE_WHATSAPP_QUOTE_FORM
+ * is on (config/seo-gates.ts). Takes raw form fields; only quote fields are used.
+ */
+export function quoteWhatsAppText(fields) {
+  const lines = ["Hi Brihadhee, I'd like a catering quote."];
+  for (const [key, f] of Object.entries(QUOTE_FIELDS)) {
+    const v = clean(fields[key], f.max);
+    if (v) lines.push(`${f.label}: ${v}`);
+  }
+  return lines.join("\n");
 }

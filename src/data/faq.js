@@ -9,6 +9,7 @@
 import { getFact, FACTS, addressLine, landmarkSentence, openingTimes, longDate } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taHome } from "./faq-ta.js";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
 import {
   categories,
   category,
@@ -60,7 +61,7 @@ const otherDrinks = beverages.items.filter((i) => i.name !== filterCoffee.name).
 export const faqItems = qaRoute("/", [
   qa(
     `What is ${name} in Anna Nagar?`,
-    `${name} is a ${PV} South Indian restaurant and caterer in ${AREA}, Chennai, known for build-your-own dosa and the ${sodhi.name}, open daily from ${HOURS}. ` +
+    `${name} is a ${PV} South Indian restaurant and ${CATERING_DIET} caterer in ${AREA}, Chennai, known for build-your-own dosa and the ${sodhi.name}, open daily from ${HOURS}. ` +
       `It is at ${ADDRESS}.`,
     { id: "what-is-brihadhee" }
   ),
@@ -76,12 +77,8 @@ export const faqItems = qaRoute("/", [
       `Add ${poppers.name} (${rupees(poppers.price)}) and finish with filter coffee (${rupees(filterCoffee.price)}).`,
     { id: "what-to-order" }
   ),
-  qa(
-    `Is ${name} good for families and groups?`,
-    `Yes, ${name} is a family-friendly, ${PV} restaurant in ${AREA}, with dine-in for ${getFact("mealTimes")} every day from ${HOURS}. ` +
-      `Groups can pre-book a table through ${bookingApps}, and the menu page lists every dish with its price.`,
-    { id: "families-groups" }
-  ),
+  /* "Is Brihadhee good for families and groups?" moved to /family-dining-anna-nagar/ (src/data/spokes.js),
+     the page that now owns the family-dining intent (one Q&A per route). */
   qa(
     `What is ${getFact("subBrand").name}?`,
     `${getFact("subBrand").name} is a ${getFact("subBrand").description} brand from ${name}, the ${PV} restaurant in ${AREA}. ` +
@@ -142,7 +139,7 @@ export const aboutFaq = qaRoute("/about/", [
   ),
   qa(
     `How do I contact ${name}?`,
-    `Call or WhatsApp ${name} on ${phone}, or email ${email}, about tables, offers or catering at its ${PV} restaurant in ${AREA}. ` +
+    `Call or WhatsApp ${name}, the ${PV} restaurant in ${AREA}, on ${phone}, or email ${email}, about tables, offers or catering. ` +
       `Pre-booked tables get up to 40% off from Monday to Thursday.`,
     { id: "contact" }
   ),

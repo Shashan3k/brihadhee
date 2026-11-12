@@ -9,6 +9,8 @@ import {
   telHref,
   whatsappHref,
   emailHref,
+  ROUTES,
+  href,
 } from "../data/site.js";
 import Icon from "./Icon.astro";
 import { getFact } from "../data/entity-truth.ts";
@@ -69,6 +71,8 @@ const address = site.address;
             <li><a href={link(item.href)}>{item.label}</a></li>
           ))}
           <li><a href={`${base}book-a-table/`}>Book a Table</a></li>
+          <li><a href={href(ROUTES.familyDining)}>Family Dining</a></li>
+          <li><a href={href(ROUTES.faq)}>FAQ</a></li>
           <li><a href={`${base}guides/what-are-nellai-meals/`}>Guide: What Are Nellai Meals?</a></li>
           <li><a href={`${base}whats-new/`}>What's New</a></li>
           <li><a href={`${base}seasonal/karthigai-ayyappa-pure-veg/`}>Karthigai &amp; Ayyappa Mala</a></li>

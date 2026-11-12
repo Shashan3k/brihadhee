@@ -13,10 +13,24 @@ These block Google Business Profile and listing work right now (`docs/strategy/g
 | # | Question | Why it is urgent | Blocks |
 |---|---|---|---|
 | **P1** | **Are you open on Sundays?** The website says open every day (from the 2026-11-11 blueprint), but your **Google profile says closed on Sundays**, and Google's AI repeats that. Which is true? | Two sources disagree, so AI answers hedge or warn people away on Sundays. If you are closed on Sundays, tell the developer the same day so the website, schema and FAQ change | GBP hours, website, EazyDiner, Justdial |
-| **P2** | **Which phone should Google show as primary?** The site and most listings use +91 94442 24999; your Google profile shows 073587 14113. Is 73587 14113 still answered? (Also: is "Order Now: 95661 35405" on Instagram yours?) | Wrong phone on Google = lost calls and enquiries | GBP, Bing, Instagram contact button |
+| ~~**P2**~~ | **Answered 2026-11-12:** +91 73587 14113 is the restaurant number on the whole website (and on Google). +91 94442 24999 stays on the catering pages only. Update Bing, Instagram and the listings to 73587 14113. Original question: **Which phone should Google show as primary?** The site and most listings use +91 94442 24999; your Google profile shows 073587 14113. Is 73587 14113 still answered? (Also: is "Order Now: 95661 35405" on Instagram yours?) | Wrong phone on Google = lost calls and enquiries | GBP, Bing, Instagram contact button |
 | **P3** | **Cost for two:** one figure we can use everywhere (for example "about ₹400 for two") | Listings disagree (₹200 to ₹800). AI quotes whichever it finds, often as "budget" | Swiggy Dineout, Zomato, EazyDiner, Justdial, GBP price range |
 | **P4** | **Corporate clients and FSSAI:** may we name any corporate clients (with their permission), and what is the 14-digit **FSSAI licence number** (with a photo of the certificate)? | B2B buyers and AI recommend caterers with proof. The corporate page says "licence number on request" until we have it | /corporate-catering-chennai/, /about/, GBP |
 | **P5** | **Parking:** is there parking? Where, how many cars and bikes, free or paid? | Swiggy says "parking available", EazyDiner says "no parking". Both cannot be right | EazyDiner, Swiggy Dineout, GBP attribute, website FAQ |
+
+## Q. Website sections ready and waiting on your answers (keyword plan of 12 November)
+
+These pages and sections are already written. Each stays switched off until you answer the question in writing; then the developer flips one switch in `config/seo-gates.ts`.
+
+| Question (section 8 of the keyword plan) | What goes live |
+|---|---|
+| **Q20** May catering be called "pure veg"? (The call said one non-veg item could be arranged from elsewhere for a large order.) | "Pure veg catering" wording. Until then the site says "vegetarian catering" and "cooked in our 100% pure vegetarian kitchen" |
+| **Q11 to Q14** Which dishes can be made without onion and garlic (including podi, sambar, chutneys, the shared tawa)? Always, or on request? May we say "Jain-friendly"? | The no onion, no garlic page, and its Jain-friendly section |
+| **Q17** Should Hindi appear on the website? | Hindi and Hinglish lines on that page |
+| **Q19** Which WhatsApp number receives catering quotes, and who replies? | The quote form sends a ready WhatsApp message to that number. Until then it emails the team |
+| **Q22** May we say "premium"? | "Premium" wording on the family dining page |
+| **Q23** Brahmin-style functions (seemantham, upanayanam, annadanam, homam)? | Those function names in catering copy (baby showers are called "valaikaapu" until then) |
+| **Q24** Which nearby temples send you diners? | Naming that temple on the family dining page |
 
 ## B. Other facts we need from you (priority order)
 

@@ -78,6 +78,8 @@ const SWIGGY_DINEOUT = "https://www.swiggy.com/restaurants/brihadhee-anna-nagar-
 const EAZYDINER = "https://www.eazydiner.com/chennai/brihadhee-anna-nagar-east-chennai-703877";
 const DISTRICT = "https://www.district.in/dining/chennai/brihadhee-anna-nagar-east";
 const INSTAGRAM = "https://www.instagram.com/brihadhee";
+const KW12 = "keyword plan of 12 November 2026 ('keyword (1).md'), with config/seo-gates.ts";
+const PHONE_SWITCH = "owner direction 2026-11-12: +91 73587 14113 site-wide; +91 94442 24999 on the catering pages only";
 const BLUEPRINT = "on-page SEO blueprint confirmed by the Brihadhee team, 2026-11-11 (docs/seo/client-confirmations.md section G)";
 
 function verified<T>(value: T, source: string = BRIEF, verifiedOn: string = D5): Fact<T> {
@@ -110,7 +112,8 @@ export const FACTS = {
   alternateNames: verified(["Brihadhee Hotels", "Brihadhee Pure Veg Restaurant"]),
   subBrand: verified({ name: "Beyond Curry by Brihadhee", description: "North Indian meal boxes" }),
   type: verified("pure vegetarian restaurant"),
-  typeLong: verified("100% pure vegetarian South Indian restaurant and caterer", CLIENT, D11),
+  /** Catering says "vegetarian" until the owner answers Q20 (config/seo-gates.ts IS_CATERING_PURE_VEG). */
+  typeLong: verified("100% pure vegetarian South Indian restaurant and vegetarian caterer", KW12, D12),
   /** Core brand description, led by the client's pillars (W11 to W13). `short` is the
    *  default meta description, the Restaurant schema description and the footer line,
    *  so it stays within 160 characters; `long` leads the About section. */
@@ -121,7 +124,7 @@ export const FACTS = {
       long:
         "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for build-your-own dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
-        `The same kitchen runs pure veg corporate catering for ${num(CORPORATE_DAILY_MEALS)}+ meals a day and end-to-end event catering ` +
+        `The same kitchen runs vegetarian corporate catering for ${num(CORPORATE_DAILY_MEALS)}+ meals a day and end-to-end vegetarian event catering ` +
         `for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests.`,
     },
     CLIENT,
@@ -131,7 +134,8 @@ export const FACTS = {
   cuisine: verified(
     "100% pure vegetarian: South Indian with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese"
   ),
-  cuisines: verified(["South Indian", "Tirunelveli", "Karaikudi", "North Indian", "Indo-Chinese", "Pure Vegetarian"]),
+  /** Lead cuisines from the 12 Nov keyword plan (section 5.1), then the rest of the menu. */
+  cuisines: verified(["South Indian", "Tamil Vegetarian", "Tirunelveli (Nellai)", "Karaikudi", "North Indian", "Indo-Chinese"], KW12, D12),
   founders: verified({
     names: ["Rakesh", "Eashwer"],
     story:
@@ -160,7 +164,12 @@ export const FACTS = {
   ),
   street: verified("3rd Avenue, W-Block, Anna Nagar East", "derived from the verified address"),
   landmarks: verified(["Anna Nagar Tower Park", "3rd Avenue and 9th Street", "Aadhaar Seva Kendra"], "Ho.md (Google map), owner brief"),
-  nearbyAreas: verified(["Anna Nagar East", "Anna Nagar West", "Shenoy Nagar", "Kilpauk", "Mogappair", "Thirumangalam"]),
+  /** Neighbourhoods diners come from (Restaurant areaServed). Shanthi Colony and Aminjikarai border Anna Nagar East (keyword plan 3.10). */
+  nearbyAreas: verified(
+    ["Anna Nagar East", "Anna Nagar West", "Shanthi Colony", "Thirumangalam", "Shenoy Nagar", "Kilpauk", "Aminjikarai", "Mogappair"],
+    KW12,
+    D12
+  ),
   /** Landmarks guests navigate from. Directions are Google Maps links from each one;
    *  no distance or travel time is stated (none is verified). */
   directionLandmarks: verified(
@@ -183,10 +192,10 @@ export const FACTS = {
   ),
 
   /* ---- Contact ----------------------------------------------------------- */
-  phone: verified("+91 94442 24999", "owner brief; Zomato, Magicpin, District and Apple Maps listings"),
-  /** The main number also takes WhatsApp (client confirmed 2026-11-12). The old +91 73587 14113 stays blocked. */
-  whatsapp: verified("+91 94442 24999", B2B, D12),
-  oldWhatsapp: unverified<string>("the old +91 73587 14113 is no longer listed", [/\b73587\s?14113\b/]),
+  /** Restaurant number on every page (owner direction 2026-11-12; it is also the Google profile number).
+   *  The catering pages keep +91 94442 24999: config/client-verification.json enquiry_channels. */
+  phone: verified("+91 73587 14113", PHONE_SWITCH, D12),
+  whatsapp: verified("+91 73587 14113", PHONE_SWITCH, D12),
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
 
   /* ---- Service ----------------------------------------------------------- */
@@ -244,8 +253,8 @@ export const FACTS = {
       "Paanai Parotta",
       "Karaikudi Paneer Poppers",
       "Filter Coffee",
-      `Pure Veg Corporate Catering (${CORPORATE_SCALE})`,
-      `End-to-End Event Catering (${EVENT_SCALE})`,
+      `Vegetarian Corporate Catering (${CORPORATE_SCALE})`,
+      `End-to-End Vegetarian Event Catering (${EVENT_SCALE})`,
     ],
     CLIENT,
     D11

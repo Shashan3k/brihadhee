@@ -11,7 +11,8 @@
  *   3. Every FAQ question is followed by a paragraph of 15 to 60 words whose
  *      first sentence is 15 to 35 words, and the answer names "Brihadhee"
  *   4. No pending fact is rendered (probes from src/data/entity-truth.ts)
- *   5. No phrase from docs/seo/avoid-terms.txt, with zero exceptions, on any
+ *   5. No phrase from docs/seo/avoid-terms.txt, with one exception (the exact
+ *      question NEGATIVE_FAQ_QUESTION in config/seo-gates.ts), on any
  *      surface: visible text, <title>, every meta tag, alt/title/aria-label
  *      attributes, link and image URLs, JSON-LD, and every text output
  *      (llms.txt, llms-full.txt, menu.json, sitemaps, robots.txt, manifest)
@@ -34,6 +35,8 @@ const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
 const REPORT = join(ROOT, "docs", "seo", "aeo-lint-report.md");
 
 const { FACTS, pendingFacts } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
+// The one permitted negative statement ("Does Brihadhee serve breakfast?" on /faq/), removed before the avoid scan.
+const { stripPermittedNegatives } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 const cfg = JSON.parse(readFileSync(join(ROOT, "config", "client-verification.json"), "utf8"));
 const { MENU } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
 const menu = { categories: MENU };
@@ -292,7 +295,7 @@ for (const p of pages) {
   /* 5: avoid terms, zero exceptions: text, title, meta, attributes, URLs, JSON-LD */
   for (const a of avoid) {
     a.re.lastIndex = 0;
-    const hit = p.surface.match(a.re);
+    const hit = stripPermittedNegatives(p.surface).match(a.re);
     if (hit) err("avoid", name, `avoid-list term "${hit[0]}" (rule: ${a.src})`);
   }
 
@@ -419,7 +422,7 @@ if (!outputs.some((o) => o.name === "llms.txt")) warn("llms.txt", "llms.txt miss
 for (const o of outputs) {
   for (const a of avoid) {
     a.re.lastIndex = 0;
-    const hit = o.text.match(a.re);
+    const hit = stripPermittedNegatives(o.text).match(a.re);
     if (hit) err("avoid", o.name, `avoid-list term "${hit[0]}" (rule: ${a.src})`);
   }
   for (const f of pending) {

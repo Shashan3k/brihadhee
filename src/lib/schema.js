@@ -7,7 +7,11 @@
  *   WebPage (<page>#webpage)       isPartOf WebSite, about Restaurant, breadcrumb -> BreadcrumbList
  *   FAQPage (<page>#faq)           about Restaurant, dateModified, built from the SAME data as the visible FAQ
  *   Service (<page>#service)       provider -> Restaurant; "Event catering" (with an
- *                                  OfferCatalog) or "Corporate catering"; areaServed Chennai
+ *                                  OfferCatalog, each Offer with eligibleQuantity >= 50
+ *                                  guests) or "Corporate catering"; areaServed Chennai
+ *   Restaurant.areaServed          the neighbourhoods diners come from (nearbyAreas)
+ * Restaurant is already a schema.org FoodEstablishment subtype, so no second
+ * FoodEstablishment node is emitted (it would read as a separate business).
  *   Article (/whats-new/#article)  author and publisher -> Restaurant, dated
  *
  * Deliberately absent: AggregateRating and review (self-served ratings earn no rich
@@ -24,6 +28,9 @@ import { site, hasHours, assetUrl } from "../data/site.js";
 import { getFact, factOr, CONTENT_UPDATED } from "../data/entity-truth.ts";
 
 import { faqItems } from "../data/faq.js";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
+
+const CATERING_DIET_CAP = CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1);
 
 const CONTEXT = "https://schema.org";
 
@@ -70,6 +77,8 @@ export function restaurantSchema() {
       (src) => assetUrl(src)
     ),
     servesCuisine: getFact("cuisines"),
+    // Neighbourhoods diners come from (entity-truth.ts nearbyAreas). Catering areas live on the Service nodes.
+    areaServed: getFact("nearbyAreas").map((name) => ({ "@type": "Place", name: `${name}, Chennai` })),
     ...(site.priceRange ? { priceRange: site.priceRange } : {}),
     currenciesAccepted: "INR",
     address: {
@@ -167,8 +176,9 @@ export function cateringServiceSchema({
   serviceType = "Event catering",
   offerCatalog = [],
   path = "/catering-services-chennai/",
-  name = "Brihadhee Pure Veg Event and Wedding Catering",
-  description = "End-to-end pure vegetarian event catering in Chennai for weddings, birthdays, housewarmings and family functions: menu planning, cooking, serving and setup, with live food counters.",
+  name = `Brihadhee ${CATERING_DIET_CAP} Event and Wedding Catering`,
+  description = `End-to-end ${CATERING_DIET} event catering in Chennai for weddings, birthdays, housewarmings and family functions: menu planning, cooking, serving and setup, with live food counters.`,
+  guests = null, // { min, max? }: guest count each catering offer is for (Offer.eligibleQuantity)
   audience = [
     { "@type": "Audience", audienceType: "Families planning functions" },
     { "@type": "BusinessAudience", audienceType: "Event management companies" },
@@ -195,6 +205,16 @@ export function cateringServiceSchema({
             itemListElement: offerCatalog.map((o) => ({
               "@type": "Offer",
               itemOffered: { "@type": "Service", name: o.name, ...(o.description ? { description: o.description } : {}) },
+              ...(guests
+                ? {
+                    eligibleQuantity: {
+                      "@type": "QuantitativeValue",
+                      minValue: guests.min,
+                      ...(guests.max ? { maxValue: guests.max } : {}),
+                      unitText: "guests",
+                    },
+                  }
+                : {}),
             })),
           },
         }

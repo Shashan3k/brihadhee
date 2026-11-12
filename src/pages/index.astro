@@ -22,16 +22,17 @@ import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
 import KolamDivider from "../components/KolamDivider.astro";
 import { homePage as page } from "../data/pages.js";
+import { ROUTES, href } from "../data/site.js";
 ---
 
 <Base
   title={page.title}
   description={page.description}
-  ogDescription={`Dosas made your way, claypot Paanai Parotta, Nellai sodhi meals and filter coffee. Pure veg lunch and dinner on 3rd Avenue, Anna Nagar East.`}
+  ogDescription={`Brihadhee: dosas made your way, claypot Paanai Parotta, Nellai sodhi meals and filter coffee. Pure veg lunch and dinner on 3rd Avenue, Anna Nagar East.`}
 >
   <Nav />
   <main id="main">
-    <Hero h1={page.h1} />
+    <Hero h1={page.h1} hoursLine={page.hoursLine} />
     <AtAGlance rows={page.glance} />
     <ContentSection {...page.byo} />
     <ContentSection {...page.lunch} />
@@ -45,7 +46,7 @@ import { homePage as page } from "../data/pages.js";
     <Reviews />
     <Visit />
     <KolamDivider />
-    <Faq title="Quick Answers" eyebrow="FAQ" />
+    <Faq title="Quick Answers" eyebrow="FAQ" moreHref={href(ROUTES.faq)} />
     <Contact />
   </main>
   <Footer />

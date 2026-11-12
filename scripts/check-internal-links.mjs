@@ -31,6 +31,9 @@ const MONEY_PAGES = [
   "/corporate-catering-chennai/",
   "/catering-services-chennai/",
   "/event-planner-catering-partner/",
+  "/small-function-catering-chennai/",
+  "/catering-quote-chennai/",
+  "/family-dining-anna-nagar/",
   "/book-a-table/",
   "/about/",
 ];

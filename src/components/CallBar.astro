@@ -6,11 +6,12 @@
  * Taps fire the GA4 events click_call, click_whatsapp, book_table_click and
  * quote_cta_click (src/scripts/main.js).
  */
-import { site, hasPhone, hasWhatsApp, telHref, whatsappHref, ROUTES, href } from "../data/site.js";
+import { site, ROUTES, href, pageContact } from "../data/site.js";
 import Icon from "./Icon.astro";
 
-const { mode = "book" } = Astro.props;
+const { mode = "book", quoteHref = "#enquiry" } = Astro.props; // quoteHref: the quote form on this page, or the quote page
 const quote = mode === "quote";
+const { hasPhone, hasWhatsApp, telHref, whatsappHref } = pageContact(Astro);
 ---
 
 <nav class="callbar is-visible" id="callbar" aria-label="Quick actions">
@@ -27,7 +28,7 @@ const quote = mode === "quote";
     </a>
   )}
   {quote ? (
-    <a href="#enquiry" data-event="quote_cta_click" data-primary>
+    <a href={quoteHref} data-event="quote_cta_click" data-primary>
       <Icon name="mail" size={19} />
       Get a quote
     </a>

@@ -1,0 +1,97 @@
+---
+/**
+ * One spoke page from src/data/spokes.js: header with the single H1, an
+ * answer-first intro, the summary box, answer-first sections, an optional
+ * topic index (the /faq/ hub), the page's Q&A (same array as its FAQPage
+ * JSON-LD), and contextual links back to the hub and across to sibling spokes.
+ * The default slot renders after the summary box (the quote builder uses it).
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "./Nav.astro";
+import Footer from "./Footer.astro";
+import PageHeader from "./PageHeader.astro";
+import AtAGlance from "./AtAGlance.astro";
+import ContentSection from "./ContentSection.astro";
+import Faq from "./Faq.astro";
+import { href } from "../data/site.js";
+
+const { page } = Astro.props;
+const home = href("/");
+---
+
+<Base
+  title={page.title}
+  description={page.description}
+  path={page.path}
+  schema={page.schema()}
+  cta={page.cta ?? "book"}
+  quoteHref={page.quoteHref ?? "#enquiry"}
+  noindex={page.noindex ?? false}
+>
+  <Nav homeBase={home} />
+  <main id="main">
+    {page.draftNote && (
+      <div class="draft-banner" role="note">
+        <div class="container"><strong>Draft.</strong> {page.draftNote}</div>
+      </div>
+    )}
+    <PageHeader eyebrow={page.eyebrow} h1={page.h1} intro={page.intro} menuHref={page.menuHref} />
+    {page.tamil && (
+      <div class="container">
+        <p class="section__lead catering__tamil tamil" lang="ta">{page.tamil}</p>
+      </div>
+    )}
+    {page.glance && <AtAGlance title={page.glanceTitle} rows={page.glance} />}
+
+    <slot />
+
+    {(page.sections ?? []).map((s) => <ContentSection {...s} />)}
+
+    {page.languages && (
+      <section class="section" id="languages" aria-labelledby="languages-title">
+        <div class="container">
+          <h2 class="section__title" id="languages-title">In Tamil and Hindi</h2>
+          <h3 lang="ta">தமிழ்</h3>
+          <p class="tamil" lang="ta">{page.languages.tamil}</p>
+          {page.languages.hindi && (
+            <details>
+              <summary>
+                <span lang="hi">हिन्दी</span>{page.languages.hindiDraft && " (draft: waits for question 17)"}
+              </summary>
+              <p lang="hi">{page.languages.hindi}</p>
+              {page.languages.hinglish && <p lang="hi-Latn">{page.languages.hinglish}</p>}
+            </details>
+          )}
+        </div>
+      </section>
+    )}
+
+    {page.topics?.length > 0 && (
+      <section class="section section--tint" id="topics" aria-labelledby="topics-title">
+        <div class="container">
+          <h2 class="section__title" id="topics-title">More answers by topic</h2>
+          <p class="section__lead">Every page on this site answers its own questions. Pick a topic to read them.</p>
+          <ul class="link-list" role="list">
+            {page.topics.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+          </ul>
+        </div>
+      </section>
+    )}
+
+    <slot name="before-faq" />
+
+    {page.faq?.length > 0 && <Faq items={page.faq} title={page.faqTitle} lead="" eyebrow="Questions" />}
+
+    {page.related?.length > 0 && (
+      <section class="section" id="more" aria-labelledby="more-title">
+        <div class="container">
+          <h2 class="section__title" id="more-title">More from Brihadhee</h2>
+          <ul class="link-list" role="list">
+            {page.related.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </div>
+      </section>
+    )}
+  </main>
+  <Footer homeBase={home} />
+</Base>

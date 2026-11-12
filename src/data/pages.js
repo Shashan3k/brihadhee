@@ -16,6 +16,7 @@ import { ROUTES, href } from "./site.js";
 import { cateringEnabled, corporate, guests, liveCounters } from "./catering.js";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taDosa, taNellai } from "./faq-ta.js";
+import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
 import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee } from "../lib/menu-facts.js";
 
 const name = getFact("name");
@@ -77,10 +78,13 @@ const counterHasDosa = liveCounters.some((c) => /build your own dosa/i.test(c));
 export const homePage = {
   path: ROUTES.home,
   title: `${name} | Pure Veg South Indian Restaurant, Anna Nagar`,
-  description: `Build your own dosa, Nellai meals and Tamil home-style lunch and dinner in Anna Nagar, Chennai. Open ${OPEN}–${CLOSE}. Book a table or get directions.`,
+  description: `${name}, Anna Nagar: build your own dosa, Nellai meals and Tamil home-style lunch and dinner. Open ${OPEN}–${CLOSE} daily. Book a table or get directions.`,
+  /* Rendered after the brand line inside one H1 (Hero.astro): "Brihadhee: Pure Veg South Indian Restaurant in Anna Nagar". */
   h1: "Pure Veg South Indian Restaurant in Anna Nagar",
+  /* Hours and meal framing, stated the same way everywhere (config/seo-gates.ts). */
+  hoursLine: `Open ${HOURS} · ${MEAL_FRAMING}`,
   glance: [
-    ["Open", `${HOURS} daily (lunch and dinner)`],
+    ["Open", `${HOURS} daily · ${MEAL_FRAMING}`],
     ["Food", "100% pure veg South Indian"],
     ["Address", `${line1}, Anna Nagar East, near ${landmark}`],
     ["Famous for", getFact("knownFor").join(", ")],
@@ -115,19 +119,24 @@ export const homePage = {
           id: "home-catering",
           eyebrow: "Catering",
           title: "Catering for Offices and Events",
-          lead: `${name}'s kitchen caters ${PV} food for offices and events across Chennai: corporate catering for more than ${num(corporate.dailyCovers)} meals a day, and end-to-end event catering for ${num(guests.min)} to ${num(guests.max)} guests. Event management companies can also book ${name} as a [catering partner for event planners](${ROUTES.plannerPartner}).`,
+          lead: `${name}'s kitchen caters ${CATERING_DIET} food for offices and events across Chennai: corporate catering for more than ${num(corporate.dailyCovers)} meals a day, end-to-end event catering for ${num(guests.min)} to ${num(guests.max)} guests, and [small function catering from ${CATERING_MIN_GUESTS} guests](${ROUTES.smallFunctions}). Event management companies can also book ${name} as a [catering partner for event planners](${ROUTES.plannerPartner}).`,
           tint: true,
           cards: true,
           items: [
             {
               title: "Corporate catering for offices",
-              text: `Daily pure veg office meals for more than ${num(corporate.dailyCovers)} people a day, cooked in the same kitchen as the restaurant.`,
+              text: `Daily ${CATERING_DIET} office meals for more than ${num(corporate.dailyCovers)} people a day, cooked in the same kitchen as the restaurant.`,
               link: { label: "Corporate catering", href: href(ROUTES.corporateCatering) },
             },
             {
               title: "End-to-end event catering",
               text: `Menu planning, cooking, serving and setup for weddings, birthdays, housewarmings and family functions, for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}.`,
               link: { label: "Event catering", href: href(ROUTES.eventCatering) },
+            },
+            {
+              title: `Get a catering quote`,
+              text: `Tell the team your event type, lunch or dinner, guest count from ${CATERING_MIN_GUESTS}, must-have dishes and whether you need serving staff, and get a menu and a per-plate price back.`,
+              link: { label: "Catering quote", href: href(ROUTES.cateringQuote) },
             },
           ],
         }
@@ -283,7 +292,7 @@ export const nellaiPage = {
   family: {
     id: "family-lunch",
     title: "Family and Weekend Group Lunch",
-    lead: `${name} is family-friendly and open every day, weekends included, from ${OPEN}. Groups can pre-book a table on ${bookingApps} for ${offer("pre-booking").description.replace(/ when you pre-book a table through .*$/, "")}, and walk-in diners get ${offer("walk-in").description.replace(/ for walk-in dine-in$/, "")}. During Karthigai, see [pure veg meals for Karthigai and Ayyappa mala](${ROUTES.seasonal}).`,
+    lead: `${name} is family-friendly and open every day, weekends included, from ${OPEN}. Groups can pre-book a table on ${bookingApps} for ${offer("pre-booking").description.replace(/ when you pre-book a table through .*$/, "")}, and walk-in diners get ${offer("walk-in").description.replace(/ for walk-in dine-in$/, "")}. During Karthigai, see [pure veg meals for Karthigai and Ayyappa mala](${ROUTES.seasonal}). For lunch after a temple visit or a family celebration, see [family dining in Anna Nagar](${ROUTES.familyDining}).`,
     links: [{ label: "Book a table", href: href(ROUTES.book), primary: true }],
   },
   office:
@@ -291,7 +300,7 @@ export const nellaiPage = {
       ? {
           id: "office-lunch",
           title: "Office Lunch in Anna Nagar",
-          lead: `Office teams can walk in to ${name} for lunch on ${STREET}, and its corporate catering supplies ${PV} office meals for more than ${num(corporate.dailyCovers)} people every day.`,
+          lead: `Office teams can walk in to ${name} for lunch on ${STREET}, and its corporate catering supplies ${CATERING_DIET} office meals for more than ${num(corporate.dailyCovers)} people every day.`,
           links: [{ label: "Corporate catering", href: href(ROUTES.corporateCatering), primary: true }],
           tint: true,
         }
@@ -372,7 +381,7 @@ export const dinnerPage = {
   family: {
     id: "family-dinner",
     title: "Family and Group Dinners",
-    lead: `${name} is a family-friendly ${PV} restaurant with dine-in every evening until ${CLOSE}. Groups can pre-book on ${bookingApps}, with ${offer("pre-booking").description.replace(/ when you pre-book a table through .*$/, "")}, and walk-in diners get ${offer("walk-in").description.replace(/ for walk-in dine-in$/, "")}. Ayyappa devotees can read about [pure veg dining during Karthigai and Ayyappa mala](${ROUTES.seasonal}).`,
+    lead: `${name} is a family-friendly ${PV} restaurant with dine-in every evening until ${CLOSE}. Groups can pre-book on ${bookingApps}, with ${offer("pre-booking").description.replace(/ when you pre-book a table through .*$/, "")}, and walk-in diners get ${offer("walk-in").description.replace(/ for walk-in dine-in$/, "")}. Ayyappa devotees can read about [pure veg dining during Karthigai and Ayyappa mala](${ROUTES.seasonal}). Planning a birthday or anniversary dinner? See [family dining at ${name}](${ROUTES.familyDining}).`,
     tint: true,
   },
   late: {
@@ -447,7 +456,7 @@ export const whatsNewPage = {
           {
             id: "new-corporate",
             title: `Corporate Catering for ${num(corporate.dailyCovers)}+ People a Day`,
-            lead: `${name}'s kitchen supplies ${PV} corporate catering for more than ${num(corporate.dailyCovers)} people every day across Chennai: daily office lunches, bulk meals, employee meal programmes and office events.`,
+            lead: `${name}'s kitchen supplies ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} people every day across Chennai: daily office lunches, bulk meals, employee meal programmes and office events.`,
             links: [{ label: "Corporate catering", href: href(ROUTES.corporateCatering), primary: true }],
             tint: true,
           },
@@ -462,8 +471,8 @@ export const whatsNewPage = {
     {
       id: "new-quote",
       title: "Quotes and WhatsApp on the Website",
-      lead: `You can now request a catering quote on the ${name} website, or WhatsApp the team on ${phone} for tables, catering and enquiries.`,
-      links: [{ label: "Request a quote", href: `${href(ROUTES.about)}#enquiry` }],
+      lead: `You can now request a catering quote on the ${name} website, for functions from ${CATERING_MIN_GUESTS} guests, or WhatsApp the team on ${phone} for tables, catering and enquiries.`,
+      links: [{ label: "Get a catering quote", href: href(ROUTES.cateringQuote) }],
       tint: true,
     },
   ],
@@ -489,9 +498,9 @@ const liveDosaGroups = cateringEnabled && guests;
 export const seasonalPage = {
   path: ROUTES.seasonal,
   title: `Karthigai & Ayyappa Mala Pure Veg Food, Chennai | ${name}`,
-  description: `100% pure veg lunch, dinner and group catering in Chennai for Karthigai month and Ayyappa mala: no meat, egg, fish or alcohol. ${name}, Anna Nagar.`,
+  description: `100% pure veg lunch and dinner, plus ${CATERING_DIET} group catering, for Karthigai month and Ayyappa mala: no meat, egg, fish or alcohol. ${name}, Anna Nagar.`,
   h1: "Pure Veg Food for Karthigai and Ayyappa Mala in Chennai",
-  intro: `${name} is a ${PV} restaurant and caterer in Anna Nagar East, Chennai: no meat, egg or fish is cooked in its kitchen and alcohol is not served. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
+  intro: `${name} is a ${PV} restaurant in Anna Nagar East, Chennai, that also caters functions: no meat, egg or fish is cooked in its kitchen and alcohol is not served. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
   sections: [
     {
       id: "ayyappa-mala",
@@ -532,11 +541,11 @@ export const seasonalPage = {
             id: "group-catering",
             title: "Group Catering in Chennai During Karthigai",
             lead: poojaCatering
-              ? `${name} caters ${PV} Ayyappa poojas, bhajans and family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}.`
-              : `${name} caters ${PV} family get-togethers and functions across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}. Planning food for an Ayyappa pooja or bhajan group? Call or WhatsApp ${phone} to check menus and dates.`,
+              ? `${name} caters ${CATERING_DIET} Ayyappa poojas, bhajans and family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, cooked in its ${PV} kitchen, with live counters for ${list(liveCounters)}.`
+              : `${name} caters ${CATERING_DIET} family get-togethers and functions across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, cooked in its ${PV} kitchen, with live counters for ${list(liveCounters)}. Planning food for an Ayyappa pooja or bhajan group? Call or WhatsApp ${phone} to check menus and dates.`,
             links: [
               { label: "Event catering", href: href(ROUTES.eventCatering), primary: true },
-              { label: "Request a quote", href: `${href(ROUTES.eventCatering)}#enquiry` },
+              { label: "Get a catering quote", href: href(ROUTES.cateringQuote) },
             ],
           },
         ]
@@ -563,7 +572,7 @@ export const seasonalPage = {
       ? [
           qa(
             `Can ${name} cater a Karthigai get-together in Chennai?`,
-            `Yes, ${name} caters ${PV} family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, cooked in its kitchen in Anna Nagar East, with live counters for build-your-own dosa and Paanai Parotta. ` +
+            `Yes, ${name} caters ${CATERING_DIET} family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, cooked in its ${PV} kitchen in Anna Nagar East, with live counters for build-your-own dosa and Paanai Parotta. ` +
               `Send the quote form or call ${phone} with your date and headcount.`
           ),
         ]

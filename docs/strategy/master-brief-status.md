@@ -4,7 +4,9 @@ This maps the "Master Context Prompt" (SEO, AEO, GEO and Google Business Profile
 
 ## The one thing that matters most
 
-**The live site is out of date.** www.brihadhee.com (Vercel) still serves an older build. That old build is what the brief audited: its canonical points to `shashan3k.github.io/brihadhee/` and it has a `meta keywords` tag. The code in this repo fixes both. Deploy it, then turn GitHub Pages off (see `docs/owner-todo.md`, section E).
+**Update 2026-11-12:** checked live: www.brihadhee.com now serves the current build (canonical on `https://www.brihadhee.com/`, the current URL set in its sitemap). The note below is kept for history.
+
+~~**The live site is out of date.** www.brihadhee.com (Vercel) still serves an older build. That old build is what the brief audited: its canonical points to `shashan3k.github.io/brihadhee/` and it has a `meta keywords` tag. The code in this repo fixes both. Deploy it, then turn GitHub Pages off (see `docs/owner-todo.md`, section E).~~
 
 ## Homepage findings from the brief (section 2)
 

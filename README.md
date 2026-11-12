@@ -34,6 +34,7 @@ npm run preview   # serve the built site locally
 | `npm run check:facts` | An unconfirmed fact or placeholder (TODO, undefined, null, "500+ varieties", "parking"…) in any HTML, llms.txt, robots.txt, sitemap or menu.json. Unconfirmed facts in `entity-truth.ts` also make `getFact()` throw, so `astro build` itself stops first |
 | `npm run check:seo` | Invalid or mismatched JSON-LD, FAQ text not matching the page, NAP differences, missing/duplicate titles or descriptions, not exactly one H1, wrong canonical, sitemap vs noindex mismatches, orphan pages, robots.txt sitemap line, non-reciprocal hreflang |
 | `npm run check:links` | A broken internal link, asset or #anchor. `npm run check:links:external` also requests external links (warnings only) |
+| `npm run check:compliance` | `scripts/verify-seo-compliance.ts`: any term on the 12 November keyword plan's do-not-use list (section 7: breakfast and tiffin, dosa counts, cheap/budget/value meal, rupee per-plate rates, Jain overclaims, non-veg catering, headcounts under 50) in `dist/` or `public/`; any claim behind an off gate in `config/seo-gates.ts`; gate values that disagree with `entity-truth.ts`, the catering config or `src/lib/lead.js`; a home page title, H1 or meta tag that does not pair "Brihadhee" with its category |
 
 `npm run build:site` builds without the gates (for quick local previews only).
 
@@ -46,6 +47,25 @@ See `.env.example`. All are optional; the site works without them.
 | `PUBLIC_GA4_ID` | Google Analytics 4 measurement ID (`G-XXXXXXX`). Unset = no analytics and the privacy page says so |
 | `PUBLIC_META_PIXEL_ID` | Meta Pixel ID (digits only) for Instagram/Facebook ads. Sends PageView plus Contact (call, WhatsApp), FindLocation, Schedule and Lead (enquiry form). Unset = no Meta tracking and the privacy page says so |
 | `INDEXNOW_KEY` | IndexNow key (8–128 letters, numbers or dashes). Builds `/<key>.txt` and lets `npm run indexnow` ping Bing/Yandex |
+
+### Client-verification gates (`config/seo-gates.ts`)
+
+Keyword clusters from the 12 November plan that make a kitchen or dietary claim stay off until the owner answers the matching question (section 8 of the plan, and `docs/owner-todo.md` section Q):
+
+| Gate | Question | What it turns on |
+|---|---|---|
+| `IS_CATERING_PURE_VEG` | Q20 | "pure veg" in catering copy (until then: "vegetarian catering"; the kitchen stays "100% pure vegetarian") |
+| `ENABLE_NO_ONION_NO_GARLIC_CLUSTER` + `NO_ONION_NO_GARLIC_DISHES` | Q11 to Q14 | `/no-onion-no-garlic-anna-nagar/`, its nav link, sitemap and llms entry |
+| `ENABLE_JAIN_FRIENDLY_CLAIMS` | Q13, Q14 | the Jain-friendly section and FAQ on that page (never "pure Jain") |
+| `ENABLE_HINDI_COPY` | Q17 | Hindi and Hinglish lines on that page |
+| `ENABLE_LIVE_WHATSAPP_QUOTE_FORM` + `QUOTE_WHATSAPP_NUMBER` | Q19 | the quote builder hands off to WhatsApp (until then it posts to `/api/lead`) |
+| `ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS` | Q23 | seemantham, upanayanam, annadanam, homam wording |
+| `ENABLE_PREMIUM_WORDING` | Q22 | "premium" |
+| `ENABLE_NAMED_TEMPLE` + `NEARBY_TEMPLE` | Q24 | naming a temple on `/family-dining-anna-nagar/` |
+
+Flip a gate only with the owner's written answer, record it in `docs/seo/client-confirmations.md`, and run `npm run build`: the compliance check fails if a gate is on without the facts it needs. To review a gated page before it goes live, run `npm run dev` and open it (it renders as a noindex draft with a banner), or build with `SEO_GATES_PREVIEW=1` into a scratch `--outDir`; never deploy that build.
+
+The one permitted mention of a retired service is the exact question "Does Brihadhee serve breakfast?" on `/faq/` (`NEGATIVE_FAQ_QUESTION`), answered "No ... lunch and dinner only". Every other use still fails the build.
 
 ### Confirming a new fact
 

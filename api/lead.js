@@ -16,7 +16,7 @@
  * post (no JavaScript) a 303 back to the page with ?lead=sent|invalid|error#enquiry.
  * Spam (honeypot or too-fast submit) gets a quiet success so bots learn nothing.
  */
-import { validateLead, leadSummary, FORM_TYPES } from "../src/lib/lead.js";
+import { validateLead, leadSummary, leadSubject } from "../src/lib/lead.js";
 
 const MAX_BODY = 16 * 1024;
 
@@ -43,7 +43,7 @@ async function sendEmail(lead, env) {
       from: env.LEAD_FROM_EMAIL || "Brihadhee website <onboarding@resend.dev>",
       to: env.LEAD_TO_EMAIL.split(",").map((s) => s.trim()).filter(Boolean),
       ...(lead.email ? { reply_to: lead.email } : {}),
-      subject: `${FORM_TYPES[lead.formType]}: ${lead.name}, ${lead.headcount} (${lead.location})`,
+      subject: leadSubject(lead),
       text,
       html: `<pre style="font:14px/1.5 system-ui,sans-serif;white-space:pre-wrap">${escapeHtml(text)}</pre>`,
     }),

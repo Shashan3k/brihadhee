@@ -1,4 +1,6 @@
-/* Brihadhee — small progressive enhancements. No dependencies. */
+/* Brihadhee — small progressive enhancements. No dependencies (the quote message
+   builder is shared with the server, from src/lib/lead.js). */
+import { quoteWhatsAppText } from "../lib/lead.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -310,6 +312,7 @@ if (revealItems.length) {
  * No personal data is sent to analytics: only the form type and headcount band. */
 const LEAD_MESSAGES = {
   sent: "Thank you. Your request has reached the Brihadhee team, and they will call you back.",
+  whatsapp: "WhatsApp has opened with your details. Press send there to reach the Brihadhee catering team.",
   invalid: "Some details were missing or not valid. Please check the form and send it again.",
   error: "Sorry, the form could not be sent just now. Please call or WhatsApp us instead.",
 };
@@ -331,10 +334,43 @@ leadForms.forEach((form) => {
   };
   if (leadStatusFromUrl && LEAD_MESSAGES[leadStatusFromUrl]) show(leadStatusFromUrl);
 
+  /* Quote builder: the 50-guest floor, shown inline while typing (QuoteBuilder.astro). */
+  const minGuests = Number(form.dataset.minGuests || 0);
+  const guestsInput = form.querySelector('input[name="guests"]');
+  const guestsNote = form.querySelector("[data-guests-note]");
+  if (minGuests && guestsInput) {
+    const checkGuests = () => {
+      const v = guestsInput.value.trim();
+      const low = v !== "" && Number(v) < minGuests;
+      if (guestsNote) guestsNote.hidden = !low;
+      guestsInput.setCustomValidity(low ? `Brihadhee caters functions from ${minGuests} guests.` : "");
+    };
+    guestsInput.addEventListener("input", checkGuests);
+    checkGuests();
+  }
+
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!form.reportValidity()) return;
     const data = Object.fromEntries(new FormData(form));
+
+    /* WhatsApp quote mode, only when ENABLE_LIVE_WHATSAPP_QUOTE_FORM is on (the
+       attribute is rendered only then). Open WhatsApp inside the click, then post
+       a copy to /api/lead in the background. */
+    if (form.dataset.whatsappQuote) {
+      const url = `https://wa.me/${form.dataset.whatsappQuote}?text=${encodeURIComponent(quoteWhatsAppText(data))}`;
+      window.open(url, "_blank", "noopener");
+      fetch(form.action, {
+        method: "POST",
+        keepalive: true,
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      }).catch(() => {});
+      show("whatsapp");
+      track("catering_quote_whatsapp", { form_type: "quote", headcount: data.guests || "" });
+      return;
+    }
+
     if (button) button.disabled = true;
     if (status) status.textContent = "Sending…";
     try {
@@ -348,7 +384,7 @@ leadForms.forEach((form) => {
         show("sent");
         form.reset();
         if (started) started.value = String(Date.now());
-        track("catering_quote_submit", { form_type: form.dataset.formType || "general", headcount: data.headcount || "" });
+        track("catering_quote_submit", { form_type: form.dataset.formType || "general", headcount: data.headcount || data.guests || "" });
       } else {
         show(res.status === 422 ? "invalid" : "error");
       }

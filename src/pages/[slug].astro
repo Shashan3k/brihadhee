@@ -1,7 +1,9 @@
 ---
 /**
  * Pillar 2 catering pages, built ONLY when offer_catering is true in
- * config/client-verification.json:
+ * config/client-verification.json (plus /small-function-catering-chennai/ and
+ * /catering-quote-chennai/ from src/data/spokes.js, and the gated
+ * /no-onion-no-garlic-anna-nagar/ draft; see getStaticPaths):
  *   /catering-services-chennai/       flagship: families and functions
  *   /event-planner-catering-partner/  event management companies
  *   /corporate-catering-chennai/      corporate and office catering (needs the
@@ -21,6 +23,12 @@ import ContentSection from "../components/ContentSection.astro";
 import LeadForm from "../components/LeadForm.astro";
 import { site, responsive } from "../data/site.js";
 import { getFact } from "../data/entity-truth.ts";
+import { CATERING_DIET, CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
+import NoOnionNoGarlicPage from "../components/NoOnionNoGarlicPage.astro";
+import SpokePage from "../components/SpokePage.astro";
+import QuoteBuilder from "../components/QuoteBuilder.astro";
+import { ROUTES, href } from "../data/site.js";
+import { gatePreview, smallFunctionsPage, quotePage } from "../data/spokes.js";
 import {
   cateringEnabled,
   CATERING_PATH,
@@ -56,11 +64,23 @@ import {
 } from "../data/catering.js";
 
 export function getStaticPaths() {
-  if (!cateringEnabled) return [];
+  const slug = (p) => p.replace(/\//g, "");
   return [
-    { params: { slug: CATERING_PATH.replace(/\//g, "") }, props: { kind: "catering" } },
-    { params: { slug: PLANNER_PATH.replace(/\//g, "") }, props: { kind: "planner" } },
-    ...(corporateEnabled ? [{ params: { slug: CORPORATE_PATH.replace(/\//g, "") }, props: { kind: "corporate" } }] : []),
+    ...(cateringEnabled
+      ? [
+          { params: { slug: slug(CATERING_PATH) }, props: { kind: "catering" } },
+          { params: { slug: slug(PLANNER_PATH) }, props: { kind: "planner" } },
+          ...(corporateEnabled ? [{ params: { slug: slug(CORPORATE_PATH) }, props: { kind: "corporate" } }] : []),
+          /* 12 Nov keyword plan spokes (src/data/spokes.js) */
+          ...(smallFunctionsPage ? [{ params: { slug: slug(smallFunctionsPage.path) }, props: { kind: "small-functions" } }] : []),
+          ...(quotePage ? [{ params: { slug: slug(quotePage.path) }, props: { kind: "quote" } }] : []),
+        ]
+      : []),
+    /* Gated spoke (config/seo-gates.ts): built only when its gate is on, or as a
+       noindex draft in `astro dev` / SEO_GATES_PREVIEW=1. */
+    ...(ENABLE_NO_ONION_NO_GARLIC_CLUSTER || gatePreview
+      ? [{ params: { slug: slug(ROUTES.noOnionNoGarlic) }, props: { kind: "no-onion" } }]
+      : []),
   ];
 }
 
@@ -73,7 +93,7 @@ const path = isCorporate ? CORPORATE_PATH : isPlanner ? PLANNER_PATH : CATERING_
 const fmt = (n) => n.toLocaleString("en-IN");
 
 const glance = [
-  ["Who", "Brihadhee, a pure vegetarian restaurant and caterer in Anna Nagar East"],
+  ["Who", `Brihadhee, a pure vegetarian restaurant in Anna Nagar East with a ${CATERING_DIET} catering service`],
   ["Events", events.map((e) => e.label).join(", ")],
   ["Guests", guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "On enquiry"],
   ["Area served", serviceAreas.join(", ")],
@@ -93,15 +113,25 @@ const compare = {
     ["Event planner flexibility", `Menu customised for each event; ${joinNatural(plannerModels)}`, "Varies; often fixed packages"],
     ["Live custom counters", joinNatural(liveCounters), "Varies"],
     ["Guest count", guests ? `${fmt(guests.min)} to ${fmt(guests.max)} guests` : "On enquiry", "Varies; many focus on very large weddings"],
-    ["Regional menu customisation", "Tirunelveli and Karaikudi specialties, plus North Indian and Indo-Chinese, all pure vegetarian", "Varies"],
+    ["Regional menu customisation", `Tirunelveli and Karaikudi specialties, plus North Indian and Indo-Chinese, all ${CATERING_DIET}`, "Varies"],
     ["Pricing", pricingText ?? "On enquiry", "Varies"],
   ],
   note: "Typical categories only; compare current quotes from each caterer before booking.",
 };
-const schema = isCorporate ? corporateSchema() : isPlanner ? plannerSchema() : cateringSchema();
+const isGated = kind === "no-onion";
+// Catering pages show the catering numbers (config enquiry_channels) in the header,
+// page header, summary, CTA bar and forms; see pageContact() in src/data/site.js.
+if (!isGated) Astro.locals.contact = contact;
+const isSpoke = kind === "small-functions" || kind === "quote";
+const schema = isGated || isSpoke ? null : isCorporate ? corporateSchema() : isPlanner ? plannerSchema() : cateringSchema();
 const cp = corporatePage;
 ---
 
+{isGated ? <NoOnionNoGarlicPage /> : kind === "small-functions" ? <SpokePage page={smallFunctionsPage} /> : kind === "quote" ? (
+  <SpokePage page={quotePage}>
+    <QuoteBuilder page={quotePage.path} {...quotePage.builder} />
+  </SpokePage>
+) : (
 <Base title={m.title} description={m.description} path={path} schema={schema} cta="quote">
   <Nav homeBase={base} />
   {isCorporate ? (
@@ -126,6 +156,8 @@ const cp = corporatePage;
         <h2 class="section__title" id="more-title">More catering from Brihadhee</h2>
         <ul class="link-list" role="list">
           <li><a href={`${base}${CATERING_PATH.slice(1)}`}>End-to-end event and wedding catering</a></li>
+          <li><a href={href(ROUTES.smallFunctions)}>Small function catering from {CATERING_MIN_GUESTS} guests</a></li>
+          <li><a href={href(ROUTES.cateringQuote)}>Get a catering quote</a></li>
           <li><a href={`${base}${PLANNER_PATH.slice(1)}`}>Catering partner for event management companies</a></li>
           <li><a href={`${base}menu/nellai-meals/`}>Lunch and Nellai meals at the restaurant</a></li>
         </ul>
@@ -138,7 +170,7 @@ const cp = corporatePage;
       eyebrow={isPlanner ? "For event management companies · Chennai" : "Event catering · Chennai"}
       h1={m.h1}
       intro={isPlanner
-        ? `Brihadhee works with event management companies across ${joinNatural(serviceAreas)} as a pure vegetarian catering partner, with ${joinNatural(plannerModels)} and regional menus for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests.`
+        ? `Brihadhee works with event management companies across ${joinNatural(serviceAreas)} as a ${CATERING_DIET} catering partner, with ${joinNatural(plannerModels)} and regional menus for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests.`
         : opening}
     />
     <AtAGlance title={isPlanner ? "Catering partnership: summary" : "Brihadhee catering: summary"} rows={glance} />
@@ -148,7 +180,9 @@ const cp = corporatePage;
         <div class="container">
           <h2 class="section__title" id="about-catering-title">{isPlanner ? "A restaurant kitchen behind every counter" : "Catering from a working restaurant kitchen"}</h2>
           <p class="section__lead">{entityLine}</p>
-          <p class="section__lead catering__tamil tamil" lang="ta">சைவ கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்</p>
+          <p class="section__lead catering__tamil tamil" lang="ta">{isPlanner
+            ? "சைவ கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்"
+            : "திருமண கேட்டரிங் சென்னை · சைவ திருமண கேட்டரிங் சென்னை · பிறந்தநாள் விழா கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்"}</p>
         </div>
       </section>
     )}
@@ -189,7 +223,7 @@ const cp = corporatePage;
         <div class="container">
           <h2 class="section__title" id="corporate-title">Corporate and office catering</h2>
           <p class="section__lead">
-            Brihadhee runs daily corporate catering across {joinNatural(serviceAreas)}, serving more than {corporate.dailyCovers.toLocaleString("en-IN")} people every day with 100% pure vegetarian food from its kitchen on {getFact("street")}.
+            Brihadhee runs daily corporate catering across {joinNatural(serviceAreas)}, serving more than {corporate.dailyCovers.toLocaleString("en-IN")} people every day with {CATERING_DIET} food from its 100% pure vegetarian kitchen on {getFact("street")}.
           </p>
           <p><a class="btn btn--ghost" href={`${base}${CORPORATE_PATH.slice(1)}`}>Corporate catering details</a></p>
         </div>
@@ -234,6 +268,9 @@ const cp = corporatePage;
         <div class="container">
           <h2 class="section__title" id="area-title">Guest count and area served</h2>
           <p class="section__lead">{guests.range} {serviceAreas.length > 0 && `We cater across ${joinNatural(serviceAreas)}.`}</p>
+          <p>
+            Planning a birthday, housewarming or get-together closer to {CATERING_MIN_GUESTS} guests? See <a href={href(ROUTES.smallFunctions)}>small function catering in Chennai</a>, or send your details through the <a href={href(ROUTES.cateringQuote)}>catering quote form</a>.
+          </p>
           {guests.examples.length > 0 && (
             <ul class="catering-chips" role="list">{guests.examples.map((x) => <li>{x}</li>)}</ul>
           )}
@@ -283,6 +320,7 @@ const cp = corporatePage;
             ? <a href={`${base}${CATERING_PATH.slice(1)}`}>See the functions Brihadhee caters for families</a>
             : <a href={`${base}${PLANNER_PATH.slice(1)}`}>Event management company? See the partner page</a>}
         </p>
+        {isPlanner && <p><a href={href(ROUTES.cateringQuote)}>Send event details through the catering quote form</a></p>}
         <div class="visit__map catering__map">
           <iframe src={site.maps.embed} title={`Map showing ${site.name} on ${getFact("street")}, Chennai`} width="600" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
         </div>
@@ -292,3 +330,4 @@ const cp = corporatePage;
   )}
   <Footer homeBase={base} />
 </Base>
+)}

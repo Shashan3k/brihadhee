@@ -43,8 +43,12 @@ non[- ]?veg(?:etarian)?\s+catering
 multi[- ]cuisine\s+catering
 
 # --- HARD BLOCK: retired positioning (client direction W11 to W13, 2026-11-11) ---
-# Zero exceptions anywhere on the site: no lookbehinds, no allowed contexts,
-# no exempt pages. Keep src/data/entity-truth.ts RETIRED_TERMS in step.
+# No lookbehinds, no allowed contexts, no exempt pages, with ONE exception added
+# 2026-11-12 (keyword plan 4.2 and 4.7): the exact question "Does Brihadhee serve
+# breakfast?" (NEGATIVE_FAQ_QUESTION in config/seo-gates.ts), answered "No ..." on
+# /faq/ to correct listings that still show a morning opening. The checks remove
+# exactly that string before scanning; any other use still fails.
+# Keep src/data/entity-truth.ts RETIRED_TERMS in step.
 # The Tamil lines have no \b because \b only sees ASCII word characters.
 \bbreakfasts?\b
 \bmini[\s-]*tiffins?\b

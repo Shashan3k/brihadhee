@@ -1,0 +1,14 @@
+---
+/**
+ * /family-dining-anna-nagar/: temple-visit and family-occasion dining (keyword plan
+ * 3.18 and 3.19). Owns the family-dining intent and its Q&A (moved from the home
+ * page). No temple is named until question 24 is answered (ENABLE_NAMED_TEMPLE).
+ */
+import SpokePage from "../components/SpokePage.astro";
+import Offers from "../components/Offers.astro";
+import { familyPage } from "../data/spokes.js";
+---
+
+<SpokePage page={familyPage}>
+  <Offers slot="before-faq" title="Dining offers for families" />
+</SpokePage>

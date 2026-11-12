@@ -1,0 +1,11 @@
+---
+/**
+ * /no-onion-no-garlic-anna-nagar/ (rendered through src/pages/[slug].astro). GATED:
+ * built only when ENABLE_NO_ONION_NO_GARLIC_CLUSTER is on in config/seo-gates.ts,
+ * or as a noindex draft with a banner in `astro dev` / SEO_GATES_PREVIEW=1 builds.
+ */
+import SpokePage from "./SpokePage.astro";
+import { noOnionPage } from "../data/spokes.js";
+---
+
+{noOnionPage && <SpokePage page={noOnionPage} />}

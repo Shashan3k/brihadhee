@@ -8,15 +8,20 @@ const mealTimes = getFact("mealTimes");
 const street = getFact("street");
 
 const { media, rating } = site;
-const { h1 } = Astro.props;
+const { h1, hoursLine = "" } = Astro.props;
 ---
 
 <section class="hero" id="top">
   <div class="container hero__grid">
     <div class="hero__copy">
       <p class="hero__tamil tamil" lang="ta">{site.nameTamil}</p>
-      <p class="hero__title">{site.name}</p>
-      <h1 class="hero__title-sub hero__h1">{h1}</h1>
+      <!-- The brand sits inside the H1 so the heading always pairs "Brihadhee" with its
+           category (disambiguation from Brihadeeswarar Temple and baby-name pages). -->
+      <h1 class="hero__heading">
+        <span class="hero__title">{site.name}</span><span class="visually-hidden">: </span>
+        <span class="hero__title-sub hero__h1">{h1}</span>
+      </h1>
+      {hoursLine && <p class="hero__hours">{hoursLine}</p>}
       <p class="hero__tagline">{site.tagline}</p>
       <p class="hero__sub">{site.subTagline}</p>
 

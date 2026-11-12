@@ -1,0 +1,12 @@
+---
+/**
+ * /faq/: brand answers no other page owns (keyword plan 4.2 and 4.7), including the
+ * one permitted "breakfast" question (config/seo-gates.ts NEGATIVE_FAQ_QUESTION),
+ * plus an index that links to every page's own Q&A block. One Q&A per route: the
+ * hub never repeats a spoke's question (src/lib/answers.js qaRoute).
+ */
+import SpokePage from "../components/SpokePage.astro";
+import { faqHubPage } from "../data/spokes.js";
+---
+
+<SpokePage page={faqHubPage} />
