@@ -10,7 +10,7 @@ import AtAGlance from "../components/AtAGlance.astro";
 import BuildYourOwnDosa from "../components/BuildYourOwnDosa.astro";
 import Faq from "../components/Faq.astro";
 import { menuFaq } from "../data/faq.js";
-import { getFact } from "../data/entity-truth.ts";
+import { getFact, openingTimes } from "../data/entity-truth.ts";
 import { UNPRICED_SIGNATURES, BUILD_YOUR_OWN_DOSA } from "../data/menu-canonical.ts";
 import { pageGraph, menuSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import {
@@ -31,10 +31,10 @@ const base = import.meta.env.BASE_URL.endsWith("/")
 const name = getFact("name");
 const extras = UNPRICED_SIGNATURES;
 const dosa = category("dosa");
-const beverages = category("beverages");
 
-const title = `${name} Menu and Prices | Pure Veg, Anna Nagar East`;
-const description = `${name} menu with prices: ${dosa.count} dosa varieties from ${rupees(dosa.min)} to ${rupees(dosa.max)}, meals, idly, parotta and beverages from ${rupees(beverages.min)}. Anna Nagar East, Chennai.`;
+const { range } = openingTimes();
+const title = `${name} Menu | Dosa, Nellai Meals & Parotta, Anna Nagar`;
+const description = `${name} menu with prices: build your own dosa, ${dosa.count} classic dosas, Nellai meals, parotta and filter coffee. Lunch and dinner, ${range} daily.`;
 const schema = pageGraph({
   path: "/menu/",
   title,
@@ -50,9 +50,9 @@ const schema = pageGraph({
     <section class="section menu-page__head">
       <div class="container">
         <p class="eyebrow">Menu</p>
-        <h1 class="section__title">{name} menu and prices, Anna Nagar East</h1>
+        <h1 class="section__title">{name} Menu</h1>
         <p class="section__lead">
-          {name} is a {getFact("type")} in Anna Nagar East, Chennai.
+          {name} is a {getFact("type")} in Anna Nagar East, Chennai, serving {getFact("mealTimes")} every day from {range}.
           This page lists all {itemCount} dishes on the current menu{allVegetarian ? ", every one of them vegetarian" : ""}.
         </p>
         <p class="menu-page__note">Prices in {currencySymbol === "₹" ? "Indian rupees (₹)" : currencySymbol}, as on the current menu. {menuNotes.gst} {menuNotes.parcel} {menuNotes.prep}</p>

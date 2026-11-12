@@ -1,6 +1,6 @@
 # Google Business Profile (GBP) update guide: Brihadhee
 
-> **Updated 2026-11-11** for the client's direction (lunch and dinner only, 11 AM to 11 PM, no breakfast or tiffin, Build Your Own Dosa, corporate catering) and the new menu (`new menu.pdf`). If any line here disagrees with `src/data/entity-truth.ts` or `src/data/menu-canonical.ts`, those files win.
+> **Updated 2026-11-12**: categories, the 600-character description, Products/Services, WhatsApp on the main number, the Sunday conflict (step F) and refreshed Q&A prices. Earlier update 2026-11-11 for the client's direction (lunch and dinner only, 11 AM to 11 PM, no breakfast or tiffin, Build Your Own Dosa, corporate catering) and the new menu (`new menu.pdf`). If any line here disagrees with `src/data/entity-truth.ts` or `src/data/menu-canonical.ts`, those files win.
 
 Prepared 2026-11-08 for the owner and marketing team. Do the steps **in order**. Sign in at business.google.com (or search "Brihadhee" in Google while signed in as the owner and use the edit panel). Write every change, with the date, in `docs/geo/presence-audit.csv`.
 
@@ -15,7 +15,7 @@ Prepared 2026-11-08 for the owner and marketing team. Do the steps **in order**.
 | Website | none ("Add website") | Biggest single gap: Google cannot connect the profile to www.brihadhee.com | Step E |
 | Address | W-41 (Old No. W-124), 3rd Ave, W Block, Anna Nagar, 600040 | No "East", no "Main Road" | Step D |
 | Category | South Indian restaurant | Correct primary; secondaries unknown | Step C |
-| Hours | "Closes 11 pm" | Opening time not seen | Step F |
+| Hours | "Closes 11 pm"; **closed on Sundays** (seen 2026-11-09, AEO_GEO_STRATEGY.md A1) | The website says open every day; Google AI Mode repeats "closed on Sundays" | Step F: **owner must confirm Sunday first** |
 | Rating | 4.2 from 857 reviews; 344 photos | Negative theme: price and service | Step P |
 | Review topics | pottalam parotta (68), sodhi idiyappam (25), dosa (23), sambar (19) | Pottalam parotta is not on our website menu | Owner to confirm the dish |
 | Buttons | Reserve a table, Order online | We don't know which partner each button opens | Step K |
@@ -31,9 +31,9 @@ Agreed values (owner-confirmed, from `entity-truth.ts`). Correct every platform 
 | Name | Brihadhee | Apple Maps: "Brihadhee Pure Veg Restaurant"; Justdial: "Beyond Curry By Brihadhee" only |
 | Address | New No. W-41, Old No. W-124, W-Block, 3rd Avenue, Main Road, Anna Nagar East, Chennai 600040 | Bing (no door number); Swiggy ("Plot No.41, 3Road Avenue"); Apple ("124, Block W"); Justdial ("18th Main Road") |
 | Phone | +91 94442 24999 | **GBP** and Bing show 073587 14113 |
-| Hours | **11:00 AM to 11:00 PM**, lunch and dinner only (open days to be confirmed) | Zomato, District, Apple: 11 AM–11 PM; Magicpin: 11:30 AM–2 PM; Justdial: till 10:45 PM |
+| Hours | **11:00 AM to 11:00 PM**, lunch and dinner only. Days: the website says every day; GBP says closed on Sundays. **Sunday status is the owner's call (owner-todo P1)** | Zomato, District, Apple: 11 AM–11 PM; Magicpin: 11:30 AM–2 PM; Justdial: till 10:45 PM |
 | Veg status | 100% pure vegetarian | **EazyDiner says "veg and non veg"** |
-| Price for two | Not a marketing angle (client). Listings disagree (Swiggy ₹800; Zomato/District/Magicpin ₹200; Justdial ₹450): leave GBP's price range as Google shows it until the owner gives one figure | |
+| Price for two | Not a marketing angle (client). Listings disagree (Swiggy ₹800; Zomato/District/Magicpin ₹200; Justdial ₹450): leave GBP's price range as Google shows it until the owner gives one figure (**owner-todo P3**) | Swiggy Dineout, Zomato, EazyDiner, Justdial |
 | Parking | **Not confirmed** | Swiggy says "Parking available"; EazyDiner says no parking. Owner must decide, then fix both |
 | Cuisines | South Indian, Tirunelveli, Karaikudi, North Indian, Indo-Chinese, pure vegetarian | Fine |
 
@@ -52,14 +52,12 @@ Keep exactly **Brihadhee** (sentence case or capitals, as on the signboard). Do 
 ## C. Categories
 
 - **Primary: South Indian restaurant** (keep; it is already set and ranking). Do not switch the primary category during the first 90 days; a switch can drop rankings for weeks.
-- **Secondary (add only these, if they appear in Google's dropdown):**
-  1. Vegetarian restaurant (confirmed: 100% pure veg)
-  2. ~~Breakfast restaurant~~: **do not add**. No breakfast service (client, 2026-11-11)
-  3. Family restaurant (confirmed: family-friendly)
-  4. Caterer (confirmed: catering 50–1,500 guests)
-  5. Indian restaurant
-  6. Dosa restaurant, **only if Google offers that exact category** (not "Tiffin centre": tiffin positioning is retired)
-- Skip "Chinese restaurant", "North Indian restaurant" and "Chettinad restaurant" for now; they dilute the pure veg South Indian signal. Revisit after day 90.
+- **Secondary (add these four):**
+  1. **Vegetarian restaurant** (confirmed: 100% pure veg)
+  2. **Caterer** (confirmed: corporate catering for 1,000+ people a day; event catering for 50–1,500 guests)
+  3. **Family restaurant** (confirmed: family-friendly)
+  4. **Dosa restaurant**, **only if Google's dropdown offers this exact category.** Type "Dosa" in the category box; if nothing called "Dosa restaurant" appears, skip it. Never pick a near match such as "Tiffin centre" (tiffin positioning is retired) or "Breakfast restaurant" (no breakfast service).
+- Do not add: Breakfast restaurant, Tiffin centre, Chinese restaurant, North Indian restaurant, Chettinad restaurant. They contradict the client direction or dilute the pure veg South Indian signal. Revisit after day 90.
 - Week 1 task: from a Chennai phone, check the primary categories of the top 5 results for "pure veg restaurant Anna Nagar" and "South Indian restaurant Anna Nagar" and write them in `docs/geo/competitor-benchmark.csv`. If most winners use "Vegetarian restaurant" as primary, discuss a test with the owner after day 90.
 
 ## D. Address and location
@@ -84,31 +82,51 @@ Enter exactly (same as the website footer):
 | Field | Value |
 |---|---|
 | Primary phone | **+91 94442 24999** |
-| Additional phone | +91 73587 14113 **only if** the owner confirms it is still answered; otherwise remove it |
+| Additional phone | +91 73587 14113 **only if** the owner confirms it is still answered; otherwise remove it. **Which number Google shows as primary is owner-todo P2** |
 | Website | `https://www.brihadhee.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp_profile` |
 | Menu link | `https://www.brihadhee.com/menu/?utm_source=google&utm_medium=organic&utm_campaign=gbp_menu` |
 | Reservations link | `https://www.brihadhee.com/book-a-table/?utm_source=google&utm_medium=organic&utm_campaign=gbp_booking` (after the page is live; until then the EazyDiner link) |
 | Order link | `https://www.brihadhee.com/order/` **only after** Swiggy/Zomato store links are confirmed |
-| Social profiles | Instagram `https://www.instagram.com/brihadhee/`; YouTube only if @brihadheerestaurant is confirmed as yours; WhatsApp only after the number is confirmed |
+| Social profiles | Instagram `https://www.instagram.com/brihadhee/`; YouTube only if @brihadheerestaurant is confirmed as yours |
+| WhatsApp / chat | +91 94442 24999 (confirmed 2026-11-12: the main number takes WhatsApp) |
 
 Why UTM tags: they let Google Analytics show exactly how many visits come from the profile.
 
 ## F. Hours
 
-- Regular hours: **11:00 AM to 11:00 PM** on the days the owner confirms (ask which days it opens).
+- Regular hours: **11:00 AM to 11:00 PM**.
+- **Sunday: do not edit until the owner confirms (owner-todo P1).** GBP currently shows **closed on Sundays**, while the website (from the 2026-11-11 blueprint) says open every day, Monday to Sunday. Google's AI repeats the GBP version. One of them is wrong:
+  - If the restaurant **is open on Sundays**: set Sunday 11:00 AM–11:00 PM on GBP the same day, then re-run the Sunday prompt in the query panel a week later.
+  - If it **is closed on Sundays**: tell the developer the same day. The website, schema (`openingHoursSpecification`), `/about/` Q&A "Is Brihadhee open on Sundays?" and llms.txt must change, or every AI answer will keep contradicting itself.
 - "More hours": lunch and dinner only if the owner gives exact times. Never add breakfast.
 - **Special hours:** before every festival (Karthigai Deepam, Christmas, New Year, Pongal, Tamil New Year, Deepavali), set special hours or confirm "open as usual". Google shows a warning on profiles with uncertain holiday hours.
 - Do not publish the "up to 6 AM late-night" idea: it contradicts the 11 PM close.
 
-## G. Business description (624 characters; limit 750)
+## G. Business description (600 characters; limit 750)
 
 Paste exactly:
 
-> Brihadhee is a 100% pure vegetarian South Indian restaurant on 3rd Avenue, W-Block, Anna Nagar East, Chennai, near Anna Nagar Tower Park. We are known for our Build Your Own Dosa (choose a batter, toppings, a stuffing and a garnish), Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, with Tirunelveli (Nellai) and Karaikudi specialities. We serve lunch and dinner from 11 AM to 11 PM. Families are welcome. Pre-book a table through Swiggy Dineout, EazyDiner or District. We also run daily corporate catering for more than 1,000 people, and end-to-end catering for weddings, birthdays and get-togethers in Chennai. Call +91 94442 24999.
+> Brihadhee is a 100% pure vegetarian South Indian restaurant and caterer in Anna Nagar East, Chennai, serving lunch and dinner from 11 AM to 11 PM. Our signature is build-your-own dosa: choose your batter, roast, fillings and podi, and we cook it to order. At lunch, try Tirunelveli-style Nellai Special Sodhi Meals and Tamil home-style dishes from our grandmother's recipes. Dinner favourites include paanai parotta, veg kothu parotta and idiyappam. Brihadhee also provides pure veg corporate catering (1,000+ meals daily) and end-to-end catering for weddings, birthdays and functions across Chennai.
 
-Rules kept: no "best", no "No. 1", no "500+", no breakfast or tiffin, no parking, no links (Google rejects URLs in descriptions), no keyword lists. Re-check monthly and whenever the menu changes.
+Every claim is a confirmed fact in `src/data/entity-truth.ts` (hours, pure veg, Build Your Own Dosa, Nellai meals, grandma's recipes, corporate scale, event catering). "Roast" means the ghee, butter or oil choice on the menu. Rules kept: no "best", no "No. 1", no "500+", no breakfast or tiffin, no prices, no parking, no phone number or links (Google rejects URLs and discourages contact details in descriptions), no keyword lists. Re-check monthly and whenever the menu changes.
 
-## H. Services
+## H. Products and services
+
+### H1. Products / Services entries (add all five)
+
+In GBP, open **Edit profile → Products** (or **Services** if Google shows that tab for the profile). Add each entry with a photo, the description below, the category in brackets, and the button "Learn more" pointing to the page with UTM tags (`?utm_source=google&utm_medium=organic&utm_campaign=gbp_product`). Leave the price empty for catering (quoted per plate).
+
+| Name | Description (paste) | Price | Link |
+|---|---|---|---|
+| Build Your Own Dosa | Choose one of 5 batters, then add podi and toppings, a filling and your roast in ghee, butter or oil. 10 chef's combinations are on the menu too. Lunch and dinner, 11 AM to 11 PM. | Batters ₹120–₹145; add-ons extra | /menu/dosa/ |
+| Nellai Special Sodhi Meals | Tirunelveli-style banana-leaf lunch built around sodhi, a coconut milk stew, with rice, sambar, rasam, kootu, poriyal and karuppatti ulundhu kali. Served from 11 AM. | ₹240 | /menu/nellai-meals/ |
+| Paanai Parotta & Dinner | Paanai Parotta, veg kothu parotta, idiyappam and Karaikudi Paneer Poppers, served every evening until 11 PM. 100% pure vegetarian. | Paanai Parotta ₹270 | /veg-dinner-anna-nagar/ |
+| Pure Veg Corporate Catering (1,000+ Daily) | Daily office lunches, bulk meals, employee meal programmes and office events across Chennai, for more than 1,000 people every day. Kitchen tasting and a trial week before you start. | Per plate, on quote | /corporate-catering-chennai/ |
+| End-to-End Event & Wedding Catering | Menu planning, cooking, serving and setup for weddings, birthdays, housewarmings and family functions, 50 to 1,500 guests, with live dosa, parotta and Nellai sodhi counters. | Per plate, on quote | /catering-services-chennai/ |
+
+Prices come from `src/data/menu-canonical.ts`; update them here and on GBP the same day the menu changes.
+
+### H2. Service options
 
 Add (under "Services" or the restaurant service options Google shows):
 - Dine-in ✔ (confirmed)
@@ -143,10 +161,10 @@ Tick only what is true. Re-check every quarter.
 ## J. Menu
 
 1. In GBP, open **Menu → Edit menu**. Create the same 12 sections as the website menu (`src/data/menu-canonical.ts`, from `new menu.pdf`): Starters, Lunch, Dine-in Combos (lunch only), Dosa Variety, Idly & Mini Idly, Idiyappam, Parotta & Chapathi, Rice, Indian Breads, Indian Gravies, Beverages, Brihadhee Signatures, plus a Build Your Own Dosa section.
-2. Enter every item with its price from `final menu 13-07-2026.pdf` (59 items; the list is in `src/data/menu-canonical.ts` and on www.brihadhee.com/menu/). One plain description line each, for example:
+2. Enter every item with its price from `new menu.pdf` (80 items; the list is in `src/data/menu-canonical.ts` and on www.brihadhee.com/menu/). One plain description line each, for example:
    - Kothu Parotta & Lemon Kothu Idiyappam Combo, ₹179 (lunch only).
    - Nellai Special Sodhi Meals, ₹240: Tirunelveli-style vegetarian meal with sodhi.
-   - Paanai Parotta, ₹260: signature parotta served in a clay pot.
+   - Paanai Parotta, ₹270: parotta layered with salna, paneer and mushroom, slow-cooked in a sealed pot (dum style).
 3. Add a photo to the top 10 items (a Build Your Own Dosa chef's suggestion, Nellai Special Sodhi Meals, Paanai Parotta, Ghee Roast, Ghee Podi Dosa, Idiyappam Sodhi, Special Kothu Parotta, Special Pottalam Parotta, Karaikudi Paneer Poppers, Filter Coffee).
 4. Set the menu link (step E).
 5. When pottalam parotta and the signature drinks (Summer in Tenkasi, Butter Biscuit Smoothie) get confirmed prices, add them on GBP and the website the same day.
@@ -206,23 +224,23 @@ Google has been reducing the Q&A section on Maps in favour of AI answers drawn f
 | 6 | What is Nellai Sodhi meals? | Nellai Special Sodhi Meals (₹240) is our Tirunelveli-style vegetarian meal served with sodhi, a mild coconut-milk stew from the Nellai region. We also serve Idiyappam Sodhi (₹180) for a lighter plate. |
 | 7 | Can I book a table? | Yes. Pre-book on Swiggy Dineout, EazyDiner or District and get up to 40% off from Monday to Thursday. Walk-in guests get 10% off on dine-in. For a large group, please call +91 94442 24999. |
 | 8 | Do you have offers? | Walk-in dine-in guests get 10% off. Pre-booking through Swiggy Dineout, EazyDiner or District gives up to 40% off from Monday to Thursday. Offers can change, so please check before you visit. |
-| 9 | What do dishes cost? | Menu prices run from ₹35 (lemon tea, black coffee) to ₹315 (paneer gravies), before 5% GST. Lunch meals are ₹150 to ₹240. |
+| 9 | What do dishes cost? | Every dish and price is on www.brihadhee.com/menu/ (prices exclude 5% GST). Lunch meals are ₹150 to ₹240, classic dosas ₹100 to ₹175, and build-your-own dosa batters ₹120 to ₹145. |
 | 10 | Is it good for families? | Yes. Brihadhee is family-friendly, 100% pure vegetarian and serves no alcohol. Families often order the Executive TN Meals, dosas and the Ghee Mini Sambar Idly (14 pieces) for children. |
-| 11 | Do you serve filter coffee? | Yes. Filter coffee is ₹40. We also serve tea (plain, ginger or elaichi), lemon tea, black coffee and plain milk. |
+| 11 | Do you serve filter coffee? | Yes. Filter coffee is ₹45. We also serve tea, lemon tea, black coffee and plain milk. |
 | 12 | What are your specialities? | We are known for Build Your Own Dosa, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee, along with Karaikudi Paneer Poppers and Karuppatti Ulundhu Kali, a traditional palm-jaggery sweet. |
-| 13 | What is Paanai Parotta? | Paanai Parotta (₹260) is our signature parotta dish served in a clay pot (paanai). (Chef to confirm the exact description before posting.) |
+| 13 | What is Paanai Parotta? | Paanai Parotta (₹270) is parotta layered with rich salna, paneer and mushroom, slow-cooked in a sealed pot (dum style). It is one of our dinner favourites. |
 | 14 | Do you serve alcohol? | No. Brihadhee does not serve alcohol. |
 | 15 | Do you do catering? | Yes. We cater pure vegetarian functions across Chennai for 50 to 1,500 guests, including baby showers, housewarmings, ear-piercing ceremonies, engagements, weddings and birthdays. Pricing is per plate, quoted for each menu. Call +91 94442 24999. |
 | 16 | What live counters do you offer for events? | Build Your Own Dosa, Paanai Parotta, Nellai Sodhi and Karaikudi Paneer Poppers live counters. Event planners can book them as white-label or co-branded counters. |
-| 17 | What do you serve for lunch? | Mini Meals (₹140), Limited TN Meals (₹150), Executive TN Meals Unlimited (₹205), Nellai Special Sodhi Meals (₹240), and sambar, variety and curd rice (₹105 each). |
+| 17 | What do you serve for lunch? | Limited TN Meals (₹150), Executive TN Meals Unlimited (₹205), Nellai Special Sodhi Meals (₹240) and Karuppatti Ulundhu Kali (₹100), plus lunch-only dine-in combos. Lunch is Tamil home-style food from our grandmother's recipes. |
 | 18 | Who runs Brihadhee? | Brihadhee was founded by Rakesh and Eashwer, an auditor and a lawyer by profession, out of a shared passion for authentic regional Tamil vegetarian food. |
 | 19 | What is Beyond Curry by Brihadhee? | Beyond Curry by Brihadhee is our North Indian meal-box brand. (Owner to add how to order before posting.) |
-| 20 | Are you connected to the Brihadeeswarar Temple? | No. Brihadhee is a restaurant in Anna Nagar East, Chennai, and is not connected to the Brihadeeswarar Temple in Thanjavur. |
+| 20 | Are you connected to the Brihadeeswarar Temple? | The name Brihadhee is a tribute to the Brihadeeswarar Temple in Thanjavur and its Chola architecture. Brihadhee is a restaurant and is not affiliated with the temple. |
 | 21 | Which areas are you close to? | We are in Anna Nagar East, a short drive from Anna Nagar West, Shenoy Nagar, Kilpauk, Mogappair and Thirumangalam. |
 | 22 | Do you have North Indian food? | Yes. We serve North Indian gravies such as Paneer Butter Masala, Aloo Gobi Masala and Nilgiris Dum Aloo (₹295–₹315), with chapathi and parotta. All 100% vegetarian. |
 | 23 | Is there parking? | **Do not post until the owner confirms.** |
 | 24 | Do you deliver? | **Do not post until Swiggy/Zomato links are confirmed.** |
-| 25 | What is your WhatsApp number? | **Do not post until the WhatsApp number is confirmed.** |
+| 25 | What is your WhatsApp number? | WhatsApp us on +91 94442 24999 for tables, catering quotes and enquiries. |
 
 ## P. Reviews
 
@@ -279,13 +297,14 @@ Google ended Business Messages (chat) on GBP in 2024, so there is no chat to swi
 
 ## Order of work for the owner (do these this week)
 
-1. Confirm the phone number to show (+91 94442 24999, and whether 73587 14113 still works).
+1. **Answer the five open owner confirmations first** (`docs/owner-todo.md`, section P): Sunday opening, primary phone on GBP, cost for two, corporate client names and FSSAI number, parking.
 2. Add the website with the UTM link.
 3. Fix the address and check the pin at the entrance.
-4. Set hours 11 AM to 11 PM on the days the owner confirms, and holiday hours for the next festival.
-5. Add secondary categories (Vegetarian restaurant, Family restaurant, Caterer, Indian restaurant). Not Breakfast restaurant.
+4. Set hours 11 AM to 11 PM. **Sunday only after the owner confirms** (step F), and holiday hours for the next festival (Karthigai Deepam).
+5. Add the secondary categories from step C: Vegetarian restaurant, Caterer, Family restaurant, and Dosa restaurant only if Google offers it. Not Breakfast restaurant.
 6. Paste the description from step G.
-7. Tick the confirmed attributes; leave parking, delivery and accessibility off until confirmed.
-8. Build the 59-item menu with prices.
-9. Upload the first 15 photos and start the review QR cards.
-10. Correct EazyDiner (non-veg error) and claim Apple Business Connect.
+7. Add the five Products/Services entries from step H1.
+8. Tick the confirmed attributes; leave parking, delivery and accessibility off until confirmed.
+9. Build the 80-item menu with prices from `new menu.pdf`.
+10. Upload the first 15 photos and start the review QR cards.
+11. Work through the listing tickets in `docs/geo/corrections-log.csv` (EazyDiner, Zomato, Swiggy Dineout, Justdial, Instagram) and claim Apple Business Connect.

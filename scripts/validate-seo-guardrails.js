@@ -29,14 +29,14 @@ const FORBIDDEN_KEYWORDS = [
   // "wedding catering Chennai", "catering services in Chennai" and
   // "large-scale catering" were removed from this list.
   "best catering in Chennai",
-  "bulk catering Chennai",
   "mass catering",
   "non-vegetarian catering",
   "non vegetarian catering",
   "multi-cuisine catering",
   "multi cuisine catering",
   // 2026-11-11: corporate and office catering are now a client service (keyword plan,
-  // client W13), so "corporate catering" and "office lunch catering" are allowed.
+  // client W13), so "corporate catering", "office lunch catering" and "bulk catering"
+  // are allowed (bulk lunch catering is a corporate-page keyword).
 ];
 
 const COMPETITORS = ["Saraswathi", "Sindhu", "Arusuvai"];
@@ -67,10 +67,16 @@ function loadConfig() {
     "prep_mode", "advance_notice_required", "enquiry_channels",
     "pricing_model", "restaurant_verified_hours",
     "restaurant_parking_available", "restaurant_parotta_confirmed",
+    "restaurant_meal_periods",
   ];
   const missing = required.filter((k) => !(k in cfg));
   if (missing.length) fatal(`Config is missing keys: ${missing.join(", ")}`);
   if (typeof cfg.offer_catering !== "boolean") fatal("offer_catering must be a boolean");
+  // Client direction W11 (2026-11-11): lunch and dinner only.
+  const meals = cfg.restaurant_meal_periods;
+  if (!Array.isArray(meals) || !meals.length || meals.some((m) => !["lunch", "dinner"].includes(m))) {
+    fatal("restaurant_meal_periods may list only \"lunch\" and \"dinner\" (client direction W11)");
+  }
   return cfg;
 }
 

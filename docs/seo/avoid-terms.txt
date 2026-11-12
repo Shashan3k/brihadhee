@@ -1,12 +1,19 @@
-# Terms and claims that must not appear on the site (visible text, title, meta
-# description, llms.txt). One JavaScript regular expression per line, matched
-# case-insensitively. Lines starting with # are comments.
+# Terms and claims that must not appear anywhere on the site. One JavaScript
+# regular expression per line, matched case-insensitively. Lines starting with
+# # are comments.
+# Read by scripts/aeo-lint.mjs, which checks every built surface with no
+# exceptions: visible text, <title>, every meta tag, alt/title/aria-label
+# attributes, link and image URLs, JSON-LD, /llms.txt, /llms-full.txt,
+# /menu.json, the sitemaps, robots.txt and the web manifest.
 # Source: the "Keywords to avoid" sections of Key.md and Catering_Keywords.md,
 # plus the AEO rules (no delivery, booking, parking, buffet, franchise,
 # non-veg or alcohol claims, no competitor names).
-# 2026-11-05: breakfast, pre-booking a table, and Chennai-wide event and
-# wedding catering were confirmed by the owner and removed from this list.
-# Read by scripts/aeo-lint.mjs.
+# 2026-11-05: pre-booking a table, and Chennai-wide event and wedding catering
+# were confirmed by the owner and removed from this list.
+# 2026-11-11 (client W11 to W13, docs/seo/client-confirmations.md section F):
+# corporate, office lunch and bulk catering are a client service and are
+# allowed; breakfast, tiffin, the 6:30 AM opening and price-led framing are
+# hard-blocked (last section).
 
 # --- Unconfirmed services (restaurant) ---
 \bparking\b
@@ -31,8 +38,26 @@
 
 # --- Broad or unconfirmed catering head terms (Catering_Keywords.md) ---
 best\s+catering\s+in\s+Chennai
-bulk\s+catering
 mass\s+catering
 non[- ]?veg(?:etarian)?\s+catering
 multi[- ]cuisine\s+catering
-# 2026-11-11: corporate and office catering are now a client service, removed from this list.
+
+# --- HARD BLOCK: retired positioning (client direction W11 to W13, 2026-11-11) ---
+# Zero exceptions anywhere on the site: no lookbehinds, no allowed contexts,
+# no exempt pages. Keep src/data/entity-truth.ts RETIRED_TERMS in step.
+# The Tamil lines have no \b because \b only sees ASCII word characters.
+\bbreakfasts?\b
+\bmini[\s-]*tiffins?\b
+\btiffins?\b
+\b0?6[:.]30\s*a\.?m\b
+\b06[:.]30\b
+\b500[\s-]*\+?[\s-]*(?:dosa[\s-]+)?(?:varieties|types|kinds)\b
+\bvalue[\s-]+combos?\b
+\bbudget\b
+\bcheap(?:er|est|ly)?\b
+\bpocket[\s-]*friendly\b
+\bwallet[\s-]*friendly\b
+\bunder[\s-]*(?:₹|rs\.?|inr)[\s-]*(?:100|150|300)\b
+காலை\s*உணவு
+மினி\s*டிபன்
+டிபன்

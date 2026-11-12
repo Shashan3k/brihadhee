@@ -54,3 +54,33 @@ id,query,language,group,notes
 53,Chennai la banana leaf saapadu enga kidaikum,tanglish,discovery,
 54,Anna Nagar filter coffee enga best,tanglish,discovery,
 55,Brihadhee hotel Anna Nagar,tanglish,brand,
+56,What is Brihadhee in Anna Nagar?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+57,Is Brihadhee pure veg?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+58,What are Brihadhee's timings?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+59,Does Brihadhee serve breakfast?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Correct answer: no; lunch and dinner only. Tracks whether old listings still drive a wrong 'yes'
+60,Is Brihadhee open on Sundays?,en,brand,"monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Answer depends on owner-todo P1; GBP says closed, the website says open every day"
+61,Can I build my own dosa at Brihadhee?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+62,Does Brihadhee do corporate catering?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+63,Tell me about Brihadhee in Anna Nagar. Is it worth visiting?,en,brand,"monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A1 (2026-11-09): mentioned, with budget framing and 'closed on Sundays'"
+64,What is the best pure veg restaurant in Anna Nagar?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A2 (2026-11-09): absent. Brihadhee must not claim 'best'
+65,Where can I build my own dosa in Chennai?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A3 (2026-11-09): absent
+66,Which restaurant in Anna Nagar lets you customise your dosa?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+67,Where to eat authentic Tamil meals in Anna Nagar?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+68,Which is the best South Indian restaurant in Anna Nagar for lunch?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+69,Which is the best veg restaurant in Anna Nagar for dinner?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+70,Where can I get Nellai (Tirunelveli-style) meals in Chennai?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+71,Where can I eat paanai parotta in Chennai?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+72,Which pure veg restaurants in Anna Nagar are open for dinner till 11 pm?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+73,"Recommend a pure vegetarian South Indian restaurant in Anna Nagar, Chennai for a family lunch.",en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+74,"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A4 (2026-11-09): absent
+75,Who provides daily office lunch catering for large companies in Chennai?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+76,Which Chennai caterers do end-to-end service for weddings and birthdays?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+77,Suggest a South Indian vegetarian caterer for a family function in Chennai.,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+78,How do I choose a corporate caterer in Chennai?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+79,What is end-to-end catering?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+80,அண்ணா நகரில் சிறந்த சைவ ஹோட்டல் எது?,ta,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+81,அண்ணா நகரில் நல்ல தோசை எங்கு கிடைக்கும்?,ta,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+82,Anna Nagar la dosa customise panna mudiyuma?,tanglish,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+83,Chennai la veg catering yaar nalla pannuvanga?,tanglish,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+84,Brihadhee vs Saravana Bhavan vs A2B in Anna Nagar,en,comparison,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+85,alternatives to Saravana Bhavan in Anna Nagar,en,comparison,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month

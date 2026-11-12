@@ -1,0 +1,120 @@
+---
+/**
+ * Quote / enquiry form, posted to the Vercel function /api/lead (validated there
+ * with src/lib/lead.js and emailed to the owner). Works without JavaScript (plain
+ * form post and redirect); with JavaScript, src/scripts/main.js sends it with
+ * fetch, shows the result in place and fires the GA4 event catering_quote_submit.
+ * A direct WhatsApp button sits beside it.
+ *
+ *   variant: "corporate" | "event" | "general"   (sets the hidden formType and wording)
+ */
+import Icon from "./Icon.astro";
+import { site, hasWhatsApp, whatsappHref, hasPhone, telHref } from "../data/site.js";
+import { FORM_TYPES, HEADCOUNTS, SOURCES, HONEYPOT } from "../lib/lead.js";
+
+const {
+  variant = "general",
+  id = "enquiry",
+  title = "Request a quote",
+  lead = "Tell us what you need and the Brihadhee team will call you back with a menu and a per-plate price.",
+  page = "/",
+  headingLevel = 2,
+} = Astro.props;
+const H = `h${headingLevel}`;
+const org = variant === "corporate" ? "Company name" : variant === "event" ? "Event type (wedding, birthday, housewarming…)" : "Company / Event type";
+const dateLabel = variant === "corporate" ? "Preferred start date" : "Service date";
+const waText = encodeURIComponent(
+  variant === "corporate"
+    ? "Hi Brihadhee, I'd like a quote for corporate catering. Company: , office location: , daily headcount: ."
+    : variant === "event"
+      ? "Hi Brihadhee, I'd like a quote for event catering. Event: , date: , guests: , venue: ."
+      : "Hi Brihadhee, I have an enquiry: "
+);
+const today = new Date().toISOString().slice(0, 10);
+const f = (name) => `${id}-${name}`;
+---
+
+<section class="section section--tint" id={id} aria-labelledby={`${id}-title`}>
+  <div class="container contact__grid">
+    <div>
+      <H class="section__title" id={`${id}-title`}>{title}</H>
+      <p class="section__lead">{lead}</p>
+      <div class="catering__cta">
+        {hasWhatsApp && (
+          <a class="btn btn--primary" href={`${whatsappHref}?text=${waText}`} target="_blank" rel="noopener" data-event="click_whatsapp">
+            <Icon name="whatsapp" size={17} /> WhatsApp {site.contact.whatsapp}
+          </a>
+        )}
+        {hasPhone && (
+          <a class="btn btn--ghost" href={telHref} data-event="click_call">
+            <Icon name="phone" size={17} /> Call {site.contact.phone}
+          </a>
+        )}
+      </div>
+      <p class="lead-form__note" data-lead-result hidden></p>
+    </div>
+
+    <form class="contact__form lead-form" action="/api/lead" method="post" data-lead-form data-form-type={variant}>
+      <input type="hidden" name="formType" value={variant} />
+      <input type="hidden" name="page" value={page} />
+      <input type="hidden" name="startedAt" value="" data-started-at />
+      <div class="lead-form__trap" aria-hidden="true">
+        <label for={f(HONEYPOT)}>Leave this empty</label>
+        <input type="text" id={f(HONEYPOT)} name={HONEYPOT} tabindex="-1" autocomplete="off" />
+      </div>
+
+      <p class="field__hint">{FORM_TYPES[variant]} · fields marked * are required</p>
+
+      <div class="field">
+        <label for={f("name")}>Name *</label>
+        <input type="text" id={f("name")} name="name" autocomplete="name" maxlength="80" required />
+      </div>
+      <div class="field">
+        <label for={f("organisation")}>{org} *</label>
+        <input type="text" id={f("organisation")} name="organisation" autocomplete={variant === "corporate" ? "organization" : "off"} maxlength="120" required />
+      </div>
+      <div class="field">
+        <label for={f("phone")}>Phone *</label>
+        <input type="tel" id={f("phone")} name="phone" autocomplete="tel" inputmode="tel" maxlength="20" pattern="[+0-9 \-]{10,20}" required />
+      </div>
+      <div class="field">
+        <label for={f("email")}>Work email</label>
+        <input type="email" id={f("email")} name="email" autocomplete="email" maxlength="120" />
+      </div>
+      <div class="field">
+        <label for={f("location")}>Location in Chennai *</label>
+        <input type="text" id={f("location")} name="location" maxlength="120" placeholder="e.g. Guindy, OMR, Anna Nagar" required />
+      </div>
+      <div class="field">
+        <label for={f("headcount")}>Estimated headcount *</label>
+        <select id={f("headcount")} name="headcount" required>
+          <option value="">Choose</option>
+          {HEADCOUNTS.map((h) => <option value={h}>{h}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={f("date")}>{dateLabel}</label>
+        <input type="date" id={f("date")} name="date" min={today} />
+      </div>
+      <div class="field">
+        <label for={f("source")}>How did you hear about us?</label>
+        <select id={f("source")} name="source">
+          <option value="">Choose</option>
+          {SOURCES.map((s) => <option value={s}>{s}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={f("message")}>Anything else</label>
+        <textarea id={f("message")} name="message" maxlength="1000" placeholder="Menu ideas, meal times, venue, dietary needs"></textarea>
+      </div>
+
+      <div class="form__foot">
+        <button class="btn btn--primary" type="submit">{variant === "general" ? "Send enquiry" : "Request a quote"}</button>
+        <p class="form__status" role="status" aria-live="polite" data-lead-status></p>
+      </div>
+      <p class="field__hint">
+        Your details are emailed to the Brihadhee team only, to reply to you. See the <a href="/privacy/">privacy policy</a>.
+      </p>
+    </form>
+  </div>
+</section>

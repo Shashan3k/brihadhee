@@ -1,0 +1,60 @@
+---
+/**
+ * /menu/dosa/: Build Your Own Dosa (P1). Replaces /best-dosa-parotta-anna-nagar/
+ * (301 in vercel.json); parotta moved to /veg-dinner-anna-nagar/. All copy and
+ * prices come from src/data/pages.js and menu-canonical.ts.
+ */
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import AtAGlance from "../../components/AtAGlance.astro";
+import BuildYourOwnDosa from "../../components/BuildYourOwnDosa.astro";
+import ContentSection from "../../components/ContentSection.astro";
+import Offers from "../../components/Offers.astro";
+import Faq from "../../components/Faq.astro";
+import { dosaPage as page } from "../../data/pages.js";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../../lib/schema.js";
+import { site, ROUTES, href } from "../../data/site.js";
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Menu", path: ROUTES.menu }, { name: "Build your own dosa", path: page.path }],
+  extras: [faqPageSchema(page.path, page.faq)],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow="Build your own dosa · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <AtAGlance title="Build your own dosa at Brihadhee: summary" rows={page.glance} />
+
+    <ContentSection
+      {...page.definition}
+      image={{ name: "dosa", alt: "Golden dosa with coconut chutney and sambar on a banana leaf at Brihadhee, Anna Nagar East", caption: "A dosa from the Brihadhee kitchen" }}
+    />
+    <BuildYourOwnDosa id={page.howItWorks.id} title={page.howItWorks.title} lead={page.howItWorks.lead} show="steps" tint />
+    <BuildYourOwnDosa id={page.combinations.id} suggestionsTitle={page.combinations.title} lead={page.combinations.lead} show="suggestions" />
+    <ContentSection {...page.classics} tint />
+    {page.liveCounter && <ContentSection {...page.liveCounter} tint={false} />}
+
+    <Offers title="Dining offers" />
+    <Faq items={page.faq} title="Build your own dosa questions" lead="Direct answers about dosa at Brihadhee, Anna Nagar East." eyebrow="Questions" />
+
+    <section class="section" id="more" aria-labelledby="more-title">
+      <div class="container">
+        <h2 class="section__title" id="more-title">More from Brihadhee</h2>
+        <ul class="link-list" role="list">
+          <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
+          <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
+          <li><a href={href(ROUTES.dinner)}>Dinner, Paanai Parotta and kothu parotta</a></li>
+          <li><a href={`${href("/")}#visit`}>Find us on {site.address.line1}</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

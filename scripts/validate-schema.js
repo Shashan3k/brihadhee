@@ -57,21 +57,11 @@ if (existsSync(keyPath)) {
 // and each question must be backed by a confirmed config value.
 const CATERING_PATH = "/catering-services-chennai/";
 const PLANNER_PATH = "/event-planner-catering-partner/";
-const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH];
-const TARGET_QUESTIONS = [
-  "Does Brihadhee offer catering in Chennai?",
-  "What kind of catering does Brihadhee provide?",
-  "Is Brihadhee catering pure vegetarian?",
-  "Which events does Brihadhee cater?",
-  "How many guests can Brihadhee cater for?",
-  "Does Brihadhee cater outside Anna Nagar?",
-  "How do I book catering with Brihadhee?",
-  "How is Brihadhee catering priced?",
-  "Does Brihadhee do corporate catering?",
-  "Does Brihadhee provide end-to-end event catering?",
-  "Where is Brihadhee located?",
-];
-
+const CORPORATE_PATH = "/corporate-catering-chennai/";
+const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH, CORPORATE_PATH];
+/* Questions allowed on the event catering page, each gated on a confirmed value.
+ * One Q&A per route: corporate questions live on /corporate-catering-chennai/
+ * and the location question on /about/ (src/lib/answers.js qaRoute). */
 /* What each question needs confirmed in the config. */
 const ch = cfg.enquiry_channels ?? {};
 const confirmedPhone =
@@ -88,17 +78,21 @@ const confirmedWhatsapp =
       : null;
 const nonEmpty = (a) => Array.isArray(a) && a.length > 0;
 const GATES = {
-  [TARGET_QUESTIONS[0]]: () => cfg.offer_catering === true,
-  [TARGET_QUESTIONS[1]]: () => nonEmpty(cfg.menu_formats),
-  [TARGET_QUESTIONS[2]]: () => nonEmpty(cfg.menu_formats),
-  [TARGET_QUESTIONS[3]]: () => nonEmpty(cfg.confirmed_events),
-  [TARGET_QUESTIONS[4]]: () => Number.isFinite(cfg.min_guests) && Number.isFinite(cfg.max_guests),
-  [TARGET_QUESTIONS[5]]: () => nonEmpty(cfg.service_area),
-  [TARGET_QUESTIONS[6]]: () => Boolean(confirmedPhone || confirmedWhatsapp),
-  [TARGET_QUESTIONS[7]]: () => ["per_plate", "on_request"].includes(cfg.pricing_model),
-  [TARGET_QUESTIONS[8]]: () => FACTS.corporateCatering?.status === "verified",
-  [TARGET_QUESTIONS[9]]: () => FACTS.eventService?.status === "verified",
-  [TARGET_QUESTIONS[10]]: () => true, // restaurant fact
+  "Does Brihadhee do wedding and event catering?": () => cfg.offer_catering === true && nonEmpty(cfg.confirmed_events),
+  "Does Brihadhee provide end-to-end event catering?": () => FACTS.eventService?.status === "verified",
+  "What kind of catering does Brihadhee provide?": () => nonEmpty(cfg.menu_formats),
+  "Is Brihadhee catering pure vegetarian?": () => nonEmpty(cfg.menu_formats),
+  "Which events does Brihadhee cater?": () => nonEmpty(cfg.confirmed_events),
+  "Does Brihadhee cater outside Anna Nagar?": () => nonEmpty(cfg.service_area),
+  "How do I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
+  "How is Brihadhee catering priced?": () => ["per_plate", "on_request"].includes(cfg.pricing_model),
+};
+const TARGET_QUESTIONS = Object.keys(GATES);
+/* Service schema per catering page (serviceType). */
+const SERVICE_TYPES = {
+  [CATERING_PATH]: "Event catering",
+  [PLANNER_PATH]: "Event catering",
+  [CORPORATE_PATH]: "Corporate catering",
 };
 
 /* ---- Helpers ---------------------------------------------------------- */
@@ -202,7 +196,8 @@ for (const { name, html, nodes } of pages) {
     }
     if (digits(r.telephone) !== digits(SITE.phone)) err(name, `telephone ${r.telephone} != site phone ${SITE.phone}`);
     if (r.telephone && !/^\+\d{10,15}$/.test(r.telephone)) err(name, `telephone not E.164: ${r.telephone}`);
-    if (hasKey(r, "aggregateRating")) err(name, "Restaurant carries aggregateRating (self-served)");
+    if (hasKey(r, "aggregateRating") || hasKey(r, "review")) err(name, "Restaurant carries aggregateRating or review (self-served)");
+    if (hasKey(r, "makesOffer")) err(name, "Restaurant carries legacy makesOffer nodes");
     if (KEY) {
       if (KEY.entity && r.name !== KEY.entity) err(name, `name != Key.md entity "${KEY.entity}"`);
       if (KEY.cuisine) {
@@ -254,7 +249,12 @@ for (const { name, html, nodes } of pages) {
   for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {
     if (!CATERING_PAGES.includes(name)) err(name, "Service schema outside the catering pages");
     if (cfg.offer_catering !== true) err(name, "Service emitted while offer_catering is not true");
-    if (s.serviceType !== "Catering") err(name, `serviceType "${s.serviceType}" != "Catering"`);
+    if (s.serviceType !== SERVICE_TYPES[name]) err(name, `serviceType "${s.serviceType}" != "${SERVICE_TYPES[name]}"`);
+    if (name === CATERING_PATH) {
+      const offers = s.hasOfferCatalog?.itemListElement ?? [];
+      if (!offers.length) err(name, "event catering Service has no hasOfferCatalog offers");
+      for (const o of offers) if (!o.itemOffered?.name) err(name, "hasOfferCatalog offer without itemOffered.name");
+    }
     if (s.provider?.["@id"] !== r?.["@id"]) err(name, "Service.provider does not reference the Restaurant @id");
     if (hasKey(s, "aggregateRating") || hasKey(s, "review")) err(name, "Service carries AggregateRating/review (no verified catering reviews)");
     const areas = [].concat(s.areaServed ?? []).map((x) => x?.name ?? x);
@@ -281,16 +281,24 @@ for (const { name, html, nodes } of pages) {
       if (name === CATERING_PATH) {
         if (!TARGET_QUESTIONS.includes(qn)) err(name, `FAQ question is not one of the catering targets: ${qn}`);
         else if (!GATES[qn]()) err(name, `FAQ question not confirmed in config: ${qn}`);
-        if (qn === TARGET_QUESTIONS[10]) {
-          for (const part of ["W-Block", "Anna Nagar East", "Tamil Nadu 600040", "Anna Nagar Tower Park", "3rd Avenue"]) {
-            if (!ans.includes(part)) err(name, `location answer missing "${part}"`);
-          }
-        }
       }
     }
     const dup = qs.map((q) => q.name).filter((n, i, a) => a.indexOf(n) !== i);
     if (dup.length) err(name, `duplicate FAQ questions: ${dup.join("; ")}`);
     if (f.about?.["@id"] !== r?.["@id"]) err(name, "FAQPage.about does not reference the Restaurant @id");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dateModified ?? "")) err(name, "FAQPage missing dateModified (YYYY-MM-DD)");
+  }
+
+  /* Menu: every MenuItem declares the vegetarian diet */
+  for (const m of nodes.filter((n) => typeOf(n).includes("Menu"))) {
+    (function walk(sections) {
+      for (const sec of sections ?? []) {
+        for (const it of sec.hasMenuItem ?? []) {
+          if (it.suitableForDiet !== "https://schema.org/VegetarianDiet") err(name, `MenuItem "${it.name}" lacks suitableForDiet VegetarianDiet`);
+        }
+        walk(sec.hasMenuSection);
+      }
+    })(m.hasMenuSection);
   }
 }
 

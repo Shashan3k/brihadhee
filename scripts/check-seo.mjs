@@ -14,7 +14,9 @@
  *  - orphan page: in the sitemap but linked from no other page
  *  - robots.txt without a Sitemap line, or pointing to a missing file
  *  - hreflang alternates that are not reciprocal
- * Warnings: title outside 30–60 characters, description outside 70–160.
+ *  - title longer than 60 characters or meta description longer than 155
+ *    (on-page blueprint, 2026-11-11)
+ * Warnings: title shorter than 30 characters, description shorter than 70.
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
@@ -87,9 +89,11 @@ const pages = walk(dist)
 for (const p of pages) {
   const at = p.path;
   if (!p.title) errors.push(`${at}: missing <title>`);
-  else if (len(p.title) < 30 || len(p.title) > 60) warnings.push(`${at}: title is ${len(p.title)} chars (aim 30–60)`);
+  else if (len(p.title) > 60) errors.push(`${at}: title is ${len(p.title)} chars (max 60): "${p.title}"`);
+  else if (len(p.title) < 30) warnings.push(`${at}: title is ${len(p.title)} chars (aim 30–60)`);
   if (!p.desc) errors.push(`${at}: missing meta description`);
-  else if (len(p.desc) < 70 || len(p.desc) > 160) warnings.push(`${at}: description is ${len(p.desc)} chars (aim 70–160)`);
+  else if (len(p.desc) > 155) errors.push(`${at}: description is ${len(p.desc)} chars (max 155): "${p.desc}"`);
+  else if (len(p.desc) < 70) warnings.push(`${at}: description is ${len(p.desc)} chars (aim 70–155)`);
   if (!p.lang) errors.push(`${at}: <html> has no lang attribute`);
   if (p.h1 !== 1) errors.push(`${at}: ${p.h1} <h1> elements (need exactly 1)`);
   if (p.keywordsTag) errors.push(`${at}: has a <meta name="keywords"> tag (ignored by Google, reads as stuffing)`);

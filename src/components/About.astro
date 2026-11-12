@@ -1,50 +1,52 @@
 ---
-import { site } from "../data/site.js";
+/**
+ * Home page "Why Guests Choose Brihadhee": an answer-first lead, then the reasons,
+ * each built from a verified fact (entity-truth.ts) or the menu (menu-facts.js).
+ */
+import { site, ROUTES, href } from "../data/site.js";
 import Icon from "./Icon.astro";
-import { getFact } from "../data/entity-truth.ts";
+import { getFact, factOr, openingTimes } from "../data/entity-truth.ts";
+import { byo, rupees } from "../lib/menu-facts.js";
+import { cateringEnabled, corporate, guests } from "../data/catering.js";
 
 const { media } = site;
-const founders = getFact("founders");
+const { range } = openingTimes();
+const num = (n) => n.toLocaleString("en-IN");
+const founders = factOr("founders");
 
-const highlights = [
+const reasons = [
+  { title: "100% pure vegetarian", text: `No meat, egg or fish on the menu, and alcohol is ${getFact("alcohol")}.` },
   {
-    title: "A menu of dosas",
-    text: "A range of dosas from the menu, from kal dosa and ghee roast to rava and ragi dosa, served with chutneys and sides.",
+    title: "A dosa built your way",
+    text: `${byo.batterCount} batters from ${rupees(byo.batterMin)}, podis, fillings and a ghee, butter or oil roast, plus ${byo.suggestionCount} chef's combinations.`,
   },
-  {
-    title: "Traditional tumbler drinks",
-    text: "Served in the familiar steel tumbler and davara.",
-  },
-  {
-    title: "Meals on banana leaf",
-    text: "Rice and meals are served on a banana leaf, with the whole table eating together.",
-  },
+  { title: "Nellai and Karaikudi dishes", text: `Nellai Special Sodhi Meals, Karuppatti Ulundhu Kali and Karaikudi Paneer Poppers, ${getFact("recipeStory").replace(/^Tamil home-style food /, "")}.` },
+  { title: `Open every day, ${range}`, text: `Lunch and dinner, dine-in, and families welcome.` },
+  { title: "Banana-leaf meals and filter coffee", text: "Meals served on a banana leaf, and drinks such as filter coffee in a steel tumbler and davara." },
+  ...(cateringEnabled && corporate && guests
+    ? [
+        {
+          title: "Catering from the same kitchen",
+          text: `Offices (more than ${num(corporate.dailyCovers)} meals a day) and events for ${num(guests.min)} to ${num(guests.max)} guests.`,
+        },
+      ]
+    : []),
 ];
 ---
 
 <section class="section" id="about" aria-labelledby="about-title">
   <div class="container about__grid">
     <div class="about__body reveal">
-      <p class="eyebrow">Our story</p>
-      <h2 class="section__title" id="about-title">
-        A pure vegetarian kitchen for regional Tamil food in Anna Nagar East
-      </h2>
-      <p class="section__lead">{site.longDescription}</p>
-
-      <p class="dropcap">
-        Brihadhee brings South Indian favourites together, from crisp dosas and
-        banana-leaf meals to traditional tumbler drinks.
-      </p>
-      <p>{site.entitySentence}</p>
-      <p>{founders.story}</p>
-      <p>
-        Browse the photo collection for a closer look at the dishes served at
-        Brihadhee in Anna Nagar East.
+      <p class="eyebrow">Why Brihadhee</p>
+      <h2 class="section__title" id="about-title">Why Guests Choose {site.name}</h2>
+      <p class="section__lead">
+        Guests choose {site.name} for 100% pure vegetarian South Indian food, a dosa they build themselves, Nellai dishes
+        from grandma's recipes and a kitchen open every day from {range}.
       </p>
 
       <ul class="feature-list" role="list">
         {
-          highlights.map((item) => (
+          reasons.map((item) => (
             <li>
               <Icon name="check" />
               <span>
@@ -54,6 +56,13 @@ const highlights = [
           ))
         }
       </ul>
+
+      <p>{site.longDescription}</p>
+      {founders && (
+        <p>
+          {site.name} was founded by {founders.names.join(" and ")}. <a href={`${href(ROUTES.about)}#story`}>Read our story</a>, or see <a href={href(ROUTES.whatsNew)}>what's new at {site.name} this month</a>.
+        </p>
+      )}
     </div>
 
     <div class="about__media reveal" style="--reveal-delay:120ms">

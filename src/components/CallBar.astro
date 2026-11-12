@@ -1,23 +1,40 @@
 ---
-import { site, hasPhone, telHref } from "../data/site.js";
+/**
+ * Sticky mobile CTA bar (hidden from 900px up): Call | WhatsApp | Book / Quote.
+ * Rendered by Base.astro on every page. Catering pages pass mode="quote", which
+ * turns the third button into "Get a quote" (jumps to the page's #enquiry form).
+ * Taps fire the GA4 events click_call, click_whatsapp, book_table_click and
+ * quote_cta_click (src/scripts/main.js).
+ */
+import { site, hasPhone, hasWhatsApp, telHref, whatsappHref, ROUTES, href } from "../data/site.js";
 import Icon from "./Icon.astro";
+
+const { mode = "book" } = Astro.props;
+const quote = mode === "quote";
 ---
 
-<div class="callbar" id="callbar" aria-label="Quick actions">
-  <a href="#menu">
-    <Icon name="utensils" size={19} />
-    Menu
-  </a>
-  <a href={site.maps.directions} target="_blank" rel="noopener">
-    <Icon name="navigation" size={19} />
-    Directions
-  </a>
-  {
-    hasPhone && (
-      <a href={telHref}>
-        <Icon name="phone" size={19} />
-        Call
-      </a>
-    )
-  }
-</div>
+<nav class="callbar is-visible" id="callbar" aria-label="Quick actions">
+  {hasPhone && (
+    <a href={telHref} data-event="click_call">
+      <Icon name="phone" size={19} />
+      Call
+    </a>
+  )}
+  {hasWhatsApp && (
+    <a href={`${whatsappHref}?text=${encodeURIComponent(`Hi ${site.name}, `)}`} target="_blank" rel="noopener" data-event="click_whatsapp">
+      <Icon name="whatsapp" size={19} />
+      WhatsApp
+    </a>
+  )}
+  {quote ? (
+    <a href="#enquiry" data-event="quote_cta_click" data-primary>
+      <Icon name="mail" size={19} />
+      Get a quote
+    </a>
+  ) : (
+    <a href={href(ROUTES.book)} data-event="book_table_click" data-primary>
+      <Icon name="utensils" size={19} />
+      Book a table
+    </a>
+  )}
+</nav>

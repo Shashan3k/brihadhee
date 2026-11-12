@@ -4,6 +4,8 @@
  * config/client-verification.json:
  *   /catering-services-chennai/       flagship: families and functions
  *   /event-planner-catering-partner/  event management companies
+ *   /corporate-catering-chennai/      corporate and office catering (needs the
+ *                                     verified corporateCatering fact)
  * Every block reads from src/data/catering.js and is omitted unless confirmed.
  * Corporate catering (1,000+ people a day) is shown on the flagship page; client names need permission.
  */
@@ -15,6 +17,8 @@ import AtAGlance from "../components/AtAGlance.astro";
 import CompareTable from "../components/CompareTable.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
+import ContentSection from "../components/ContentSection.astro";
+import LeadForm from "../components/LeadForm.astro";
 import { site, responsive } from "../data/site.js";
 import { getFact } from "../data/entity-truth.ts";
 import {
@@ -42,6 +46,13 @@ import {
   joinNatural,
   corporate,
   eventService,
+  CORPORATE_PATH,
+  corporateEnabled,
+  corporateMeta,
+  corporatePage,
+  corporateSchema,
+  endToEnd,
+  liveDosaCounter,
 } from "../data/catering.js";
 
 export function getStaticPaths() {
@@ -49,14 +60,16 @@ export function getStaticPaths() {
   return [
     { params: { slug: CATERING_PATH.replace(/\//g, "") }, props: { kind: "catering" } },
     { params: { slug: PLANNER_PATH.replace(/\//g, "") }, props: { kind: "planner" } },
+    ...(corporateEnabled ? [{ params: { slug: CORPORATE_PATH.replace(/\//g, "") }, props: { kind: "corporate" } }] : []),
   ];
 }
 
 const { kind } = Astro.props;
 const isPlanner = kind === "planner";
+const isCorporate = kind === "corporate";
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const m = isPlanner ? plannerMeta : meta;
-const path = isPlanner ? PLANNER_PATH : CATERING_PATH;
+const m = isCorporate ? corporateMeta : isPlanner ? plannerMeta : meta;
+const path = isCorporate ? CORPORATE_PATH : isPlanner ? PLANNER_PATH : CATERING_PATH;
 const fmt = (n) => n.toLocaleString("en-IN");
 
 const glance = [
@@ -85,14 +98,44 @@ const compare = {
   ],
   note: "Typical categories only; compare current quotes from each caterer before booking.",
 };
-const schema = isPlanner ? plannerSchema() : cateringSchema();
+const schema = isCorporate ? corporateSchema() : isPlanner ? plannerSchema() : cateringSchema();
+const cp = corporatePage;
 ---
 
-<Base title={m.title} description={m.description} path={path} schema={schema}>
+<Base title={m.title} description={m.description} path={path} schema={schema} cta="quote">
   <Nav homeBase={base} />
+  {isCorporate ? (
+  <main id="main">
+    <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} />
+    <AtAGlance title="Brihadhee corporate catering: summary" rows={cp.glance} />
+    <ContentSection {...cp.scale} />
+    <ContentSection {...cp.services} />
+    <ContentSection {...cp.menus} />
+    <ContentSection {...cp.process} />
+    {cp.safety && <ContentSection {...cp.safety} />}
+    {cp.areas && <ContentSection {...cp.areas} />}
+    <Faq items={cp.faq} title="Corporate catering questions" lead="" eyebrow="Questions" />
+    <LeadForm
+      variant="corporate"
+      page={path}
+      title="Request a corporate catering quote"
+      lead="Share your office location and daily headcount, and the Brihadhee team will call you back with a menu, a tasting date and a per-plate price."
+    />
+    <section class="section" id="more" aria-labelledby="more-title">
+      <div class="container">
+        <h2 class="section__title" id="more-title">More catering from Brihadhee</h2>
+        <ul class="link-list" role="list">
+          <li><a href={`${base}${CATERING_PATH.slice(1)}`}>End-to-end event and wedding catering</a></li>
+          <li><a href={`${base}${PLANNER_PATH.slice(1)}`}>Catering partner for event management companies</a></li>
+          <li><a href={`${base}menu/nellai-meals/`}>Lunch and Nellai meals at the restaurant</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  ) : (
   <main id="main">
     <PageHeader
-      eyebrow={isPlanner ? "For event management companies · Chennai" : "Catering · Chennai"}
+      eyebrow={isPlanner ? "For event management companies · Chennai" : "Event catering · Chennai"}
       h1={m.h1}
       intro={isPlanner
         ? `Brihadhee works with event management companies across ${joinNatural(serviceAreas)} as a pure vegetarian catering partner, with ${joinNatural(plannerModels)} and regional menus for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests.`
@@ -123,6 +166,9 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
       </section>
     )}
 
+    {!isPlanner && endToEnd && <ContentSection {...endToEnd} />}
+    {!isPlanner && liveDosaCounter && <ContentSection {...liveDosaCounter} />}
+
     {isPlanner && plannerModels.length > 0 && (
       <section class="section section--tint" id="partnership" aria-labelledby="partnership-title">
         <div class="container">
@@ -145,7 +191,7 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
           <p class="section__lead">
             Brihadhee runs daily corporate catering across {joinNatural(serviceAreas)}, serving more than {corporate.dailyCovers.toLocaleString("en-IN")} people every day with 100% pure vegetarian food from its kitchen on {getFact("street")}.
           </p>
-          {eventService && <p>For events, the service is end to end: {eventService.replace(/^end-to-end service: /, "")}.</p>}
+          <p><a class="btn btn--ghost" href={`${base}${CORPORATE_PATH.slice(1)}`}>Corporate catering details</a></p>
         </div>
       </section>
     )}
@@ -204,9 +250,18 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
       eyebrow="Questions"
     />
 
-    <section class="section section--tint" id="contact" aria-labelledby="contact-title">
+    <LeadForm
+      variant="event"
+      page={path}
+      title={isPlanner ? "Start a partnership" : "Get an event catering quote"}
+      lead={isPlanner
+        ? "Tell us about your next event, and the Brihadhee team will call you back with a counter plan and per-plate pricing."
+        : "Share the event, date, venue and guest count, and the Brihadhee team will call you back with a menu and a per-plate price."}
+    />
+
+    <section class="section" id="contact" aria-labelledby="contact-title">
       <div class="container">
-        <h2 class="section__title" id="contact-title">{isPlanner ? "Start a partnership" : "Enquire about catering"}</h2>
+        <h2 class="section__title" id="contact-title">{isPlanner ? "Meet the team in Anna Nagar East" : "Visit the kitchen in Anna Nagar East"}</h2>
         <address class="catering__address">
           {site.address.line1}<br />
           {site.address.line2}<br />
@@ -234,5 +289,6 @@ const schema = isPlanner ? plannerSchema() : cateringSchema();
       </div>
     </section>
   </main>
+  )}
   <Footer homeBase={base} />
 </Base>

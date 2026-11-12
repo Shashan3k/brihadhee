@@ -76,8 +76,31 @@ export const joinNames = (names) =>
 export const currencySymbol = currency;
 
 /* ---- Build Your Own Dosa (page 1 of the menu) ---------------------------- */
+/**
+ * Guest-facing wording for each printed menu step (on-page blueprint, 2026-11-11).
+ * The menu's own order and options are kept; only the headings change. The menu's
+ * "Garnish" is the ghee, butter or oil the dosa is roasted in, hence "roast".
+ * A new step on the menu without wording here fails the build.
+ */
+const BYO_WORDING = {
+  batter: { label: "Pick your base", text: (o) => `Choose one of ${o.length} batters, ${rupeeRange(o)}.` },
+  topping: { label: "Finish with podi and toppings", text: (o) => `Add any of ${o.length} podis and toppings, from +${rupees(minOf(o))} each.` },
+  stuffing: { label: "Add fillings", text: (o) => `Add a filling: ${o.length} options, from +${rupees(minOf(o))}.` },
+  garnish: { label: "Choose your roast", text: (o) => `Roast it in ghee, butter or oil: ${o.length} options, from +${rupees(minOf(o))}.` },
+};
+const minOf = (o) => Math.min(...o.map((x) => x.price));
+const rupeeRange = (o) => {
+  const lo = minOf(o);
+  const hi = Math.max(...o.map((x) => x.price));
+  return lo === hi ? rupees(lo) : `${rupees(lo)} to ${rupees(hi)}`;
+};
+
 export const byo = (() => {
-  const steps = BUILD_YOUR_OWN_DOSA.steps;
+  const steps = BUILD_YOUR_OWN_DOSA.steps.map((s) => {
+    const w = BYO_WORDING[s.name.toLowerCase()];
+    if (!w) throw new Error(`[menu-facts] Build Your Own Dosa step "${s.name}" has no guest-facing wording in BYO_WORDING`);
+    return { ...s, label: w.label, text: w.text(s.options) };
+  });
   const step = (n) => steps.find((s) => s.name.toLowerCase() === n);
   const batters = step("batter").options;
   const sugg = [...BUILD_YOUR_OWN_DOSA.suggestions].sort((a, b) => a.price - b.price);

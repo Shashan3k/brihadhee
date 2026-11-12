@@ -70,6 +70,15 @@ const D6 = "2026-11-06";
 const KW = "keyword plan from the Brihadhee team (client W11 to W13), revised 2026-11-11";
 const D11 = "2026-11-11";
 const CLIENT = "client direction W11 to W13 (SEO_RANKING_STRATEGY.md), 2026-11-11";
+const B2B = "corporate and event catering brief confirmed by the Brihadhee team, 2026-11-12 (docs/seo/client-confirmations.md section H)";
+const D12 = "2026-11-12";
+const LISTINGS = "listing URLs from docs/geo/presence-audit.csv (seen 2026-11-05), confirmed as the restaurant's own profiles by the Brihadhee team, 2026-11-12";
+const ZOMATO = "https://www.zomato.com/chennai/brihadhee-anna-nagar-east";
+const SWIGGY_DINEOUT = "https://www.swiggy.com/restaurants/brihadhee-anna-nagar-chennai-1150652/dineout";
+const EAZYDINER = "https://www.eazydiner.com/chennai/brihadhee-anna-nagar-east-chennai-703877";
+const DISTRICT = "https://www.district.in/dining/chennai/brihadhee-anna-nagar-east";
+const INSTAGRAM = "https://www.instagram.com/brihadhee";
+const BLUEPRINT = "on-page SEO blueprint confirmed by the Brihadhee team, 2026-11-11 (docs/seo/client-confirmations.md section G)";
 
 function verified<T>(value: T, source: string = BRIEF, verifiedOn: string = D5): Fact<T> {
   return { value, status: "verified", verifiedOn, source };
@@ -80,10 +89,18 @@ function unverified<T>(needs: string, probes: RegExp[] = []): Fact<T> {
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
+/* Catering scale (client W13), shared by the brand description, knownFor and the
+ * catering facts so the numbers are typed once. */
+const CORPORATE_DAILY_MEALS = 1000;
+const EVENT_GUESTS = { min: 50, max: 1500 };
+const num = (n: number): string => n.toLocaleString("en-IN");
+const CORPORATE_SCALE = `${num(CORPORATE_DAILY_MEALS)}+ meals daily`;
+const EVENT_SCALE = `${num(EVENT_GUESTS.min)}–${num(EVENT_GUESTS.max)} guests`;
+
 /** Canonical production origin (owner, 2026-11-06). No trailing slash. */
 export const SITE_ORIGIN = "https://www.brihadhee.com";
 /** Date the site content was last reviewed; used for dateModified and sitemap lastmod. */
-export const CONTENT_UPDATED = D11;
+export const CONTENT_UPDATED = D12;
 
 export const FACTS = {
   /* ---- Identity ---------------------------------------------------------- */
@@ -93,7 +110,23 @@ export const FACTS = {
   alternateNames: verified(["Brihadhee Hotels", "Brihadhee Pure Veg Restaurant"]),
   subBrand: verified({ name: "Beyond Curry by Brihadhee", description: "North Indian meal boxes" }),
   type: verified("pure vegetarian restaurant"),
-  typeLong: verified("pure vegetarian South Indian restaurant and caterer"),
+  typeLong: verified("100% pure vegetarian South Indian restaurant and caterer", CLIENT, D11),
+  /** Core brand description, led by the client's pillars (W11 to W13). `short` is the
+   *  default meta description, the Restaurant schema description and the footer line,
+   *  so it stays within 160 characters; `long` leads the About section. */
+  brandDescription: verified(
+    {
+      short:
+        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for build-your-own dosa, Nellai sodhi meals, Paanai Parotta and catering.",
+      long:
+        "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for build-your-own dosa, " +
+        "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
+        `The same kitchen runs pure veg corporate catering for ${num(CORPORATE_DAILY_MEALS)}+ meals a day and end-to-end event catering ` +
+        `for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests.`,
+    },
+    CLIENT,
+    D11
+  ),
   dietary: verified("100% pure vegetarian", "owner brief; menu PDF lists no meat, egg or fish"),
   cuisine: verified(
     "100% pure vegetarian: South Indian with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese"
@@ -104,6 +137,14 @@ export const FACTS = {
     story:
       "Brihadhee was founded by Rakesh and Eashwer, an auditor and a lawyer by profession, out of a shared passion for authentic regional Tamil vegetarian food.",
   }),
+  /** Recipe story (client confirmed; also the Instagram bio, Key.md). */
+  recipeStory: verified("Tamil home-style food cooked from grandma's recipes", BLUEPRINT, D11),
+  /** Name story (client confirmed). Always say the restaurant is not affiliated with the temple. */
+  nameStory: verified(
+    "The name Brihadhee is a tribute to the Brihadeeswarar Temple in Thanjavur and its Chola architecture. Brihadhee is a restaurant and is not affiliated with the temple.",
+    BLUEPRINT,
+    D11
+  ),
 
   /* ---- Location ---------------------------------------------------------- */
   address: verified<Address>(
@@ -120,6 +161,20 @@ export const FACTS = {
   street: verified("3rd Avenue, W-Block, Anna Nagar East", "derived from the verified address"),
   landmarks: verified(["Anna Nagar Tower Park", "3rd Avenue and 9th Street", "Aadhaar Seva Kendra"], "Ho.md (Google map), owner brief"),
   nearbyAreas: verified(["Anna Nagar East", "Anna Nagar West", "Shenoy Nagar", "Kilpauk", "Mogappair", "Thirumangalam"]),
+  /** Landmarks guests navigate from. Directions are Google Maps links from each one;
+   *  no distance or travel time is stated (none is verified). */
+  directionLandmarks: verified(
+    [
+      { label: "Anna Nagar Tower Park", query: "Anna Nagar Tower Park, Chennai" },
+      { label: "Anna Nagar East Metro", query: "Anna Nagar East Metro Station, Chennai" },
+      { label: "Roundana", query: "Anna Nagar Roundana, Chennai" },
+      { label: "VR Mall", query: "VR Chennai mall, Anna Nagar" },
+      { label: "Shanthi Colony", query: "Shanthi Colony, Anna Nagar, Chennai" },
+      { label: "Thirumangalam", query: "Thirumangalam, Chennai" },
+    ],
+    BLUEPRINT,
+    D11
+  ),
   geo: verified<Geo>({ latitude: 13.0879662, longitude: 80.2178222 }, "Google Maps place URL (docs/geo/presence-audit.csv)", D6),
   mapUrl: verified(
     "https://www.google.com/maps/place/BRIHADHEE/@13.0879662,80.2178222,17z/data=!4m6!3m5!1s0x3a5265ec5076e09b:0xa0425a2bd8cf093c!8m2!3d13.0879662!4d80.2178222!16s%2Fg%2F11x16tzgsf",
@@ -129,31 +184,30 @@ export const FACTS = {
 
   /* ---- Contact ----------------------------------------------------------- */
   phone: verified("+91 94442 24999", "owner brief; Zomato, Magicpin, District and Apple Maps listings"),
-  whatsapp: unverified<string>("which number takes WhatsApp enquiries (the old +91 73587 14113 is no longer listed)", [/\b73587\s?14113\b/]),
+  /** The main number also takes WhatsApp (client confirmed 2026-11-12). The old +91 73587 14113 stays blocked. */
+  whatsapp: verified("+91 94442 24999", B2B, D12),
+  oldWhatsapp: unverified<string>("the old +91 73587 14113 is no longer listed", [/\b73587\s?14113\b/]),
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
 
   /* ---- Service ----------------------------------------------------------- */
-  /* Client direction (W11, keyword plan 2026-11-11): open 11 AM to 11 PM, lunch and
-   * dinner only. The 6:30 AM opening and breakfast are retired (see RETIRED_TERMS).
-   * Which DAYS it opens is not confirmed yet, so `days` stays empty: no day-by-day
-   * table, no "open on Sundays" claim and no openingHoursSpecification until
-   * `openDays` is verified. */
+  /* Client direction (W11, 2026-11-11): open 11 AM to 11 PM, lunch and dinner only.
+   * The 6:30 AM opening and breakfast are retired (see RETIRED_TERMS). Open every day,
+   * Monday to Sunday (client confirmed with the on-page blueprint, 2026-11-11), so
+   * `days` drives the hours tables and openingHoursSpecification. */
   hours: verified<Hours>(
     {
       timeZone: "Asia/Kolkata",
-      summary: "Open 11:00 AM to 11:00 PM",
+      summary: "Open daily, 11:00 AM to 11:00 PM",
       short: "11:00 AM to 11:00 PM",
       opens: "11:00",
       closes: "23:00",
-      days: [],
+      days: DAYS.map((day) => ({ day, open: "11:00", close: "23:00" })),
     },
-    KW,
+    BLUEPRINT,
     D11
   ),
-  openDays: unverified<string[]>(
-    "which days of the week the restaurant is open (daily, or closed on any day), and the last-order time",
-    [/\bopen (?:daily|every day|all (?:7|seven) days|on sundays?)\b/i]
-  ),
+  openDays: verified<string[]>(DAYS, BLUEPRINT, D11),
+  lastOrderTime: unverified<string>("the last-order time before the 11 PM close", [/\blast orders?\s+(?:is|are|at|by|until)\s+\d/i]),
   mealTimes: verified("lunch and dinner", CLIENT, D11),
   dineIn: verified(true),
   familyFriendly: verified(true, "owner brief; Google profile notes (Ho.md)"),
@@ -161,9 +215,13 @@ export const FACTS = {
   acceptsReservations: verified({ value: true, how: "pre-booking through Swiggy Dineout, EazyDiner and District" }),
   /** Booking pages confirmed for linking. Swiggy Dineout and District URLs are not confirmed yet (named, not linked). */
   bookingLinks: verified(
-    [{ label: "EazyDiner", url: "https://www.eazydiner.com/chennai/brihadhee-anna-nagar-east-chennai-703877" }],
-    "master brief from the Brihadhee team, 2026-11-08",
-    "2026-11-08"
+    [
+      { label: "Swiggy Dineout", url: SWIGGY_DINEOUT },
+      { label: "EazyDiner", url: EAZYDINER },
+      { label: "District", url: DISTRICT },
+    ],
+    LISTINGS,
+    D12
   ),
   priceRange: verified({ schema: "₹₹" }, "owner brief; Zomato, District and EazyDiner list about ₹200 for two"),
   offers: verified<Offer[]>(
@@ -178,12 +236,25 @@ export const FACTS = {
     "owner brief 2026-11-05; Mini Tiffin and budget tiffin retired by client direction 2026-11-11 (offers change; re-check monthly)",
     D11
   ),
-  knownFor: verified(["build-your-own dosas", "Paanai Parotta", "Nellai Special Sodhi Meals", "filter coffee"], KW, D11),
+  /** Client pillars in order (W11 to W13, docs/seo/client-confirmations.md section F3). */
+  knownFor: verified(
+    [
+      "Build-Your-Own Dosa",
+      "Nellai Special Sodhi Meals",
+      "Paanai Parotta",
+      "Karaikudi Paneer Poppers",
+      "Filter Coffee",
+      `Pure Veg Corporate Catering (${CORPORATE_SCALE})`,
+      `End-to-End Event Catering (${EVENT_SCALE})`,
+    ],
+    CLIENT,
+    D11
+  ),
   customizableDosas: verified(true),
 
   /* ---- Catering ---------------------------------------------------------- */
   catering: verified<Catering>({
-    guests: { min: 50, max: 1500 },
+    guests: EVENT_GUESTS,
     area: "Chennai",
     liveCounters: ["Build Your Own Dosa", "Paanai Parotta", "Nellai Sodhi", "Karaikudi Paneer Poppers"],
     plannerModels: ["white-label live counters", "co-branded live counters"],
@@ -192,16 +263,70 @@ export const FACTS = {
   /** End-to-end event service (client W13): menu planning, cooking, service and setup. */
   eventService: verified("end-to-end service: menu planning, cooking, serving and setup", KW, D11),
   /** Corporate catering (client W13). Client names and headcounts need the client's permission. */
-  corporateCatering: verified({ dailyCovers: 1000, description: "daily corporate and office catering" }, KW, D11),
+  corporateCatering: verified({ dailyCovers: CORPORATE_DAILY_MEALS, description: "daily corporate and office catering" }, KW, D11),
   corporateClients: unverified<string[]>("permission to name corporate clients and show their headcounts"),
+  /** Corporate service areas (client confirmed). One "Areas we serve" section, never doorway pages. */
+  corporateAreas: verified(
+    ["Anna Nagar", "Ambattur Industrial Estate", "Guindy", "OMR", "Sholinganallur", "Siruseri", "Perungudi", "Taramani", "Tidel Park", "Ambit IT Park"],
+    B2B,
+    D12
+  ),
+  /** Corporate services (client confirmed). */
+  corporateServices: verified(["daily office lunch supply", "bulk lunch catering", "employee meal programmes", "office parties and corporate events"], B2B, D12),
+  /** How a corporate account starts (client confirmed). */
+  corporateProcess: verified(
+    [
+      { title: "Enquiry and Headcount", text: "Tell us your office location, daily headcount, meal times, any dietary needs and when you want to start. Use the quote form, call or WhatsApp; the team calls you back to understand how your office eats." },
+      { title: "Kitchen Tasting at Anna Nagar", text: "Your admin or HR team tastes the proposed menu at the Brihadhee kitchen in Anna Nagar East and sees where the food is cooked, before anything reaches your office." },
+      { title: "Trial Week", text: "A one-week trial at your office, so your team can rate the food, the portions and the delivery timing before you commit. Feedback from the trial shapes the final menu." },
+      { title: "Daily Rollout and Menu Rotation", text: "Daily service begins on a rotating menu, so your team does not eat the same lunch every day, with special days such as Nellai Special Sodhi Meals built into the cycle." },
+    ],
+    B2B,
+    D12
+  ),
+  /** Food safety and punctuality (client confirmed). The licence number itself is pending (fssaiLicence). */
+  foodSafety: verified(
+    {
+      licensed: true,
+      points: [
+        "Cooked in Brihadhee's FSSAI-licensed restaurant kitchen in Anna Nagar East",
+        "100% pure vegetarian: no meat, egg or fish is cooked in the kitchen",
+        "Packed in the kitchen for delivery to your office",
+        "Delivered to an agreed time slot for each office",
+      ],
+    },
+    B2B,
+    D12
+  ),
+  fssaiLicence: unverified<string>("the 14-digit FSSAI licence number", [/\bFSSAI\s*(?:licen[cs]e)?\s*(?:no\.?|number|#)?\s*:?\s*\d{14}\b/i]),
 
   /* ---- Unverified: null until the owner confirms ------------------------- */
   /** Owner-supplied profiles only. Add Google Business Profile, Swiggy, Zomato, District,
    *  Justdial, Apple Maps and Bing Places URLs once the owner confirms each is theirs. */
   sameAs: verified<string[]>(
-    ["https://www.instagram.com/brihadhee", "https://www.eazydiner.com/chennai/brihadhee-anna-nagar-east-chennai-703877"],
-    "master brief from the Brihadhee team (sections 9 and 14), 2026-11-08",
-    "2026-11-08"
+    [
+      INSTAGRAM,
+      "https://www.google.com/maps/place/BRIHADHEE/@13.0879662,80.2178222,17z/data=!4m6!3m5!1s0x3a5265ec5076e09b:0xa0425a2bd8cf093c!8m2!3d13.0879662!4d80.2178222!16s%2Fg%2F11x16tzgsf",
+      ZOMATO,
+      SWIGGY_DINEOUT,
+      EAZYDINER,
+      DISTRICT,
+    ],
+    LISTINGS,
+    D12
+  ),
+  /* ---- Seasonal (Karthigai / Ayyappa mala): pending until the client confirms --- */
+  noOnionGarlic: unverified<boolean>(
+    "whether the kitchen cooks without onion and garlic on request (for Ayyappa mala devotees), at the restaurant and for catering",
+    [/\b(?:no[- ]onion[,\s-]*(?:no[- ])?garlic|without onion(?: and| or|,)? garlic|onion[- ]and[- ]garlic[- ]free|jain food)\b/i]
+  ),
+  poojaCatering: unverified<boolean>(
+    "whether Brihadhee caters Ayyappa poojas, bhajans and devotee groups (add \"pooja\" to confirmed_events)",
+    [/\bpooja catering\b|\bcater(?:s|ing)?\s+(?:an?\s+|your\s+)?(?:ayyappa\s+)?(?:pooja|bhajan)s?\b/i]
+  ),
+  karthigaiSpecial: unverified<{ name: string; detail: string }>(
+    "a Karthigai seasonal menu or offer: dish names, prices and dates",
+    [/\bkarthigai\s+(?:special|menu|offer|thali)s?\b/i]
   ),
   parking: unverified<string>("whether parking is available, and where", [/\bparking\b/i]),
   googleRating: unverified<{ value: number; count: number; checkedOn: string }>(
@@ -223,16 +348,18 @@ export type FactKey = keyof typeof FACTS;
 
 /**
  * Positioning the client has ruled out (W11 to W13, 2026-11-11). These words must not
- * appear in any title, heading, meta description, copy, schema or llms file.
+ * appear in any title, heading, meta description, copy, schema, menu.json or llms file.
  * scripts/check-facts.mjs fails the build if one slips into public output.
+ * Mirrors the hard-block section of docs/seo/avoid-terms.txt (read by aeo-lint.mjs).
  */
 export const RETIRED_TERMS: { re: RegExp; why: string }[] = [
-  { re: /\bbreakfast\b/i, why: "breakfast service is retired" },
-  { re: /\btiffins?\b/i, why: "tiffin and Mini Tiffin positioning is retired" },
-  { re: /\b500\s*\+?\s*(?:dosa\s+)?(?:varieties|types|kinds)\b/i, why: "'500 varieties' is not a client claim" },
-  { re: /\b(?:cheap|budget|pocket[- ]friendly)\b/i, why: "price-led positioning is ruled out" },
-  { re: /\bvalue combos?\b/i, why: "price-led positioning is ruled out" },
-  { re: /\b0?6[:.]30\s*a\.?m\b/i, why: "the 6:30 AM opening is retired (open 11 AM to 11 PM)" },
+  { re: /\bbreakfasts?\b|காலை\s*உணவு/i, why: "breakfast service is retired" },
+  { re: /\btiffins?\b|டிபன்/i, why: "tiffin and Mini Tiffin positioning is retired" },
+  { re: /\b500[\s-]*\+?[\s-]*(?:dosa[\s-]+)?(?:varieties|types|kinds)\b/i, why: "'500 varieties' is not a client claim" },
+  { re: /\b(?:cheap(?:er|est|ly)?|budget|pocket[\s-]*friendly|wallet[\s-]*friendly)\b/i, why: "price-led positioning is ruled out" },
+  { re: /\bunder[\s-]*(?:₹|rs\.?|inr)[\s-]*(?:100|150|300)\b/i, why: "price-led positioning is ruled out" },
+  { re: /\bvalue[\s-]+combos?\b/i, why: "price-led positioning is ruled out" },
+  { re: /\b0?6[:.]30\s*a\.?m\b|\b06[:.]30\b/i, why: "the 6:30 AM opening is retired (open 11 AM to 11 PM)" },
 ];
 
 /* ---- Accessors ------------------------------------------------------------ */
@@ -274,6 +401,31 @@ export const unverifiedFacts = pendingFacts;
 export function addressLine(): string {
   const a = getFact("address");
   return `${a.line1}, ${a.line2}, ${a.city}, ${a.state} ${a.postalCode}`;
+}
+
+/** "2026-11-12" -> "November 2026". */
+export function monthYear(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-IN", { month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+/** "2026-11-12" -> "12 November 2026". */
+export function longDate(iso: string): string {
+  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+}
+
+/** "23:00" -> "11 PM", "11:30" -> "11:30 AM". */
+export function clock(t: string): string {
+  const [h, m] = t.split(":").map(Number);
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h >= 12 ? "PM" : "AM"}`;
+}
+
+/** Opening and closing time from the verified hours: { open: "11 AM", close: "11 PM", range: "11 AM to 11 PM" }. */
+export function openingTimes(): { open: string; close: string; range: string } {
+  const h = getFact("hours");
+  const open = clock(h.opens);
+  const close = clock(h.closes);
+  return { open, close, range: `${open} to ${close}` };
 }
 
 /** "A, B and C"; uses semicolons when an item itself contains " and ". */

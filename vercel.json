@@ -5,8 +5,18 @@
       "source": "/:path*",
       "has": [{ "type": "host", "value": "brihadhee.vercel.app" }],
       "destination": "https://www.brihadhee.com/:path*",
-      "permanent": true
-    }
+      "statusCode": 301
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "brihadhee.com" }],
+      "destination": "https://www.brihadhee.com/:path*",
+      "statusCode": 301
+    },
+    { "source": "/best-dosa-parotta-anna-nagar/", "destination": "/menu/dosa/", "statusCode": 301 },
+    { "source": "/best-dosa-parotta-anna-nagar", "destination": "/menu/dosa/", "statusCode": 301 },
+    { "source": "/nellai-meals-south-indian-veg-anna-nagar/", "destination": "/menu/nellai-meals/", "statusCode": 301 },
+    { "source": "/nellai-meals-south-indian-veg-anna-nagar", "destination": "/menu/nellai-meals/", "statusCode": 301 }
   ],
   "headers": [
     {

@@ -8,13 +8,15 @@ const mealTimes = getFact("mealTimes");
 const street = getFact("street");
 
 const { media, rating } = site;
+const { h1 } = Astro.props;
 ---
 
 <section class="hero" id="top">
   <div class="container hero__grid">
     <div class="hero__copy">
       <p class="hero__tamil tamil" lang="ta">{site.nameTamil}</p>
-      <h1 class="hero__title">{site.name}<span class="visually-hidden">, </span><span class="hero__title-sub">pure vegetarian South Indian restaurant and caterer in Anna Nagar East, Chennai</span></h1>
+      <p class="hero__title">{site.name}</p>
+      <h1 class="hero__title-sub hero__h1">{h1}</h1>
       <p class="hero__tagline">{site.tagline}</p>
       <p class="hero__sub">{site.subTagline}</p>
 

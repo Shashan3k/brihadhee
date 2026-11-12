@@ -18,6 +18,28 @@ const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   : `${import.meta.env.BASE_URL}/`;
 
 /**
+ * Page paths, in one place. Every internal link to these pages reads from here.
+ * The catering routes exist only while offer_catering is true (see catering.js).
+ */
+export const ROUTES = {
+  home: "/",
+  menu: "/menu/",
+  dosa: "/menu/dosa/",
+  lunch: "/menu/nellai-meals/",
+  dinner: "/veg-dinner-anna-nagar/",
+  about: "/about/",
+  book: "/book-a-table/",
+  eventCatering: "/catering-services-chennai/",
+  corporateCatering: "/corporate-catering-chennai/",
+  plannerPartner: "/event-planner-catering-partner/",
+  whatsNew: "/whats-new/",
+  seasonal: "/seasonal/karthigai-ayyappa-pure-veg/",
+  nellaiGuide: "/guides/what-are-nellai-meals/",
+};
+/** Site-relative href for a route (respects the build base path). */
+export const href = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;
+
+/**
  * Responsive WebP for a photo in public/images (see scripts/optimize-images.mjs):
  * returns { src, srcset } for <img>. `width` is the full-size pixel width.
  */
@@ -48,16 +70,15 @@ export const site = {
   /* ---- Identity ------------------------------------------------------- */
   name: getFact("name"),
   nameTamil: getFact("nameTamil"),
-  tagline: "Regional Tamil vegetarian food, from Nellai sodhi to Paanai Parotta.",
+  tagline: `${getFact("recipeStory")}, from Nellai sodhi to Paanai Parotta.`,
   subTagline:
-    `Build-your-own dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}, ${getFact("hours").short}.`,
-  shortDescription:
-    "Brihadhee is a pure vegetarian restaurant and caterer in Anna Nagar East, Chennai, known for build-your-own dosas, Paanai Parotta and Nellai sodhi meals.",
+    `Build-your-own dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}, every day from ${getFact("hours").short}.`,
+  // Core brand description, led by the client pillars (entity-truth.ts brandDescription).
+  shortDescription: getFact("brandDescription").short,
   // Entity sentence reused on the page body.
   entitySentence:
     `${getFact("name")} is a pure vegetarian restaurant on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}.`,
-  longDescription:
-    "Brihadhee is a pure vegetarian restaurant in Anna Nagar East, Chennai, serving South Indian food with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese dishes.",
+  longDescription: getFact("brandDescription").long,
 
   /* ---- Contact (all optional — empty hides the control) ---------------- */
   contact: {
@@ -185,18 +206,26 @@ export const site = {
   },
 
   /* ---- Navigation ----------------------------------------------------- */
+  /* Primary navigation. An item with `children` renders as a dropdown (Nav.astro);
+     the footer lists every link flat. */
   navigation: [
-    { label: "Menu", href: `${BASE_URL}menu/` },
-    { label: "Dosa & Parotta", href: `${BASE_URL}best-dosa-parotta-anna-nagar/` },
-    { label: "Nellai Meals", href: `${BASE_URL}nellai-meals-south-indian-veg-anna-nagar/` },
+    { label: "Menu", href: href(ROUTES.menu) },
+    { label: "Build Your Own Dosa", href: href(ROUTES.dosa) },
+    { label: "Lunch & Nellai Meals", href: href(ROUTES.lunch) },
+    { label: "Dinner", href: href(ROUTES.dinner) },
     ...(verification.offer_catering === true
       ? [
-          { label: "Catering", href: `${BASE_URL}catering-services-chennai/` },
-          { label: "Event Planners", href: `${BASE_URL}event-planner-catering-partner/` },
+          {
+            label: "Catering",
+            children: [
+              ...(isConfirmed("corporateCatering") ? [{ label: "Corporate Catering", href: href(ROUTES.corporateCatering) }] : []),
+              { label: "Event Catering", href: href(ROUTES.eventCatering) },
+              { label: "Event Planner Partner", href: href(ROUTES.plannerPartner) },
+            ],
+          },
         ]
       : []),
-    { label: "About", href: `${BASE_URL}about/` },
-    { label: "Contact", href: "#contact" },
+    { label: "Visit & Contact", href: href(ROUTES.about) },
   ],
 
   /* ---- SEO ------------------------------------------------------------ */
@@ -235,6 +264,10 @@ export const whatsappHref = hasWhatsApp
   : "";
 
 export const emailHref = hasEmail ? `mailto:${site.contact.email}` : "";
+
+/** Google Maps directions from a named place (origin) to the restaurant. */
+export const directionsFrom = (origin) =>
+  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${site.geo.latitude},${site.geo.longitude}`;
 
 /** Absolute canonical URL for a local asset src (strips the build base path). */
 export const assetUrl = (src) => absoluteUrl(`/${src.startsWith(BASE_URL) ? src.slice(BASE_URL.length) : src.replace(/^\//, "")}`);

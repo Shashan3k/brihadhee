@@ -1,0 +1,39 @@
+---
+/**
+ * /whats-new/: dated freshness page (P1). Settles old facts for people and AI
+ * answers by stating the current offer positively; it never names a retired
+ * service. Copy: src/data/pages.js whatsNewPage. Schema adds an Article.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import ContentSection from "../components/ContentSection.astro";
+import Faq from "../components/Faq.astro";
+import { whatsNewPage as page } from "../data/pages.js";
+import { longDate } from "../data/entity-truth.ts";
+import { pageGraph, faqPageSchema, articleSchema, HOME_CRUMBS } from "../lib/schema.js";
+import { ROUTES, href } from "../data/site.js";
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "What's new", path: page.path }],
+  extras: [
+    articleSchema({ path: page.path, headline: page.h1, description: page.description, datePublished: page.published, image: "/images/dosa.webp" }),
+    faqPageSchema(page.path, page.faq),
+  ],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow={`Updated ${longDate(page.published)}`} h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
+    {page.sections.map((sec) => <ContentSection {...sec} />)}
+    <Faq items={page.faq} title="What's new: quick answer" lead="" eyebrow="Questions" />
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

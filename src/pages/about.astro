@@ -1,9 +1,10 @@
 ---
 /**
- * /about/: who runs Brihadhee, where it is, when it is open, how to get there.
- * Primary intent: brand + location + hours ("brihadhee address", "brihadhee
- * timings", "pure veg restaurant near Anna Nagar Tower"). All facts come from
- * entity-truth.ts.
+ * /about/: merged About and Contact page: address, directions from Anna Nagar
+ * landmarks, opening hours, the founders' story and the name story. Primary
+ * intent: "brihadhee address", "brihadhee timings", "brihadhee contact number".
+ * All facts come from entity-truth.ts. Directions are Google Maps links from each
+ * landmark; no distance or travel time is stated (none is verified).
  */
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
@@ -12,68 +13,70 @@ import PageHeader from "../components/PageHeader.astro";
 import AtAGlance from "../components/AtAGlance.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
-import { getFact, addressLine, landmarkSentence } from "../data/entity-truth.ts";
+import LeadForm from "../components/LeadForm.astro";
+import { getFact, addressLine, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
 import { aboutFaq } from "../data/faq.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { site, telHref, hasHours } from "../data/site.js";
+import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href } from "../data/site.js";
 
-const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const name = getFact("name");
 const street = getFact("street");
 const hours = site.hours;
 const phone = getFact("phone");
+const email = getFact("email");
 const founders = getFact("founders");
-const path = "/about/";
-const title = `About ${name}: Address & Directions, Anna Nagar East`;
-const description = `${name}, pure veg restaurant on ${street}, near Anna Nagar Tower Park: address, map, directions and phone (${phone}).`;
-const fmt = (t) => {
-  const [h, m] = t.split(":").map(Number);
-  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
-};
+const landmark = getFact("landmarks")[0];
+const { range } = openingTimes();
+const path = ROUTES.about;
+const title = `${name} Anna Nagar: Address, Timings & Contact`;
+const description = `${name} address and timings: ${street}, near ${landmark}. Open daily ${range}. Call ${phone}.`;
 const schema = pageGraph({
   path,
   title,
   description,
-  crumbs: [...HOME_CRUMBS, { name: "About and location", path }],
+  crumbs: [...HOME_CRUMBS, { name: "Address, timings and contact", path }],
   extras: [faqPageSchema(path, aboutFaq)],
 });
 ---
 
 <Base title={title} description={description} path={path} schema={schema}>
-  <Nav homeBase={base} />
+  <Nav homeBase={href("/")} />
   <main id="main">
     <PageHeader
-      eyebrow="About · Anna Nagar East"
-      h1={`About ${name}: location and directions`}
-      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near Anna Nagar Tower Park, serving ${getFact("mealTimes")}.`}
-      menuHref={`${base}menu/`}
+      eyebrow="Address, timings and contact · Anna Nagar East"
+      h1={`Visit ${name} in Anna Nagar`}
+      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near ${landmark}, open every day from ${range} for ${getFact("mealTimes")}.`}
+      menuHref={href(ROUTES.menu)}
     />
     <AtAGlance />
 
-    <section class="section" id="story" aria-labelledby="story-title">
-      <div class="container">
-        <h2 class="section__title" id="story-title">Who runs {name}</h2>
-        <p class="section__lead">{founders.story}</p>
-        <p class="tamil" lang="ta">{getFact("nameTamil")}: அண்ணா நகர் கிழக்கு, சுத்த சைவ உணவகம்.</p>
-      </div>
-    </section>
-
-    <section class="section section--tint" id="find-us" aria-labelledby="find-us-title">
+    <section class="section" id="find-us" aria-labelledby="find-us-title">
       <div class="container dish-page__grid">
         <div>
-          <h2 class="section__title" id="find-us-title">Address and directions</h2>
+          <h2 class="section__title" id="find-us-title">Address and Directions from Anna Nagar Landmarks</h2>
+          <p class="section__lead">
+            {name} is at {addressLine()}, near {landmark}. Pick the landmark you are starting from for Google Maps directions.
+          </p>
           <address class="catering__address">
             {site.address.line1}<br />
             {site.address.line2}<br />
             {site.address.city}, {site.address.state} {site.address.postalCode}
           </address>
           <p>Landmarks: {landmarkSentence()}.</p>
+          <ul class="link-list" role="list">
+            {getFact("directionLandmarks").map((l) => (
+              <li><a href={directionsFrom(l.query)} target="_blank" rel="noopener">Directions from {l.label}</a></li>
+            ))}
+          </ul>
+          <p>
+            Phone: <a href={telHref}>{phone}</a> · Email: <a href={emailHref}>{email}</a>
+          </p>
           <div class="page-head__actions">
             <a class="btn btn--primary" href={getFact("mapUrl")} target="_blank" rel="noopener">
               <Icon name="navigation" size={17} /> Open in Google Maps
             </a>
             <a class="btn btn--ghost" href={telHref}>
-              <Icon name="phone" size={17} /> Call {getFact("phone")}
+              <Icon name="phone" size={17} /> Call {phone}
             </a>
           </div>
         </div>
@@ -83,28 +86,52 @@ const schema = pageGraph({
       </div>
     </section>
 
-    <section class="section" id="hours" aria-labelledby="hours-title">
+    <section class="section section--tint" id="hours" aria-labelledby="hours-title">
       <div class="container">
-        <h2 class="section__title" id="hours-title">Opening hours</h2>
-        {hasHours ? (
+        <h2 class="section__title" id="hours-title">Opening Hours: {range} for Lunch and Dinner</h2>
+        <p class="section__lead">
+          {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")}. For a table, call
+          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>book online</a>. These are the current hours; see <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for this month's changes.
+        </p>
+        {hasHours && (
           <table class="menu-page__table">
             <caption class="visually-hidden">{name} opening hours for each day</caption>
             <tbody>
               {hours.days.map((d) => (
-                <tr><th scope="row">{d.day}</th><td>{fmt(d.open)} to {fmt(d.close)}</td></tr>
+                <tr><th scope="row">{d.day}</th><td>{clock(d.open)} to {clock(d.close)}</td></tr>
               ))}
             </tbody>
           </table>
-        ) : (
-          <p class="section__lead">
-            {name} is open from {getFact("hours").short}, serving {getFact("mealTimes")} only. To check whether it is open on a
-            particular day, call <a href={telHref}>{phone}</a> or see the <a href={getFact("mapUrl")} rel="noopener">Google Maps listing</a>.
-          </p>
         )}
       </div>
     </section>
 
+    <section class="section" id="story" aria-labelledby="story-title">
+      <div class="container">
+        <h2 class="section__title" id="story-title">Our Story: Founded by {founders.names.join(" and ")}</h2>
+        <p class="section__lead">{founders.story}</p>
+        <p>
+          Today {name} serves {getFact("recipeStory")}, from the Nellai Special Sodhi Meals to build-your-own dosa, at its
+          100% pure vegetarian restaurant on {street}.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tint" id="name" aria-labelledby="name-title">
+      <div class="container">
+        <h2 class="section__title" id="name-title">The Meaning Behind the Name {name}</h2>
+        <p class="section__lead">{getFact("nameStory")}</p>
+        <p class="tamil" lang="ta">{getFact("nameTamil")}: அண்ணா நகர் கிழக்கு, சுத்த சைவ உணவகம்.</p>
+      </div>
+    </section>
+
     <Faq items={aboutFaq} title="Location and visiting questions" lead="" eyebrow="Questions" />
+    <LeadForm
+      variant="general"
+      page={path}
+      title="Send an Enquiry or Request a Quote"
+      lead={`Ask about a group table, corporate meals or event catering, and the ${name} team will call you back. For a table today, call or WhatsApp instead.`}
+    />
   </main>
-  <Footer homeBase={base} />
+  <Footer homeBase={href("/")} />
 </Base>

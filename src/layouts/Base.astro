@@ -2,6 +2,7 @@
 import { site, ogImageUrl } from "../data/site.js";
 import { homeSchema } from "../lib/schema.js";
 import "../styles/global.css";
+import CallBar from "../components/CallBar.astro";
 import frauncesUrl from "../assets/fonts/fraunces-latin.woff2?url";
 import instrumentUrl from "../assets/fonts/instrument-sans-latin.woff2?url";
 
@@ -12,6 +13,7 @@ const {
   ogDescription = null, // optional: distinct social-card text; falls back to description
   schema = null, // optional: replaces the default Restaurant + FAQ JSON-LD
   noindex = false, // true for utility pages (privacy, 404); they are also kept out of the sitemap
+  cta = "book", // mobile CTA bar: "book" (Book a table) or "quote" (Get a quote, catering pages)
 } = Astro.props;
 
 // GA4 loads only when PUBLIC_GA4_ID is set (Vercel env var). Unset = no tracking at all.
@@ -131,6 +133,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
+    <CallBar mode={cta} />
     <script>
       import "../scripts/main.js";
     </script>

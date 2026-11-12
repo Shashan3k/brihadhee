@@ -11,8 +11,6 @@ import {
 } from "../data/site.js";
 import Icon from "./Icon.astro";
 
-const formEnabled = hasWhatsApp || hasEmail;
-const channel = hasWhatsApp ? "whatsapp" : "email";
 const hasChannels = hasPhone || hasWhatsApp || hasEmail;
 ---
 
@@ -99,7 +97,7 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
       </div>
 
       {
-        !formEnabled && (
+        (
           <div
             class="visit__card contact__visit reveal"
             style="--reveal-delay:100ms"
@@ -124,91 +122,15 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
                 <Icon name="navigation" size={17} />
                 Get directions
               </a>
+              <a class="btn btn--primary" href="/about/#enquiry">
+                <Icon name="mail" size={17} />
+                Send an enquiry
+              </a>
             </div>
           </div>
         )
       }
 
-      {
-        formEnabled && (
-          <form
-            class="contact__form reveal"
-            id="enquiry-form"
-            data-event="enquiry_submit"
-            data-channel={channel}
-            data-default-inquiry="general"
-            data-whatsapp={site.contact.whatsapp.replace(/\D/g, "")}
-            data-email={site.contact.email}
-            style="--reveal-delay:100ms"
-          >
-            <h3>Send an enquiry</h3>
-            <p>
-              Fill this in and it opens {channel === "whatsapp" ? "WhatsApp" : "your email app"}
-              with the message ready to send.
-            </p>
-
-            <div class="field">
-              <label for="enquiry-type">What can we help with?</label>
-              <select id="enquiry-type" name="inquiryType">
-                <option value="general">General enquiry</option>
-              </select>
-            </div>
-
-            <div class="field enquiry-event-field" hidden>
-              <label for="enquiry-date">Event date (optional)</label>
-              <input type="date" id="enquiry-date" name="eventDate" />
-            </div>
-
-            <div class="field enquiry-event-field" hidden>
-              <label for="enquiry-guests">Estimated guests (optional)</label>
-              <input type="number" id="enquiry-guests" name="guestCount" min="1" inputmode="numeric" />
-            </div>
-
-            <div class="field">
-              <label for="enquiry-name">Your name</label>
-              <input
-                type="text"
-                id="enquiry-name"
-                name="name"
-                autocomplete="name"
-                required
-              />
-            </div>
-
-            <div class="field">
-              <label for="enquiry-phone">Phone (optional)</label>
-              <input
-                type="tel"
-                id="enquiry-phone"
-                name="phone"
-                autocomplete="tel"
-                inputmode="tel"
-              />
-            </div>
-
-            <div class="field">
-              <label for="enquiry-message">Message</label>
-              <textarea
-                id="enquiry-message"
-                name="message"
-                required
-                placeholder="Table for six on Saturday evening…"
-              ></textarea>
-            </div>
-
-            <div class="form__foot">
-              <button class="btn btn--primary" type="submit">
-                <Icon name={channel === "whatsapp" ? "whatsapp" : "mail"} size={17} />
-                {channel === "whatsapp" ? "Send on WhatsApp" : "Send by email"}
-              </button>
-              <p class="form__status" role="status" aria-live="polite"></p>
-            </div>
-            <p class="field__hint">
-              Nothing is stored on this website.
-            </p>
-          </form>
-        )
-      }
     </div>
   </div>
 </section>

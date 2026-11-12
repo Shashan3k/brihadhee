@@ -1,0 +1,57 @@
+---
+/**
+ * /menu/nellai-meals/: veg lunch and Nellai meals (P1). Replaces
+ * /nellai-meals-south-indian-veg-anna-nagar/ (301 in vercel.json). All copy and
+ * prices come from src/data/pages.js and menu-canonical.ts.
+ */
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import AtAGlance from "../../components/AtAGlance.astro";
+import ContentSection from "../../components/ContentSection.astro";
+import Faq from "../../components/Faq.astro";
+import { nellaiPage as page } from "../../data/pages.js";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../../lib/schema.js";
+import { site, ROUTES, href } from "../../data/site.js";
+import { openingTimes } from "../../data/entity-truth.ts";
+
+const { close } = openingTimes();
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Menu", path: ROUTES.menu }, { name: "Lunch and Nellai meals", path: page.path }],
+  extras: [faqPageSchema(page.path, page.faq)],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow="Lunch · Tirunelveli and Karaikudi · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <AtAGlance title="Lunch at Brihadhee: summary" rows={page.glance} />
+
+    <ContentSection {...page.sodhiSection} />
+    <ContentSection {...page.homeStyle} />
+    <ContentSection {...page.family} />
+    {page.office && <ContentSection {...page.office} />}
+    <ContentSection {...page.booking} tint={!page.office} />
+
+    <Faq items={page.faq} title="Nellai meals and lunch questions" lead="Direct answers about Tirunelveli and Karaikudi dishes at Brihadhee." eyebrow="Questions" />
+
+    <section class="section" id="more" aria-labelledby="more-title">
+      <div class="container">
+        <h2 class="section__title" id="more-title">More from Brihadhee</h2>
+        <ul class="link-list" role="list">
+          <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
+          <li><a href={href(ROUTES.dosa)}>Build your own dosa</a></li>
+          <li><a href={href(ROUTES.dinner)}>Dinner until {close}</a></li>
+          <li><a href={`${href("/")}#visit`}>Find us on {site.address.line1}</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

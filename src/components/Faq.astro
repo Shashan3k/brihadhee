@@ -1,5 +1,6 @@
 ---
 import { faqItems, faqLanguageGroups } from "../data/faq.js";
+import { CONTENT_UPDATED, monthYear } from "../data/entity-truth.ts";
 
 // Visible Q&A. Each page passes the SAME array it gives to faqPageSchema(), so
 // the text in the JSON-LD and on the page cannot drift apart (checked by
@@ -24,6 +25,7 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
           <p class="eyebrow">{eyebrow}</p>
           <h2 class="section__title" id="faq-title">{title}</h2>
           {lead && <p class="section__lead">{lead}</p>}
+          <p class="faq__updated">Last updated: <time datetime={CONTENT_UPDATED}>{monthYear(CONTENT_UPDATED)}</time></p>
         </div>
 
         <div class="faq__list">
@@ -40,7 +42,7 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
 
         {other.length > 0 && (
           <>
-            <p class="faq__group">{faqLanguageGroups.ta}</p>
+            <h3 class="faq__group" lang="ta">{faqLanguageGroups.ta}</h3>
             <div class="faq__list">
               {other.map((item) => (
                 <details class="faq__item" id={`faq-${item.id ?? slug(item.question)}`}>

@@ -62,13 +62,14 @@ After each new page goes live, inspect and request indexing for it the same day.
    INDEXNOW_KEY=<your-key> npm run indexnow
    ```
    or only the changed pages: `INDEXNOW_KEY=<your-key> npm run indexnow -- /menu/ /book-a-table/`
+   To check first without sending anything: `INDEXNOW_KEY=<your-key> npm run indexnow -- --dry-run` prints the exact payload (every URL in `dist/sitemap.xml`).
 5. Google does not use IndexNow. Use URL inspection in Search Console for Google.
 
 ## 8. Google Analytics 4
 
 1. https://analytics.google.com → Admin → Create property "Brihadhee website" (India, INR, Asia/Kolkata) → Web stream for `https://www.brihadhee.com`.
 2. Copy the Measurement ID (`G-…`) into Vercel as `PUBLIC_GA4_ID` and redeploy. The privacy page updates itself.
-3. Admin → Events: mark `call_click`, `directions_click`, `book_click` and `whatsapp_click` as **key events** (conversions).
+3. Admin → Events: mark `click_call`, `click_whatsapp`, `book_table_click` and `catering_quote_submit` as **key events** (conversions).
 4. Link GA4 to Search Console (Admin → Product links → Search Console links).
 
-Events the site sends: `call_click`, `directions_click`, `book_click` (partner booking links), `order_click` (Swiggy/Zomato links, once added), `whatsapp_click` (once a WhatsApp number is confirmed), `menu_filter_use` (menu tabs), `enquiry_submit` (enquiry form), `book_submit` (reserved for a future booking form).
+Events the site sends: `click_call` (any tel: link, including the mobile CTA bar), `click_whatsapp` (any WhatsApp link), `book_table_click` (`/book-a-table/` and partner booking links), `catering_quote_submit` (a quote or enquiry form accepted by `/api/lead`, with `form_type` and `headcount`; no personal data), `directions_click`, `order_click` (Swiggy/Zomato links, once added), `quote_cta_click` (the mobile bar's Get a quote button on catering pages), `menu_filter_use` (menu tabs).

@@ -193,7 +193,7 @@ const pending = pendingFacts();
 const priceByName = new Map(allDishes.map((d) => [d.name, d.price]));
 for (const st of BUILD_YOUR_OWN_DOSA.steps) for (const o of st.options) priceByName.set(o.name, o.price);
 for (const s of BUILD_YOUR_OWN_DOSA.suggestions) priceByName.set(s.name, s.price);
-const CATERING = ["/catering-services-chennai/", "/event-planner-catering-partner/"];
+const CATERING = ["/catering-services-chennai/", "/event-planner-catering-partner/", "/corporate-catering-chennai/"];
 for (const p of pages) {
   if (!p.jsonOk || p.path === "/404.html") continue;
   const need = ["Restaurant", "WebSite", "WebPage", "BreadcrumbList"];
@@ -321,7 +321,7 @@ async function serverChecks() {
 
 /* ---- 9. Lighthouse ------------------------------------------------------------------------- */
 async function lighthouse(base) {
-  const routes = ["/", "/menu/", "/best-dosa-parotta-anna-nagar/", "/catering-services-chennai/", "/about/"];
+  const routes = ["/", "/menu/", "/menu/dosa/", "/catering-services-chennai/", "/about/"];
   const out = mkdtempSync(join(tmpdir(), "lh-"));
   const npx = process.platform === "win32" ? "npx.cmd" : "npx";
   const probe = spawnSync(npx, ["--no-install", "lighthouse", "--version"], { shell: process.platform === "win32", encoding: "utf8" });

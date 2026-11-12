@@ -5,20 +5,24 @@
  * Graph (stable @ids):
  *   Restaurant (#restaurant)       <- publisher of -> WebSite (#website)
  *   WebPage (<page>#webpage)       isPartOf WebSite, about Restaurant, breadcrumb -> BreadcrumbList
- *   FAQPage (<page>#faq)           about Restaurant, built from the SAME data as the visible FAQ
- *   Service (/catering/#service)   provider -> Restaurant (only when catering is confirmed)
+ *   FAQPage (<page>#faq)           about Restaurant, dateModified, built from the SAME data as the visible FAQ
+ *   Service (<page>#service)       provider -> Restaurant; "Event catering" (with an
+ *                                  OfferCatalog) or "Corporate catering"; areaServed Chennai
+ *   Article (/whats-new/#article)  author and publisher -> Restaurant, dated
  *
- * Deliberately absent: AggregateRating (self-served ratings earn no rich result),
- * Menu / MenuItem (menu prices are not confirmed final), openingHoursSpecification
- * and priceRange (pending facts: they appear only once confirmed).
+ * Deliberately absent: AggregateRating and review (self-served ratings earn no rich
+ * result), makesOffer (offers change; they are shown on the pages with a checked
+ * date), dateModified on the Restaurant (not a schema.org property of Restaurant;
+ * freshness lives on WebPage, FAQPage and Article), and anything still pending in
+ * entity-truth.ts. openingHoursSpecification comes from the verified hours: one
+ * node, every day, 11:00 to 23:00.
  *
  * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
 import { site, hasHours, assetUrl } from "../data/site.js";
-import { getFact, factOr, FACTS, CONTENT_UPDATED } from "../data/entity-truth.ts";
+import { getFact, factOr, CONTENT_UPDATED } from "../data/entity-truth.ts";
 
-const FACTS_DATE = (key) => FACTS[key].verifiedOn;
 import { faqItems } from "../data/faq.js";
 
 const CONTEXT = "https://schema.org";
@@ -39,19 +43,17 @@ const e164 = (n) => `+${String(n).replace(/\D/g, "")}`;
 
 /** Base Restaurant entity. Identical on every page that emits it. */
 export function restaurantSchema() {
-  const hours = hasHours
-    ? site.hours.days
-        .filter((d) => d.open && d.close)
-        .map((d) => ({
-          "@type": "OpeningHoursSpecification",
-          dayOfWeek: d.day,
-          opens: d.open,
-          closes: d.close,
-        }))
-    : [];
+  // One OpeningHoursSpecification per distinct time range (open daily 11:00 to 23:00 -> one node).
+  const hours = [];
+  if (hasHours) {
+    for (const d of site.hours.days.filter((x) => x.open && x.close)) {
+      const same = hours.find((h) => h.opens === d.open && h.closes === d.close);
+      if (same) same.dayOfWeek.push(d.day);
+      else hours.push({ "@type": "OpeningHoursSpecification", dayOfWeek: [d.day], opens: d.open, closes: d.close });
+    }
+  }
   const alternateNames = [getFact("nameTamil"), ...getFact("alternateNames")];
   const founders = factOr("founders");
-  const offers = factOr("offers", []);
   const reservations = factOr("acceptsReservations");
   const subBrand = factOr("subBrand");
   const sameAs = factOr("sameAs", []);
@@ -95,17 +97,6 @@ export function restaurantSchema() {
       : {}),
     ...(subBrand
       ? { brand: { "@type": "Brand", name: subBrand.name, description: subBrand.description } }
-      : {}),
-    ...(offers.length
-      ? {
-          makesOffer: offers.map((o) => ({
-            "@type": "Offer",
-            name: o.name,
-            description: o.description,
-            ...(o.price ? { price: String(o.price), priceCurrency: "INR" } : {}),
-            validFrom: FACTS_DATE("offers"),
-          })),
-        }
       : {}),
     amenityFeature: [
       ...(getFact("dineIn")
@@ -170,23 +161,43 @@ export function webPageSchemas({ path, title, description, crumbs }) {
  *   phone: confirmed catering phone (or null to omit)
  * Never carries AggregateRating: there are no verified catering-specific reviews.
  */
-export function cateringServiceSchema({ areas = [], phone = null } = {}) {
+export function cateringServiceSchema({
+  areas = [],
+  phone = null,
+  serviceType = "Event catering",
+  offerCatalog = [],
+  path = "/catering-services-chennai/",
+  name = "Brihadhee Pure Veg Event and Wedding Catering",
+  description = "End-to-end pure vegetarian event catering in Chennai for weddings, birthdays, housewarmings and family functions: menu planning, cooking, serving and setup, with live food counters.",
+  audience = [
+    { "@type": "Audience", audienceType: "Families planning functions" },
+    { "@type": "BusinessAudience", audienceType: "Event management companies" },
+  ],
+} = {}) {
   return {
     "@context": CONTEXT,
     "@type": "Service",
-    "@id": ids.cateringService,
-    serviceType: "Catering",
-    name: "Brihadhee Pure Veg Event and Wedding Catering",
-    description:
-      "Pure vegetarian catering for corporate offices, family functions, weddings and event management companies, with regional menus, live food counters and end-to-end event service.",
-    url: pageUrl("/catering-services-chennai/"),
+    "@id": `${pageUrl(path)}#service`,
+    serviceType,
+    name,
+    description,
+    url: pageUrl(path),
     provider: { "@id": ids.restaurant },
-    audience: [
-      { "@type": "Audience", audienceType: "Families planning functions" },
-      { "@type": "BusinessAudience", audienceType: "Event management companies" },
-    ],
+    audience,
     ...(areas.length
-      ? { areaServed: areas.map((name) => ({ "@type": "Place", name })) }
+      ? { areaServed: areas.length === 1 ? { "@type": "City", name: areas[0] } : areas.map((name) => ({ "@type": "City", name })) }
+      : {}),
+    ...(offerCatalog.length
+      ? {
+          hasOfferCatalog: {
+            "@type": "OfferCatalog",
+            name,
+            itemListElement: offerCatalog.map((o) => ({
+              "@type": "Offer",
+              itemOffered: { "@type": "Service", name: o.name, ...(o.description ? { description: o.description } : {}) },
+            })),
+          },
+        }
       : {}),
     ...(phone ? { telephone: e164(phone) } : {}),
   };
@@ -200,6 +211,7 @@ export function faqPageSchema(path, items) {
     "@context": CONTEXT,
     "@type": "FAQPage",
     "@id": pid.faq,
+    dateModified: CONTENT_UPDATED,
     about: { "@id": ids.restaurant },
     mainEntityOfPage: { "@id": pid.webpage },
     mainEntity: items.map((i) => ({
@@ -212,6 +224,32 @@ export function faqPageSchema(path, items) {
         ...(i.lang && i.lang !== "en" ? { inLanguage: i.lang } : {}),
       },
     })),
+  };
+}
+
+/**
+ * Article for a dated page (/whats-new/, guides). Published by the Restaurant. A guide
+ * passes `about` (topic names) and then only `mentions` the Restaurant; dateModified
+ * follows CONTENT_UPDATED.
+ */
+export function articleSchema({ path, headline, description, datePublished, image, about = null }) {
+  const pid = pageIds(path);
+  return {
+    "@context": CONTEXT,
+    "@type": "Article",
+    "@id": `${pageUrl(path)}#article`,
+    headline,
+    description,
+    datePublished,
+    dateModified: CONTENT_UPDATED > datePublished ? CONTENT_UPDATED : datePublished,
+    inLanguage: site.locale.replace("_", "-"),
+    image: [assetUrl(image)],
+    author: { "@id": ids.restaurant },
+    publisher: { "@id": ids.restaurant },
+    ...(about
+      ? { about: about.map((name) => ({ "@type": "Thing", name })), mentions: { "@id": ids.restaurant } }
+      : { about: { "@id": ids.restaurant } }),
+    mainEntityOfPage: { "@id": pid.webpage },
   };
 }
 

@@ -1,0 +1,82 @@
+---
+/**
+ * One answer-first content section: an H2, a lead paragraph that answers the
+ * heading in its first sentence, then optional dish lists, H3 sub-sections
+ * (each with its own answer-first paragraph), links and a photo. Used by the
+ * home page and the dish pages; all copy comes from src/data/pages.js.
+ *
+ *   dishes:  [{ name, price, note }]                       a priced dish list
+ *   items:   [{ id?, title, text, dishes?, link? }]          H3 sub-sections
+ *   links:   [{ label, href, primary?, external? }]          calls to action
+ *   image:   { name, alt, caption }                         photo in public/images
+ *   note:    a short line after the dish list
+ * `lead` and item `text` may contain contextual links as [anchor](/path/)
+ * (src/lib/inline-links.js).
+ */
+import Icon from "./Icon.astro";
+import { responsive } from "../data/site.js";
+import { linkify } from "../lib/inline-links.js";
+
+const { id, eyebrow = "", title, lead = "", note = "", dishes = [], items = [], links = [], image = null, tint = false, cards = false } = Astro.props;
+const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
+---
+
+<section class={`section content${tint ? " section--tint" : ""}`} id={id} aria-labelledby={`${id}-title`}>
+  <div class={`container${image ? " dish-page__grid" : ""}`}>
+    <div class="content__body">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h2 class="section__title" id={`${id}-title`}>{title}</h2>
+      {lead && <p class="section__lead" set:html={linkify(lead)} />}
+
+      {dishes.length > 0 && (
+        <ul class="dish-list dish-list--cols" role="list">
+          {dishes.map((d) => (
+            <li><strong>{d.name}</strong> {d.price != null && <span>{d.price}</span>}{d.note && <><br /><small>{d.note}</small></>}</li>
+          ))}
+        </ul>
+      )}
+
+      {note && <p class="field__hint">{note}</p>}
+
+      {items.length > 0 && (
+        <div class={cards ? "services__grid content__cards" : "content__items"}>
+          {items.map((it) => (
+            <article class={cards ? "service" : "content__item"} id={it.id}>
+              <h3>{it.title}</h3>
+              <p set:html={linkify(it.text)} />
+              {it.dishes?.length > 0 && (
+                <ul class="dish-list" role="list">
+                  {it.dishes.map((d) => (
+                    <li><strong>{d.name}</strong> {d.price != null && <span>{d.price}</span>}{d.note && <><br /><small>{d.note}</small></>}</li>
+                  ))}
+                </ul>
+              )}
+              {it.link && (
+                <a class="service__link" href={it.link.href} {...ext(it.link)}>
+                  {it.link.label} <Icon name="arrowRight" size={17} />
+                </a>
+              )}
+            </article>
+          ))}
+        </div>
+      )}
+
+      {links.length > 0 && (
+        <div class="page-head__actions">
+          {links.map((l) => (
+            <a class={`btn ${l.primary ? "btn--primary" : "btn--ghost"}`} href={l.href} {...ext(l)}>
+              {l.label} <Icon name="arrowRight" size={17} />
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+
+    {image && (
+      <figure class="dish-page__photo">
+        <img {...responsive(image.name, 1200)} sizes="(max-width: 900px) 92vw, 45vw" width="1200" height="900" loading="lazy" decoding="async" alt={image.alt} />
+        {image.caption && <figcaption>{image.caption}</figcaption>}
+      </figure>
+    )}
+  </div>
+</section>

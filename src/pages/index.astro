@@ -1,11 +1,17 @@
 ---
+/**
+ * Home: brand hub, following the on-page blueprint of 2026-11-11. Required H2s,
+ * in order: Build Your Own Dosa, Your Way; Lunch; Dinner Until 11 PM; Catering
+ * for Offices and Events; Why Guests Choose Brihadhee; What Guests Say; Visit Us
+ * in Anna Nagar; Quick Answers. The full menu (every dish in the HTML, checked by
+ * aeo-lint and verify), offers and gallery sit between "Why" and "What Guests Say".
+ */
 import Base from "../layouts/Base.astro";
-import { getFact } from "../data/entity-truth.ts";
 import Nav from "../components/Nav.astro";
 import Hero from "../components/Hero.astro";
-import Services from "../components/Services.astro";
-import About from "../components/About.astro";
 import AtAGlance from "../components/AtAGlance.astro";
+import ContentSection from "../components/ContentSection.astro";
+import About from "../components/About.astro";
 import Offers from "../components/Offers.astro";
 import MenuSection from "../components/MenuSection.astro";
 import Gallery from "../components/Gallery.astro";
@@ -14,28 +20,33 @@ import Visit from "../components/Visit.astro";
 import Faq from "../components/Faq.astro";
 import Contact from "../components/Contact.astro";
 import Footer from "../components/Footer.astro";
-import CallBar from "../components/CallBar.astro";
 import KolamDivider from "../components/KolamDivider.astro";
+import { homePage as page } from "../data/pages.js";
 ---
 
-<Base ogDescription={`Dosas made your way, claypot Paanai Parotta, Nellai sodhi meals and filter coffee. Pure veg lunch and dinner on 3rd Avenue, Anna Nagar East.`}>
+<Base
+  title={page.title}
+  description={page.description}
+  ogDescription={`Dosas made your way, claypot Paanai Parotta, Nellai sodhi meals and filter coffee. Pure veg lunch and dinner on 3rd Avenue, Anna Nagar East.`}
+>
   <Nav />
   <main id="main">
-    <Hero />
-    <AtAGlance />
-    <Services />
+    <Hero h1={page.h1} />
+    <AtAGlance rows={page.glance} />
+    <ContentSection {...page.byo} />
+    <ContentSection {...page.lunch} />
+    <ContentSection {...page.dinner} />
+    {page.catering && <ContentSection {...page.catering} />}
     <KolamDivider />
     <About />
-    <Offers />
-    <KolamDivider />
     <MenuSection />
+    <Offers />
     <Gallery />
     <Reviews />
     <Visit />
     <KolamDivider />
-    <Faq />
+    <Faq title="Quick Answers" eyebrow="FAQ" />
     <Contact />
   </main>
   <Footer />
-  <CallBar />
 </Base>

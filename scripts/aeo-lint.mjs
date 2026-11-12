@@ -11,7 +11,10 @@
  *   3. Every FAQ question is followed by a paragraph of 15 to 60 words whose
  *      first sentence is 15 to 35 words, and the answer names "Brihadhee"
  *   4. No pending fact is rendered (probes from src/data/entity-truth.ts)
- *   5. No phrase from docs/seo/avoid-terms.txt
+ *   5. No phrase from docs/seo/avoid-terms.txt, with zero exceptions, on any
+ *      surface: visible text, <title>, every meta tag, alt/title/aria-label
+ *      attributes, link and image URLs, JSON-LD, and every text output
+ *      (llms.txt, llms-full.txt, menu.json, sitemaps, robots.txt, manifest)
  *   6. No "best", "No.1" or "top-rated" claim without a data-claim-source annotation
  *   7. Every image has non-empty, non-repeating alt text (lightbox image and
  *      repeated brand logos exempt)
@@ -19,6 +22,8 @@
  *   9. Catering is absent from the build and the sitemap while offer_catering is false
  *  10. JSON-LD parses and has no empty values
  *  11. Pages are complete without JavaScript (one H1, menu items present in the HTML)
+ *  12. One Q&A per route: no FAQ question on two pages; the full address only in
+ *      the first answer on a page; a visible "Last updated" line with every Q&A
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
@@ -54,6 +59,7 @@ const CHECKS = {
   catering_gate: "Catering gated while unconfirmed",
   jsonld: "JSON-LD parses, no empty values",
   no_js: "Complete without JavaScript",
+  faq_route: "One Q&A per route, address once, Last updated shown",
 };
 for (const [id, title] of Object.entries(CHECKS)) checks.set(id, { title, errors: 0 });
 const err = (id, page, msg) => {
@@ -73,6 +79,8 @@ const decode = (s) =>
     .replace(/&gt;/g, ">")
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&#x27;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
     .replace(/&nbsp;/g, " ");
 const norm = (s) => decode(s).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
@@ -95,6 +103,30 @@ function headText(html) {
   const desc = head.match(/<meta name="description" content="([^"]*)"/i)?.[1] ?? "";
   return norm(`${title} ${desc}`);
 }
+/** Percent-decode URL-encoded runs (Tamil or spaces in a link) without throwing. */
+const urlDecode = (s) =>
+  s.replace(/(?:%[0-9a-f]{2})+/gi, (run) => {
+    try {
+      return decodeURIComponent(run);
+    } catch {
+      return run;
+    }
+  });
+/**
+ * Everything a person, crawler or AI agent can read on a page, for the
+ * zero-exception avoid list: the visible text (tags removed, so a phrase split
+ * across tags still matches) plus the raw markup with only executable
+ * <script> and <style> blocks dropped. The markup carries the <title>, every
+ * meta tag, alt/title/aria-label attributes, link and image URLs, and JSON-LD.
+ */
+function surfaceText(html) {
+  const markup = html
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script\b(?![^>]*type="application\/(?:ld\+)?json")[^>]*>[\s\S]*?<\/script>/gi, " ");
+  return `${visibleText(html)}\n${urlDecode(decode(markup))}`;
+}
+/** Built text files other than HTML that crawlers and AI agents fetch. */
+const TEXT_OUTPUT = /\.(?:txt|json|xml|webmanifest)$/i;
 
 /* ---- Avoid terms ------------------------------------------------------ */
 const avoidFile = join(ROOT, "docs", "seo", "avoid-terms.txt");
@@ -107,8 +139,9 @@ const avoid = existsSync(avoidFile)
   : [];
 if (!avoid.length) warn("-", "docs/seo/avoid-terms.txt missing or empty");
 
-/* ---- Load pages -------------------------------------------------------- */
+/* ---- Load pages and text outputs ---------------------------------------- */
 const pages = [];
+const outputs = []; // llms.txt, llms-full.txt, menu.json, sitemaps, robots.txt, manifest
 for (const file of walk(dist)) {
   const rel = "/" + relative(dist, file).replace(/\\/g, "/");
   if (/\.html?$/i.test(file)) {
@@ -124,7 +157,9 @@ for (const file of walk(dist)) {
         err("jsonld", name, `JSON-LD block ${i + 1} is not valid JSON: ${e.message}`);
       }
     }
-    pages.push({ name, html, nodes, text: visibleText(html), head: headText(html) });
+    pages.push({ name, html, nodes, text: visibleText(html), head: headText(html), surface: surfaceText(html) });
+  } else if (TEXT_OUTPUT.test(file) && !rel.startsWith("/_astro/")) {
+    outputs.push({ name: rel.slice(1), text: urlDecode(readFileSync(file, "utf8")) });
   }
 }
 const sitemapPath = join(dist, "sitemap.xml");
@@ -151,6 +186,8 @@ if (cfg.offer_catering === true) {
 }
 const phoneOk = (raw) => allowedPhones.includes(digits(raw).slice(-10));
 const pending = pendingFacts();
+const faqOwners = new Map(); // question -> page that shows it
+const addressText = `${addr.line1}, ${addr.line2}, ${addr.city}, ${addr.state} ${addr.postalCode}`;
 
 for (const p of pages) {
   const { name, html, nodes, text, head } = p;
@@ -175,6 +212,15 @@ for (const p of pages) {
   } else if (visible.length) {
     err("faq_equal", name, "FAQ visible on the page but no FAQPage JSON-LD");
   }
+  /* 12: one Q&A per route, full address only in the first answer, Last updated */
+  visible.forEach((v, i) => {
+    const owner = faqOwners.get(v.q.toLowerCase());
+    if (owner && owner !== name) err("faq_route", name, `question also on ${owner}: "${v.q}"`);
+    faqOwners.set(v.q.toLowerCase(), name);
+    if (i === 0 && !v.a.includes(addressText)) err("faq_route", name, `first answer does not state the full address: "${v.q}"`);
+    if (i > 0 && /W-41|W-Block/.test(v.a)) err("faq_route", name, `answer repeats the street address (first answer only): "${v.q}"`);
+  });
+  if (visible.length && !/Last updated:\s*[A-Z][a-z]+ \d{4}/.test(text)) err("faq_route", name, 'Q&A shown without a visible "Last updated: Month YYYY" line');
   for (const v of visible) {
     const w = words(v.a);
     const fs = firstSentence(v.a);
@@ -191,6 +237,11 @@ for (const p of pages) {
     if (w < 15 || w > 60 || !/Brihadhee/.test(m[3])) {
       err("answer_first", name, `question heading "${norm(m[2])}" is followed by a ${w}-word paragraph (needs 15 to 60 words naming Brihadhee)`);
     }
+    // Question headings (guides, dish pages) share the one-Q&A-per-route rule.
+    const q = norm(m[2]);
+    const owner = faqOwners.get(q.toLowerCase());
+    if (owner && owner !== name) err("faq_route", name, `question heading also asked on ${owner}: "${q}"`);
+    faqOwners.set(q.toLowerCase(), name);
   }
 
   /* 2: NAP */
@@ -208,7 +259,7 @@ for (const p of pages) {
   for (const m of text.matchAll(/(?:\+?\s?91[\s-]?)?\b\d{5}[\s-]?\d{5}\b/g)) {
     if (!phoneOk(m[0])) err("nap", name, `unexpected phone number on the page: "${m[0].trim()}"`);
   }
-  for (const m of html.matchAll(/href="(?:tel:|https:\/\/wa\.me\/)([^"]+)"/g)) {
+  for (const m of html.matchAll(/href="(?:tel:|https:\/\/wa\.me\/)([^"?]+)/g)) {
     if (!phoneOk(m[1])) err("nap", name, `tel/WhatsApp link ${m[1]} is not a confirmed number`);
   }
   for (const m of html.matchAll(/mailto:([^"?]+)/g)) {
@@ -238,10 +289,10 @@ for (const p of pages) {
     }
   }
 
-  /* 5: avoid terms */
+  /* 5: avoid terms, zero exceptions: text, title, meta, attributes, URLs, JSON-LD */
   for (const a of avoid) {
     a.re.lastIndex = 0;
-    const hit = (text + " " + head).match(a.re);
+    const hit = p.surface.match(a.re);
     if (hit) err("avoid", name, `avoid-list term "${hit[0]}" (rule: ${a.src})`);
   }
 
@@ -362,16 +413,20 @@ if (cfg.offer_catering !== true) {
     if (/\bcatering\b/i.test(p.text)) err("catering_gate", p.name, "page text mentions catering while gated");
   }
 }
-// llms.txt also obeys the avoid list and the pending-fact probes
-for (const a of avoid) {
-  a.re.lastIndex = 0;
-  const hit = llms.match(a.re);
-  if (hit) err("avoid", "llms.txt", `avoid-list term "${hit[0]}"`);
-}
-for (const f of pending) {
-  for (const probe of f.probes) {
-    const hit = llms.match(probe);
-    if (hit) err("pending", "llms.txt", `pending fact "${f.key}" appears: "${hit[0]}"`);
+// Every other text output (llms.txt, llms-full.txt, menu.json, sitemaps,
+// robots.txt, manifest) obeys the avoid list and the pending-fact probes too.
+if (!outputs.some((o) => o.name === "llms.txt")) warn("llms.txt", "llms.txt missing from the build");
+for (const o of outputs) {
+  for (const a of avoid) {
+    a.re.lastIndex = 0;
+    const hit = o.text.match(a.re);
+    if (hit) err("avoid", o.name, `avoid-list term "${hit[0]}" (rule: ${a.src})`);
+  }
+  for (const f of pending) {
+    for (const probe of f.probes) {
+      const hit = o.text.match(probe);
+      if (hit) err("pending", o.name, `pending fact "${f.key}" appears: "${hit[0]}"`);
+    }
   }
 }
 
@@ -379,7 +434,7 @@ for (const f of pending) {
 const today = new Date().toISOString().slice(0, 10);
 const lines = [];
 lines.push("# AEO lint report", "");
-lines.push(`Generated by \`scripts/aeo-lint.mjs\` on ${today}. Pages checked: ${pages.map((p) => `\`${p.name}\``).join(", ")}, plus \`sitemap.xml\` and \`llms.txt\`.`, "");
+lines.push(`Generated by \`scripts/aeo-lint.mjs\` on ${today}. Pages checked: ${pages.map((p) => `\`${p.name}\``).join(", ")}, plus ${outputs.map((o) => `\`${o.name}\``).join(", ")}.`, "");
 lines.push(`**Result: ${errors.length ? `FAILED, ${errors.length} error(s)` : "PASSED"}**`, "");
 lines.push("| Check | Result |", "|---|---|");
 for (const [, c] of checks) lines.push(`| ${c.title} | ${c.errors ? `FAIL (${c.errors})` : "pass"} |`);

@@ -1,0 +1,72 @@
+---
+/**
+ * /guides/what-are-nellai-meals/: P1 informational guide (1,000 to 1,400 words).
+ * Answers the dish-definition queries (Nellai meals, sodhi, ulundhu kali,
+ * Tirunelveli cuisine, idiyappam pairings) and links to the lunch menu and the
+ * event catering page. Schema: Article + BreadcrumbList (with the base graph).
+ * Copy: src/data/guides.js.
+ */
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import { nellaiGuide as page } from "../../data/guides.js";
+import { longDate } from "../../data/entity-truth.ts";
+import { pageGraph, articleSchema, HOME_CRUMBS } from "../../lib/schema.js";
+import { ROUTES, href } from "../../data/site.js";
+import { linkify } from "../../lib/inline-links.js";
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Lunch and Nellai meals", path: ROUTES.lunch }, { name: "What are Nellai meals?", path: page.path }],
+  extras: [
+    articleSchema({
+      path: page.path,
+      headline: page.h1,
+      description: page.description,
+      datePublished: page.published,
+      image: "/images/meals.webp",
+      about: ["Nellai meals", "Sodhi", "Ulundhu kali", "Tirunelveli cuisine", "Idiyappam"],
+    }),
+  ],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow="Guide · Tirunelveli food" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
+
+    <article class="guide">
+      {page.sections.map((sec, i) => (
+        <section class={`section${i % 2 ? " section--tint" : ""}`} id={sec.id} aria-labelledby={`${sec.id}-title`}>
+          <div class={`container${i === 0 ? " dish-page__grid" : ""}`}>
+            <div class="guide__body">
+              <h2 class="section__title" id={`${sec.id}-title`}>{sec.title}</h2>
+              <p class="section__lead" set:html={linkify(sec.answer)} />
+              {sec.paras.map((p) => <p set:html={linkify(p)} />)}
+              {sec.dishes && (
+                <ul class="dish-list dish-list--cols" role="list">
+                  {sec.dishes.map((d) => (
+                    <li><strong>{d.name}</strong> <span>{d.price}</span>{d.note && <><br /><small>{d.note}</small></>}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {i === 0 && (
+              <figure class="dish-page__photo">
+                <img src={href("images/meals.webp")} srcset={`${href("images/meals-480.webp")} 480w, ${href("images/meals-800.webp")} 800w, ${href("images/meals.webp")} 1200w`} sizes="(max-width: 900px) 92vw, 45vw" width="1200" height="900" loading="lazy" decoding="async"
+                  alt="A Nellai-style vegetarian meal on a banana leaf with rice, sodhi and sides at Brihadhee, Anna Nagar East" />
+                <figcaption>A Nellai-style banana-leaf meal</figcaption>
+              </figure>
+            )}
+          </div>
+        </section>
+      ))}
+    </article>
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

@@ -1,5 +1,5 @@
 {
-  "_readme": "Owner-confirmed catering and restaurant facts as of 2026-11-05 (client brief). Do not flip a flag without a written confirmation from the owner. scripts/validate-seo-guardrails.js and the catering pages read this file.",
+  "_readme": "Owner-confirmed catering and restaurant facts as of 2026-11-11 (client direction W11 to W13, which supersedes the 2026-11-05 brief; see docs/seo/client-confirmations.md section F). Do not flip a flag without a written confirmation from the owner. scripts/validate-seo-guardrails.js, scripts/aeo-lint.mjs and the catering pages read this file.",
   "offer_catering": true,
   "confirmed_events": [
     "baby_shower",
@@ -28,8 +28,12 @@
     "is_different_from_restaurant": false
   },
   "pricing_model": "per_plate",
-  "restaurant_verified_hours": "11:00 AM to 11:00 PM (client W11, keyword plan 2026-11-11); open days not yet confirmed",
-  "_restaurant_verified_hours_note": "2026-11-11: client confirmed 11 AM to 11 PM, lunch and dinner only (keyword plan). The 6:30 AM opening stays retired. Which days it opens is still unconfirmed (entity-truth.ts openDays).",
+  "restaurant_verified_hours": "11:00 AM to 11:00 PM (11:00-23:00), every day (Monday to Sunday), lunch and dinner only (client W11 and the on-page blueprint, 2026-11-11)",
+  "_restaurant_verified_hours_note": "2026-11-11: client confirmed 11 AM to 11 PM, lunch and dinner only (W11). The 6:30 AM opening and breakfast are retired. Open every day, Monday to Sunday (confirmed with the on-page blueprint, 2026-11-11; entity-truth.ts openDays). The last-order time is still pending.",
+  "restaurant_meal_periods": [
+    "lunch",
+    "dinner"
+  ],
   "restaurant_parking_available": null,
   "restaurant_parotta_confirmed": true,
   "_allowed_values": {
@@ -48,7 +52,6 @@
     ],
     "menu_formats": [
       "south_indian_meals",
-      "tiffin",
       "snack_boxes",
       "banana_leaf_service",
       "live_counters",
@@ -63,6 +66,7 @@
       "on_request"
     ],
     "advance_notice_required": "free text, for example 2 days",
+    "restaurant_meal_periods": "lunch and dinner only (client W11, 2026-11-11); no other meal period may be added",
     "enquiry_channels": "phone and whatsapp as strings; is_different_from_restaurant true or false",
     "customizable_dosas_confirmed": "true only after the owner confirms customizable dosas are available now and how they work"
   },

@@ -65,10 +65,13 @@ const address = site.address;
       <nav aria-labelledby="footer-explore">
         <p class="footer__title" id="footer-explore">Explore</p>
         <ul class="footer__links" role="list">
-          {site.navigation.map((item) => (
+          {site.navigation.flatMap((item) => item.children ?? [item]).map((item) => (
             <li><a href={link(item.href)}>{item.label}</a></li>
           ))}
           <li><a href={`${base}book-a-table/`}>Book a Table</a></li>
+          <li><a href={`${base}guides/what-are-nellai-meals/`}>Guide: What Are Nellai Meals?</a></li>
+          <li><a href={`${base}whats-new/`}>What's New</a></li>
+          <li><a href={`${base}seasonal/karthigai-ayyappa-pure-veg/`}>Karthigai &amp; Ayyappa Mala</a></li>
           <li><a href={`${base}privacy/`}>Privacy</a></li>
         </ul>
       </nav>

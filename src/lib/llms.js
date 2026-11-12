@@ -5,9 +5,10 @@
  * Pending facts (Google rating, WhatsApp number, late-night offer) never appear.
  */
 import { site } from "../data/site.js";
-import { getFact, factOr, FACTS, addressLine, landmarkSentence } from "../data/entity-truth.ts";
+import { getFact, factOr, FACTS, addressLine, landmarkSentence, openingTimes } from "../data/entity-truth.ts";
 import { faqItems } from "../data/faq.js";
-import { dosaPage, nellaiPage } from "../data/pages.js";
+import { dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
+import { nellaiGuide } from "../data/guides.js";
 import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes } from "./menu-facts.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
@@ -25,6 +26,8 @@ import {
   contact as cateringContact,
   faqs as cateringFaqs,
   plannerFaqs,
+  CORPORATE_PATH,
+  corporatePage,
 } from "../data/catering.js";
 
 const u = (path) => `${site.url}${path}`;
@@ -53,29 +56,35 @@ export function buildLlms({ full = false } = {}) {
   push(`- Serves diners from: ${getFact("nearbyAreas").join(", ")}`);
   push(`- Phone: ${getFact("phone")}`);
   push(`- Email: ${getFact("email")}`);
-  push(`- Hours: ${getFact("hours").short}, lunch and dinner only (which days it opens is not confirmed yet)`);
+  push(`- Hours: ${openingTimes().range}, every day (Monday to Sunday), lunch and dinner only`);
   push(`- Meal times: ${getFact("mealTimes")}`);
   push(`- Price level: ${getFact("priceRange").schema}; dish prices are listed on the menu page`);
   push(`- Reservations: ${getFact("acceptsReservations").how}`);
   push(`- Alcohol: ${getFact("alcohol")}`);
   push(`- Known for: ${getFact("knownFor").join(", ")}`);
+  push(`- Food: ${getFact("recipeStory")}`);
   if (founders) push(`- Founders: ${founders.story}`);
   if (sub) push(`- Sub-brand: ${sub.name} (${sub.description})`);
   push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`);
-  push(`- Not to be confused with: Brihadeeswarar Temple, Thanjavur (a temple, not connected to this restaurant)`);
+  push(`- Name: ${getFact("nameStory")}`);
   push("");
 
   push("## Pages", "");
   push(`- [Home](${u("/")}): restaurant and catering overview, hours, location, FAQ`);
   push(`- [Menu and prices](${u("/menu/")}): every dish with its price`);
   push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
-  push(`- [About and location](${u("/about/")}): founders, address, map and directions`);
-  push(`- [Dosa and parotta](${u(dosaPage.path)}): build-your-own dosas, Paanai Parotta, kothu parotta`);
-  push(`- [Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Karupatti Ulundhu Kali, pure veg lunch`);
+  push(`- [Address, timings and contact](${u("/about/")}): address, directions from Anna Nagar landmarks, hours, founders and the name story`);
+  push(`- [Build your own dosa](${u(dosaPage.path)}): how it works, chef's combinations, classic dosas`);
+  push(`- [Lunch and Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Tamil home-style lunch, office lunch`);
+  push(`- [Dinner until ${openingTimes().close}](${u(dinnerPage.path)}): Paanai Parotta, veg kothu parotta, idiyappam, Karaikudi Paneer Poppers`);
   if (cateringEnabled) {
-    push(`- [Catering](${u(CATERING_PATH)}): pure vegetarian event and wedding catering in Chennai`);
+    push(`- [Event catering](${u(CATERING_PATH)}): end-to-end pure vegetarian event and wedding catering in Chennai`);
+    if (corporatePage) push(`- [Corporate catering](${u(CORPORATE_PATH)}): daily office lunches, bulk meals, employee meal programmes and corporate events`);
     push(`- [Event planner partner](${u(PLANNER_PATH)}): catering partner for event management companies`);
   }
+  push(`- [What's new](${u(whatsNewPage.path)}): ${whatsNewPage.h1}: build-your-own dosa, Nellai lunch, dinner until ${openingTimes().close}, corporate catering`);
+  push(`- [Karthigai and Ayyappa mala](${u(seasonalPage.path)}): pure veg lunch, dinner and group catering in Chennai during Karthigai month`);
+  push(`- [Guide: What are Nellai meals?](${u(nellaiGuide.path)}): sodhi, ulundhu kali, Tirunelveli cuisine and idiyappam pairings`);
   push(`- [Full reference](${u("/llms-full.txt")}): everything above plus the full menu`);
   push("");
 
@@ -120,10 +129,13 @@ export function buildLlms({ full = false } = {}) {
     for (const f of items) push(`- ${f.question} ${f.answer}`);
     push("");
   };
-  qa("Restaurant questions", faqItems.filter((i) => i.lang === "en"));
+  qa("Restaurant questions", faqItems.filter((i) => !i.lang || i.lang === "en"));
   if (full) {
-    qa("Dosa and parotta questions", dosaPage.faq);
-    qa("Nellai meals questions", nellaiPage.faq);
+    qa("Build your own dosa questions", dosaPage.faq);
+    qa("Lunch and Nellai meals questions", nellaiPage.faq);
+    qa("Dinner questions", dinnerPage.faq);
+    qa("What's new", whatsNewPage.faq);
+    qa("Karthigai and Ayyappa mala questions", seasonalPage.faq);
   }
 
   if (cateringEnabled) {
@@ -136,6 +148,8 @@ export function buildLlms({ full = false } = {}) {
     if (liveCounters.length) push(`- Live counters: ${liveCounters.join(", ")}`);
     const corp = factOr("corporateCatering", null);
     if (corp) push(`- Corporate catering: ${corp.description}, more than ${corp.dailyCovers} people every day`);
+    const corpAreas = factOr("corporateAreas", []);
+    if (corpAreas.length) push(`- Corporate catering areas: ${corpAreas.join(", ")}`);
     const evs = factOr("eventService", null);
     if (evs) push(`- Event service: ${evs}`);
     if (plannerModels.length) push(`- For event planners: ${plannerModels.join(", ")}`);
@@ -145,6 +159,7 @@ export function buildLlms({ full = false } = {}) {
     if (full) {
       qa("Catering questions", cateringFaqs);
       qa("Event planner questions", plannerFaqs);
+      if (corporatePage) qa("Corporate catering questions", corporatePage.faq);
     }
   }
 

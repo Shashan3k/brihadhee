@@ -23,9 +23,18 @@ const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
     </a>
 
     <nav class="nav__links" aria-label="Primary">
-      {site.navigation.map((item) => (
-        <a href={link(item.href)}>{item.label}</a>
-      ))}
+      {site.navigation.map((item) =>
+        item.children ? (
+          <details class="nav__group" data-nav-group>
+            <summary>{item.label}</summary>
+            <div class="nav__menu">
+              {item.children.map((c) => <a href={link(c.href)}>{c.label}</a>)}
+            </div>
+          </details>
+        ) : (
+          <a href={link(item.href)}>{item.label}</a>
+        )
+      )}
     </nav>
 
     <div class="nav__actions">
@@ -53,12 +62,24 @@ const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
 
   <div class="nav__panel" id="nav-panel" hidden>
     {
-      site.navigation.map((item) => (
-        <a href={link(item.href)}>
-          {item.label}
-          <Icon name="arrowUpRight" size={16} />
-        </a>
-      ))
+      site.navigation.map((item) =>
+        item.children ? (
+          <div class="nav__panel-group" role="group" aria-label={item.label}>
+            <p class="nav__panel-label">{item.label}</p>
+            {item.children.map((c) => (
+              <a href={link(c.href)}>
+                {c.label}
+                <Icon name="arrowUpRight" size={16} />
+              </a>
+            ))}
+          </div>
+        ) : (
+          <a href={link(item.href)}>
+            {item.label}
+            <Icon name="arrowUpRight" size={16} />
+          </a>
+        )
+      )
     }
     {
       hasPhone && (

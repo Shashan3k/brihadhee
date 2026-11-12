@@ -1,0 +1,59 @@
+---
+/**
+ * /veg-dinner-anna-nagar/: vegetarian dinner, open until 11 PM (P1, new route).
+ * Holds the parotta content until /menu/parotta-kothu/ exists. All copy and
+ * prices come from src/data/pages.js and menu-canonical.ts. The last-order time
+ * is not confirmed (entity-truth.ts lastOrderTime), so the page never states one.
+ */
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import AtAGlance from "../components/AtAGlance.astro";
+import ContentSection from "../components/ContentSection.astro";
+import Offers from "../components/Offers.astro";
+import Faq from "../components/Faq.astro";
+import { dinnerPage as page } from "../data/pages.js";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
+import { site, ROUTES, href } from "../data/site.js";
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Dinner", path: page.path }],
+  extras: [faqPageSchema(page.path, page.faq)],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow="Dinner · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <AtAGlance title="Dinner at Brihadhee: summary" rows={page.glance} />
+
+    <ContentSection
+      {...page.favourites}
+      image={{ name: "idiyappam", alt: "Idiyappam with coconut milk on a banana leaf, served for dinner at Brihadhee, Anna Nagar East", caption: "Idiyappam from the Brihadhee kitchen" }}
+    />
+    <ContentSection {...page.family} />
+    <ContentSection {...page.late} />
+    <ContentSection {...page.reserve} />
+
+    <Offers title="Dining offers" />
+    <Faq items={page.faq} title="Dinner questions" lead="Direct answers about dinner at Brihadhee, Anna Nagar East." eyebrow="Questions" />
+
+    <section class="section" id="more" aria-labelledby="more-title">
+      <div class="container">
+        <h2 class="section__title" id="more-title">More from Brihadhee</h2>
+        <ul class="link-list" role="list">
+          <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
+          <li><a href={href(ROUTES.dosa)}>Build your own dosa</a></li>
+          <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
+          <li><a href={`${href("/")}#visit`}>Find us on {site.address.line1}</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

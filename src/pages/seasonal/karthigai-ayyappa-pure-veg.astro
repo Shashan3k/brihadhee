@@ -1,0 +1,44 @@
+---
+/**
+ * /seasonal/karthigai-ayyappa-pure-veg/: Karthigai month and Ayyappa mala pure
+ * veg lunch, dinner and group catering (P1, time-bound; reuse the URL yearly).
+ * Copy: src/data/pages.js seasonalPage. Onion- and garlic-free cooking, pooja
+ * catering and a seasonal menu stay "ask the team" until confirmed.
+ */
+import Base from "../../layouts/Base.astro";
+import Nav from "../../components/Nav.astro";
+import Footer from "../../components/Footer.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import AtAGlance from "../../components/AtAGlance.astro";
+import ContentSection from "../../components/ContentSection.astro";
+import Faq from "../../components/Faq.astro";
+import { seasonalPage as page } from "../../data/pages.js";
+import { getFact, openingTimes } from "../../data/entity-truth.ts";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../../lib/schema.js";
+import { ROUTES, href } from "../../data/site.js";
+
+const schema = pageGraph({
+  path: page.path,
+  title: page.title,
+  description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Karthigai and Ayyappa mala", path: page.path }],
+  extras: [faqPageSchema(page.path, page.faq)],
+});
+const glance = [
+  ["Who", `${getFact("name")}, a 100% pure vegetarian restaurant and caterer in Anna Nagar East`],
+  ["Kitchen", "no meat, egg or fish is cooked; alcohol is not served"],
+  ["Open", `every day, ${openingTimes().range}, lunch and dinner`],
+  ["Season", "Karthigai month (mid-November to mid-December) and the Ayyappa mala season"],
+];
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main">
+    <PageHeader eyebrow="Karthigai · Ayyappa mala · Chennai" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <AtAGlance title="Karthigai and Ayyappa mala at Brihadhee: summary" rows={glance} />
+    {page.sections.map((sec) => <ContentSection {...sec} />)}
+    <Faq items={page.faq} title="Karthigai and Ayyappa mala questions" lead="" eyebrow="Questions" />
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

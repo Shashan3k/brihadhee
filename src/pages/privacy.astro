@@ -31,9 +31,11 @@ const schema = pageGraph({ path, title, description, crumbs: [...HOME_CRUMBS, { 
 
         <h2>What we collect</h2>
         <p>
-          The website has no accounts and no booking database. When you use the enquiry form, your browser opens
-          WhatsApp or your email app with the message filled in. Nothing is stored on our website; you choose whether
-          to send it.
+          The website has no accounts and no booking database. When you send the enquiry or quote form, the details you
+          type (name, company or event type, phone, work email, location, headcount, date, how you heard about us and
+          your message) go to our server, which emails them to the {name} team through our email provider, Resend. The
+          website does not keep a copy. We use these details only to reply to your enquiry, and we delete them on
+          request. If you tap WhatsApp instead, the conversation happens in WhatsApp and its own privacy policy applies.
         </p>
 
         <h2>Analytics</h2>
@@ -41,8 +43,9 @@ const schema = pageGraph({ path, title, description, crumbs: [...HOME_CRUMBS, { 
           hasGa4 && (
             <p>
               We use Google Analytics 4 to count visits and taps on buttons such as Call, Directions and Book. It
-              records pages viewed, device type and approximate location, and may set cookies. We do not send your
-              name, phone number or messages to Google Analytics. You can block it with your browser's privacy settings
+              records pages viewed, device type and approximate location, and may set cookies. When a quote form is
+              sent, it records only the form type and the headcount band. We do not send your name, phone number,
+              email or messages to Google Analytics. You can block it with your browser's privacy settings
               or the Google Analytics opt-out add-on.
             </p>
           )
@@ -62,6 +65,7 @@ const schema = pageGraph({ path, title, description, crumbs: [...HOME_CRUMBS, { 
         <h2>Third-party services</h2>
         <p>
           Our pages embed a Google Maps map and link to Google Maps, WhatsApp, EazyDiner, Swiggy Dineout and District.
+          Enquiry form emails are delivered by Resend (resend.com).
           When you open these, their own privacy policies apply.
         </p>
 

@@ -37,14 +37,12 @@ if (heroShowcase && heroSection && finePointer.matches && !reducedMotionPreferen
 
 /* ---------------- Header + mobile menu ---------------- */
 const header = document.getElementById("site-header");
-const callbar = document.getElementById("callbar");
 const navToggle = document.getElementById("nav-toggle");
 const navPanel = document.getElementById("nav-panel");
 
 const onScroll = () => {
   const y = window.scrollY;
   header?.classList.toggle("is-scrolled", y > 8);
-  callbar?.classList.toggle("is-visible", y > 420);
 };
 requestAnimationFrame(onScroll); // first check after the first frame, so it does not force an early layout
 window.addEventListener("scroll", onScroll, { passive: true });
@@ -162,7 +160,7 @@ if (lightbox && galleryItems.length) {
     current = (index + galleryItems.length) % galleryItems.length;
     const item = galleryItems[current];
     image.src = item.dataset.src || "";
-    image.alt = item.dataset.alt || "";
+    image.alt = item.dataset.alt || "Enlarged photo from the Brihadhee gallery";
     caption.textContent = item.dataset.caption || "";
   };
 
@@ -305,82 +303,81 @@ if (revealItems.length) {
   }
 }
 
-/* ---------------- Enquiry form ---------------- */
-const enquiryForm = document.getElementById("enquiry-form");
+/* ---------------- Lead / quote forms (LeadForm.astro -> /api/lead) ----------------
+ * Without JavaScript the form posts normally and the function redirects back with
+ * ?lead=sent|invalid|error. With JavaScript it is sent with fetch and the result is
+ * shown in place. catering_quote_submit fires only after the server accepts the lead.
+ * No personal data is sent to analytics: only the form type and headcount band. */
+const LEAD_MESSAGES = {
+  sent: "Thank you. Your request has reached the Brihadhee team, and they will call you back.",
+  invalid: "Some details were missing or not valid. Please check the form and send it again.",
+  error: "Sorry, the form could not be sent just now. Please call or WhatsApp us instead.",
+};
+const leadForms = [...document.querySelectorAll("form[data-lead-form]")];
+const leadStatusFromUrl = new URLSearchParams(location.search).get("lead");
 
-if (enquiryForm) {
-  const status = enquiryForm.querySelector(".form__status");
-  const inquiryType = enquiryForm.elements.namedItem("inquiryType");
-  const eventFields = [...enquiryForm.querySelectorAll(".enquiry-event-field")];
-  const setInquiryType = (type) => {
-    if (!inquiryType) return;
-    inquiryType.value = type;
-    eventFields.forEach((field) => {
-      field.hidden = type !== "event";
-    });
+leadForms.forEach((form) => {
+  const started = form.querySelector("[data-started-at]");
+  if (started) started.value = String(Date.now());
+  const status = form.querySelector("[data-lead-status]");
+  const result = form.closest("section")?.querySelector("[data-lead-result]");
+  const button = form.querySelector('button[type="submit"]');
+  const show = (key) => {
+    if (result) {
+      result.textContent = LEAD_MESSAGES[key] || "";
+      result.hidden = !result.textContent;
+    }
+    if (status) status.textContent = LEAD_MESSAGES[key] || "";
   };
+  if (leadStatusFromUrl && LEAD_MESSAGES[leadStatusFromUrl]) show(leadStatusFromUrl);
 
-  setInquiryType(enquiryForm.dataset.defaultInquiry || "general");
-  inquiryType?.addEventListener("change", () => setInquiryType(inquiryType.value));
-  document.querySelectorAll("[data-inquiry]").forEach((link) => {
-    link.addEventListener("click", () => {
-      setInquiryType(link.dataset.inquiry);
-      enquiryForm.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
-      enquiryForm.querySelector("#enquiry-type")?.focus({ preventScroll: true });
-    });
-  });
-
-  enquiryForm.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    if (!enquiryForm.reportValidity()) return;
-
-    const data = new FormData(enquiryForm);
-    const name = String(data.get("name") || "").trim();
-    const phone = String(data.get("phone") || "").trim();
-    const message = String(data.get("message") || "").trim();
-    const typeLabel = {
-      general: "General enquiry",
-    }[String(data.get("inquiryType") || "general")];
-    const eventDate = String(data.get("eventDate") || "").trim();
-    const guestCount = String(data.get("guestCount") || "").trim();
-    const details = [
-      typeLabel,
-      eventDate && `Event date: ${eventDate}`,
-      guestCount && `Estimated guests: ${guestCount}`,
-    ].filter(Boolean).join("\n");
-    const text = `Enquiry from ${name}${phone ? ` (${phone})` : ""}\n${details}\n\n${message}`;
-
-    if (enquiryForm.dataset.channel === "whatsapp" && enquiryForm.dataset.whatsapp) {
-      const url = `https://wa.me/${enquiryForm.dataset.whatsapp}?text=${encodeURIComponent(text)}`;
-      window.open(url, "_blank", "noopener");
-      if (status) status.textContent = "Opening WhatsApp — press send there.";
-    } else if (enquiryForm.dataset.email) {
-      const url = `mailto:${enquiryForm.dataset.email}?subject=${encodeURIComponent(
-        `Website enquiry from ${name}`
-      )}&body=${encodeURIComponent(text)}`;
-      window.location.href = url;
-      if (status) status.textContent = "Opening your email app…";
+    if (!form.reportValidity()) return;
+    const data = Object.fromEntries(new FormData(form));
+    if (button) button.disabled = true;
+    if (status) status.textContent = "Sending…";
+    try {
+      const res = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (res.ok && body.ok) {
+        show("sent");
+        form.reset();
+        if (started) started.value = String(Date.now());
+        track("catering_quote_submit", { form_type: form.dataset.formType || "general", headcount: data.headcount || "" });
+      } else {
+        show(res.status === 422 ? "invalid" : "error");
+      }
+    } catch {
+      show("error");
+    } finally {
+      if (button) button.disabled = false;
     }
   });
-}
+});
 
 /* ---------------- Analytics (GA4 and Meta Pixel, each only when its ID is set) ----------------
  * One delegated listener. An explicit data-event="name" wins; otherwise the
- * event is inferred from the link: tel: -> call_click, wa.me -> whatsapp_click,
- * Google Maps -> directions_click, booking partners -> book_click, delivery
- * apps -> order_click. Forms with data-event fire that event on submit.
+ * event is inferred from the link: tel: -> click_call, wa.me -> click_whatsapp,
+ * Google Maps -> directions_click, booking partners and /book-a-table/ ->
+ * book_table_click, delivery apps -> order_click. A lead form fires
+ * catering_quote_submit only after /api/lead accepts it (see above).
  * Menu tabs carry data-event="menu_filter_use". No personal data is sent.
  *
  * The same names map to Meta standard events (META_EVENTS) so ads can optimise
  * for them. Events without a mapping (menu_filter_use) are not sent to Meta.
  */
 const META_EVENTS = {
-  call_click: ["Contact", { content_name: "call" }],
-  whatsapp_click: ["Contact", { content_name: "whatsapp" }],
+  click_call: ["Contact", { content_name: "call" }],
+  click_whatsapp: ["Contact", { content_name: "whatsapp" }],
   directions_click: ["FindLocation", {}],
-  book_click: ["Schedule", {}],
+  book_table_click: ["Schedule", {}],
   order_click: ["Contact", { content_name: "order" }],
-  enquiry_submit: ["Lead", { content_name: "website enquiry form" }],
+  catering_quote_submit: ["Lead", { content_name: "catering quote form" }],
 };
 function trackMeta(name) {
   const mapped = META_EVENTS[name];
@@ -392,18 +389,14 @@ if (typeof window.fbq === "function") {
     if (!el || el.tagName === "FORM") return;
     trackMeta(inferEvent(el));
   });
-  // Fires only after the browser's own validation passes (the form uses reportValidity on submit).
-  enquiryForm?.addEventListener("submit", () => {
-    if (enquiryForm.checkValidity()) trackMeta(enquiryForm.dataset.event || "");
-  });
 }
 function inferEvent(el) {
   if (el.dataset.event) return el.dataset.event;
   const href = el.getAttribute("href") || "";
-  if (href.startsWith("tel:")) return "call_click";
-  if (/wa\.me|api\.whatsapp\.com/.test(href)) return "whatsapp_click";
+  if (href.startsWith("tel:")) return "click_call";
+  if (/wa\.me|api\.whatsapp\.com/.test(href)) return "click_whatsapp";
   if (/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(href)) return "directions_click";
-  if (/eazydiner\.com|\/dineout|district\.in/.test(href)) return "book_click";
+  if (/eazydiner\.com|\/dineout|district\.in|\/book-a-table\/?(?:[#?]|$)/.test(href)) return "book_table_click";
   if (/swiggy\.com|zomato\.com/.test(href)) return "order_click";
   return "";
 }
@@ -414,8 +407,32 @@ if (typeof window.gtag === "function") {
     const name = inferEvent(el);
     if (name) window.gtag("event", name, { link_text: (el.textContent || "").trim().slice(0, 60), page_path: location.pathname });
   });
-  document.addEventListener("submit", (e) => {
-    const form = e.target;
-    if (form instanceof HTMLFormElement && form.dataset.event) window.gtag("event", form.dataset.event, { page_path: location.pathname });
-  });
 }
+
+/** Send one named event to GA4 and Meta (each only when loaded). */
+function track(name, params = {}) {
+  if (typeof window.gtag === "function") window.gtag("event", name, { ...params, page_path: location.pathname });
+  trackMeta(name);
+}
+
+/* ---------------- Catering dropdown (Nav.astro <details>) ----------------
+ * Works without JavaScript; this only closes it on outside click, on Escape,
+ * and when another group opens. */
+const navGroups = [...document.querySelectorAll("[data-nav-group]")];
+navGroups.forEach((g) =>
+  g.addEventListener("toggle", () => {
+    if (g.open) navGroups.forEach((o) => o !== g && (o.open = false));
+  })
+);
+document.addEventListener("click", (e) => {
+  navGroups.forEach((g) => g.open && !g.contains(e.target) && (g.open = false));
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape") return;
+  navGroups.forEach((g) => {
+    if (g.open) {
+      g.open = false;
+      g.querySelector("summary")?.focus();
+    }
+  });
+});

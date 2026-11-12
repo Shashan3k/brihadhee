@@ -26,6 +26,13 @@ export function GET() {
     diet: getFact("dietary"),
     address: getFact("address"),
     telephone: getFact("phone"),
+    servedFor: getFact("mealTimes").split(" and "),
+    openingHours: {
+      days: getFact("openDays"),
+      opens: getFact("hours").opens,
+      closes: getFact("hours").closes,
+      timeZone: getFact("hours").timeZone,
+    },
     lastUpdated: CONTENT_UPDATED,
     priceSource: MENU_SOURCE,
     itemCount: items.length,
