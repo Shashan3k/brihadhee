@@ -2,14 +2,22 @@
  * Q&A for the home page, /about/ and /menu/. Each array is the ONE source for
  * that page's visible Q&A and its FAQPage JSON-LD (they cannot drift apart).
  * Facts come from entity-truth.ts; prices and lists from menu-canonical.ts via
- * menu-facts.js. qa() enforces the answer-first rules and qaRoute() the
- * one-Q&A-per-route and address-once rules (src/lib/answers.js).
- * Not answered (unverified): cost for two, parking, delivery, the Google rating, the last-order time.
+ * menu-facts.js. qa() sizes each answer to its question and qaRoute() keeps one
+ * Q&A per route, the address once per page and the "100% pure vegetarian"
+ * descriptor out of answers that are not about diet (src/lib/answers.js).
+ *
+ * Scope: "100% pure vegetarian" describes the restaurant and its kitchen.
+ * Catering is described with CATERING_DIET ("vegetarian" until the owner answers
+ * Q20, config/seo-gates.ts IS_CATERING_PURE_VEG).
+ *
+ * Unverified, so answered only with "call to check" and never with a value:
+ * parking, delivery, the last-order time (on /faq/ and the dinner page).
+ * Not answered at all: cost for two, the Google rating.
  */
 import { getFact, FACTS, addressLine, landmarkSentence, openingTimes, longDate } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taHome } from "./faq-ta.js";
-import { CATERING_DIET } from "../../config/seo-gates.ts";
+import { CATERING_DIET, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
 import {
   categories,
   category,
@@ -21,6 +29,9 @@ import {
   priceRange,
   rupees,
   summarise,
+  byo,
+  byoDefinition,
+  menuNotes,
 } from "../lib/menu-facts.js";
 
 const name = getFact("name");
@@ -28,7 +39,7 @@ const PV = "100% pure vegetarian";
 const AREA = "Anna Nagar East";
 const phone = getFact("phone");
 const email = getFact("email");
-const { range: HOURS, open: OPEN, close: CLOSE } = openingTimes();
+const { range: HOURS, open: OPEN } = openingTimes();
 const ADDRESS = addressLine();
 const offers = getFact("offers");
 const offer = (id) => {
@@ -42,105 +53,117 @@ const item = (n) => {
   return hit;
 };
 const bookingApps = list(getFact("bookingLinks").map((b) => b.label));
+const bookingLabels = getFact("bookingLinks").map((b) => b.label);
+const bookingOr = `${bookingLabels.slice(0, -1).join(", ")} or ${bookingLabels.at(-1)}`;
+const corporate = getFact("corporateCatering");
 
 const dosa = category("dosa");
 const idly = category("idly");
 const idiyappam = category("idiyappam");
+const combos = category("combos");
 const idlyAll = summarise([...idly.items, ...idiyappam.items]);
 const beverages = category("beverages");
 const paanai = item("Paanai Parotta");
 const sodhi = item("Nellai Special Sodhi Meals");
+const idiyappamSodhi = item("Idiyappam Sodhi");
 const poppers = item("Karaikudi Paneer Poppers");
 const prices = allItems.map((i) => i.price);
 const minPrice = Math.min(...prices);
 const maxPrice = Math.max(...prices);
 const riceDishes = findItems(/\brice$/i).map((i) => i.name);
 const otherDrinks = beverages.items.filter((i) => i.name !== filterCoffee.name).map((i) => i.name);
+const batterRange = priceRange(summarise(byo.steps.find((s) => s.name === "Batter").options));
+const gst = menuNotes.gst.replace(/^Prices exclude /, "").replace(/\.$/, ""); // "5% GST"
+const num = (n) => n.toLocaleString("en-IN");
 
 /* ---- Home / (brand hub) --------------------------------------------------- */
 export const faqItems = qaRoute("/", [
   qa(
     `What is ${name} in Anna Nagar?`,
-    `${name} is a ${PV} South Indian restaurant and ${CATERING_DIET} caterer in ${AREA}, Chennai, known for build-your-own dosa and the ${sodhi.name}, open daily from ${HOURS}. ` +
+    `${name} is a ${PV} South Indian restaurant in ${AREA}, Chennai, open every day from ${HOURS} for lunch and dinner. ` +
+      `It is known for build-your-own dosa and the ${sodhi.name}, and its kitchen also runs ${CATERING_DIET} corporate and event catering. ` +
       `It is at ${ADDRESS}.`,
     { id: "what-is-brihadhee" }
   ),
+  /* P0 (AEO audit 2026-11-12, src/data/faq.js:70): the restaurant answer no longer
+     extends the pure-veg guarantee to catering, which stays CATERING_DIET until Q20. */
   qa(
     `Is ${name} pure veg?`,
-    `Yes, ${name} is ${PV}: there is no meat, egg or fish on its restaurant menu or its catering menus, in ${AREA} or anywhere in Chennai. ` +
-      `All ${itemCount} dishes on the current menu are vegetarian, alcohol is not served, and listings that tag it as non-veg are wrong.`,
+    `Yes. ${name}'s restaurant in ${AREA} is ${PV}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. ` +
+      `Its catering is ${CATERING_DIET}, with the menu for each function agreed in the quote.`,
     { id: "pure-veg" }
   ),
   qa(
-    `What should I order at ${name}?`,
-    `At ${name}, the ${PV} restaurant in ${AREA}, order a build-your-own dosa, the ${sodhi.name} at lunch (${rupees(sodhi.price)}) and ${paanai.name} at dinner (${rupees(paanai.price)}). ` +
-      `Add ${poppers.name} (${rupees(poppers.price)}) and finish with filter coffee (${rupees(filterCoffee.price)}).`,
+    `What is build-your-own dosa at ${name}?`,
+    `${byoDefinition} Batters cost ${batterRange}, and each addition is priced separately.`,
+    { id: "byo-dosa-definition" }
+  ),
+  qa(
+    `What should a first-timer order at ${name}?`,
+    `On a first visit to ${name}, order the ${sodhi.name} (${rupees(sodhi.price)}) at lunch, or a build-your-own dosa and ${paanai.name} (${rupees(paanai.price)}) at dinner. ` +
+      `Share ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}) or ${poppers.name} (${rupees(poppers.price)}), and finish with filter coffee (${rupees(filterCoffee.price)}). ` +
+      `For a quicker lunch, the ${combos.count} dine-in combos cost ${priceRange(combos)}.`,
     { id: "what-to-order" }
   ),
-  /* "Is Brihadhee good for families and groups?" moved to /family-dining-anna-nagar/ (src/data/spokes.js),
-     the page that now owns the family-dining intent (one Q&A per route). */
+  /* "Is Brihadhee good for families and groups?" lives on /family-dining-anna-nagar/ (src/data/spokes.js). */
   qa(
     `What is ${getFact("subBrand").name}?`,
-    `${getFact("subBrand").name} is a ${getFact("subBrand").description} brand from ${name}, the ${PV} restaurant in ${AREA}. ` +
-      `The restaurant itself focuses on South Indian food, with build-your-own dosa, ${dosa.count} classic dosas and Tirunelveli and Karaikudi dishes on its menu.`,
+    `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
+      `The restaurant itself serves South Indian food, led by build-your-own dosa and Tirunelveli and Karaikudi dishes.`,
     { id: "beyond-curry" }
   ),
   qa(
     `How much do dishes cost at ${name}?`,
-    `Dishes at ${name}, the ${PV} restaurant in ${AREA}, cost ${rupees(minPrice)} to ${rupees(maxPrice)} on the current menu. ` +
-      `Meals cost ${priceRange(meals)}, and every dish price is listed on the menu page.`,
+    `Dishes at ${name} cost ${rupees(minPrice)} to ${rupees(maxPrice)} on the current menu, before ${gst}. ` +
+      `Meals cost ${priceRange(meals)}, and every price is on the menu page.`,
     { id: "dish-prices" }
   ),
   qa(
     `Does ${name} have dining offers?`,
-    `Yes, ${name}, the ${PV} restaurant in ${AREA}, offers ${offer("walk-in").description}. ` +
-      `It also gives ${offer("pre-booking").description}. ` +
-      `Offers were checked on ${longDate(FACTS.offers.verifiedOn)} and can change, so confirm them in the booking app.`,
+    `Yes. ${name} gives ${offer("walk-in").description}, and ${offer("pre-booking").description}. ` +
+      `Offers were checked on ${longDate(FACTS.offers.verifiedOn)} and can change.`,
     { id: "offers" }
   ),
+  qa(`Who founded ${name}?`, `${getFact("founders").story} Its kitchen serves ${getFact("recipeStory")}.`, { id: "founders" }),
   qa(
-    `Who founded ${name}?`,
-    `${getFact("founders").story} ` + `Today ${name} is a ${PV} restaurant in ${AREA}, serving ${getFact("mealTimes")} every day from ${HOURS}.`,
-    { id: "founders" }
+    `Does ${name} do catering?`,
+    `Yes. ${name} runs ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
+      `Both are cooked in the restaurant's kitchen in ${AREA}.`,
+    { id: "catering" }
   ),
   ...taHome,
 ]);
 
 /* ---- /about/ (address, timings, contact) ---------------------------------- */
 export const aboutFaq = qaRoute("/about/", [
-  qa(
-    `Where is ${name} located?`,
-    `${name} is at ${ADDRESS}, near Anna Nagar Tower Park. ` + `The ${PV} restaurant's nearest landmarks are ${landmarkSentence()}.`,
-    { id: "location" }
-  ),
+  qa(`Where is ${name} located?`, `${name} is at ${ADDRESS}. Nearby landmarks: ${landmarkSentence()}.`, { id: "location" }),
   qa(
     `What are ${name}'s timings?`,
-    `${name} is open every day from ${HOURS}, serving ${PV} lunch and dinner at its restaurant in ${AREA}. ` +
-      `Lunch is served from ${OPEN}, dinner runs until ${CLOSE}, and tables can be pre-booked on ${bookingApps}.`,
+    `${name} in Anna Nagar is open every day from ${HOURS}, for lunch and dinner. ` +
+      `The last-order time is not published, so call ${phone} if you plan to arrive late.`,
     { id: "timings" }
   ),
   qa(
     `What meals does ${name} serve?`,
-    `${name} serves ${PV} South Indian lunch and dinner from ${HOURS} every day at its restaurant in ${AREA}. ` +
-      `Lunch centres on the ${sodhi.name} and Tamil Nadu meals, and dinner on build-your-own dosa, ${paanai.name} and idiyappam.`,
+    `${name} serves lunch and dinner only, from ${HOURS}. ` +
+      `Lunch centres on the ${sodhi.name} and Tamil Nadu meals; dinner on build-your-own dosa, ${paanai.name} and idiyappam.`,
     { id: "meals" }
   ),
   qa(
     `Is ${name} open on Sundays?`,
-    `Yes, ${name} is open on Sundays from ${HOURS}, like every other day of the week, serving ${PV} lunch and dinner in ${AREA}. ` +
-      `Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
+    `Yes. ${name} is open on Sundays from ${HOURS}, like every other day of the week. ` + `Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
     { id: "sundays" }
   ),
   qa(
     `Which areas is ${name} close to?`,
-    `${name}, the ${PV} restaurant in ${AREA}, draws diners from ${list(getFact("nearbyAreas"))}. ` +
-      `It sits near Anna Nagar Tower Park, and this page has Google Maps directions from ${getFact("directionLandmarks").length} nearby landmarks.`,
+    `${name} is in ${AREA}, near Anna Nagar Tower Park, and draws diners from ${list(getFact("nearbyAreas").filter((a) => a !== AREA))}. ` +
+      `This page has Google Maps directions from ${getFact("directionLandmarks").length} nearby landmarks.`,
     { id: "areas" }
   ),
   qa(
     `How do I contact ${name}?`,
-    `Call or WhatsApp ${name}, the ${PV} restaurant in ${AREA}, on ${phone}, or email ${email}, about tables, offers or catering. ` +
-      `Pre-booked tables get up to 40% off from Monday to Thursday.`,
+    `Call or WhatsApp ${name} on ${phone}, or email ${email}. ` +
+      `This is the restaurant's current number; a different number on an older post or listing is out of date.`,
     { id: "contact" }
   ),
 ]);
@@ -149,27 +172,45 @@ export const aboutFaq = qaRoute("/about/", [
 export const menuFaq = qaRoute("/menu/", [
   qa(
     `What is on the ${name} menu?`,
-    `The ${name} menu lists ${itemCount} dishes, all ${PV}, in ${categories.length} sections, from build-your-own dosa and ${dosa.count} classic dosas to lunch meals, parotta and filter coffee. ` +
-      `Prices run from ${rupees(minPrice)} to ${rupees(maxPrice)} at ${ADDRESS}.`,
+    `The ${name} menu in ${AREA} lists ${itemCount} vegetarian dishes in ${categories.length} sections, from build-your-own dosa and ${dosa.count} classic dosas to lunch meals, parotta, idiyappam and filter coffee. ` +
+      `Prices run from ${rupees(minPrice)} to ${rupees(maxPrice)}, before ${gst}.`,
     { id: "menu-overview" }
   ),
   qa(
     `Does ${name} serve filter coffee?`,
-    `Yes, ${name} serves filter coffee for ${rupees(filterCoffee.price)} at its ${PV} restaurant in ${AREA}, along with ${list(otherDrinks)}. ` +
-      `Filter coffee is served every day from ${HOURS}, with lunch and dinner.`,
+    `Yes. ${name} serves filter coffee for ${rupees(filterCoffee.price)}, with lunch and dinner from ${HOURS}. ` + `${list(otherDrinks)} are also on the menu.`,
     { id: "filter-coffee" }
   ),
   qa(
     `How much does a meal cost at ${name}?`,
-    `Meals at ${name} cost ${priceRange(meals)} across ${meals.count} options, from ${meals.cheapest.name} to ${meals.dearest.name}, at its ${PV} restaurant in ${AREA}. ` +
-      `Rice dishes such as ${list(riceDishes)} are listed separately on the menu.`,
+    `Meals at ${name} cost ${priceRange(meals)}, from ${meals.cheapest.name} to ${meals.dearest.name}. ` + `Rice dishes such as ${list(riceDishes)} are listed separately.`,
     { id: "meal-cost" }
   ),
   qa(
     `Which idly and idiyappam dishes does ${name} serve?`,
-    `${name} serves ${idly.count} idly dishes and ${idiyappam.count} idiyappam dishes (${priceRange(idlyAll)}) at its ${PV} restaurant in ${AREA}, alongside ${dosa.count} classic dosas. ` +
-      `They include ${list([idly.names[0], idly.names[1], idiyappam.names[0]])}.`,
+    `${name} serves ${idly.count} idly dishes and ${idiyappam.count} idiyappam dishes, priced ${priceRange(idlyAll)}. ` +
+      `They include ${list([idly.names[0], idly.names[1], idiyappam.names[0]])}, served for lunch and dinner from ${OPEN}.`,
     { id: "idly-idiyappam" }
+  ),
+]);
+
+/* ---- /book-a-table/ ---------------------------------------------------------- */
+const prebook = offer("pre-booking").description.replace(/ when you pre-book a table through .*$/, ""); // "up to 40% off Monday to Thursday"
+const walkIn = offer("walk-in").description.replace(/ for walk-in dine-in$/, ""); // "10% off"
+export const bookingFaq = qaRoute("/book-a-table/", [
+  qa(
+    `Is a table booking at ${name} confirmed instantly?`,
+    `It depends on the app: ${name}'s website does not take bookings itself, so you pre-book on ${bookingOr}, and that app shows whether your booking is confirmed. ` +
+      `To confirm a table directly with the restaurant in ${AREA}, call ${phone}.`
+  ),
+  qa(
+    `Can ${name} seat a large group?`,
+    `Call ${name} on ${phone} before a large group visits, so the team can confirm seating for your date and time. ` +
+      `Seating capacity is not published; for ${CATERING_MIN_GUESTS} or more guests at your own venue, ask about catering.`
+  ),
+  qa(
+    `Do I need to book a table at ${name}?`,
+    `No. Walk-ins are welcome at ${name} every day from ${HOURS}, and walk-in diners get ${walkIn}. ` + `Pre-booking gets ${prebook}.`
   ),
 ]);
 

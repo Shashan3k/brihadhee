@@ -8,8 +8,10 @@
  * docs/seo/aeo-lint-report.md. Checks:
  *   1. FAQ JSON-LD text equals the visible FAQ text
  *   2. NAP: name, address, phone and email identical on every page and in schema
- *   3. Every FAQ question is followed by a paragraph of 15 to 60 words whose
- *      first sentence is 15 to 35 words, and the answer names "Brihadhee"
+ *   3. Every FAQ answer is direct: its first sentence (5 to 35 words; a leading
+ *      "Yes." or "No." is part of it) names the entity, the whole answer is at
+ *      most 80 words and names "Brihadhee". Length follows the question
+ *      (src/lib/answers.js qa() applies the fact/explain limits at build time).
  *   4. No pending fact is rendered (probes from src/data/entity-truth.ts)
  *   5. No phrase from docs/seo/avoid-terms.txt, with one exception (the exact
  *      question NEGATIVE_FAQ_QUESTION in config/seo-gates.ts), on any
@@ -23,8 +25,8 @@
  *   9. Catering is absent from the build and the sitemap while offer_catering is false
  *  10. JSON-LD parses and has no empty values
  *  11. Pages are complete without JavaScript (one H1, menu items present in the HTML)
- *  12. One Q&A per route: no FAQ question on two pages; the full address only in
- *      the first answer on a page; a visible "Last updated" line with every Q&A
+ *  12. One Q&A per route: no FAQ question on two pages; the street address in at
+ *      most one answer on a page; a visible "Last updated" line with every Q&A
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
@@ -53,7 +55,7 @@ const checks = new Map(); // id -> { title, errors: n }
 const CHECKS = {
   faq_equal: "FAQ JSON-LD equals visible FAQ",
   nap: "NAP identical everywhere",
-  answer_first: "Answer-first structure (15 to 35 / 15 to 60 words, names Brihadhee)",
+  answer_first: "Answer-first structure (first sentence 5 to 35 words, answer at most 80, names Brihadhee)",
   pending: "No pending fact rendered",
   avoid: "No avoid-list terms",
   superlatives: "No unsourced superlatives",
@@ -88,7 +90,7 @@ const decode = (s) =>
 const norm = (s) => decode(s).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
 // "No." in addresses ("New No. W-41") is an abbreviation, not a sentence end.
-const firstSentence = (s) => s.trim().split(/(?<=[.!?])(?<!\bNo\.)\s+/)[0];
+const firstSentence = (s) => s.trim().split(/(?<=[.!?])(?<!\b(?:No|Yes)\.)\s+/)[0];
 const digits = (s) => String(s).replace(/\D/g, "");
 
 function visibleText(html) {
@@ -190,7 +192,6 @@ if (cfg.offer_catering === true) {
 const phoneOk = (raw) => allowedPhones.includes(digits(raw).slice(-10));
 const pending = pendingFacts();
 const faqOwners = new Map(); // question -> page that shows it
-const addressText = `${addr.line1}, ${addr.line2}, ${addr.city}, ${addr.state} ${addr.postalCode}`;
 
 for (const p of pages) {
   const { name, html, nodes, text, head } = p;
@@ -215,21 +216,21 @@ for (const p of pages) {
   } else if (visible.length) {
     err("faq_equal", name, "FAQ visible on the page but no FAQPage JSON-LD");
   }
-  /* 12: one Q&A per route, full address only in the first answer, Last updated */
-  visible.forEach((v, i) => {
+  /* 12: one Q&A per route, the street address in at most one answer, Last updated */
+  visible.forEach((v) => {
     const owner = faqOwners.get(v.q.toLowerCase());
     if (owner && owner !== name) err("faq_route", name, `question also on ${owner}: "${v.q}"`);
     faqOwners.set(v.q.toLowerCase(), name);
-    if (i === 0 && !v.a.includes(addressText)) err("faq_route", name, `first answer does not state the full address: "${v.q}"`);
-    if (i > 0 && /W-41|W-Block/.test(v.a)) err("faq_route", name, `answer repeats the street address (first answer only): "${v.q}"`);
   });
+  const withStreet = visible.filter((v) => /W-41|W-Block/.test(v.a));
+  if (withStreet.length > 1) err("faq_route", name, `the street address appears in ${withStreet.length} answers (once per page): ${withStreet.map((v) => `"${v.q}"`).join(", ")}`);
   if (visible.length && !/Last updated:\s*[A-Z][a-z]+ \d{4}/.test(text)) err("faq_route", name, 'Q&A shown without a visible "Last updated: Month YYYY" line');
   for (const v of visible) {
     const w = words(v.a);
     const fs = firstSentence(v.a);
     const fw = words(fs);
-    if (w < 15 || w > 60) err("answer_first", name, `answer is ${w} words (needs 15 to 60): "${v.q}"`);
-    if (fw < 15 || fw > 35) err("answer_first", name, `first sentence is ${fw} words (needs 15 to 35): "${v.q}"`);
+    if (w < 5 || w > 80) err("answer_first", name, `answer is ${w} words (needs 5 to 80): "${v.q}"`);
+    if (fw < 5 || fw > 35) err("answer_first", name, `first sentence is ${fw} words (needs 5 to 35): "${v.q}"`);
     if (!/Brihadhee/.test(v.a)) err("answer_first", name, `answer does not name Brihadhee: "${v.q}"`);
     if (!/Brihadhee|பிரிஹதீ/.test(fs)) err("answer_first", name, `first sentence does not name the entity: "${v.q}"`);
   }

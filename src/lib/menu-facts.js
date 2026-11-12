@@ -118,3 +118,16 @@ export const byo = (() => {
   };
 })();
 export const menuNotes = MENU_NOTES;
+
+/**
+ * The canonical definition of Build Your Own Dosa (AEO audit 2026-11-12: one
+ * answer engine read "build your own" as a self-service cooking station). The
+ * guest chooses from the menu; the kitchen cooks. Used word for word on the home
+ * page, the dosa page, the home FAQ and both llms files.
+ */
+export const BYO_DEFINITION = {
+  sentence:
+    "At Brihadhee, build-your-own dosa means you choose the batter, podi and toppings, filling and roast from the menu, and the kitchen cooks your dosa to order and serves it at your table.",
+  notSelfService: "It is a chef-cooked custom dosa, not a self-service cooking station.",
+};
+export const byoDefinition = `${BYO_DEFINITION.sentence} ${BYO_DEFINITION.notSelfService}`;

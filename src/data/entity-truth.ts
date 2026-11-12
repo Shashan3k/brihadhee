@@ -337,7 +337,11 @@ export const FACTS = {
     "a Karthigai seasonal menu or offer: dish names, prices and dates",
     [/\bkarthigai\s+(?:special|menu|offer|thali)s?\b/i]
   ),
-  parking: unverified<string>("whether parking is available, and where", [/\bparking\b/i]),
+  /** Probes catch a parking claim, not the word: /faq/ says parking details are not published and to call. */
+  parking: unverified<string>("whether parking is available, and where", [
+    /\b(?:free|ample|valet|easy|dedicated|private|on[\s-]?site|own|with|has)\s+(?:car\s+|bike\s+|two[\s-]wheeler\s+)?parking\b/i,
+    /\bparking\s+(?:is\s+|are\s+)?(?:available|provided|facility|facilities|spaces?|lot|area)\b/i,
+  ]),
   googleRating: unverified<{ value: number; count: number; checkedOn: string }>(
     "current Google rating and review count from the verified Business Profile, with the date checked",
     [/\b857\b/, /\b4\.2\s*(?:★|stars?|\/\s*5|out of 5)/i, /google\s+(?:rating|reviews?)/i]

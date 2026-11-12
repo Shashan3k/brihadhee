@@ -22,6 +22,8 @@ import { getFact, addressLine, openingTimes } from "./entity-truth.ts";
 import * as GATES from "../../config/seo-gates.ts";
 import { ROUTES, href } from "./site.js";
 import { qa, qaRoute, claimQuestion, list } from "../lib/answers.js";
+import { taSmallFunctions } from "./faq-ta.js";
+import verification from "../../config/client-verification.json";
 import {
   cateringEnabled,
   corporateEnabled,
@@ -35,7 +37,7 @@ import {
   serviceAreas,
 } from "./catering.js";
 import { pageGraph, faqPageSchema, cateringServiceSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { byo, category, allItems, rupees, priceRange, summarise, filterCoffee } from "../lib/menu-facts.js";
+import { byo, category, allItems, rupees, priceRange, summarise, filterCoffee, menuNotes } from "../lib/menu-facts.js";
 
 /** Gated pages render as noindex drafts in `astro dev` or with SEO_GATES_PREVIEW=1. */
 export const gatePreview =
@@ -81,12 +83,26 @@ const item = (n) => {
 const sodhiMeals = item("Nellai Special Sodhi Meals");
 const paanai = item("Paanai Parotta");
 const poppers = item("Karaikudi Paneer Poppers");
+const kali = item("Karuppatti Ulundhu Kali");
+const idiyappamSodhi = item("Idiyappam Sodhi");
+const combos = category("combos");
 const lunch = category("lunch");
 const tnMeals = summarise(lunch.items.filter((i) => /TN Meals/.test(i.name)));
 const batters = byo.steps.find((s) => s.name === "Batter").options;
 const batterRange = priceRange(summarise(batters));
 const dish = (i) => ({ name: i.name, price: rupees(i.price), note: i.description });
 const svc = eventService ? eventService.replace(/^end-to-end service: /, "") : "menu planning, cooking and serving";
+/* Not yet confirmed by the owner (config/client-verification.json): clean-up and
+ * vessels, cooking on site or delivered, and the advance notice. Until each is
+ * confirmed the copy says it is agreed on the quote call; it never guesses. */
+const cleanupKnown = typeof verification.staff_serving_cleanup_included === "boolean";
+const cleanupLine = cleanupKnown
+  ? verification.staff_serving_cleanup_included
+    ? "Serving staff and clean-up are included."
+    : "Serving and clean-up are arranged by you."
+  : "Transport, vessels and clean-up are agreed for each function on the quote call.";
+const leadTime = typeof verification.advance_notice_required === "string" && verification.advance_notice_required ? verification.advance_notice_required : null;
+const corp = corporateEnabled ? getFact("corporateCatering") : null;
 
 /* ======================================================================= *
  * /small-function-catering-chennai/  (keyword plan 3.9a, priority 1)       *
@@ -102,25 +118,37 @@ function buildSmallFunctions() {
   const faq = qaRoute(path, [
     qa(
       "Who does small function catering in Anna Nagar?",
-      `${name}, the ${PV} restaurant in ${NEAR}, does small function catering from ${MIN} guests: ${CD} food for birthdays, housewarmings and get-togethers, cooked in its own kitchen. ` +
+      `${name}, a restaurant in ${NEAR}, does small function catering from ${MIN} guests: ${CD} food for birthdays, housewarmings and get-togethers, cooked in its own kitchen. ` +
         `It is at ${ADDRESS}.`
     ),
     qa(
       `What is the minimum guest count for ${name} catering?`,
-      `${name} caters functions from a minimum of ${MIN} guests across Chennai, with ${CD} food cooked in the kitchen of its ${PV} restaurant in ${NEAR}. ` +
-        `The same team caters functions of up to ${num(guests.max)} guests, and each quote is built for the event.`
+      `${name} caters functions from a minimum of ${MIN} guests, up to ${num(guests.max)}. ` + `For a smaller group, book a table at the restaurant instead.`
     ),
     qa(
       "How much does vegetarian catering cost per plate in Chennai?",
-      `At ${name}, the ${PV} restaurant in ${NEAR}, ${CD} catering is quoted per plate for each function from ${MIN} guests, not from a fixed rate card. ` +
-        `The price depends on the guest count, lunch or dinner, the dishes and live counters, serving staff and the spend you have in mind.`
+      `${name} quotes ${CD} catering per plate for each function, so it has no fixed rate card. ` +
+        `The price depends on the guest count (from ${MIN}), lunch or dinner, the dishes and live counters you choose, whether you need serving staff, and the spend per guest you have in mind.`,
+      { kind: "explain" }
+    ),
+    qa(
+      `What does ${name}'s end-to-end catering include?`,
+      `${name}'s end-to-end catering covers ${svc} by one team, with live counters for ${joinNatural(liveCounters)} if you want them. ` + cleanupLine
+    ),
+    qa(
+      `How far ahead should I book catering for ${MIN} guests?`,
+      leadTime
+        ? `Book ${name} catering at least ${leadTime} ahead of your function. Call ${cPhone} to check your date.`
+        : `${name} has not published a fixed booking lead time, so call ${cPhone} as soon as your date is set. ` +
+            `The team confirms whether it can take your date and guest count.`
     ),
     hasBirthday &&
       qa(
         `Can ${name} cater a birthday party for ${MIN} guests in Chennai?`,
-        `Yes, ${name} caters birthday parties across Chennai from ${MIN} guests, with ${CD} food from its ${PV} restaurant kitchen in ${NEAR} and a live build-your-own dosa counter if you want one. ` +
+        `Yes. ${name} caters birthday parties across Chennai from ${MIN} guests, with a live build-your-own dosa counter if you want one. ` +
           `Send the quote form with your date, venue and guest count, or call ${cPhone}.`
       ),
+    ...taSmallFunctions,
   ]);
 
   return {
@@ -246,29 +274,36 @@ function buildQuote() {
   const faq = qaRoute(path, [
     qa(
       `How do I get a catering quote from ${name}?`,
-      `To get a catering quote from ${name}, the ${PV} restaurant in ${NEAR}, send the form on this page with your event, guest count from ${MIN} and must-have dishes. ` +
-        `Its kitchen is at ${ADDRESS}.`
+      `To get a ${name} catering quote, send the form on this page with your event, lunch or dinner, guest count (from ${MIN}), must-have dishes, spend per guest and serving needs, or call ${cPhone}. ` +
+        (whatsappQuote
+          ? "The form opens WhatsApp with your details, and the team replies there with a menu and a per-plate price."
+          : "The form is emailed to the catering team, who call you back with a suggested menu and a per-plate price.")
+    ),
+    qa(
+      `What happens after I send ${name} a catering enquiry?`,
+      `${name}'s catering team ${reply}, then confirms the menu, date and price with you before anything is booked. ` +
+        `Nothing is confirmed automatically; the enquiry is a request for a quote.`
     ),
     qa(
       `Does ${name} provide serving staff with catering?`,
-      `Yes, ${name}'s end-to-end catering includes ${svc}, for functions of ${MIN} to ${num(guests.max)} guests across Chennai, with food from its ${PV} restaurant kitchen in ${NEAR}. ` +
-        "Tell the team in the quote form whether you need serving staff."
+      `Yes. ${name}'s end-to-end catering includes ${svc}, for functions of ${MIN} to ${num(guests.max)} guests across Chennai. ` +
+        `Say in the form whether you need serving staff. ${cleanupLine}`
     ),
     whatsappQuote
       ? qa(
           `Can I send a catering enquiry to ${name} on WhatsApp?`,
-          `Yes, the quote form on this page sends your details to ${name}'s catering team on WhatsApp at ${whatsappQuote}, for functions from ${MIN} guests. ` +
-            `The team at its ${PV} restaurant in ${NEAR} replies with a menu and a per-plate price.`
+          `Yes. The quote form on this page sends your details to ${name}'s catering team on WhatsApp at ${whatsappQuote}, for functions from ${MIN} guests. ` +
+            `The team replies with a menu and a per-plate price.`
         )
       : qa(
           `Can I send a catering enquiry to ${name} on WhatsApp?`,
-          `Yes, you can WhatsApp ${name}'s catering team on ${cWhatsapp}, at its ${PV} restaurant in ${NEAR}, with your event, date, venue and guest count from ${MIN}. ` +
-            "The team then suggests a menu and confirms a per-plate price."
+          `Yes. WhatsApp ${name}'s catering team on ${cWhatsapp} with your event, date, venue and guest count (from ${MIN}). ` +
+            "A team member replies; there is no automated WhatsApp quote yet, and the form on this page is answered with a call."
         ),
     qa(
       `What is on a ${CD} catering menu for ${MIN} people?`,
-      `A ${name} catering menu for ${MIN} guests is built from its ${PV} restaurant's dishes, such as Nellai sodhi, karupatti ulundhu kali and ${paanai.name}. ` +
-        `Live counters for build-your-own dosa can be added, and the final menu and per-plate price are agreed with the team in ${NEAR}.`
+      `A ${name} catering menu for ${MIN} guests is built from the restaurant's own dishes, such as Nellai sodhi, karupatti ulundhu kali and ${paanai.name}, made in its Anna Nagar East kitchen. ` +
+        `A live build-your-own dosa counter can be added, and the final menu and per-plate price are agreed with the team.`
     ),
   ]);
 
@@ -344,18 +379,18 @@ function buildFamily() {
   const faq = qaRoute(path, [
     qa(
       `Is ${name} good for families and groups?`,
-      `Yes, ${name} is a family-friendly, ${PV} restaurant in ${NEAR}, with dine-in for lunch and dinner every day from ${HOURS}. ` +
-        `It is at ${ADDRESS}.`,
+      `Yes. ${name} is a family-friendly, ${PV} restaurant in ${NEAR}, open for lunch and dinner every day from ${HOURS}. ` +
+        `For a large group, call ${phone} before you come so the team can arrange seating.`,
       { id: "families-groups" }
     ),
     qa(
       "Which Anna Nagar restaurant suits a family lunch after a temple visit?",
-      `${name}, a ${PV} restaurant in ${NEAR}, suits a family lunch after a temple visit: it opens at ${OPEN} daily, and no meat, egg or fish is cooked in its kitchen. ` +
+      `${name}, in ${NEAR}, suits a family lunch after a temple visit: it opens at ${OPEN} daily, and no meat, egg or fish is cooked in its kitchen. ` +
         `Its ${sodhiMeals.name} cost ${rupees(sodhiMeals.price)}, served on a banana leaf.`
     ),
     qa(
       "Which vegetarian restaurant in Anna Nagar is good for a birthday or anniversary dinner?",
-      `${name}, a ${PV} restaurant in ${NEAR}, serves dinner every day until ${CLOSE} and takes table pre-bookings for birthdays and anniversaries on ${bookingAnd}. ` +
+      `${name}, in ${NEAR}, serves dinner every day until ${CLOSE} and takes table pre-bookings for birthdays and anniversaries on ${bookingAnd}. ` +
         `Pre-booked tables get ${prebook}.`
     ),
   ]);
@@ -452,25 +487,40 @@ function buildFaqHub() {
   const faq = qaRoute(path, [
     /* The single permitted mention of the retired service: the exact question in
        config/seo-gates.ts, answered without repeating the word. */
+    qa(GATES.NEGATIVE_FAQ_QUESTION, `No. ${name} serves lunch and dinner only, from ${HOURS} every day.`, { id: GATES.NEGATIVE_FAQ_ID }),
     qa(
-      GATES.NEGATIVE_FAQ_QUESTION,
-      `No. ${name} serves lunch and dinner only, from ${HOURS} every day, at its ${PV} South Indian restaurant in ${NEAR}, Chennai. ` + `It is at ${ADDRESS}.`,
-      { id: GATES.NEGATIVE_FAQ_ID }
+      `Does ${name} serve non-veg food?`,
+      `No. ${name}'s restaurant is ${PV}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. ` +
+        `Its catering is ${CD}, and each function's menu is agreed in the quote.`
+    ),
+    qa(
+      `How is ${name} different from other pure veg restaurants in Anna Nagar?`,
+      `${name} is a ${PV} South Indian restaurant on ${STREET}, known for chef-cooked build-your-own dosa, Tirunelveli (Nellai) sodhi meals at lunch, and ${CD} catering from ${MIN} guests. ` +
+        `It is open ${HOURS} for lunch and dinner, and makes no claims about other restaurants.`,
+      { kind: "explain" }
     ),
     qa(
       `Is ${name} related to the Brihadeeswarar Temple?`,
-      `No, ${name} is a ${PV} South Indian restaurant in ${NEAR}, Chennai, and is not affiliated with the Brihadeeswarar Temple in Thanjavur. ` +
-        `Its name is a tribute to the temple and its Chola architecture, and the restaurant is open every day from ${HOURS}.`
+      `No. ${name} is a restaurant in Anna Nagar East, Chennai, and is not affiliated with the Brihadeeswarar Temple in Thanjavur. ` +
+        `Its name is a tribute to the temple and its Chola architecture.`
     ),
     qa(
       `Is ${name} on Swiggy or Zomato?`,
-      `Yes, ${name}, the ${PV} restaurant in ${NEAR}, has its own listings on Zomato and Swiggy Dineout, as well as EazyDiner and District. ` +
-        `Its full menu, with every price, is on this website, and the restaurant is open every day from ${HOURS}.`
+      `Yes. ${name} has its own listings on Zomato and Swiggy Dineout, as well as EazyDiner and District. ` + `Its full menu, with every price, is on this website.`
+    ),
+    qa(
+      `Does ${name} deliver food?`,
+      `${name} has not confirmed a delivery service on its website, so call ${phone} to check current delivery and parcel options for your area. ` +
+        `${menuNotes.parcel}`
     ),
     qa(
       `Can I book a table at ${name}?`,
-      `Yes, you can pre-book a table at ${name}, the ${PV} restaurant in ${NEAR}, on ${bookingOr}, or call ${phone}. ` +
-        `Pre-booked tables get ${prebook}, and walk-in diners get ${walkIn}.`
+      `Yes. Pre-book a table at ${name} on ${bookingOr}, or call ${phone}. ` + `Pre-booked tables get ${prebook}, and walk-in diners get ${walkIn}.`
+    ),
+    qa(
+      `Is there parking at ${name}?`,
+      `${name} has not published parking details yet, so call ${phone} before you visit to ask about parking near the restaurant at your time. ` +
+        `Directions from nearby landmarks are on the address and contact page.`
     ),
   ]);
   const topic = (label, route) => ({ label, href: `${href(route)}#faq` });
@@ -482,6 +532,32 @@ function buildFaqHub() {
     eyebrow: "FAQ · Anna Nagar East",
     intro: `Short answers about ${name}, the ${PV} South Indian restaurant in ${NEAR}, Chennai, open every day from ${HOURS} for lunch and dinner only. Listings that still show a morning opening time are out of date. Each topic below links to the page with the full answers.`,
     menuHref: href(ROUTES.menu),
+    sections: [
+      {
+        id: "first-visit",
+        title: `A First Visit to ${name}: What to Order`,
+        lead: `On a first visit to ${name}, order by meal: the ${sodhiMeals.name} at lunch, and build-your-own dosa or ${paanai.name} at dinner. Everything below is on the current menu, with its price.`,
+        items: [
+          {
+            title: "Lunch",
+            text: `The [${sodhiMeals.name}](${ROUTES.lunch}) (${rupees(sodhiMeals.price)}): a Tirunelveli banana-leaf meal with sodhi and ${kali.name}. For something lighter, Tamil Nadu meals cost ${priceRange(tnMeals)}; for a quick lunch, a dine-in combo costs ${priceRange(combos)} (lunch only).`,
+          },
+          {
+            title: "Dinner",
+            text: `A [build-your-own dosa](${ROUTES.dosa}) from ${byo.batterCount} batters (${batterRange}), or [${paanai.name}](${ROUTES.dinner}) (${rupees(paanai.price)}), parotta slow-cooked with salna in a sealed pot.`,
+          },
+          {
+            title: "To share",
+            text: `${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}), idiyappam in a coconut milk stew, or ${poppers.name} (${rupees(poppers.price)}).`,
+          },
+          {
+            title: "To finish",
+            text: `${filterCoffee.name} (${rupees(filterCoffee.price)}), or ${kali.name} (${rupees(kali.price)}) if you skipped the Nellai meal. ${menuNotes.gst}`,
+          },
+        ],
+        links: [{ label: "Full menu with prices", href: href(ROUTES.menu), primary: true }],
+      },
+    ],
     faqTitle: `${name}: quick answers`,
     faq,
     topics: [
@@ -547,13 +623,13 @@ function buildNoOnion() {
     ),
     qa(
       `Can I get a no onion no garlic dosa at ${name}?`,
-      `Yes, at ${name}, the ${PV} restaurant in ${NEAR}, you can build your own dosa without onion and garlic: choose one of ${byo.batterCount} batters and skip the ${list(onionGarlicToppings)}. ` +
+      `Yes. At ${name} you can build your own dosa without onion and garlic: choose one of ${byo.batterCount} batters and skip the ${list(onionGarlicToppings)}. ` +
         `Ask the team which podis suit you; dosas are served from ${HOURS}.`
     ),
     showJain &&
       qa(
         `Is ${name} Jain friendly?`,
-        `${name}, the ${PV} restaurant in ${NEAR}, offers no onion, no garlic options ${avail}, and guests who also avoid root vegetables can tell the team when they order. ` +
+        `${name} offers no onion, no garlic options ${avail}, and guests who also avoid root vegetables can tell the team when they order. ` +
           `It does not call its kitchen Jain, so ask about each dish; it is open from ${HOURS}.`
       ),
   ]);

@@ -88,6 +88,8 @@ const GATES = {
   "Which events does Brihadhee cater?": () => nonEmpty(cfg.confirmed_events),
   "Does Brihadhee cater outside Anna Nagar?": () => nonEmpty(cfg.service_area),
   "How do I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
+  /* Answered with the confirmed lead time, or "not published, call" while advance_notice_required is null. */
+  "How far ahead should I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
   "How is Brihadhee catering priced?": () => ["per_plate", "on_request"].includes(cfg.pricing_model),
 };
 const TARGET_QUESTIONS = Object.keys(GATES);

@@ -17,7 +17,7 @@ import { cateringEnabled, corporate, guests, liveCounters } from "./catering.js"
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
-import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee } from "../lib/menu-facts.js";
+import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, byoDefinition, BYO_DEFINITION, menuNotes } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
@@ -60,6 +60,10 @@ const kali = item("Karuppatti Ulundhu Kali");
 const poppers = item("Karaikudi Paneer Poppers");
 const kothu = item("Special Kothu Parotta");
 const kothuChapathi = item("Special Kothu Chapathi");
+const parottaSalna = item("Parotta Salna (2 pcs)");
+const maduraiSalna = item("Madurai Salna Parotta");
+const idiCoconut = item("Idiyappam Coconut Milk");
+const kothuIdiyappam = idiyappam.items.filter((i) => /kothu/i.test(i.name));
 const dinnerParotta = summarise(findItems(/parotta/i).filter((i) => i.category !== combos.name));
 const tnMeals = summarise(lunch.items.filter((i) => /TN Meals/.test(i.name)));
 const sodhiParts = sodhiMeals.description.replace(/\.$/, "");
@@ -73,6 +77,12 @@ const batterRange = priceRange(summarise(batters));
 const dearestSuggestion = [...byo.suggestions].sort((a, b) => b.price - a.price)[0];
 const suggestionRange = `${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}`;
 const counterHasDosa = liveCounters.some((c) => /build your own dosa/i.test(c));
+/** Cheapest option of a Build Your Own Dosa step ("Topping", "Stuffing", "Garnish"), as "₹15". */
+const stepFrom = (step) => {
+  const st = byo.steps.find((s) => s.name === step);
+  if (!st) throw new Error(`[pages] Build Your Own Dosa step "${step}" not found in menu-canonical.ts`);
+  return rupees(Math.min(...st.options.map((o) => o.price)));
+};
 
 /* ---- Home / ------------------------------------------------------------- */
 export const homePage = {
@@ -93,7 +103,7 @@ export const homePage = {
     id: "home-dosa",
     eyebrow: "Signature",
     title: "Build Your Own Dosa, Your Way",
-    lead: `At ${name}, you build your own dosa: pick one of ${byo.batterCount} batters (${batterRange}), add podi and toppings, a filling and a ghee, butter or oil roast, and the kitchen makes it your way. ${byo.suggestionCount} chef's combinations cost ${suggestionRange}.`,
+    lead: `${byoDefinition} Pick one of ${byo.batterCount} batters (${batterRange}) and add what you like, or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
     links: [{ label: "How build your own dosa works", href: href(ROUTES.dosa), primary: true }],
     image: { name: "dosa", alt: "Crisp golden dosa with chutney and sambar, the base of a build-your-own dosa at Brihadhee", caption: "Build your own dosa at Brihadhee" },
   },
@@ -154,6 +164,9 @@ const CLASSIC_DOSAS = [
   { title: "Navadhaniya Dosa", batter: batterBy(/navadhan/i), grain: "navadhaniya (nine-grain)" },
   { title: "Madurai Malli Dosa", item: item("Madurai Malli Dosa") },
 ];
+const ghee = item("Ghee Roast");
+const gheePodi = item("Ghee Podi Dosa");
+const plain = item("Plain Dosa");
 const classicNames = new Set(CLASSIC_DOSAS.filter((d) => d.item).map((d) => d.item.name));
 const otherDosas = dosa.items.filter((i) => !classicNames.has(i.name));
 
@@ -162,7 +175,8 @@ export const dosaPage = {
   title: `Build Your Own Dosa in Chennai | ${name}, Anna Nagar`,
   description: `Choose your batter, roast, fillings and podi, and we cook your dosa your way. Build your own dosa at ${name}, Anna Nagar. Lunch and dinner daily.`,
   h1: `Build Your Own Dosa at ${name}, Anna Nagar`,
-  intro: `${name} is a ${PV} restaurant on ${STREET} where you build your own dosa: pick one of ${byo.batterCount} batters, then add podi and toppings, a filling and your roast. It is served for lunch and dinner, every day from ${HOURS}.`,
+  /* The canonical definition leads the page (AEO audit 2026-11-12: "build your own" was read as a self-service station). */
+  intro: `${byoDefinition} ${name} is a ${PV} restaurant on ${STREET}, serving lunch and dinner every day from ${HOURS}.`,
   glance: [
     ["Who", `${name}, a ${PV} restaurant in Anna Nagar East`],
     ["Batters", `${byo.batterCount} batters, ${batterRange}`],
@@ -175,7 +189,21 @@ export const dosaPage = {
   definition: {
     id: "what-is-byo-dosa",
     title: "What Is a Build-Your-Own Dosa?",
-    lead: `A build-your-own dosa is a dosa you design yourself: you choose the batter, the podi and toppings, the filling and the ghee, butter or oil it is roasted in. At ${name} in Anna Nagar East, ${byo.batterCount} batters cost ${batterRange} and each add-on is priced separately.`,
+    lead: `${BYO_DEFINITION.sentence} Guests do not cook: the ${name} kitchen in Anna Nagar East makes every dosa.`,
+    items: [
+      {
+        title: "Classic dosa or build-your-own?",
+        text: `At ${name}, a classic dosa, such as the ${item("Ghee Roast").name} or ${item("Ghee Masala Dosa").name}, is a fixed recipe at a fixed price (${dosa.count} on the menu, ${priceRange(dosa)}). A build-your-own dosa starts from a batter and you choose every addition. The ${byo.suggestionCount} chef's combinations sit in between: ready-made builds with a printed price (${suggestionRange}).`,
+      },
+      {
+        title: "How a custom dosa is priced",
+        text: `You pay for the batter (${batterRange}) plus each addition you pick: podi and toppings from +${stepFrom("Topping")}, fillings from +${stepFrom("Stuffing")} and a roast from +${stepFrom("Garnish")}. ${menuNotes.gst}`,
+      },
+      {
+        title: "Ordering, step by step",
+        text: `1. Choose a batter. 2. Add podi and toppings. 3. Add a filling. 4. Choose a ghee, butter or oil roast. Tell your server, or name a chef's combination; the kitchen cooks it to order and brings it to your table. ${menuNotes.prep}`,
+      },
+    ],
   },
   howItWorks: {
     id: "how-it-works",
@@ -218,23 +246,34 @@ export const dosaPage = {
   faq: qaRoute(ROUTES.dosa, [
     qa(
       "Which restaurant in Anna Nagar lets you customise your dosa?",
-      `${name}, a ${PV} restaurant in Anna Nagar East, lets you customise your dosa: pick one of ${byo.batterCount} batters, then add podi, a filling and a ghee, butter or oil roast. ` +
+      `${name}, a ${PV} restaurant in Anna Nagar East, lets you customise your dosa: you pick the batter, podi, filling and roast, and the kitchen cooks it to order. ` +
         `It is at ${ADDRESS}.`
     ),
     qa(
       `Can I build my own dosa at ${name}?`,
-      `Yes, ${name} lets you build your own dosa at its ${PV} restaurant in Anna Nagar East, starting from one of ${byo.batterCount} batters (${batterRange}). ` +
-        `You then add podi and toppings, a filling and your roast, or order one of ${byo.suggestionCount} chef's suggestions for ${suggestionRange}.`
+      `Yes. At ${name} you choose one of ${byo.batterCount} batters (${batterRange}), then podi and toppings, a filling and a roast, and the kitchen cooks it for you. ` +
+        `Or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`
+    ),
+    qa(
+      `Is build-your-own dosa at ${name} a self-service counter?`,
+      `No. At ${name} you choose the ingredients and the kitchen cooks your dosa to order and serves it at your table; guests do not cook. ` +
+        `At catered events, the live dosa counter is run by ${name}'s own team.`
     ),
     qa(
       "Which restaurant serves the best dosa in Anna Nagar?",
-      `${name}, a ${PV} restaurant in Anna Nagar East, is built around dosa: you can build your own from ${byo.batterCount} batters or order one of ${dosa.count} classic dosas. ` +
-        `Classic dosas cost ${priceRange(dosa)}, served for lunch and dinner from ${HOURS}.`
+      `${name}, in Anna Nagar East, is a dosa-led restaurant: you can build your own from ${byo.batterCount} batters or order one of ${dosa.count} classic dosas (${priceRange(dosa)}). ` +
+        `Taste is personal, so ${name} states its menu rather than a ranking; dosas are served for lunch and dinner from ${HOURS}.`
     ),
     qa(
       `How much does a dosa cost at ${name}?`,
-      `Classic dosas at ${name} cost ${priceRange(dosa)} at its ${PV} restaurant in Anna Nagar East. ` +
-        `A build-your-own dosa starts with a batter at ${batterRange}, plus each add-on, and the chef's suggestions cost ${suggestionRange}.`
+      `Classic dosas at ${name} cost ${priceRange(dosa)}. ` +
+        `A build-your-own dosa costs the batter (${batterRange}) plus each addition, and the chef's combinations cost ${suggestionRange}, before ${menuNotes.gst.replace(/^Prices exclude /, "").replace(/\.$/, "")}.`
+    ),
+    qa(
+      "What is the difference between ghee roast, paper roast and podi dosa?",
+      `At ${name}, the ${ghee.name} (${rupees(ghee.price)}) is a ${lc(ghee.description)}, and the ${gheePodi.name} (${rupees(gheePodi.price)}) is a ${lc(gheePodi.description)}. ` +
+        `The menu does not list a separate paper roast; for a plain crisp dosa, order the ${plain.name} (${rupees(plain.price)}), or build one and choose your roast.`,
+      { kind: "explain" }
     ),
     ...taDosa,
   ]),
@@ -317,18 +356,22 @@ export const nellaiPage = {
   faq: qaRoute(ROUTES.lunch, [
     qa(
       `What are Nellai meals at ${name}?`,
-      `Nellai meals at ${name} are the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), a Tirunelveli-style banana-leaf lunch built around sodhi, a coconut milk stew, at its ${PV} restaurant. ` +
-        `${name} is at ${ADDRESS}.`
+      `At ${name}, Nellai meals are the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}): a Tirunelveli-style banana-leaf lunch built around sodhi, a coconut milk stew. ` +
+        `It ends with ${kali.name}, a sweet of black urad dal and palm jaggery.`
     ),
     qa(
       "Where can I get Nellai meals in Chennai?",
-      `${name} serves the ${sodhiMeals.name} for ${rupees(sodhiMeals.price)} at its ${PV} restaurant in Anna Nagar East, Chennai, every day from ${OPEN}. ` +
-        `The Tirunelveli-style meal comes with rice, sodhi, sambar, rasam, kootu, poriyal and ${lc(kali.name)}.`
+      `${name} in Anna Nagar East, Chennai, serves the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) at lunch every day from ${OPEN}. ` + `It is at ${ADDRESS}.`
     ),
     qa(
       "Where can I get a pure veg lunch in Anna Nagar East?",
-      `${name} serves a ${PV} lunch in Anna Nagar East from ${OPEN}, with ${lunch.count} lunch dishes from ${rupees(lunch.min)} to ${rupees(lunch.max)}. ` +
-        `The ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) is the regional signature; ${list(tnMeals.names)} are simpler options.`
+      `${name} serves a ${PV} lunch in Anna Nagar East every day from ${OPEN}. ` +
+        `Choose the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), ${list(tnMeals.names)} (${priceRange(tnMeals)}), or a lunch-only dine-in combo (${priceRange(combos)}).`
+    ),
+    qa(
+      `Does ${name} have lunch combos?`,
+      `Yes. ${name} serves ${combos.count} dine-in combos at lunch only, priced ${priceRange(combos)}. ` +
+        `They include the ${combos.cheapest.name} and the ${combo.name}. ${menuNotes.prep}`
     ),
     ...taNellai,
   ]),
@@ -402,18 +445,27 @@ export const dinnerPage = {
   faq: qaRoute(ROUTES.dinner, [
     qa(
       "Where can I get Paanai Parotta in Chennai?",
-      `You can get Paanai Parotta (claypot parotta) for ${rupees(paanai.price)} at ${name}, a ${PV} restaurant in Anna Nagar East, Chennai, open until ${CLOSE}. ` +
-        `${name} is at ${ADDRESS}.`
+      `${name} in Anna Nagar East, Chennai, serves Paanai Parotta (claypot parotta) for ${rupees(paanai.price)}, every day until ${CLOSE}. ` + `It is at ${ADDRESS}.`
+    ),
+    qa(
+      `What is Paanai Parotta at ${name}?`,
+      `At ${name}, ${paanai.name} (${rupees(paanai.price)}) is ${lc(paanai.description)}. ` +
+        `The salna is cooked into the pot; for parotta with salna on the side, order ${parottaSalna.name.replace(/ \(2 pcs\)$/, "")} (2 pcs, ${rupees(parottaSalna.price)}) or ${maduraiSalna.name} (${rupees(maduraiSalna.price)}).`
     ),
     qa(
       "Where can I get veg kothu parotta in Anna Nagar?",
-      `${name} serves veg kothu parotta at its ${PV} restaurant in Anna Nagar East: ${kothu.name} for ${rupees(kothu.price)}, made as ${lc(kothu.description)}. ` +
+      `${name} in Anna Nagar East serves veg kothu parotta as the ${kothu.name} (${rupees(kothu.price)}): ${lc(kothu.description)}. ` +
         `At lunch, the ${combo.name} costs ${rupees(combo.price)}.`
     ),
     qa(
+      `What does ${name} serve with idiyappam?`,
+      `${name} serves idiyappam with sweet coconut milk as ${idiCoconut.name} (${rupees(idiCoconut.price)}), or with sodhi, a coconut milk stew, as ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}). ` +
+        `For a fuller plate, order kothu idiyappam: ${list(kothuIdiyappam.map((i) => i.name))} (${priceRange(summarise(kothuIdiyappam))}).`
+    ),
+    qa(
       `Is ${name} open for dinner after 9 PM?`,
-      `Yes, ${name}, the ${PV} restaurant in Anna Nagar East, is open every day until ${CLOSE}, so you can sit down for dinner after 9 PM. ` +
-        `Call ${phone} to check the last order time before you set out.`
+      `Yes. ${name} is open until ${CLOSE} every day, so you can sit down for dinner after 9 PM. ` +
+        `The last-order time is not published; call ${phone} to check before you set out.`
     ),
   ]),
 };
@@ -498,7 +550,7 @@ const liveDosaGroups = cateringEnabled && guests;
 export const seasonalPage = {
   path: ROUTES.seasonal,
   title: `Karthigai & Ayyappa Mala Pure Veg Food, Chennai | ${name}`,
-  description: `100% pure veg lunch and dinner, plus ${CATERING_DIET} group catering, for Karthigai month and Ayyappa mala: no meat, egg, fish or alcohol. ${name}, Anna Nagar.`,
+  description: `100% pure veg lunch and dinner for Karthigai and Ayyappa mala, with no meat, egg, fish or alcohol, plus ${CATERING_DIET} group catering. ${name}, Anna Nagar.`,
   h1: "Pure Veg Food for Karthigai and Ayyappa Mala in Chennai",
   intro: `${name} is a ${PV} restaurant in Anna Nagar East, Chennai, that also caters functions: no meat, egg or fish is cooked in its kitchen and alcohol is not served. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
   sections: [
@@ -554,7 +606,7 @@ export const seasonalPage = {
   faq: qaRoute(ROUTES.seasonal, [
     qa(
       "Where can Ayyappa devotees eat pure veg food in Anna Nagar?",
-      `Ayyappa devotees can eat at ${name}, a ${PV} restaurant in Anna Nagar East where no meat, egg or fish is cooked and alcohol is not served, open from ${HOURS}. ` +
+      `Ayyappa devotees can eat at ${name}, a ${PV} restaurant in Anna Nagar East where no meat, egg or fish is cooked and alcohol is not served. ` +
         `It is at ${ADDRESS}.`
     ),
     noOnionGarlic
@@ -565,14 +617,14 @@ export const seasonalPage = {
         )
       : qa(
           `Does ${name} use onion and garlic?`,
-          `Yes, some dishes at ${name}, the ${PV} restaurant in Anna Nagar East, contain onion or garlic, such as ${list([...onionGarlicDishes, ...onionGarlicToppings].slice(0, 2))}. ` +
+          `Yes. Some dishes at ${name} contain onion or garlic, such as ${list([...onionGarlicDishes, ...onionGarlicToppings].slice(0, 2))}. ` +
             `If you avoid them during the Ayyappa mala, call ${phone} or ask the team which dishes suit you before ordering.`
         ),
     ...(liveDosaGroups
       ? [
           qa(
             `Can ${name} cater a Karthigai get-together in Chennai?`,
-            `Yes, ${name} caters ${CATERING_DIET} family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, cooked in its ${PV} kitchen in Anna Nagar East, with live counters for build-your-own dosa and Paanai Parotta. ` +
+            `Yes. ${name} caters ${CATERING_DIET} family get-togethers across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for build-your-own dosa and Paanai Parotta. ` +
               `Send the quote form or call ${phone} with your date and headcount.`
           ),
         ]

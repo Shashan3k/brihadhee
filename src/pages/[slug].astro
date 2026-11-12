@@ -142,6 +142,7 @@ const cp = corporatePage;
     <ContentSection {...cp.services} />
     <ContentSection {...cp.menus} />
     <ContentSection {...cp.process} />
+    {cp.checklist && <ContentSection {...cp.checklist} />}
     {cp.safety && <ContentSection {...cp.safety} />}
     {cp.areas && <ContentSection {...cp.areas} />}
     <Faq items={cp.faq} title="Corporate catering questions" lead="" eyebrow="Questions" />

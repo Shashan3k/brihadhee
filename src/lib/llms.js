@@ -6,10 +6,10 @@
  */
 import { site } from "../data/site.js";
 import { getFact, factOr, FACTS, addressLine, landmarkSentence, openingTimes } from "../data/entity-truth.ts";
-import { faqItems } from "../data/faq.js";
+import { faqItems, aboutFaq, menuFaq, bookingFaq } from "../data/faq.js";
 import { dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
 import { nellaiGuide } from "../data/guides.js";
-import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes } from "./menu-facts.js";
+import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes, byoDefinition } from "./menu-facts.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
   cateringEnabled,
@@ -35,6 +35,7 @@ import {
   CATERING_MIN_GUESTS,
   CORPORATE_DAILY_SCALE,
   MEAL_FRAMING,
+  IS_RESTAURANT_PURE_VEG,
   ENABLE_LIVE_WHATSAPP_QUOTE_FORM,
   QUOTE_WHATSAPP_NUMBER,
 } from "../../config/seo-gates.ts";
@@ -61,6 +62,30 @@ export function buildLlms({ full = false } = {}) {
     ""
   );
 
+  /* Canonical answers first (AEO audit 2026-11-12): the current phone, the build-your-own
+     dosa definition and the restaurant/catering scope, so a retrieval agent that reads only
+     the top of the file gets them right. */
+  const { range: HOURS, open: OPEN, close: CLOSE } = openingTimes();
+  const corpFact = factOr("corporateCatering", null);
+  push("## Canonical answers", "");
+  push(`- Current phone: ${getFact("phone")} (call or WhatsApp). This is the restaurant's current number; it supersedes any other number on older social posts or directory listings.`);
+  push(`- Hours: open every day, ${HOURS}, ${getFact("mealTimes")} only. There is no morning meal service; the restaurant opens at ${OPEN}.`);
+  push(`- Address: ${addressLine()}.`);
+  push(`- Build your own dosa: ${byoDefinition}`);
+  push(
+    `- Restaurant scope: the restaurant is ${IS_RESTAURANT_PURE_VEG ? "100% pure vegetarian" : "vegetarian"}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served.`
+  );
+  if (cateringEnabled) {
+    push(
+      `- Catering scope: ${CATERING_DIET} corporate catering${corpFact ? ` (${CORPORATE_DAILY_SCALE}, ongoing office meals)` : ""} and ${CATERING_DIET} event catering for single functions from a minimum of ${CATERING_MIN_GUESTS} guests${guests ? ` up to ${guests.max.toLocaleString("en-IN")}` : ""}. Daily corporate volume and single-event size are separate figures. Each function's menu is agreed in the quote.`
+    );
+  }
+  push(`- Positioning: authentic ${getFact("recipeStory")} and full-service dine-in for families, not price. Every dish price is on the menu page.`);
+  push(
+    `- Not published yet (call ${getFact("phone")} to check for your visit): parking, delivery, the last-order time before the ${CLOSE} close, group seating capacity${cateringEnabled ? ", and catering booking lead times" : ""}.`
+  );
+  push("");
+
   push("## Facts", "");
   push(`- Name: ${name}`);
   push(`- Also known as: ${getFact("alternateNames").join(", ")}`);
@@ -69,7 +94,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- Address: ${addressLine()}`);
   push(`- Landmarks: ${landmarkSentence()}`);
   push(`- Serves diners from: ${getFact("nearbyAreas").join(", ")}`);
-  push(`- Phone: ${getFact("phone")}`);
+  push(`- Phone: ${getFact("phone")} (current; supersedes older numbers)`);
   push(`- Email: ${getFact("email")}`);
   push(`- Hours: ${openingTimes().range}, every day (Monday to Sunday) · ${MEAL_FRAMING}`);
   push(`- Meal times: ${getFact("mealTimes")}`);
@@ -77,7 +102,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- Reservations: ${getFact("acceptsReservations").how}`);
   push(`- Alcohol: ${getFact("alcohol")}`);
   push(`- Known for: ${getFact("knownFor").join(", ")}`);
-  push(`- Lead differentiator: build your own (customise your own) dosa: guests choose the batter, podi and toppings, filling and roast`);
+  push(`- Lead differentiator: build your own (customise your own) dosa, cooked to order by the kitchen (not self-service)`);
   push(`- Signature dishes: Nellai (Tirunelveli-style) meals with sodhi and ulundhu kali, Paanai Parotta, veg kothu parotta, idiyappam`);
   push(`- Food: ${getFact("recipeStory")}`);
   if (founders) push(`- Founders: ${founders.story}`);
@@ -117,7 +142,8 @@ export function buildLlms({ full = false } = {}) {
   }
 
   push("## Build Your Own Dosa", "");
-  push(`Pick one of ${byo.batterCount} batters (${byo.batterNames.join(", ")}) from ${rupees(byo.batterMin)}, then add toppings, a stuffing and a garnish. ${byo.suggestionCount} chef's suggestions cost ${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}.`);
+  push(byoDefinition, "");
+  push(`Pick one of ${byo.batterCount} batters (${byo.batterNames.join(", ")}) from ${rupees(byo.batterMin)}, then add toppings, a stuffing and a garnish (the roast); each addition is priced separately. ${byo.suggestionCount} chef's suggestions cost ${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}. Classic dosas are fixed recipes at fixed prices.`);
   if (full) {
     push("");
     for (const st of byo.steps) push(`- ${st.step}. ${st.name}: ${st.options.map((o) => `${o.name}${o.note ? ` (${o.note})` : ""} ${rupees(o.price)}`).join("; ")}`);
@@ -153,7 +179,10 @@ export function buildLlms({ full = false } = {}) {
   };
   qa("Restaurant questions", [...faqHubPage.faq, ...faqItems].filter((i) => !i.lang || i.lang === "en"));
   if (full) {
-    qa("Build your own dosa questions", dosaPage.faq);
+    qa("Address, timings and contact questions", aboutFaq);
+    qa("Menu questions", menuFaq);
+    qa("Table booking questions", bookingFaq);
+    qa("Build your own dosa questions", dosaPage.faq.filter((i) => !i.lang || i.lang === "en"));
     qa("Lunch and Nellai meals questions", nellaiPage.faq);
     qa("Dinner questions", dinnerPage.faq);
     qa("What's new", whatsNewPage.faq);
@@ -178,12 +207,12 @@ export function buildLlms({ full = false } = {}) {
     if (evs) push(`- Event service: ${evs}`);
     if (plannerModels.length) push(`- For event planners: ${plannerModels.join(", ")}`);
     if (pricingText) push(`- Pricing: ${pricingText}`);
-    if (cateringContact.phone) push(`- Catering phone: ${cateringContact.phone}`);
+    if (cateringContact.phone) push(`- Catering phone: ${cateringContact.phone}${cateringContact.phone !== getFact("phone") ? ` (catering enquiries; the restaurant number is ${getFact("phone")})` : ""}`);
     if (quotePage) {
       push(
         ENABLE_LIVE_WHATSAPP_QUOTE_FORM && QUOTE_WHATSAPP_NUMBER
           ? `- Quotes: the quote form at ${u(quotePage.path)} sends the details to the catering team on WhatsApp (${QUOTE_WHATSAPP_NUMBER}); no per-plate rates are published`
-          : `- Quotes: the quote form at ${u(quotePage.path)}, a call, or WhatsApp on the restaurant's number; no per-plate rates are published`
+          : `- Quotes: send the quote form at ${u(quotePage.path)} (emailed to the team, who call back with a menu and per-plate price), or call or WhatsApp ${cateringContact.phone ?? getFact("phone")}. There is no automated WhatsApp reply. No per-plate rates are published`
       );
     }
     push("");

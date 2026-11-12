@@ -16,7 +16,10 @@
 # hard-blocked (last section).
 
 # --- Unconfirmed services (restaurant) ---
-\bparking\b
+# Parking: a claim is blocked, not the word, so /faq/ can say parking is not
+# published yet and to call the restaurant (AEO audit 2026-11-12, section 4.2).
+\b(?:free|ample|valet|easy|dedicated|private|on[\s-]?site|own|with|has)\s+(?:car\s+|bike\s+|two[\s-]wheeler\s+)?parking\b
+\bparking\s+(?:is\s+|are\s+)?(?:available|provided|facility|facilities|spaces?|lot|area)\b
 \bhome\s+delivery\b
 \bfree\s+delivery\b
 \bonline\s+(?:order|ordering)\b

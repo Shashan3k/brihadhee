@@ -2,7 +2,9 @@
 /**
  * /book-a-table/: how to reserve. Brihadhee takes pre-bookings through partner
  * apps (Swiggy Dineout, EazyDiner, District), so there is no booking form here:
- * a form without a confirmed endpoint would lose bookings. Offers come from
+ * a form without a confirmed endpoint would lose bookings. The page says so, and
+ * says a group can confirm seating by phone (AEO audit 2026-11-12: whether a
+ * request is an instant booking was unclear). Q&A: bookingFaq in src/data/faq.js. Offers come from
  * entity-truth.ts (owner-confirmed; re-check monthly). Only partner URLs in
  * FACTS.bookingLinks are linked; the others are named.
  */
@@ -12,8 +14,10 @@ import Footer from "../components/Footer.astro";
 import PageHeader from "../components/PageHeader.astro";
 import Icon from "../components/Icon.astro";
 import { getFact } from "../data/entity-truth.ts";
-import { pageGraph, HOME_CRUMBS } from "../lib/schema.js";
+import Faq from "../components/Faq.astro";
+import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import { telHref } from "../data/site.js";
+import { bookingFaq } from "../data/faq.js";
 
 const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 const name = getFact("name");
@@ -42,6 +46,7 @@ const schema = pageGraph({
   title,
   description,
   crumbs: [...HOME_CRUMBS, { name: "Book a table", path }],
+  extras: [faqPageSchema(path, bookingFaq)],
 });
 ---
 
@@ -51,7 +56,7 @@ const schema = pageGraph({
     <PageHeader
       eyebrow="Reservations · Anna Nagar East"
       h1={`Book a table at ${name}, Anna Nagar East`}
-      intro={`You can walk in to ${name} for ${getFact("mealTimes")}, and walk-in diners get ${walkInPct} off. Pre-booking on Swiggy Dineout, EazyDiner or District gives ${preBook.description.replace(/ when you pre-book.*$/, "")}.`}
+      intro={`You can walk in to ${name} for ${getFact("mealTimes")}, and walk-in diners get ${walkInPct} off. To reserve, pre-book on Swiggy Dineout, EazyDiner or District (${preBook.description.replace(/ when you pre-book.*$/, "")}), or call ${phone}. This website does not take bookings itself.`}
       menuHref={`${base}menu/`}
     />
 
@@ -62,8 +67,12 @@ const schema = pageGraph({
           <li>Open Swiggy Dineout, EazyDiner or District and search for "{name}, Anna Nagar East".</li>
           <li>Choose the date, time and number of guests.</li>
           <li>Pick the pre-booking offer shown for your slot. The biggest discounts are on Monday to Thursday.</li>
-          <li>Show the booking at the counter when you arrive.</li>
+          <li>Check the booking status in that app, then show the booking at the counter when you arrive.</li>
         </ol>
+        <p>
+          A booking made in Swiggy Dineout, EazyDiner or District is handled by that app, and its status shows there. To confirm a
+          table directly with the restaurant, especially for a group, call {phone}.
+        </p>
         <div class="page-head__actions">
           {links.map((l) => (
             <a class="btn btn--primary" href={l.url} target="_blank" rel="noopener" data-event="book_table_click">
@@ -84,14 +93,16 @@ const schema = pageGraph({
       <div class="container">
         <h2 class="section__title" id="groups-title">Large groups and functions</h2>
         <p class="section__lead">
-          For a large family group, call {phone} before you come so the team can arrange seating. For functions of
-          50 guests or more, see <a href={`${base}catering-services-chennai/`}>{name} catering</a>.
+          For a large family group, call {phone} before you come so the team can confirm seating for your date and time; the
+          restaurant does not publish a seating capacity. For functions of 50 guests or more at your own venue, see
+          <a href={`${base}catering-services-chennai/`}>{name} catering</a>.
         </p>
         <p>
           {name} is {getFact("dietary")}, family-friendly and serves no alcohol. Every dish price is on the <a href={`${base}menu/`}>menu page</a>.
         </p>
       </div>
     </section>
+    <Faq items={bookingFaq} title="Table booking questions" lead="Direct answers about reserving a table at Brihadhee, Anna Nagar East." eyebrow="Questions" />
   </main>
   <Footer homeBase={base} />
 </Base>
