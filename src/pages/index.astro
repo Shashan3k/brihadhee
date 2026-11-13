@@ -1,10 +1,12 @@
 ---
 /**
  * Home: brand hub, following the on-page blueprint of 2026-11-11. Required H2s,
- * in order: Build Your Own Dosa, Your Way; Lunch; Dinner Until 11 PM; Catering
- * for Offices and Events; Why Guests Choose Brihadhee; What Guests Say; Visit Us
- * in Anna Nagar; Quick Answers. The full menu (every dish in the HTML, checked by
- * aeo-lint and verify), offers and gallery sit between "Why" and "What Guests Say".
+ * in order: Customized Dosa, Your Way (was "Build Your Own Dosa, Your Way"; client
+ * direction 2026-11-13); Lunch; Dinner Until 11 PM; Catering for Offices and Events;
+ * Why Guests Choose Brihadhee; What Guests Say; Visit Us in Anna Nagar; Quick
+ * Answers. The full menu (every dish in the HTML, checked by aeo-lint and verify),
+ * offers and gallery sit between "Why" and "What Guests Say". Contact and Careers
+ * (client direction 2026-11-13) close the page.
  */
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
@@ -19,6 +21,7 @@ import Reviews from "../components/Reviews.astro";
 import Visit from "../components/Visit.astro";
 import Faq from "../components/Faq.astro";
 import Contact from "../components/Contact.astro";
+import Careers from "../components/Careers.astro";
 import Footer from "../components/Footer.astro";
 import KolamDivider from "../components/KolamDivider.astro";
 import { homePage as page } from "../data/pages.js";
@@ -32,7 +35,7 @@ import { ROUTES, href } from "../data/site.js";
 >
   <Nav />
   <main id="main">
-    <Hero h1={page.h1} hoursLine={page.hoursLine} />
+    <Hero h1={page.h1} />
     <AtAGlance rows={page.glance} />
     <ContentSection {...page.byo} />
     <ContentSection {...page.lunch} />
@@ -48,6 +51,7 @@ import { ROUTES, href } from "../data/site.js";
     <KolamDivider />
     <Faq title="Quick Answers" eyebrow="FAQ" moreHref={href(ROUTES.faq)} />
     <Contact />
+    <Careers />
   </main>
   <Footer />
 </Base>

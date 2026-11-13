@@ -2997,3 +2997,323 @@ a.contact__channel:hover {
   border-bottom: 1px solid #e6c766;
   font-size: 0.95rem;
 }
+
+/* =========================================================================
+   Client updates, 2026-11-13: logo wordmark, hero details and slideshow,
+   Menu and Catering dropdowns, catering card legibility, Careers.
+   ========================================================================= */
+
+/* ---- Hero: the logo's own lettering as the title (Wordmark.astro) ---- */
+.hero__heading .hero__title {
+  display: block;
+  max-width: none;
+  margin: 0 0 1.1rem;
+  font-size: 1rem;
+  line-height: 0;
+  letter-spacing: 0;
+  color: #561c00; /* the wordmark brown of the official logo */
+}
+.hero__wordmark {
+  display: block;
+  width: min(100%, 34rem);
+  height: auto;
+}
+.hero__heading .hero__title-sub {
+  max-width: 30rem;
+  margin: 0 0 1rem;
+  font-family: var(--ff-display);
+  font-size: clamp(1.2rem, 2.3vw, 1.6rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* Hours and meal framing, as two clear chips */
+.hero__hours {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1.4rem;
+}
+.hero__hours > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid rgba(119, 82, 53, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--ink);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.hero__hours svg {
+  flex: none;
+  color: var(--orange);
+}
+
+/* Tagline: "Nostalgic Tamil Food with a Modern Twist" */
+.hero__tagline {
+  max-width: 30rem;
+  margin: 0;
+  font-family: var(--ff-display);
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #8c390c;
+}
+
+/* Featured on 3rd Avenue */
+.hero__features {
+  margin-top: 1.25rem;
+}
+.hero__features-label {
+  margin: 0 0 0.55rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.hero__features-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hero__features-list li {
+  padding: 0.42rem 0.85rem;
+  border: 1px solid rgba(158, 71, 42, 0.2);
+  border-radius: 999px;
+  background: rgba(158, 71, 42, 0.08);
+  color: #6b2f17;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.hero__actions {
+  margin-top: 1.75rem;
+}
+
+/* ---- Hero slideshow (Hero.astro, src/scripts/main.js) ---- */
+.hero-slides {
+  touch-action: pan-y;
+}
+.hero-slides__track {
+  position: absolute;
+  inset: 0;
+}
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.9s var(--ease);
+}
+.hero-slide.is-active {
+  opacity: 1;
+}
+.hero-slides__controls {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: calc(8% + 0.85rem);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.28rem;
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  border-radius: 999px;
+  background: rgba(250, 247, 241, 0.84);
+  box-shadow: 0 16px 38px -24px rgba(54, 31, 17, 0.58), inset 0 1px rgba(255, 255, 255, 0.86);
+  color: #332216;
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  transform: translate3d(-50%, 0, 65px);
+}
+.hero-slides__controls[hidden] {
+  display: none;
+}
+.hero-slides__btn {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: background-color 0.2s var(--ease);
+}
+.hero-slides__btn:hover {
+  background: rgba(43, 26, 16, 0.08);
+}
+.hero-slides__toggle .icon-play,
+.hero-slides__toggle[data-state="paused"] .icon-pause {
+  display: none;
+}
+.hero-slides__toggle[data-state="paused"] .icon-play {
+  display: block;
+}
+.hero-slides__dots {
+  display: inline-flex;
+  align-items: center;
+}
+.hero-slides__dot {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+}
+.hero-slides__dot::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(51, 34, 22, 0.32);
+  transition: width 0.3s var(--ease), background-color 0.3s var(--ease);
+}
+.hero-slides__dot:hover::before {
+  background: rgba(51, 34, 22, 0.6);
+}
+.hero-slides__dot[aria-current="true"]::before {
+  width: 18px;
+  background: #9e472a;
+}
+@media (max-width: 600px) {
+  .hero-slides__controls {
+    bottom: calc(9% + 0.6rem);
+  }
+  .hero-slides__btn {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* ---- Primary nav: Menu and Catering dropdowns (Nav.astro) ---- */
+@media (min-width: 900px) {
+  .nav__links {
+    gap: 0.35rem;
+  }
+  .nav__links > a,
+  .nav__group > summary {
+    font-size: 0.9rem;
+  }
+}
+.nav__menu--wide {
+  left: 0;
+  transform: none;
+  width: min(34rem, calc(100vw - 4rem));
+  padding: 0.5rem;
+}
+.nav__links .nav__menu .nav__menu-main {
+  font-weight: 600;
+  color: var(--ink);
+}
+.nav__menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.05rem 0.4rem;
+  margin-top: 0.35rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--line);
+}
+.nav__links .nav__menu-grid a {
+  padding: 0.5rem 0.8rem;
+  font-size: 0.84rem;
+  white-space: normal;
+}
+
+/* Mobile drawer: each dropdown is a collapsible group, so the drawer stays short and
+   "Visit & Contact" is always on screen. */
+.nav__panel {
+  max-height: calc(100dvh - var(--header-h) - 1.75rem);
+}
+.nav__panel-group {
+  display: block;
+  border-bottom: 1px solid var(--line);
+}
+.nav__panel-group > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0.85rem 0.25rem;
+  font-weight: 600;
+}
+.nav__panel-group > summary::-webkit-details-marker {
+  display: none;
+}
+.nav__panel-group > summary::after {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.3rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s var(--ease);
+}
+.nav__panel-group[open] > summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+.nav__panel-links {
+  display: grid;
+  padding: 0 0 0.5rem 0.75rem;
+}
+.nav__panel .nav__panel-links a {
+  min-height: 44px;
+  padding: 0.6rem 0.25rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line);
+}
+.nav__panel .nav__panel-links a:last-child {
+  border-bottom: 0;
+}
+
+/* ---- Catering / office events cards on light sections (ContentSection cards) ----
+   The .service colours in the "Editorial" block above were written for a dark band.
+   On the home page and the catering pages these cards sit on a light section, where
+   that cream text could not be read. Dark ink here. */
+.content__cards .service {
+  border-color: var(--line);
+  background: rgba(255, 253, 247, 0.92);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+}
+.content__cards .service:hover {
+  border-color: var(--line-strong);
+  background: var(--paper);
+  box-shadow: var(--shadow-md);
+}
+.content__cards .service h3,
+.content__cards .service > p {
+  color: var(--ink);
+}
+.content__cards .service > p a,
+.content__cards .service__link {
+  color: var(--orange-deep);
+}
+
+/* ---- Careers (Careers.astro) ---- */
+.careers__grid {
+  display: grid;
+  gap: 1.5rem 3rem;
+  align-items: center;
+}
+.careers__head .section__title {
+  max-width: 18ch;
+  margin: 0;
+}
+.careers__contact .contact__channels {
+  margin-top: 0.75rem;
+}
+@media (min-width: 860px) {
+  .careers__grid {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+}

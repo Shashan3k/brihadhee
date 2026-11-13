@@ -120,9 +120,9 @@ export const FACTS = {
   brandDescription: verified(
     {
       short:
-        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for build-your-own dosa, Nellai sodhi meals, Paanai Parotta and catering.",
+        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals, Paanai Parotta and catering.",
       long:
-        "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for build-your-own dosa, " +
+        "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
         `The same kitchen runs vegetarian corporate catering for ${num(CORPORATE_DAILY_MEALS)}+ meals a day and end-to-end vegetarian event catering ` +
         `for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests.`,
@@ -197,6 +197,12 @@ export const FACTS = {
   phone: verified("+91 73587 14113", PHONE_SWITCH, D12),
   whatsapp: verified("+91 73587 14113", PHONE_SWITCH, D12),
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
+  /** Careers section on the home page (client direction, 2026-11-13): job seekers call the
+   *  restaurant number or Rakesh. Rakesh's number is not on file yet, so his line stays hidden.
+   *  TODO(owner): when the number arrives, replace this with
+   *    verified({ name: "Rakesh", phone: "+91 9xxxx xxxxx" }, "<who confirmed it>", "<YYYY-MM-DD>")
+   *  scripts/aeo-lint.mjs then allows that number on the page. */
+  careersContact: unverified<{ name: string; phone: string }>("Rakesh's phone number for career enquiries (Careers section on the home page)"),
 
   /* ---- Service ----------------------------------------------------------- */
   /* Client direction (W11, 2026-11-11): open 11 AM to 11 PM, lunch and dinner only.
@@ -245,10 +251,12 @@ export const FACTS = {
     "owner brief 2026-11-05; Mini Tiffin and budget tiffin retired by client direction 2026-11-11 (offers change; re-check monthly)",
     D11
   ),
-  /** Client pillars in order (W11 to W13, docs/seo/client-confirmations.md section F3). */
+  /** Client pillars in order (W11 to W13, docs/seo/client-confirmations.md section F3).
+   *  The dosa pillar is called "Customized Dosa" on the site (client direction, 2026-11-13);
+   *  /menu/dosa/ still explains it as build-your-own dosa. */
   knownFor: verified(
     [
-      "Build-Your-Own Dosa",
+      "Customized Dosa",
       "Nellai Special Sodhi Meals",
       "Paanai Parotta",
       "Karaikudi Paneer Poppers",

@@ -1,0 +1,41 @@
+---
+/**
+ * Careers (home page, client direction 2026-11-13): the heading, then a contact block
+ * with the restaurant's number and Rakesh's. Numbers come from site.js `careers`;
+ * Rakesh's line appears once entity-truth.ts `careersContact` is verified, and is
+ * never shown empty.
+ */
+import { site } from "../data/site.js";
+import Icon from "./Icon.astro";
+
+const { title, contacts } = site.careers;
+const tel = (n) => `tel:${n.replace(/[^\d+]/g, "")}`;
+---
+
+<section class="section section--tint careers" id="careers" aria-labelledby="careers-title">
+  <div class="container careers__grid">
+    <div class="careers__head reveal">
+      <p class="eyebrow">Careers</p>
+      <h2 class="section__title" id="careers-title">{title}</h2>
+    </div>
+
+    <div class="visit__card careers__contact reveal" style="--reveal-delay:100ms">
+      <p class="visit__label">Contact</p>
+      <ul class="contact__channels" role="list">
+        {
+          contacts.map((c) => (
+            <li>
+              <a class="contact__channel" href={tel(c.phone)}>
+                <Icon name="phone" />
+                <span>
+                  <span>{c.label}</span>
+                  <strong>{c.phone}</strong>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

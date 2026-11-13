@@ -2,28 +2,47 @@
 import { site, hasPhone, telHref } from "../data/site.js";
 import Icon from "./Icon.astro";
 import Stars from "./Stars.astro";
-import { getFact } from "../data/entity-truth.ts";
-
-const mealTimes = getFact("mealTimes");
-const street = getFact("street");
+import Wordmark from "./Wordmark.astro";
+import { getFact, openingTimes } from "../data/entity-truth.ts";
+import { MEAL_FRAMING } from "../../config/seo-gates.ts";
 
 const { media, rating } = site;
-const { h1, hoursLine = "" } = Astro.props;
+const { range } = openingTimes(); // "11 AM to 11 PM"
+const avenue = getFact("street").split(",")[0]; // "3rd Avenue"
+// Slideshow: the hero photo first (the LCP image), then the rest (site.js media.heroSlides).
+const slides = [media.hero, ...media.heroSlides];
+const { h1 } = Astro.props;
 ---
 
 <section class="hero" id="top">
   <div class="container hero__grid">
     <div class="hero__copy">
       <p class="hero__tamil tamil" lang="ta">{site.nameTamil}</p>
-      <!-- The brand sits inside the H1 so the heading always pairs "Brihadhee" with its
-           category (disambiguation from Brihadeeswarar Temple and baby-name pages). -->
+      {/* The brand sits inside the H1 so the heading always pairs "Brihadhee" with its
+          category (disambiguation from Brihadeeswarar Temple and baby-name pages). The
+          visible brand is the logo wordmark; the text "Brihadhee" stays in the H1 for
+          screen readers and crawlers (scripts/verify-seo-compliance.ts checks it). */}
       <h1 class="hero__heading">
-        <span class="hero__title">{site.name}</span><span class="visually-hidden">: </span>
+        <span class="hero__title">
+          <Wordmark class="hero__wordmark" />
+          <span class="visually-hidden">{site.name}</span>
+        </span><span class="visually-hidden">: </span>
         <span class="hero__title-sub hero__h1">{h1}</span>
       </h1>
-      {hoursLine && <p class="hero__hours">{hoursLine}</p>}
+
+      <p class="hero__hours">
+        <span><Icon name="clock" size={17} />{range}</span>
+        <span><Icon name="utensils" size={17} />{MEAL_FRAMING}</span>
+      </p>
+
       <p class="hero__tagline">{site.tagline}</p>
-      <p class="hero__sub">{site.subTagline}</p>
+
+      <div class="hero__features">
+        <p class="hero__features-label" id="hero-features-label">On {avenue}</p>
+        <ul class="hero__features-list" role="list" aria-labelledby="hero-features-label">
+          {site.heroFeatures.map((feature) => <li>{feature}</li>)}
+        </ul>
+      </div>
 
       <div class="hero__actions">
         <a class="btn btn--primary" href="#menu">
@@ -48,31 +67,76 @@ const { h1, hoursLine = "" } = Astro.props;
           )
         }
       </div>
-
-      <ul class="hero__facts" role="list">
-        <li>100% pure veg</li>
-        <li>{mealTimes.charAt(0).toUpperCase() + mealTimes.slice(1)}</li>
-        <li>{street.split(", Anna Nagar East")[0]}</li>
-        <li>Dine-in and catering</li>
-      </ul>
     </div>
 
     <div class="hero__media">
       <div class="hero-showcase" data-hero-showcase>
         <div class="hero-showcase__glow" aria-hidden="true"></div>
-        <figure class="hero-showcase__photo">
-          <img
-            src={media.hero.src}
-            srcset={media.hero.srcset}
-            sizes="(max-width: 900px) 92vw, 46vw"
-            width={media.hero.width}
-            height={media.hero.height}
-            alt={media.hero.alt}
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        </figure>
+
+        {/* Auto-playing slideshow (src/scripts/main.js). Without JavaScript the first
+            photo shows on its own and the controls stay hidden. */}
+        <div
+          class="hero-showcase__photo hero-slides"
+          data-hero-slides
+          role="region"
+          aria-roledescription="carousel"
+          aria-label={`Photos of food at ${site.name}`}
+        >
+          <div class="hero-slides__track" id="hero-slides-track" aria-live="off">
+            {
+              slides.map((slide, i) => (
+                <figure
+                  class:list={["hero-slide", i === 0 && "is-active"]}
+                  data-hero-slide
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`${i + 1} of ${slides.length}`}
+                  aria-hidden={i === 0 ? undefined : "true"}
+                >
+                  <img
+                    src={slide.src}
+                    srcset={slide.srcset}
+                    sizes="(max-width: 900px) 92vw, 46vw"
+                    width={slide.width}
+                    height={slide.height}
+                    alt={slide.alt}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchpriority={i === 0 ? "high" : "low"}
+                    decoding="async"
+                  />
+                </figure>
+              ))
+            }
+          </div>
+        </div>
+
+        <div class="hero-slides__controls" data-hero-slides-controls hidden>
+          <button class="hero-slides__btn" type="button" data-slide-prev aria-controls="hero-slides-track" aria-label="Previous photo">
+            <Icon name="chevronLeft" size={16} />
+          </button>
+          <div class="hero-slides__dots">
+            {
+              slides.map((_, i) => (
+                <button
+                  class="hero-slides__dot"
+                  type="button"
+                  data-slide-to={i}
+                  aria-controls="hero-slides-track"
+                  aria-label={`Show photo ${i + 1} of ${slides.length}`}
+                  aria-current={i === 0 ? "true" : undefined}
+                />
+              ))
+            }
+          </div>
+          <button class="hero-slides__btn" type="button" data-slide-next aria-controls="hero-slides-track" aria-label="Next photo">
+            <Icon name="chevronRight" size={16} />
+          </button>
+          <button class="hero-slides__btn hero-slides__toggle" type="button" data-slide-toggle aria-label="Pause slideshow">
+            <Icon name="pause" size={15} class="icon-pause" />
+            <Icon name="play" size={15} class="icon-play" />
+          </button>
+        </div>
+
         {rating && (
           <a
             class="hero-showcase__rating"
@@ -88,6 +152,10 @@ const { h1, hoursLine = "" } = Astro.props;
             </span>
           </a>
         )}
+
+        {/* TODO(client copy): replace "Anna Nagar East • Freshly made" with the updated
+            badge text once the client sends it (requested 2026-11-13). Keep it short; it
+            sits on the photo's top-right corner. */}
         <span class="hero-showcase__tag">
           <span aria-hidden="true">●</span>
           Anna Nagar East <i>•</i> Freshly made

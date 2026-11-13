@@ -37,6 +37,120 @@ if (heroShowcase && heroSection && finePointer.matches && !reducedMotionPreferen
   });
 }
 
+/* ---------------- Hero slideshow (Hero.astro) ----------------
+ * Cross-fades the hero photos every SLIDE_MS. Pauses while the pointer is over the
+ * photo, while a control has focus and while the tab is hidden; the pause button
+ * stops it for good (WCAG 2.2.2). With reduced motion it starts paused. Without
+ * JavaScript the first photo shows alone and the controls stay hidden. */
+const heroSlides = document.querySelector("[data-hero-slides]");
+const slideItems = heroSlides ? [...heroSlides.querySelectorAll("[data-hero-slide]")] : [];
+const slideControls = document.querySelector("[data-hero-slides-controls]");
+
+if (heroSlides && slideControls && slideItems.length > 1) {
+  const SLIDE_MS = 5000;
+  const stage = heroSlides.closest("[data-hero-showcase]") ?? heroSlides;
+  const track = heroSlides.querySelector(".hero-slides__track");
+  const dots = [...slideControls.querySelectorAll("[data-slide-to]")];
+  const toggle = slideControls.querySelector("[data-slide-toggle]");
+  let current = 0;
+  let timer = 0;
+  let paused = reducedMotion; // set by the pause button
+  let hovering = false;
+  let focused = false;
+
+  const show = (index) => {
+    current = (index + slideItems.length) % slideItems.length;
+    slideItems.forEach((slide, i) => {
+      const active = i === current;
+      slide.classList.toggle("is-active", active);
+      if (active) slide.removeAttribute("aria-hidden");
+      else slide.setAttribute("aria-hidden", "true");
+    });
+    dots.forEach((dot, i) => {
+      if (i === current) dot.setAttribute("aria-current", "true");
+      else dot.removeAttribute("aria-current");
+    });
+  };
+
+  const stop = () => {
+    clearInterval(timer);
+    timer = 0;
+  };
+  const start = () => {
+    stop();
+    if (paused || hovering || focused || document.hidden) return;
+    timer = setInterval(() => show(current + 1), SLIDE_MS);
+  };
+
+  const syncToggle = () => {
+    toggle?.setAttribute("aria-label", paused ? "Play slideshow" : "Pause slideshow");
+    toggle?.setAttribute("data-state", paused ? "paused" : "playing");
+    // Announce slide changes only when the visitor is driving them.
+    track?.setAttribute("aria-live", paused ? "polite" : "off");
+  };
+
+  slideControls.querySelector("[data-slide-prev]")?.addEventListener("click", () => {
+    show(current - 1);
+    start();
+  });
+  slideControls.querySelector("[data-slide-next]")?.addEventListener("click", () => {
+    show(current + 1);
+    start();
+  });
+  dots.forEach((dot) =>
+    dot.addEventListener("click", () => {
+      show(Number(dot.dataset.slideTo));
+      start();
+    })
+  );
+  toggle?.addEventListener("click", () => {
+    paused = !paused;
+    syncToggle();
+    start();
+  });
+
+  stage.addEventListener("pointerenter", (event) => {
+    if (event.pointerType !== "mouse") return;
+    hovering = true;
+    stop();
+  });
+  stage.addEventListener("pointerleave", () => {
+    hovering = false;
+    start();
+  });
+  stage.addEventListener("focusin", () => {
+    focused = true;
+    stop();
+  });
+  stage.addEventListener("focusout", (event) => {
+    if (stage.contains(event.relatedTarget)) return;
+    focused = false;
+    start();
+  });
+  document.addEventListener("visibilitychange", start);
+
+  // Swipe on touch screens.
+  let swipeX = null;
+  heroSlides.addEventListener("pointerdown", (event) => {
+    if (event.pointerType !== "mouse") swipeX = event.clientX;
+  }, { passive: true });
+  heroSlides.addEventListener("pointerup", (event) => {
+    if (swipeX === null) return;
+    const dx = event.clientX - swipeX;
+    swipeX = null;
+    if (Math.abs(dx) < 40) return;
+    show(current + (dx < 0 ? 1 : -1));
+    start();
+  }, { passive: true });
+  heroSlides.addEventListener("pointercancel", () => {
+    swipeX = null;
+  });
+
+  slideControls.hidden = false;
+  syncToggle();
+  start();
+}
+
 /* ---------------- Header + mobile menu ---------------- */
 const header = document.getElementById("site-header");
 const navToggle = document.getElementById("nav-toggle");
@@ -451,9 +565,9 @@ function track(name, params = {}) {
   trackMeta(name);
 }
 
-/* ---------------- Catering dropdown (Nav.astro <details>) ----------------
- * Works without JavaScript; this only closes it on outside click, on Escape,
- * and when another group opens. */
+/* ---------------- Nav dropdowns: Menu and Catering (Nav.astro <details>) ----------------
+ * Desktop dropdowns and the mobile drawer's groups. They work without JavaScript;
+ * this only closes them on outside click, on Escape, and when another group opens. */
 const navGroups = [...document.querySelectorAll("[data-nav-group]")];
 navGroups.forEach((g) =>
   g.addEventListener("toggle", () => {

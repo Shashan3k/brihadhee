@@ -189,6 +189,10 @@ const allowedPhones = [phoneDigits, digits(F("whatsapp"))].map((d) => d.slice(-1
 if (cfg.offer_catering === true) {
   for (const n of [ch.phone, ch.whatsapp]) if (n) allowedPhones.push(digits(n).slice(-10));
 }
+// The careers contact (Rakesh) on the home page, once the owner confirms the number.
+if (FACTS.careersContact?.status === "verified" && FACTS.careersContact.value?.phone) {
+  allowedPhones.push(digits(FACTS.careersContact.value.phone).slice(-10));
+}
 const phoneOk = (raw) => allowedPhones.includes(digits(raw).slice(-10));
 const pending = pendingFacts();
 const faqOwners = new Map(); // question -> page that shows it

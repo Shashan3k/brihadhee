@@ -131,3 +131,13 @@ export const BYO_DEFINITION = {
   notSelfService: "It is a chef-cooked custom dosa, not a self-service cooking station.",
 };
 export const byoDefinition = `${BYO_DEFINITION.sentence} ${BYO_DEFINITION.notSelfService}`;
+/**
+ * The same offer in the home page's wording (client direction, 2026-11-13: "Customized
+ * Dosa" replaces "Build your own dosa" on the front page). /menu/dosa/ keeps
+ * BYO_DEFINITION. The first sentence stays within the answer-first limit (src/lib/answers.js).
+ */
+export const customizedDosaDefinition =
+  "At Brihadhee, a customized dosa is a dosa you design from the menu: you pick the batter, podi and toppings, filling and roast, and the kitchen cooks it to order for your table. " +
+  "It is chef-cooked, not a self-service cooking station.";
+/** Display name of a live counter on the home page ("Build Your Own Dosa" -> "Customized Dosa"). */
+export const customizedLabel = (name) => (/build[\s-]+your[\s-]+own[\s-]+dosa/i.test(name) ? "Customized Dosa" : name);

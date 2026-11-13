@@ -30,7 +30,7 @@ import {
   rupees,
   summarise,
   byo,
-  byoDefinition,
+  customizedDosaDefinition,
   menuNotes,
 } from "../lib/menu-facts.js";
 
@@ -81,7 +81,7 @@ export const faqItems = qaRoute("/", [
   qa(
     `What is ${name} in Anna Nagar?`,
     `${name} is a ${PV} South Indian restaurant in ${AREA}, Chennai, open every day from ${HOURS} for lunch and dinner. ` +
-      `It is known for build-your-own dosa and the ${sodhi.name}, and its kitchen also runs ${CATERING_DIET} corporate and event catering. ` +
+      `It is known for customized dosa and the ${sodhi.name}, and its kitchen also runs ${CATERING_DIET} corporate and event catering. ` +
       `It is at ${ADDRESS}.`,
     { id: "what-is-brihadhee" }
   ),
@@ -93,14 +93,16 @@ export const faqItems = qaRoute("/", [
       `Its catering is ${CATERING_DIET}, with the menu for each function agreed in the quote.`,
     { id: "pure-veg" }
   ),
+  /* "Customized Dosa" is the home page's name for the offer (client direction, 2026-11-13);
+     /menu/dosa/ explains it as build-your-own dosa. */
   qa(
-    `What is build-your-own dosa at ${name}?`,
-    `${byoDefinition} Batters cost ${batterRange}, and each addition is priced separately.`,
-    { id: "byo-dosa-definition" }
+    `What is a customized dosa at ${name}?`,
+    `${customizedDosaDefinition} Batters cost ${batterRange}, and each addition is priced separately.`,
+    { id: "customized-dosa" }
   ),
   qa(
     `What should a first-timer order at ${name}?`,
-    `On a first visit to ${name}, order the ${sodhi.name} (${rupees(sodhi.price)}) at lunch, or a build-your-own dosa and ${paanai.name} (${rupees(paanai.price)}) at dinner. ` +
+    `On a first visit to ${name}, order the ${sodhi.name} (${rupees(sodhi.price)}) at lunch, or a customized dosa and ${paanai.name} (${rupees(paanai.price)}) at dinner. ` +
       `Share ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}) or ${poppers.name} (${rupees(poppers.price)}), and finish with filter coffee (${rupees(filterCoffee.price)}). ` +
       `For a quicker lunch, the ${combos.count} dine-in combos cost ${priceRange(combos)}.`,
     { id: "what-to-order" }
@@ -109,7 +111,7 @@ export const faqItems = qaRoute("/", [
   qa(
     `What is ${getFact("subBrand").name}?`,
     `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
-      `The restaurant itself serves South Indian food, led by build-your-own dosa and Tirunelveli and Karaikudi dishes.`,
+      `The restaurant itself serves South Indian food, led by customized dosa and Tirunelveli and Karaikudi dishes.`,
     { id: "beyond-curry" }
   ),
   qa(

@@ -61,9 +61,10 @@ const base = import.meta.env.BASE_URL.endsWith("/")
       content={`${site.geo.latitude}, ${site.geo.longitude}`}
     />
 
-    <!-- Icons & manifest -->
-    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
-    <link rel="apple-touch-icon" href={`${base}icon-192.png`} />
+    <!-- Icons & manifest: the Brihadhee logo face (from the official V09 logo artwork) -->
+    <link rel="icon" href={`${base}favicon.ico`} sizes="48x48" />
+    <link rel="icon" href={`${base}favicon-96x96.png`} type="image/png" sizes="96x96" />
+    <link rel="apple-touch-icon" href={`${base}apple-touch-icon.png`} sizes="180x180" />
     <link rel="manifest" href={`${base}site.webmanifest`} />
 
     <!-- Open Graph -->

@@ -67,7 +67,7 @@ const address = site.address;
       <nav aria-labelledby="footer-explore">
         <p class="footer__title" id="footer-explore">Explore</p>
         <ul class="footer__links" role="list">
-          {site.navigation.flatMap((item) => item.children ?? [item]).map((item) => (
+          {site.footerLinks.map((item) => (
             <li><a href={link(item.href)}>{item.label}</a></li>
           ))}
           <li><a href={`${base}book-a-table/`}>Book a Table</a></li>

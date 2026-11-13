@@ -13,6 +13,7 @@
 import verification from "../../config/client-verification.json";
 import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl } from "./entity-truth.ts";
 import { CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
+import { MENU } from "./menu-canonical.ts";
 
 const BASE_URL = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
@@ -78,9 +79,10 @@ export const site = {
   /* ---- Identity ------------------------------------------------------- */
   name: getFact("name"),
   nameTamil: getFact("nameTamil"),
-  tagline: `${getFact("recipeStory")}, from Nellai sodhi to Paanai Parotta.`,
-  subTagline:
-    `Build-your-own dosas, Paanai Parotta, Nellai Special Sodhi Meals and filter coffee on ${getFact("street")}, for ${getFact("mealTimes")}, every day from ${getFact("hours").short}.`,
+  // Hero tagline and featured dishes (client direction, 2026-11-13). Hero.astro shows the
+  // features "on 3rd Avenue" (the street fact), next to the hours and meal framing.
+  tagline: "Nostalgic Tamil Food with a Modern Twist",
+  heroFeatures: ["Customized Dosa", "Paanai Parotta", "Nellai Special Sodhi Meals", "Coffee Bar"],
   // Core brand description, led by the client pillars (entity-truth.ts brandDescription).
   shortDescription: getFact("brandDescription").short,
   // Entity sentence reused on the page body.
@@ -149,6 +151,41 @@ export const site = {
       height: 1200,
       alt: "Crisp South Indian dosa served with sambar and chutneys on a banana leaf",
     },
+    /* Hero slideshow (Hero.astro, src/scripts/main.js). Slide 1 is `hero` above (the
+       LCP image); it plays automatically and shows the first slide without JavaScript.
+       Every alt must differ from the other photos on the home page (aeo-lint check 7). */
+    heroSlides: [
+      {
+        ...responsive("dosa", 1200),
+        width: 1200,
+        height: 900,
+        alt: "Golden dosa on a banana-leaf tray with sambar and chutney bowls",
+      },
+      {
+        ...responsive("meals", 1200),
+        width: 1200,
+        height: 900,
+        alt: "Thali of rice, papad and small bowls of curries on a banana leaf",
+      },
+      {
+        ...responsive("idiyappam", 1200),
+        width: 1200,
+        height: 900,
+        alt: "Idiyappam on a banana leaf with a bowl of coconut milk and two clay pots",
+      },
+      {
+        ...responsive("coffee", 1000),
+        width: 1000,
+        height: 1000,
+        alt: "Steel tumbler of frothy South Indian drink resting in its davara",
+      },
+      {
+        ...responsive("sweets", 1200),
+        width: 1200,
+        height: 900,
+        alt: "Chocolate sauce being poured over a dessert in a brass bowl",
+      },
+    ],
     about: {
       ...responsive("meals", 1200),
       width: 1200,
@@ -214,23 +251,33 @@ export const site = {
   },
 
   /* ---- Navigation ----------------------------------------------------- */
-  /* Primary navigation. An item with `children` renders as a dropdown (Nav.astro);
-     the footer lists every link flat. */
+  /* Primary navigation (client direction, 2026-11-13). An item with `children` renders
+     as a dropdown (Nav.astro). Menu: "All Menu" opens /menu/, which lists every category
+     and dish on one page; the category links jump to their section there. There is no
+     separate "Dinner" entry. The footer has its own list (footerLinks below). */
   navigation: [
-    { label: "Menu", href: href(ROUTES.menu) },
-    { label: "Build Your Own Dosa", href: href(ROUTES.dosa) },
-    { label: "Lunch & Nellai Meals", href: href(ROUTES.lunch) },
-    { label: "Dinner", href: href(ROUTES.dinner) },
+    {
+      label: "Menu",
+      children: [
+        { label: "All Menu", href: href(ROUTES.menu) },
+        { label: "Customized Dosa", href: href(ROUTES.dosa) },
+        { label: "Lunch & Nellai Meals", href: href(ROUTES.lunch) },
+        // Every other menu category, Starters first. "Lunch" is covered by the link above.
+        ...[...MENU.filter((c) => c.id === "starters"), ...MENU.filter((c) => !["starters", "lunch"].includes(c.id))].map((c) => ({
+          label: c.name,
+          href: `${href(ROUTES.menu)}#${c.id}`,
+          group: "categories",
+        })),
+      ],
+    },
     ...(verification.offer_catering === true
       ? [
           {
             label: "Catering",
             children: [
-              ...(isConfirmed("corporateCatering") ? [{ label: "Corporate Catering", href: href(ROUTES.corporateCatering) }] : []),
-              { label: "Event Catering", href: href(ROUTES.eventCatering) },
-              { label: `Small Functions (${CATERING_MIN_GUESTS}+ Guests)`, href: href(ROUTES.smallFunctions) },
-              { label: "Get a Catering Quote", href: href(ROUTES.cateringQuote) },
-              { label: "Event Planner Partner", href: href(ROUTES.plannerPartner) },
+              ...(isConfirmed("corporateCatering") ? [{ label: "Corporate", href: href(ROUTES.corporateCatering) }] : []),
+              { label: "Events", href: href(ROUTES.eventCatering) },
+              { label: "Small Functions", href: href(ROUTES.smallFunctions) },
             ],
           },
         ]
@@ -238,6 +285,37 @@ export const site = {
     ...(ENABLE_NO_ONION_NO_GARLIC_CLUSTER ? [{ label: "No Onion, No Garlic", href: href(ROUTES.noOnionNoGarlic) }] : []),
     { label: "Visit & Contact", href: href(ROUTES.about) },
   ],
+
+  /* Footer "Explore" links: the money pages by name (the header dropdowns are shorter). */
+  footerLinks: [
+    { label: "Menu", href: href(ROUTES.menu) },
+    { label: "Customized Dosa", href: href(ROUTES.dosa) },
+    { label: "Lunch & Nellai Meals", href: href(ROUTES.lunch) },
+    { label: "Dinner", href: href(ROUTES.dinner) },
+    ...(verification.offer_catering === true
+      ? [
+          ...(isConfirmed("corporateCatering") ? [{ label: "Corporate Catering", href: href(ROUTES.corporateCatering) }] : []),
+          { label: "Event Catering", href: href(ROUTES.eventCatering) },
+          { label: `Small Functions (${CATERING_MIN_GUESTS}+ Guests)`, href: href(ROUTES.smallFunctions) },
+          { label: "Get a Catering Quote", href: href(ROUTES.cateringQuote) },
+          { label: "Event Planner Partner", href: href(ROUTES.plannerPartner) },
+        ]
+      : []),
+    ...(ENABLE_NO_ONION_NO_GARLIC_CLUSTER ? [{ label: "No Onion, No Garlic", href: href(ROUTES.noOnionNoGarlic) }] : []),
+    { label: "Visit & Contact", href: href(ROUTES.about) },
+    { label: "Careers", href: "#careers" },
+  ],
+
+  /* ---- Careers (home page, client direction 2026-11-13) ----------------- */
+  /* The restaurant number, plus Rakesh once his number is confirmed (entity-truth.ts
+     careersContact; until then his line is hidden, never shown empty). */
+  careers: {
+    title: "For a career opportunity in Brihadhee",
+    contacts: [
+      { label: "Restaurant", phone: getFact("phone") },
+      ...(isConfirmed("careersContact") ? [{ label: getFact("careersContact").name, phone: getFact("careersContact").phone }] : []),
+    ],
+  },
 
   /* ---- SEO ------------------------------------------------------------ */
   // Canonical origin for canonical, og:url, schema @ids, sitemap and llms files.

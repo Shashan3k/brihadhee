@@ -9,6 +9,15 @@ import Icon from "./Icon.astro";
 const { homeBase = "" } = Astro.props;
 const { phone, hasPhone, telHref } = pageContact(Astro);
 const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
+
+/* Dropdowns (site.navigation items with `children`) are <details> elements, so they
+   open without JavaScript; src/scripts/main.js closes them on outside click and Escape.
+   Children marked `group: "categories"` (the menu categories) get their own
+   two-column list under the main links. */
+const split = (children) => ({
+  main: children.filter((c) => !c.group),
+  categories: children.filter((c) => c.group === "categories"),
+});
 ---
 
 <header class="site-header" id="site-header">
@@ -24,18 +33,31 @@ const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
     </a>
 
     <nav class="nav__links" aria-label="Primary">
-      {site.navigation.map((item) =>
-        item.children ? (
-          <details class="nav__group" data-nav-group>
-            <summary>{item.label}</summary>
-            <div class="nav__menu">
-              {item.children.map((c) => <a href={link(c.href)}>{c.label}</a>)}
-            </div>
-          </details>
-        ) : (
-          <a href={link(item.href)}>{item.label}</a>
-        )
-      )}
+      {
+        site.navigation.map((item) => {
+          if (!item.children) return <a href={link(item.href)}>{item.label}</a>;
+          const { main, categories } = split(item.children);
+          return (
+            <details class="nav__group" data-nav-group>
+              <summary>{item.label}</summary>
+              <div class:list={["nav__menu", categories.length > 0 && "nav__menu--wide"]}>
+                {main.map((c) => (
+                  <a class="nav__menu-main" href={link(c.href)}>
+                    {c.label}
+                  </a>
+                ))}
+                {categories.length > 0 && (
+                  <div class="nav__menu-grid" role="group" aria-label={`${item.label} categories`}>
+                    {categories.map((c) => (
+                      <a href={link(c.href)}>{c.label}</a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </details>
+          );
+        })
+      }
     </nav>
 
     <div class="nav__actions">
@@ -65,17 +87,19 @@ const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
     {
       site.navigation.map((item) =>
         item.children ? (
-          <div class="nav__panel-group" role="group" aria-label={item.label}>
-            <p class="nav__panel-label">{item.label}</p>
-            {item.children.map((c) => (
-              <a href={link(c.href)}>
-                {c.label}
-                <Icon name="arrowUpRight" size={16} />
-              </a>
-            ))}
-          </div>
+          <details class="nav__panel-group" data-nav-group>
+            <summary>{item.label}</summary>
+            <div class="nav__panel-links">
+              {item.children.map((c) => (
+                <a href={link(c.href)}>
+                  {c.label}
+                  <Icon name="arrowUpRight" size={16} />
+                </a>
+              ))}
+            </div>
+          </details>
         ) : (
-          <a href={link(item.href)}>
+          <a class="nav__panel-link" href={link(item.href)}>
             {item.label}
             <Icon name="arrowUpRight" size={16} />
           </a>

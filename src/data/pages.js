@@ -17,7 +17,7 @@ import { cateringEnabled, corporate, guests, liveCounters } from "./catering.js"
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
-import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, byoDefinition, BYO_DEFINITION, menuNotes } from "../lib/menu-facts.js";
+import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, byoDefinition, BYO_DEFINITION, menuNotes, customizedDosaDefinition, customizedLabel } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
@@ -91,21 +91,21 @@ export const homePage = {
   description: `${name}, Anna Nagar: build your own dosa, Nellai meals and Tamil home-style lunch and dinner. Open ${OPEN}–${CLOSE} daily. Book a table or get directions.`,
   /* Rendered after the brand line inside one H1 (Hero.astro): "Brihadhee: Pure Veg South Indian Restaurant in Anna Nagar". */
   h1: "Pure Veg South Indian Restaurant in Anna Nagar",
-  /* Hours and meal framing, stated the same way everywhere (config/seo-gates.ts). */
-  hoursLine: `Open ${HOURS} · ${MEAL_FRAMING}`,
   glance: [
     ["Open", `${HOURS} daily · ${MEAL_FRAMING}`],
     ["Food", "100% pure veg South Indian"],
     ["Address", `${line1}, Anna Nagar East, near ${landmark}`],
     ["Famous for", getFact("knownFor").join(", ")],
   ],
+  /* "Customized Dosa" replaces "Build your own dosa" on the home page (client direction,
+     2026-11-13). The offer is the same; /menu/dosa/ explains it. */
   byo: {
     id: "home-dosa",
     eyebrow: "Signature",
-    title: "Build Your Own Dosa, Your Way",
-    lead: `${byoDefinition} Pick one of ${byo.batterCount} batters (${batterRange}) and add what you like, or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
-    links: [{ label: "How build your own dosa works", href: href(ROUTES.dosa), primary: true }],
-    image: { name: "dosa", alt: "Crisp golden dosa with chutney and sambar, the base of a build-your-own dosa at Brihadhee", caption: "Build your own dosa at Brihadhee" },
+    title: "Customized Dosa, Your Way",
+    lead: `${customizedDosaDefinition} Pick one of ${byo.batterCount} batters (${batterRange}) and add what you like, or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
+    links: [{ label: "How customized dosa works", href: href(ROUTES.dosa), primary: true }],
+    image: { name: "dosa", alt: "Crisp golden dosa with chutney and sambar, the base of a customized dosa at Brihadhee", caption: "Customized dosa at Brihadhee" },
   },
   lunch: {
     id: "home-lunch",
@@ -120,7 +120,7 @@ export const homePage = {
     id: "home-dinner",
     eyebrow: "Dinner",
     title: `Dinner Until ${CLOSE}`,
-    lead: `${name} serves dinner every day until ${CLOSE}: build-your-own dosa, ${paanai.name} (${rupees(paanai.price)}), veg kothu parotta, idiyappam and ${poppers.name}, with filter coffee to finish.`,
+    lead: `${name} serves dinner every day until ${CLOSE}: customized dosa, ${paanai.name} (${rupees(paanai.price)}), veg kothu parotta, idiyappam and ${poppers.name}, with filter coffee to finish.`,
     links: [{ label: `Dinner until ${CLOSE}`, href: href(ROUTES.dinner), primary: true }],
   },
   catering:
@@ -140,7 +140,7 @@ export const homePage = {
             },
             {
               title: "End-to-end event catering",
-              text: `Menu planning, cooking, serving and setup for weddings, birthdays, housewarmings and family functions, for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}.`,
+              text: `Menu planning, cooking, serving and setup for weddings, birthdays, housewarmings and family functions, for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters.map(customizedLabel))}.`,
               link: { label: "Event catering", href: href(ROUTES.eventCatering) },
             },
             {
