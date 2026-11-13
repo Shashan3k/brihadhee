@@ -3605,11 +3605,11 @@ a.contact__channel:hover {
 /* ---- Hero slideshow: slower cross-fade, a slow settle on the active photo,
         and a quieter control bar ---- */
 .hero-slide {
-  transition: opacity 1.2s var(--ease);
+  transition: opacity 0.7s var(--ease); /* about a third of the 2.3 s slide time */
 }
 .hero-showcase .hero-showcase__photo .hero-slide img {
   transform: scale(1.045);
-  transition: transform 6.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 1.2s var(--ease);
+  transition: transform 2.6s cubic-bezier(0.25, 0.1, 0.25, 1), filter 0.7s var(--ease);
 }
 .hero-showcase .hero-showcase__photo .hero-slide.is-active img {
   transform: scale(1);

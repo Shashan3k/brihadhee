@@ -47,7 +47,7 @@ const slideItems = heroSlides ? [...heroSlides.querySelectorAll("[data-hero-slid
 const slideControls = document.querySelector("[data-hero-slides-controls]");
 
 if (heroSlides && slideControls && slideItems.length > 1) {
-  const SLIDE_MS = 5000;
+  const SLIDE_MS = 2300; // client direction 2026-11-13: a new photo every 2.3 s
   const stage = heroSlides.closest("[data-hero-showcase]") ?? heroSlides;
   const track = heroSlides.querySelector(".hero-slides__track");
   const dots = [...slideControls.querySelectorAll("[data-slide-to]")];
