@@ -198,11 +198,13 @@ export const FACTS = {
   whatsapp: verified("+91 73587 14113", PHONE_SWITCH, D12),
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
   /** Careers section on the home page (client direction, 2026-11-13): job seekers call the
-   *  restaurant number or Rakesh. Rakesh's number is not on file yet, so his line stays hidden.
-   *  TODO(owner): when the number arrives, replace this with
-   *    verified({ name: "Rakesh", phone: "+91 9xxxx xxxxx" }, "<who confirmed it>", "<YYYY-MM-DD>")
-   *  scripts/aeo-lint.mjs then allows that number on the page. */
-  careersContact: unverified<{ name: string; phone: string }>("Rakesh's phone number for career enquiries (Careers section on the home page)"),
+   *  restaurant number or Rakesh. Rakesh's number is from the client's audio note,
+   *  supplied by the Brihadhee team on 2026-11-13; scripts/aeo-lint.mjs allows it on the page. */
+  careersContact: verified(
+    { name: "Rakesh", phone: "+91 83003 19370" },
+    "client audio note (Careers contact), transcribed and supplied by the Brihadhee team, 2026-11-13",
+    "2026-11-13"
+  ),
 
   /* ---- Service ----------------------------------------------------------- */
   /* Client direction (W11, 2026-11-11): open 11 AM to 11 PM, lunch and dinner only.

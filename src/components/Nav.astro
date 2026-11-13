@@ -18,6 +18,12 @@ const split = (children) => ({
   main: children.filter((c) => !c.group),
   categories: children.filter((c) => c.group === "categories"),
 });
+
+// Mark the link for the page being viewed (hash links are sections, never "the page").
+const here = Astro.url.pathname.replace(/\/?$/, "/");
+const isHere = (href) => !href.includes("#") && href.replace(/\/?$/, "/") === here;
+const current = (href) => (isHere(href) ? "page" : undefined);
+const groupIsHere = (item) => item.children.some((c) => isHere(c.href));
 ---
 
 <header class="site-header" id="site-header">
@@ -35,14 +41,14 @@ const split = (children) => ({
     <nav class="nav__links" aria-label="Primary">
       {
         site.navigation.map((item) => {
-          if (!item.children) return <a href={link(item.href)}>{item.label}</a>;
+          if (!item.children) return <a href={link(item.href)} aria-current={current(item.href)}>{item.label}</a>;
           const { main, categories } = split(item.children);
           return (
-            <details class="nav__group" data-nav-group>
+            <details class:list={["nav__group", groupIsHere(item) && "is-current"]} data-nav-group>
               <summary>{item.label}</summary>
               <div class:list={["nav__menu", categories.length > 0 && "nav__menu--wide"]}>
                 {main.map((c) => (
-                  <a class="nav__menu-main" href={link(c.href)}>
+                  <a class="nav__menu-main" href={link(c.href)} aria-current={current(c.href)}>
                     {c.label}
                   </a>
                 ))}
@@ -85,26 +91,36 @@ const split = (children) => ({
 
   <div class="nav__panel" id="nav-panel" hidden>
     {
-      site.navigation.map((item) =>
-        item.children ? (
-          <details class="nav__panel-group" data-nav-group>
+      site.navigation.map((item) => {
+        if (!item.children)
+          return (
+            <a class="nav__panel-link" href={link(item.href)} aria-current={current(item.href)}>
+              {item.label}
+              <Icon name="arrowUpRight" size={16} />
+            </a>
+          );
+        const { main, categories } = split(item.children);
+        return (
+          <details class:list={["nav__panel-group", groupIsHere(item) && "is-current"]} data-nav-group>
             <summary>{item.label}</summary>
             <div class="nav__panel-links">
-              {item.children.map((c) => (
-                <a href={link(c.href)}>
+              {main.map((c) => (
+                <a href={link(c.href)} aria-current={current(c.href)}>
                   {c.label}
                   <Icon name="arrowUpRight" size={16} />
                 </a>
               ))}
+              {categories.length > 0 && (
+                <div class="nav__panel-grid" role="group" aria-label={`${item.label} categories`}>
+                  {categories.map((c) => (
+                    <a href={link(c.href)}>{c.label}</a>
+                  ))}
+                </div>
+              )}
             </div>
           </details>
-        ) : (
-          <a class="nav__panel-link" href={link(item.href)}>
-            {item.label}
-            <Icon name="arrowUpRight" size={16} />
-          </a>
-        )
-      )
+        );
+      })
     }
     {
       hasPhone && (

@@ -180,6 +180,12 @@ if (navToggle && navPanel) {
     if (event.target.closest("a")) setMenuOpen(false);
   });
 
+  // A tap outside the open drawer (on the dimmed page) closes it.
+  document.addEventListener("click", (event) => {
+    if (navPanel.hidden || navPanel.contains(event.target) || navToggle.contains(event.target)) return;
+    setMenuOpen(false);
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && !navPanel.hidden) {
       setMenuOpen(false);
@@ -586,3 +592,30 @@ document.addEventListener("keydown", (e) => {
     }
   });
 });
+
+/* ---------------- Menu page category index (menu.astro) ----------------
+ * Highlights the category being read and keeps its chip in view in the
+ * horizontally scrolling index. Plain in-page links without JavaScript. */
+const jumpLinks = [...document.querySelectorAll(".menu-page__jump a[href^='#']")];
+const jumpTargets = jumpLinks.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+
+if (jumpTargets.length && "IntersectionObserver" in window) {
+  const list = jumpLinks[0].closest("ul");
+  const mark = (id) => {
+    jumpLinks.forEach((a) => {
+      const on = a.getAttribute("href") === `#${id}`;
+      if (on) {
+        a.setAttribute("aria-current", "true");
+        if (list) {
+          const left = a.offsetLeft - (list.clientWidth - a.offsetWidth) / 2;
+          list.scrollTo({ left, behavior: reducedMotion ? "auto" : "smooth" });
+        }
+      } else a.removeAttribute("aria-current");
+    });
+  };
+  const watch = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.isIntersecting && mark(e.target.id)),
+    { rootMargin: "-30% 0px -60% 0px", threshold: 0 }
+  );
+  jumpTargets.forEach((t) => watch.observe(t));
+}

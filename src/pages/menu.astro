@@ -46,7 +46,7 @@ const schema = pageGraph({
 
 <Base title={title} description={description} path="/menu/" schema={schema}>
   <Nav homeBase={base} />
-  <main id="main">
+  <main id="main" class="menu-page">
     <section class="section menu-page__head">
       <div class="container">
         <p class="eyebrow">Menu</p>
@@ -62,6 +62,17 @@ const schema = pageGraph({
         </p>
       </div>
     </section>
+
+    {/* Category index: one tap to any part of the full menu. Sticks under the header
+        while the menu scrolls; a plain list of in-page links without CSS. */}
+    <nav class="menu-page__jump" aria-label="Menu categories">
+      <ul class="container menu-page__jump-list" role="list">
+        <li><a href="#build-your-own-dosa">Customized Dosa</a></li>
+        {categories.map((c) => (
+          <li><a href={`#${c.id}`}>{c.name}</a></li>
+        ))}
+      </ul>
+    </nav>
 
     <BuildYourOwnDosa />
 
@@ -98,7 +109,7 @@ const schema = pageGraph({
 
     {
       categories.map((c) => (
-        <section class="section" id={c.id} aria-labelledby={`${c.id}-title`}>
+        <section class="section menu-page__cat" id={c.id} aria-labelledby={`${c.id}-title`}>
           <div class="container">
             <h2 class="section__title" id={`${c.id}-title`}>{c.name}</h2>
             {c.blurb && <p class="section__lead">{c.blurb}</p>}

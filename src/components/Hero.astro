@@ -1,5 +1,5 @@
 ---
-import { site, hasPhone, telHref } from "../data/site.js";
+import { site } from "../data/site.js";
 import Icon from "./Icon.astro";
 import Stars from "./Stars.astro";
 import Wordmark from "./Wordmark.astro";
@@ -44,6 +44,8 @@ const { h1 } = Astro.props;
         </ul>
       </div>
 
+      {/* Two actions only: "Call now" is already in the header (every width) and the
+          mobile call bar, so a third hero button only pushed the row onto two lines. */}
       <div class="hero__actions">
         <a class="btn btn--primary" href="#menu">
           <Icon name="utensils" size={18} />
@@ -58,14 +60,6 @@ const { h1 } = Astro.props;
           <Icon name="navigation" size={18} />
           Get directions
         </a>
-        {
-          hasPhone && (
-            <a class="btn btn--ghost" href={telHref}>
-              <Icon name="phone" size={18} />
-              Call now
-            </a>
-          )
-        }
       </div>
     </div>
 

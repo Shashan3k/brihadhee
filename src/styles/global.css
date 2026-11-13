@@ -3317,3 +3317,539 @@ a.contact__channel:hover {
     grid-template-columns: 1.1fr 0.9fr;
   }
 }
+
+/* =========================================================================
+   UI polish, 2026-11-13: dropdown motion and states, hero rhythm and slideshow,
+   menu page index and price leaders, one shared card treatment. Colours come
+   only from the existing tokens and the brand values already used above.
+   ========================================================================= */
+:root {
+  interpolate-size: allow-keywords;
+  --accent-wash: rgba(168, 70, 15, 0.07); /* --orange at low alpha */
+  --accent-wash-strong: rgba(168, 70, 15, 0.11);
+  --elev-pop: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 2px 6px rgba(58, 37, 17, 0.06),
+    0 26px 52px -20px rgba(80, 49, 20, 0.3);
+}
+
+/* ---- Desktop dropdowns: fade-and-drop on open, clear hover and current states ---- */
+@media (min-width: 900px) {
+  .nav__group > summary {
+    transition: color 0.2s var(--ease), background-color 0.2s var(--ease);
+  }
+  .nav__group > summary:hover {
+    background: var(--accent-wash);
+    color: var(--ink);
+  }
+  .nav__group[open] > summary {
+    background: var(--accent-wash-strong);
+    color: var(--orange-deep);
+  }
+  .nav__group.is-current > summary,
+  .nav__links > a[aria-current="page"] {
+    color: var(--orange-deep);
+  }
+  .nav__menu {
+    top: calc(100% + 0.8rem);
+    padding: 0.45rem;
+    border-color: var(--line);
+    border-radius: 18px;
+    background: rgba(255, 253, 249, 0.985);
+    box-shadow: var(--elev-pop);
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.18s var(--ease), translate 0.24s var(--ease);
+  }
+  /* A small notch ties the panel to its trigger. */
+  .nav__menu::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 2.1rem;
+    width: 11px;
+    height: 11px;
+    border-top: 1px solid var(--line);
+    border-left: 1px solid var(--line);
+    border-top-left-radius: 3px;
+    background: inherit;
+    rotate: 45deg;
+  }
+  .nav__menu:not(.nav__menu--wide)::before {
+    left: calc(50% - 5.5px);
+  }
+  .nav__links .nav__menu a {
+    position: relative;
+    color: var(--ink-2);
+    transition: background-color 0.15s var(--ease), color 0.15s var(--ease), padding-left 0.18s var(--ease);
+  }
+  /* Accent rail on hover, keyboard focus and the current page. */
+  .nav__links .nav__menu a::before {
+    content: "";
+    position: absolute;
+    left: 0.32rem;
+    top: 50%;
+    width: 3px;
+    height: 0;
+    border-radius: 3px;
+    background: var(--orange);
+    translate: 0 -50%;
+    transition: height 0.18s var(--ease);
+  }
+  .nav__links .nav__menu a:hover,
+  .nav__links .nav__menu a:focus-visible,
+  .nav__links .nav__menu a[aria-current="page"] {
+    padding-left: 1.05rem;
+    background: var(--accent-wash);
+    color: var(--orange-deep);
+  }
+  .nav__links .nav__menu a:hover::before,
+  .nav__links .nav__menu a:focus-visible::before,
+  .nav__links .nav__menu a[aria-current="page"]::before {
+    height: 1.05em;
+  }
+  .nav__links .nav__menu a:focus-visible {
+    outline: 2px solid var(--orange-bright);
+    outline-offset: -2px;
+  }
+  .nav__links .nav__menu .nav__menu-main {
+    font-size: 0.92rem;
+  }
+  .nav__menu-grid {
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+  }
+}
+@starting-style {
+  .nav__group[open] .nav__menu {
+    opacity: 0;
+    translate: 0 -6px;
+  }
+}
+
+/* ---- Mobile header and drawer ---- */
+@media (max-width: 899px) {
+  .nav__actions .btn--sm {
+    flex: none;
+    min-height: 40px;
+    padding: 0.5rem 0.95rem;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    box-shadow: 0 4px 0 #78341f, 0 9px 16px -10px rgba(78, 34, 20, 0.6);
+  }
+  .nav__panel {
+    z-index: 1;
+    /* Opaque: the header's own backdrop blur stops the panel blurring the page, so
+       a translucent panel let page text ghost through the links. */
+    background: var(--paper);
+    opacity: 1;
+    translate: 0 0;
+    transition: opacity 0.2s var(--ease), translate 0.26s var(--ease);
+  }
+  /* Dim the page behind the open drawer; a tap on it closes the drawer (main.js). */
+  body:has(#nav-panel:not([hidden])) {
+    overflow: hidden;
+  }
+  body:has(#nav-panel:not([hidden]))::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 95;
+    background: rgba(43, 26, 16, 0.32);
+    opacity: 1;
+    transition: opacity 0.2s var(--ease);
+  }
+  .nav__panel .btn {
+    justify-content: center;
+    gap: 0.55rem;
+  }
+  .nav__panel-group.is-current > summary,
+  .nav__panel a[aria-current="page"] {
+    color: var(--orange-deep);
+  }
+  .nav__panel-group[open] > summary {
+    color: var(--orange-deep);
+  }
+  .nav__panel-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 0.75rem;
+    padding-top: 0.25rem;
+  }
+  .nav__panel .nav__panel-grid a {
+    justify-content: flex-start;
+    min-height: 44px;
+    padding: 0.55rem 0.25rem;
+    border-bottom: 0;
+    color: var(--ink-2);
+    font-size: 0.93rem;
+    font-weight: 500;
+  }
+  .nav__panel .nav__panel-links a:active,
+  .nav__panel .nav__panel-grid a:active {
+    color: var(--orange-deep);
+  }
+}
+@starting-style {
+  .nav__panel {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+  body:has(#nav-panel:not([hidden]))::after {
+    opacity: 0;
+  }
+}
+/* Drawer groups slide open where the browser can animate <details> content. */
+.nav__panel-group::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition: block-size 0.28s var(--ease), content-visibility 0.28s allow-discrete;
+}
+.nav__panel-group[open]::details-content {
+  block-size: auto;
+}
+
+/* ---- Hero: wordmark first, then what and when, then the tagline ---- */
+.hero__heading .hero__title {
+  margin-bottom: clamp(0.9rem, 1.6vw, 1.25rem);
+}
+.hero__wordmark {
+  width: min(100%, 35rem);
+}
+.hero__heading .hero__title-sub {
+  max-width: 24ch;
+  margin-bottom: 0.9rem;
+  font-size: clamp(1.15rem, 2vw, 1.45rem);
+  line-height: 1.3;
+}
+/* Hours and meal framing read as one badge with a divider. */
+.hero__hours {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 0 0 1.5rem;
+  border: 1px solid rgba(119, 82, 53, 0.22);
+  border-radius: 999px;
+  background: rgba(255, 253, 249, 0.72);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.85), 0 8px 18px -14px rgba(80, 49, 20, 0.4);
+}
+.hero__hours > span {
+  padding: 0.5rem 0.95rem;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 0.93rem;
+}
+.hero__hours > span + span {
+  border-left: 1px solid rgba(119, 82, 53, 0.2);
+}
+.hero__tagline {
+  max-width: 21ch;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: var(--orange-deep);
+}
+.hero__features {
+  margin-top: 1.35rem;
+}
+.hero__features-label {
+  margin-bottom: 0.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-3);
+}
+.hero__features-list li {
+  padding: 0.4rem 0.85rem;
+  border-color: rgba(168, 70, 15, 0.2);
+  background: rgba(255, 253, 249, 0.6);
+  color: var(--ink);
+  font-weight: 500;
+}
+.hero__actions {
+  margin-top: 1.75rem;
+}
+.hero__actions .btn {
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .hero {
+    padding-top: calc(var(--header-h) + 2.25rem);
+  }
+  .hero__tamil {
+    margin-bottom: 0.35rem;
+  }
+  .hero__hours > span {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.86rem;
+  }
+  .hero__features-list li {
+    font-size: 0.86rem;
+  }
+  .hero__actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    padding-inline: 0.9rem;
+  }
+}
+@media (max-width: 359px) {
+  .hero__hours {
+    border-radius: 16px;
+  }
+  .hero__hours > span + span {
+    border-left: 0;
+    border-top: 1px solid rgba(119, 82, 53, 0.2);
+  }
+}
+
+/* ---- Hero slideshow: slower cross-fade, a slow settle on the active photo,
+        and a quieter control bar ---- */
+.hero-slide {
+  transition: opacity 1.2s var(--ease);
+}
+.hero-showcase .hero-showcase__photo .hero-slide img {
+  transform: scale(1.045);
+  transition: transform 6.5s cubic-bezier(0.25, 0.1, 0.25, 1), filter 1.2s var(--ease);
+}
+.hero-showcase .hero-showcase__photo .hero-slide.is-active img {
+  transform: scale(1);
+}
+.hero-slides__controls {
+  gap: 0;
+  padding: 0.18rem;
+  background: rgba(255, 253, 249, 0.78);
+  opacity: 0.9;
+  transition: opacity 0.25s var(--ease);
+}
+.hero-showcase:hover .hero-slides__controls,
+.hero-slides__controls:focus-within {
+  opacity: 1;
+}
+.hero-slides__btn {
+  width: 30px;
+  height: 30px;
+}
+.hero-slides__btn:focus-visible,
+.hero-slides__dot:focus-visible {
+  outline: 2px solid var(--orange-bright);
+  outline-offset: 0;
+  border-radius: 999px;
+}
+.hero-slides__dot::before {
+  width: 6px;
+  height: 6px;
+}
+.hero-slides__dot[aria-current="true"]::before {
+  width: 16px;
+  background: var(--orange);
+}
+
+/* ---- One card treatment: catering, careers, visit ---- */
+/* The cards fill the row they have (the 4-column services grid left an empty
+   column for three catering cards). */
+.content__cards,
+.content__cards.services__grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+  gap: clamp(0.85rem, 1.6vw, 1.15rem);
+}
+.content__cards .service h3 {
+  text-wrap: pretty;
+}
+.content__cards .service {
+  min-height: 0;
+  padding: clamp(1.35rem, 2.6vw, 1.9rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.25s var(--ease), border-color 0.25s var(--ease), box-shadow 0.25s var(--ease);
+}
+.content__cards .service:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  background: var(--paper);
+  box-shadow: var(--shadow-md);
+}
+.content__cards .service h3 {
+  margin-top: 0;
+  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  line-height: 1.2;
+  color: var(--ink);
+}
+.content__cards .service > p {
+  max-width: 46ch;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.content__cards .service__link {
+  margin-top: auto;
+  padding-top: 1rem;
+  font-weight: 600;
+}
+.content__cards .service .dish-list li,
+.content__cards .service .dish-list strong {
+  color: var(--ink);
+}
+.visit__card,
+.careers__contact {
+  border-radius: var(--radius);
+}
+.careers__grid {
+  align-items: center;
+}
+.careers__contact {
+  padding: clamp(1.35rem, 2.6vw, 1.9rem);
+}
+.careers__contact .contact__channels {
+  gap: 0.6rem;
+}
+a.contact__channel {
+  transition: border-color 0.2s var(--ease), background-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+a.contact__channel:hover {
+  border-color: var(--orange);
+  background: var(--paper);
+}
+a.contact__channel:hover strong {
+  color: var(--orange-deep);
+}
+a.contact__channel:focus-visible {
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .content__cards .service:hover {
+    transform: none;
+  }
+}
+
+/* ---- /menu: the full menu as one page, with a sticky category index ---- */
+.menu-page .menu-page__head {
+  padding-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+.menu-page__jump {
+  position: sticky;
+  z-index: 50;
+  top: 5.6rem;
+  border-block: 1px solid var(--line);
+  background: rgba(251, 248, 242, 0.92);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+}
+@media (min-width: 900px) {
+  .menu-page__jump {
+    top: 6.15rem;
+  }
+}
+.menu-page__jump-list {
+  display: flex;
+  gap: 0.4rem;
+  padding-block: 0.6rem;
+  overflow-x: auto;
+  list-style: none;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+/* Fade the trailing edge so it is clear the index scrolls sideways. */
+.menu-page__jump-list {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
+}
+.menu-page__jump-list::-webkit-scrollbar {
+  display: none;
+}
+.menu-page__jump a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--ink-2);
+  font-size: 0.86rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.menu-page__jump a:hover {
+  border-color: var(--orange);
+  color: var(--orange-deep);
+}
+.menu-page__jump a[aria-current="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.menu-page section[id] {
+  scroll-margin-top: calc(var(--header-h) + 5.25rem);
+}
+.menu-page .byo {
+  padding-top: clamp(2.75rem, 5vw, 4rem);
+}
+.menu-page .menu-page__cat {
+  padding-block: clamp(2.5rem, 5vw, 3.75rem);
+}
+.menu-page .menu-page__cat + .menu-page__cat {
+  border-top: 1px solid var(--line);
+}
+.menu-page .menu-page__cat .section__title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+.menu-page__list {
+  gap: 0 3rem;
+}
+.menu-page__item {
+  padding-block: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+/* Printed-menu dot leaders between dish and price. */
+.menu-page__row {
+  align-items: baseline;
+  gap: 0.4rem;
+}
+.menu-page__row::after {
+  content: "";
+  order: 1;
+  flex: 1 1 1.25rem;
+  min-width: 1.25rem;
+  border-bottom: 1.5px dotted var(--line-strong);
+  translate: 0 -0.28em;
+}
+.menu-page__name {
+  font-weight: 600;
+}
+.menu-page__price {
+  order: 2;
+  font-weight: 700;
+  color: var(--orange-deep);
+}
+.menu-page__desc {
+  margin-top: 0.25rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--ink-3);
+  opacity: 1;
+}
+.menu-page__table thead th {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  border-bottom-color: var(--line-strong);
+}
+.menu-page__table tbody tr {
+  transition: background-color 0.15s var(--ease);
+}
+.menu-page__table tbody tr:hover {
+  background: var(--accent-wash);
+}
+.menu-page__table tbody th a {
+  font-weight: 600;
+  color: var(--ink);
+}
+/* The number is the point of a contact row: full ink, not the label's muted tone. */
+.contact__channel strong {
+  color: var(--ink);
+}
