@@ -16,7 +16,7 @@
  */
 import { getFact, FACTS, addressLine, landmarkSentence, openingTimes, longDate } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
-import { taHome } from "./faq-ta.js";
+import { taHome, taMenu } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
 import {
   categories,
@@ -180,7 +180,8 @@ export const menuFaq = qaRoute("/menu/", [
   ),
   qa(
     `Does ${name} serve filter coffee?`,
-    `Yes. ${name} serves filter coffee for ${rupees(filterCoffee.price)}, with lunch and dinner from ${HOURS}. ` + `${list(otherDrinks)} are also on the menu.`,
+    `Yes. ${name} serves South Indian filter coffee for ${rupees(filterCoffee.price)} near ${getFact("landmarks")[0]} in ${AREA}. ` +
+      `It is on the lunch and dinner menu. ${list(otherDrinks)} are also available.`,
     { id: "filter-coffee" }
   ),
   qa(
@@ -194,6 +195,7 @@ export const menuFaq = qaRoute("/menu/", [
       `They include ${list([idly.names[0], idly.names[1], idiyappam.names[0]])}, served for lunch and dinner from ${OPEN}.`,
     { id: "idly-idiyappam" }
   ),
+  ...taMenu,
 ]);
 
 /* ---- /book-a-table/ ---------------------------------------------------------- */

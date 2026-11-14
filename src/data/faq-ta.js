@@ -1,6 +1,6 @@
 /**
  * Tamil Q&As (அடிக்கடி கேட்கப்படும் கேள்விகள்) and Tanglish Q&As, appended
- * after the English Q&As on /, /menu/dosa/, /menu/nellai-meals/,
+ * after the English Q&As on /, /menu/, /menu/dosa/, /menu/nellai-meals/,
  * /small-function-catering-chennai/ and /corporate-catering-chennai/, so the
  * one-Q&A-per-route and address-once rules (src/lib/answers.js qaRoute) cover
  * them too. Numbers come from the menu and entity-truth.ts; only the wording is
@@ -21,7 +21,7 @@
  */
 import { getFact, factOr } from "./entity-truth.ts";
 import { qa } from "../lib/answers.js";
-import { category, allItems, byo, summarise } from "../lib/menu-facts.js";
+import { category, allItems, byo, filterCoffee, summarise } from "../lib/menu-facts.js";
 import { IS_CATERING_PURE_VEG, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
 import verification from "../../config/client-verification.json";
 
@@ -54,7 +54,8 @@ const dosa = category("dosa");
 const batters = byo.steps.find((s) => s.name === "Batter").options;
 const batterR = summarise(batters);
 const sodhi = item("Nellai Special Sodhi Meals");
-item("Paanai Parotta");
+const paanai = item("Paanai Parotta");
+const kothu = item("Special Kothu Parotta");
 item("Kal Dosa (2 pcs)");
 item("Ghee Masala Dosa");
 const tnMeals = summarise(category("lunch").items.filter((i) => /TN Meals/.test(i.name)));
@@ -75,6 +76,20 @@ export const taHome = [
     `அண்ணா நகர் கிழக்கில் உள்ள ${BR} ஒரு ${PV} தென்னிந்திய உணவகம். ` +
       "விருப்பப்படி தேர்வு செய்து ஆர்டர் செய்யும் தோசை, நெல்லை ஸ்பெஷல் சொதி மீல்ஸ், பானை பரோட்டா ஆகியவை இங்குள்ள சிறப்பு உணவுகள்.",
     { ...TA, id: "ta-veg-restaurant" }
+  ),
+];
+
+/* ---- /menu/ -------------------------------------------------------------- */
+export const taMenu = [
+  qa(
+    "அண்ணா நகரில் ஃபில்டர் காபி எங்கு கிடைக்கும்?",
+    `அண்ணா நகர் டவர் பூங்கா அருகே உள்ள ${BR} உணவகத்தில் ஃபில்டர் காபி கிடைக்கும். மெனு விலை ${rs(filterCoffee.price)}. ${gstNote}`,
+    { ...TA, id: "ta-filter-coffee" }
+  ),
+  qa(
+    "அண்ணா நகரில் பானை பரோட்டா எங்கு கிடைக்கும்?",
+    `அண்ணா நகர் கிழக்கில் உள்ள ${BR} உணவகத்தின் மெனுவில் பானை பரோட்டா ${rs(paanai.price)}, ஸ்பெஷல் கொத்து பரோட்டா ${rs(kothu.price)} என்று தனித்தனியாக உள்ளன. ${gstNote}`,
+    { ...TA, id: "ta-parotta" }
   ),
 ];
 

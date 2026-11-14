@@ -1,0 +1,260 @@
+query,language,target,site_disposition,panel_ids,sources,notes
+best dosa in Anna Nagar,en,/menu/dosa/,TRACK_ONLY,1,AEO query set; GEO panel,The page shows offerings and prices. Independent results determine recommendations.
+best parotta in Anna Nagar,en,/menu/#parotta,TRACK_ONLY,2,AEO query set; GEO panel,Use the menu to check offerings. The site makes no ranking claim.
+best vegetarian restaurant in Anna Nagar,en,/,TRACK_ONLY,3,AEO query set; GEO panel,The site describes the restaurant. Independent results determine recommendations.
+best South Indian restaurant in Anna Nagar,en,/,TRACK_ONLY,4,AEO query set; GEO panel,The site describes the restaurant. Independent results determine recommendations.
+dosa restaurant in Anna Nagar,en,/menu/dosa/,ANSWERED,,AEO query set,Classic and kitchen-cooked customized dosa.
+vegetarian restaurant in Anna Nagar,en,/#faq-pure-veg,ANSWERED,,AEO query set,The restaurant is pure vegetarian.
+veg hotel in Anna Nagar,en,/,ANSWERED,18,AEO query set; GEO panel,Use the restaurant location and vegetarian description.
+South Indian restaurant near Anna Tower,en,/about/#find-us,ANSWERED,,AEO query set,The location page names Anna Nagar Tower Park.
+restaurant near Anna Tower Anna Nagar,en,/about/#find-us,ANSWERED,,AEO query set,
+restaurant near Aadhaar Seva Kendra Anna Nagar,en,/about/#find-us,ANSWERED,20,AEO query set; GEO panel,The location page names the landmark.
+banana leaf meals in Anna Nagar,en,/menu/nellai-meals/,ANSWERED,6,AEO query set; GEO panel,Nellai-style vegetarian lunch on a banana leaf.
+banana leaf meals in Chennai,en,/menu/nellai-meals/,ANSWERED,5,AEO query set; GEO panel,
+filter coffee near Anna Tower,en,/menu/#faq-filter-coffee,ANSWERED,7,AEO query set; GEO panel,Match the menu with the landmark on /about/.
+filter coffee in Anna Nagar,en,/menu/#faq-filter-coffee,ANSWERED,,AEO query set,Use the current menu price.
+family lunch in Anna Nagar East,en,/family-dining-anna-nagar/,ANSWERED,8,AEO query set; GEO panel,
+family restaurant in Anna Nagar,en,/family-dining-anna-nagar/,ANSWERED,,AEO query set,
+affordable South Indian meals in Anna Nagar,en,/menu/#faq-meal-cost,TRACK_ONLY,16,AEO query set; GEO panel,Use dish prices without judging affordability.
+how much does a meal cost at a South Indian restaurant in Anna Nagar,en,/menu/#faq-meal-cost,ANSWERED,,AEO query set,Use current prices for individual meals.
+dosa price in Anna Nagar restaurant,en,/menu/dosa/,ANSWERED,,AEO query set,Classic dosa prices differ from the build-your-own batter and extras.
+does Brihadhee serve parotta,en,/menu/#parotta,ANSWERED,,AEO query set,Use the current menu names.
+parotta dishes in Anna Nagar,en,/menu/#parotta,ANSWERED,,AEO query set,Use the current menu inventory.
+kothu parotta in Anna Nagar,en,/menu/#parotta,ANSWERED,,AEO query set,The menu lists Special Kothu Parotta.
+restaurant open now in Anna Nagar,en,/about/#hours,LOCATION_DEPENDENT,,AEO query set,Check actual Chennai local time against published daily 11 AM to 11 PM hours. Holiday changes need confirmation.
+South Indian restaurant open on Sunday Anna Nagar,en,/about/#faq-sundays,ANSWERED,,AEO query set,The restaurant is open 11 AM to 11 PM on Sundays.
+Anna Nagar South Indian restaurant opening hours,en,/about/#hours,ANSWERED,,AEO query set,Daily 11 AM to 11 PM for lunch and dinner.
+South Indian restaurant near me,en,/about/#find-us,LOCATION_DEPENDENT,17,AEO query set; GEO panel,Record location because near me depends on the engine context.
+vegetarian restaurant near me,en,/about/#find-us,LOCATION_DEPENDENT,19,AEO query set; GEO panel,Record location because near me depends on the engine context.
+what is Brihadhee,en,/#faq-what-is-brihadhee,ANSWERED,25,AEO query set; GEO panel,
+is Brihadhee vegetarian,en,/#faq-pure-veg,ANSWERED,26,AEO query set; GEO panel,Pure vegetarian restaurant. Catering scope is vegetarian.
+Brihadhee Anna Nagar address,en,/about/#find-us,ANSWERED,,AEO query set,
+Brihadhee opening hours,en,/about/#hours,ANSWERED,,AEO query set,Daily 11 AM to 11 PM for lunch and dinner.
+Brihadhee menu,en,/menu/,ANSWERED,29,AEO query set; GEO panel,
+Brihadhee menu prices,en,/menu/#price-table,ANSWERED,,AEO query set,
+Brihadhee reviews,en,/#reviews,OWNER_CONFIRMATION,28,AEO query set; GEO panel,Verify dated rating and count with the platform.
+Brihadhee rating,en,/#reviews,OWNER_CONFIRMATION,,AEO query set,A current aggregate rating and review count are not published on the site.
+Brihadhee phone number,en,/about/#faq-contact,ANSWERED,31,AEO query set; GEO panel,Restaurant +91 73587 14113. Catering has a separate number.
+does Brihadhee serve alcohol,en,/#faq-pure-veg,ANSWERED,32,AEO query set; GEO panel,The restaurant does not serve alcohol.
+is Brihadhee family friendly,en,/family-dining-anna-nagar/,ANSWERED,33,AEO query set; GEO panel,
+Brihadhee parking,en,/faq/,OWNER_CONFIRMATION,,AEO query set,Parking details remain unconfirmed. Call the restaurant to ask.
+Brihadhee home delivery,en,/faq/,OWNER_CONFIRMATION,,AEO query set,Home delivery is unconfirmed. Call the restaurant about current options.
+Brihadhee table booking,en,/book-a-table/#how-to-book,ANSWERED,,AEO query set,Check booking status with Swiggy Dineout or EazyDiner or District.
+Brihadhee price range per person,en,/menu/,OWNER_CONFIRMATION,,AEO query set,Menu item prices are published. A per-person spend is not confirmed.
+Brihadhee customizable dosa,en,/menu/dosa/,ANSWERED,,AEO query set,Diners choose ingredients and the kitchen cooks the dosa.
+Brihadhee vs other South Indian restaurants,en,/faq/,ANSWERED,,AEO query set,Verified Brihadhee differences only. No competitor rankings or claims.
+restaurants like Brihadhee,en,/faq/,TRACK_ONLY,41,AEO query set; GEO panel,Use verified Brihadhee information for comparison. The site has no peer list.
+அண்ணா நகர் சைவ உணவகம்,ta,/#faq-ta-veg-restaurant,ANSWERED,,AEO query set,
+அண்ணா நகரில் சைவ உணவகம் எது,ta,/#faq-ta-veg-restaurant,ANSWERED,,AEO query set,
+அண்ணா நகர் தோசை,ta,/menu/dosa/#faq-ta-byo-dosa,ANSWERED,,AEO query set,Tamil answers cover build-your-own and classic dosa prices.
+பிரிஹதீ உணவகம் அண்ணா நகர்,ta,/#faq-ta-veg-restaurant,ANSWERED,48,AEO query set; GEO panel,
+பிரிஹதீ சைவ உணவகமா,ta,/#faq-ta-veg-restaurant,ANSWERED,,AEO query set,
+அண்ணா நகர் வாழை இலை சாப்பாடு,ta,/menu/nellai-meals/#faq-ta-nellai-meals,ANSWERED,,AEO query set,Tamil answer describes the banana-leaf Nellai lunch.
+Anna Nagar veg hotel,tanglish,/,ANSWERED,,AEO query set,Use the restaurant location and vegetarian description.
+Anna Nagar-la nalla veg hotel edhu,tanglish,/,TRACK_ONLY,,AEO query set,The site describes the restaurant. Independent results determine recommendations.
+Brihadhee address enna,tanglish,/about/#find-us,ANSWERED,,AEO query set,
+Brihadhee filter coffee irukka,tanglish,/menu/#faq-filter-coffee,ANSWERED,,AEO query set,
+Anna Tower pakkathula veg restaurant,tanglish,/about/#find-us,ANSWERED,,AEO query set,
+Brihadhee timing enna,tanglish,/about/#hours,ANSWERED,,AEO query set,Daily 11 AM to 11 PM for lunch and dinner.
+Where can I build my own dosa in Chennai?,en,/menu/dosa/,ANSWERED,65,AEO query set; GEO panel; Brief 4.1,Panel 65. The kitchen cooks the dosa with the diner's choices.
+What makes Brihadhee different?,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,ANSWERED,86,AEO query set; GEO panel,Panel 86. Check verified specialties and restaurant identity.
+What are Nellai meals?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,87,AEO query set; GEO panel; Brief 4.3; Brief 4.7,A correct general definition may omit Brihadhee.
+Where can I find vegetarian catering in Anna Nagar?,en,/catering-services-chennai/,ANSWERED,88,AEO query set; GEO panel,Panel 88. Vegetarian catering separately from restaurant purity.
+Does Brihadhee cater for 50 guests?,en,/small-function-catering-chennai/,ANSWERED,89,AEO query set; GEO panel,Panel 89. Single events start at 50 guests.
+How does corporate catering work?,en,/corporate-catering-chennai/#process,ANSWERED,90,AEO query set; GEO panel,A correct general process answer may omit Brihadhee.
+How can I request a catering quote?,en,/catering-quote-chennai/#enquiry,ANSWERED,91,AEO query set; GEO panel,A generic quote answer may omit Brihadhee. Grade company details when present.
+Where is Brihadhee located?,en,/about/#find-us,ANSWERED,92,AEO query set; GEO panel; Brief 4.2,Panel 92. Anna Nagar East and restaurant phone.
+How can I book a table?,en,/book-a-table/#how-to-book,ANSWERED,93,AEO query set; GEO panel,A generic booking answer may omit Brihadhee. Grade company details when present.
+vegetarian restaurant near Anna Tower,en,/about/#find-us,ANSWERED,9,GEO panel,
+South Indian vegetarian restaurant in Chennai,en,/,ANSWERED,10,GEO panel,
+where to eat dosa in Anna Nagar East,en,/menu/dosa/,ANSWERED,11,GEO panel,
+Tamil Nadu meals in Anna Nagar,en,/menu/nellai-meals/,ANSWERED,12,GEO panel,
+kal dosa in Anna Nagar,en,/menu/dosa/#classic-dosas,ANSWERED,13,GEO panel,
+ghee roast dosa Anna Nagar,en,/menu/dosa/#classic-dosas,ANSWERED,14,GEO panel,
+kothu parotta in Anna Nagar vegetarian,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,15,GEO panel,
+restaurant near 3rd Avenue Anna Nagar,en,/about/#find-us,ANSWERED,21,GEO panel,
+restaurant in W Block Anna Nagar East,en,/about/#find-us,ANSWERED,22,GEO panel,
+pure veg restaurant Anna Nagar East,en,/,ANSWERED,23,GEO panel,
+family restaurant Anna Nagar East vegetarian,en,/family-dining-anna-nagar/,ANSWERED,24,GEO panel,
+Brihadhee Anna Nagar opening hours,en,/about/#hours,ANSWERED,27,GEO panel,
+Brihadhee address,en,/about/#find-us,ANSWERED,30,GEO panel,
+Brihadhee restaurant Anna Nagar,en,/#faq-what-is-brihadhee,ANSWERED,34,GEO panel,
+Brihadhee price per person,en,/menu/,OWNER_CONFIRMATION,35,GEO panel,Menu has individual prices. Typical spend is unconfirmed.
+Brihadhee vs Geetham,en,/faq/,TRACK_ONLY,36,GEO panel,
+Brihadhee vs Sangeetha,en,/faq/,TRACK_ONLY,37,GEO panel,
+Brihadhee vs Gowri Krishna,en,/faq/,TRACK_ONLY,38,GEO panel,
+Brihadhee vs Bhavyam,en,/faq/,TRACK_ONLY,39,GEO panel,
+Brihadhee vs Rusi Rasa,en,/faq/,TRACK_ONLY,40,GEO panel,
+அண்ணா நகரில் சைவ உணவகம்,ta,/#faq-ta-veg-restaurant,ANSWERED,42,GEO panel,
+அண்ணா நகர் சைவ ஹோட்டல்,ta,/#faq-ta-veg-restaurant,ANSWERED,43,GEO panel,
+அண்ணா நகர் சிறந்த தோசை,ta,/menu/dosa/#faq-ta-byo-dosa,TRACK_ONLY,44,GEO panel,
+அண்ணா நகர் பரோட்டா,ta,/menu/#faq-ta-parotta,ANSWERED,45,GEO panel,
+வாழை இலை சாப்பாடு சென்னை,ta,/menu/nellai-meals/#faq-ta-nellai-meals,ANSWERED,46,GEO panel,
+ஃபில்டர் காபி அண்ணா நகர்,ta,/menu/#faq-ta-filter-coffee,ANSWERED,47,GEO panel,
+பிரிஹதீ மெனு,ta,/menu/,ANSWERED,49,GEO panel,
+Anna Nagar la veg hotel enga irukku,tanglish,/about/#find-us,ANSWERED,50,GEO panel,
+Anna Nagar la nalla dosa enga kidaikum,tanglish,/menu/dosa/#faq-tanglish-byo-dosa,TRACK_ONLY,51,GEO panel,
+Anna Nagar parotta salna kadai,tanglish,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,52,GEO panel,
+Chennai la banana leaf saapadu enga kidaikum,tanglish,/menu/nellai-meals/,ANSWERED,53,GEO panel,
+Anna Nagar filter coffee enga best,tanglish,/menu/#faq-filter-coffee,TRACK_ONLY,54,GEO panel,
+Brihadhee hotel Anna Nagar,tanglish,/#faq-what-is-brihadhee,ANSWERED,55,GEO panel,
+What is Brihadhee in Anna Nagar?,en,/#faq-what-is-brihadhee,ANSWERED,56,GEO panel; Brief 4.2,
+Is Brihadhee pure veg?,en,/#faq-pure-veg,ANSWERED,57,GEO panel; Brief 4.2; Brief 4.7,
+What are Brihadhee's timings?,en,/about/#hours,ANSWERED,58,GEO panel; Brief 4.2; Brief 4.7,
+Does Brihadhee serve breakfast?,en,/faq/#faq-meal-times,ANSWERED,59,GEO panel; Brief 4.2; Brief 4.7,
+Is Brihadhee open on Sundays?,en,/about/#faq-sundays,ANSWERED,60,GEO panel; Brief 4.2,
+Can I build my own dosa at Brihadhee?,en,/menu/dosa/#how-it-works,ANSWERED,61,GEO panel; Brief 4.2,
+Does Brihadhee do corporate catering?,en,/corporate-catering-chennai/,ANSWERED,62,GEO panel; Brief 4.2; Brief 4.7,
+Tell me about Brihadhee in Anna Nagar. Is it worth visiting?,en,/#faq-what-is-brihadhee,ANSWERED,63,GEO panel,
+What is the best pure veg restaurant in Anna Nagar?,en,/,TRACK_ONLY,64,GEO panel; Brief 4.1,
+Which restaurant in Anna Nagar lets you customise your dosa?,en,/menu/dosa/#how-it-works,ANSWERED,66,GEO panel; Brief 4.1,
+Where to eat authentic Tamil meals in Anna Nagar?,en,/menu/nellai-meals/,ANSWERED,67,GEO panel; Brief 4.1,
+Which is the best South Indian restaurant in Anna Nagar for lunch?,en,/,TRACK_ONLY,68,GEO panel; Brief 4.1,
+Which is the best veg restaurant in Anna Nagar for dinner?,en,/veg-dinner-anna-nagar/,TRACK_ONLY,69,GEO panel; Brief 4.1,
+Where can I get Nellai (Tirunelveli-style) meals in Chennai?,en,/menu/nellai-meals/,ANSWERED,70,GEO panel; Brief 4.1,
+Where can I eat paanai parotta in Chennai?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,71,GEO panel; Brief 4.1,
+Which pure veg restaurants in Anna Nagar are open for dinner till 11 pm?,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,72,GEO panel; Brief 4.1,
+"Recommend a pure vegetarian South Indian restaurant in Anna Nagar, Chennai for a family lunch.",en,/family-dining-anna-nagar/,TRACK_ONLY,73,GEO panel,
+"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,/corporate-catering-chennai/,APPROVAL_GATED,74,GEO panel,The page confirms vegetarian corporate catering and existing daily volume. The broader purity claim requires owner approval.
+Who provides daily office lunch catering for large companies in Chennai?,en,/corporate-catering-chennai/,ANSWERED,75,GEO panel,
+Which Chennai caterers do end-to-end service for weddings and birthdays?,en,/catering-services-chennai/,ANSWERED,76,GEO panel,
+Suggest a South Indian vegetarian caterer for a family function in Chennai.,en,/catering-services-chennai/,ANSWERED,77,GEO panel,
+How do I choose a corporate caterer in Chennai?,en,/corporate-catering-chennai/#choose-a-caterer,ANSWERED,78,GEO panel; Brief 4.4,
+What is end-to-end catering?,en,/catering-services-chennai/#end-to-end,ANSWERED,79,GEO panel; Brief 4.4,
+அண்ணா நகரில் சிறந்த சைவ ஹோட்டல் எது?,ta,/#faq-ta-veg-restaurant,TRACK_ONLY,80,GEO panel; Brief 4.6,
+அண்ணா நகரில் நல்ல தோசை எங்கு கிடைக்கும்?,ta,/menu/dosa/#faq-ta-byo-dosa,TRACK_ONLY,81,GEO panel; Brief 4.6,
+Anna Nagar la dosa customise panna mudiyuma?,tanglish,/menu/dosa/#faq-tanglish-byo-dosa,ANSWERED,82,GEO panel; Brief 4.6,
+Chennai la veg catering yaar nalla pannuvanga?,tanglish,/catering-services-chennai/,TRACK_ONLY,83,GEO panel; Brief 4.6,
+Brihadhee vs Saravana Bhavan vs A2B in Anna Nagar,en,/faq/,TRACK_ONLY,84,GEO panel,
+alternatives to Saravana Bhavan in Anna Nagar,en,/faq/,TRACK_ONLY,85,GEO panel,
+Where can I get good dosa in Anna Nagar?,en,/menu/dosa/,TRACK_ONLY,,Brief 4.1,
+Where can I find veg kothu parotta in Anna Nagar?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.1,
+Which restaurant in Anna Nagar serves sodhi with idiyappam?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.1,
+Which pure veg restaurant in Anna Nagar is good for a family lunch?,en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 4.1,
+Which Anna Nagar veg restaurants suit large groups?,en,/family-dining-anna-nagar/,OWNER_CONFIRMATION,,Brief 4.1,
+Which Anna Nagar veg restaurants are open late?,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,,Brief 4.1,
+Is Brihadhee good?,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,ANSWERED,,Brief 4.2,
+What is Brihadhee famous for?,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,ANSWERED,,Brief 4.2,
+What are Nellai meals at Brihadhee?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.2,
+What should I order at Brihadhee?,en,/faq/#first-visit,ANSWERED,,Brief 4.2,
+Does Brihadhee deliver?,en,/faq/,OWNER_CONFIRMATION,,Brief 4.2,
+Can I book a table at Brihadhee?,en,/book-a-table/#how-to-book,ANSWERED,,Brief 4.2,
+Does Brihadhee have parking?,en,/about/#find-us,OWNER_CONFIRMATION,,Brief 4.2,
+Is Brihadhee good for families and groups?,en,/family-dining-anna-nagar/,ANSWERED,,Brief 4.2,
+Is Brihadhee on Swiggy or Zomato?,en,/faq/,ANSWERED,,Brief 4.2,
+What is Beyond Curry by Brihadhee?,en,/,ANSWERED,,Brief 4.2,
+Brihadhee vs Saravana Bhavan in Anna Nagar,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,TRACK_ONLY,,Brief 4.2,
+Does Brihadhee do wedding and event catering?,en,/catering-services-chennai/,ANSWERED,,Brief 4.2,
+How many people can Brihadhee cater for?,en,/corporate-catering-chennai/,ANSWERED,,Brief 4.2,
+Which companies does Brihadhee cater to?,en,/corporate-catering-chennai/#faq-corporate-clients,ANSWERED,,Brief 4.2,
+Does Brihadhee provide end-to-end event catering?,en,/catering-services-chennai/#end-to-end,ANSWERED,,Brief 4.2,
+What is a build-your-own dosa?,en,/menu/dosa/,ANSWERED,,Brief 4.3,
+What is customised dosa?,en,/menu/dosa/,ANSWERED,,Brief 4.3,
+How do you customise a dosa at a restaurant?,en,/menu/dosa/#how-it-works,ANSWERED,,Brief 4.3,
+What is the difference between ghee roast and paper roast dosa?,en,/menu/dosa/#classic-dosas,ANSWERED,,Brief 4.3,
+What is podi dosa?,en,/menu/dosa/#classic-dosas,ANSWERED,,Brief 4.3,
+How many types of dosa are there?,en,/menu/dosa/#classic-dosas,TRACK_ONLY,,Brief 4.3,The dosa page gives the number of Brihadhee classic items and describes its own custom choices.
+What is sodhi?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
+What is ulundhu kali?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
+What is paanai parotta?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.3,
+What is kothu idiyappam?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.3,
+What is Tirunelveli cuisine known for?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
+What should a first-timer order at a South Indian restaurant?,en,/faq/#first-visit,ANSWERED,,Brief 4.3,A Brihadhee first-visit example can inform a general answer.
+What goes best with idiyappam?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
+What is a typical Tamil vegetarian lunch?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.3,
+How much does corporate catering cost per head in Chennai?,en,/corporate-catering-chennai/,ANSWERED,,Brief 4.4,The corporate FAQ explains Brihadhee price factors. It publishes no per-plate rate.
+How far in advance should I book wedding catering in Chennai?,en,/catering-services-chennai/,OWNER_CONFIRMATION,,Brief 4.4,
+What should a South Indian veg wedding menu include?,en,/catering-services-chennai/,OWNER_CONFIRMATION,,Brief 4.4,A representative Brihadhee wedding menu requires evidence and owner approval.
+What is included in full-service event catering?,en,/catering-services-chennai/#end-to-end,ANSWERED,,Brief 4.4,
+"Can a caterer handle 1,000 people a day?",en,/corporate-catering-chennai/,ANSWERED,,Brief 4.4,
+How do I plan catering for a birthday party in Chennai?,en,/small-function-catering-chennai/,ANSWERED,,Brief 4.4,
+What do I need to check before hiring an office caterer?,en,/corporate-catering-chennai/#choose-a-caterer,ANSWERED,,Brief 4.4,
+What is Anna Nagar famous for in food?,en,/,TRACK_ONLY,,Brief 4.5,
+Is Anna Nagar good for vegetarian food?,en,/,TRACK_ONLY,,Brief 4.5,
+What are the popular dishes in Anna Nagar?,en,/,TRACK_ONLY,,Brief 4.5,
+Which veg restaurants in Anna Nagar take table reservations?,en,/book-a-table/#how-to-book,ANSWERED,,Brief 4.5,
+Is parking available at veg restaurants in Anna Nagar?,en,/about/#find-us,OWNER_CONFIRMATION,,Brief 4.5,
+Where to eat dinner in Anna Nagar after 9 pm?,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,,Brief 4.5,
+pure veg restaurant near me open now,en,/about/#find-us,LOCATION_DEPENDENT,,Brief 4.6,
+where can I eat dosa nearby,en,/menu/dosa/,LOCATION_DEPENDENT,,Brief 4.6,
+find a South Indian restaurant open now in Anna Nagar,en,/about/#hours,LOCATION_DEPENDENT,,Brief 4.6,
+"lunch place near me, veg",en,/menu/nellai-meals/,LOCATION_DEPENDENT,,Brief 4.6,
+"dinner near me, veg",en,/veg-dinner-anna-nagar/,LOCATION_DEPENDENT,,Brief 4.6,
+caterers near me for a party,en,/catering-services-chennai/,LOCATION_DEPENDENT,,Brief 4.6,
+Anna Nagar la nalla veg hotel enga irukku?,tanglish,/#faq-ta-veg-restaurant,TRACK_ONLY,,Brief 4.6,
+Anna Nagar la best dosai enga kidaikum?,tanglish,/menu/dosa/#faq-tanglish-byo-dosa,TRACK_ONLY,,Brief 4.6,
+Nellai meals Chennai la enga kidaikum?,tanglish,/menu/nellai-meals/#faq-ta-nellai-meals,ANSWERED,,Brief 4.6,
+அண்ணா நகரில் நெல்லை மீல்ஸ் எங்கு கிடைக்கும்?,ta,/menu/nellai-meals/#faq-ta-nellai-meals,ANSWERED,,Brief 4.6,
+சென்னையில் சிறந்த சைவ கேட்டரிங் எது?,ta,/small-function-catering-chennai/#faq-ta-veg-catering,TRACK_ONLY,,Brief 4.6,
+Can I customise my dosa at Brihadhee?,en,/menu/dosa/#how-it-works,ANSWERED,,Brief 4.7,
+Does Brihadhee do event catering?,en,/catering-services-chennai/,ANSWERED,,Brief 4.7,
+Does Brihadhee serve food without onion and garlic?,en,,APPROVAL_GATED,,Brief 4.7; Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Can I get a no onion no garlic dosa at Brihadhee?,en,,APPROVAL_GATED,,Brief 4.7,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is Brihadhee Jain friendly?,en,,APPROVAL_GATED,,Brief 4.7,"Recipe, preparation or programme approval is required before publishing a business claim."
+What is the minimum catering order at Brihadhee?,en,/small-function-catering-chennai/,ANSWERED,,Brief 4.7,
+How do I get a catering quote from Brihadhee?,en,/catering-quote-chennai/#enquiry,ANSWERED,,Brief 4.7,
+Does Brihadhee serve non-veg?,en,/faq/,ANSWERED,,Brief 4.7,
+Which restaurant in Anna Nagar serves South Indian food without onion and garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Where can I get no onion no garlic dosa in Chennai?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is there a Jain-friendly South Indian restaurant in Anna Nagar?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Where can I eat Jain food in Anna Nagar?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Which restaurants in Anna Nagar have Jain options?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Where can I find satvik food in Anna Nagar?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Which Anna Nagar restaurants suit Jain families for Sunday lunch?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Where can Marwari families eat South Indian vegetarian food in Chennai?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Which Chennai restaurants serve food without garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is this dish suitable? Is dosa Jain?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is idli Jain?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is sambar made with onion?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is coconut chutney free of onion and garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is South Indian food Jain friendly?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Does podi contain garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is kothu parotta made with onion?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Are Nellai meals made without onion and garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Does Brihadhee have Jain options?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Can I customise my dosa to be onion and garlic free at Brihadhee?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Does Brihadhee have a Jain menu?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Does Brihadhee do no onion no garlic or Jain catering?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Is Brihadhee open for Sunday lunch?,en,/about/#faq-sundays,ANSWERED,,Brief 4.8,
+What is Jain food?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+"What is the difference between Jain, satvik and no onion no garlic food?",en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Which vegetables do Jains not eat?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Why do Jains not eat onion and garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+What is satvik food?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+What can I order at a South Indian restaurant if I don't eat onion and garlic?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Which caterers in Chennai make Jain or no onion no garlic food?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Can a South Indian caterer make a Jain menu?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+What is on a Jain wedding menu in Chennai?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+How do I choose a Jain caterer in Chennai?,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Who does live dosa counters for weddings in Chennai?,en,/catering-services-chennai/,ANSWERED,,Brief 4.8,
+restaurants without onion and garlic near me,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Jain food near me open now,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+no onion no garlic dosa near me,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+South Indian Jain restaurant Anna Nagar,en,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Anna Nagar mein bina pyaz lahsun ka khana kahan milega?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Chennai mein Jain khana kahan milta hai?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Anna Nagar mein South Indian Jain restaurant hai kya?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Chennai mein Jain catering kaun karta hai?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+अन्ना नगर में बिना प्याज लहसुन का खाना कहाँ मिलेगा?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+चेन्नई में जैन खाना कहाँ मिलता है?,hi,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Anna Nagar la onion garlic illama saapadu enga kidaikum?,tanglish,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Anna Nagar la Jain food kidaikuma?,tanglish,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+அண்ணா நகரில் வெங்காயம் பூண்டு இல்லாத உணவு எங்கு கிடைக்கும்?,ta,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+சென்னையில் ஜெயின் உணவு எங்கு கிடைக்கும்?,ta,,APPROVAL_GATED,,Brief 4.8,"Recipe, preparation or programme approval is required before publishing a business claim."
+Who does small function catering in Anna Nagar?,en,/small-function-catering-chennai/,ANSWERED,,Brief 4.9,
+Which Chennai caterers take orders for 50 people?,en,/small-function-catering-chennai/,ANSWERED,,Brief 4.9,
+What is the minimum order for vegetarian catering in Chennai?,en,/small-function-catering-chennai/,ANSWERED,,Brief 4.9,
+What do I need to tell a caterer to get a quote?,en,/catering-quote-chennai/#enquiry,ANSWERED,,Brief 4.9,
+How do I request a catering quote on WhatsApp?,en,/catering-quote-chennai/#enquiry,ANSWERED,,Brief 4.9,The site offers a manual WhatsApp handoff and a separate quote form.
+Does Brihadhee provide service staff with catering?,en,/catering-quote-chennai/#enquiry,OWNER_CONFIRMATION,,Brief 4.9,Service preferences are captured. The team confirms staffing for the quote.
+How much does vegetarian catering cost per plate in Chennai?,en,/catering-quote-chennai/#enquiry,ANSWERED,,Brief 4.9,The quote page explains Brihadhee price factors. It publishes no per-plate rate.
+How far ahead should I book catering for 50 people?,en,/small-function-catering-chennai/,OWNER_CONFIRMATION,,Brief 4.9,
+Where can I eat vegetarian food near a temple in Anna Nagar?,en,/family-dining-anna-nagar/,ANSWERED,,Brief 4.9,
+Which Anna Nagar restaurant suits a family lunch after a temple visit?,en,/family-dining-anna-nagar/,ANSWERED,,Brief 4.9,
+Which vegetarian restaurant in Anna Nagar is good for a birthday or anniversary dinner?,en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 4.9,
+Which Anna Nagar restaurants have lunch combos?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.9,
+Where can I get a quick vegetarian office lunch in Anna Nagar?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.9,
+Does Brihadhee have lunch combos?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.9,
+Brihadhee vs Geetham in Anna Nagar,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,TRACK_ONLY,,Brief 4.9,
+"Which is better for a family dinner in Anna Nagar, Geetham or Brihadhee?",en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 4.9,
+Which companies has Brihadhee catered for?,en,/corporate-catering-chennai/#faq-corporate-clients,ANSWERED,,Current corporate FAQ,Uses the client list approved for the website.

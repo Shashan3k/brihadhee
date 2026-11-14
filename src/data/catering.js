@@ -121,7 +121,7 @@ export const contact = {
 /* ---- Section data (null/empty = section hidden) ----------------------- */
 
 export const opening = eventIds.length
-  ? `Brihadhee provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and family functions" : "family functions"} across ${joinNatural(areas.length ? areas : ["Chennai"])}. The Anna Nagar East team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
+  ? `Brihadhee’s Anna Nagar East team provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and family functions" : "family functions"} across ${joinNatural(areas.length ? areas : ["Chennai"])}. The team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
   : null;
 
 export const entityLine = cateringEnabled
@@ -574,6 +574,14 @@ export const corporatePage = corporateEnabled
             `Discuss a tasting at its Anna Nagar East kitchen and a one-week trial before agreeing a rotating menu and delivery slot. You can also enquire about a packed bulk lunch or a staffed office event.`,
           { id: "how-does-brihadhee-start-a-corporate-catering-account" }
         ),
+        ...(clientLead.length ? [
+          qa(
+            "Which companies has Brihadhee catered for?",
+            `Companies Brihadhee has catered for in Chennai include ${joinNatural(clientLead)}. ` +
+              "See the client list above for more examples of past catering work.",
+            { id: "corporate-clients" }
+          ),
+        ] : []),
         qa(
           "Is Brihadhee's corporate catering kitchen FSSAI licensed?",
           `Yes. Brihadhee cooks every corporate meal in its FSSAI-licensed, ${PV} restaurant kitchen in ${NEAR}, where no meat, egg or fish is cooked. ` +

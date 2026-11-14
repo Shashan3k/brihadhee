@@ -59,8 +59,9 @@ const schema = pageGraph({
         </p>
         <p class="menu-page__note">Prices in {currencySymbol === "₹" ? "Indian rupees (₹)" : currencySymbol}, as on the current menu. {menuNotes.gst} {menuNotes.parcel} {menuNotes.prep}</p>
         <p class="section__lead">
-          Start with <a href={href(ROUTES.dosa)}>how to order a customized dosa</a> or explore
-          <a href={href(ROUTES.lunch)}>Nellai meals and lunch combos</a>.
+          See <a href={href(ROUTES.dosa)}>how to order a customized dosa</a>,
+          <a href={href(ROUTES.lunch)}>Nellai meals and lunch combos</a>, or
+          <a href={`${href(ROUTES.dinner)}#dinner-favourites`}>Paanai Parotta and kothu parotta at dinner</a>.
           Planning a visit? <a href={href(ROUTES.book)}>Book a table</a> or
           <a href={`${href(ROUTES.about)}#find-us`}>get directions to Brihadhee</a>.
         </p>

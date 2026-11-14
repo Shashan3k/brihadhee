@@ -17,7 +17,7 @@ import { cateringEnabled, corporate, guests, liveCounters } from "./catering.js"
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
-import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, byoDefinition, BYO_DEFINITION, menuNotes, customizedDosaDefinition, customizedLabel } from "../lib/menu-facts.js";
+import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedDosaDefinition, customizedLabel } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
@@ -177,8 +177,8 @@ export const dosaPage = {
   title: `Build Your Own Dosa in Chennai | ${name}, Anna Nagar`,
   description: `Choose your batter, roast, fillings and podi, and we cook your dosa your way. Build your own dosa at ${name}, Anna Nagar. Lunch and dinner daily.`,
   h1: `Build Your Own Dosa at ${name}, Anna Nagar`,
-  /* The canonical definition leads the page (AEO audit 2026-11-12: "build your own" was read as a self-service station). */
-  intro: `${byoDefinition} ${name} is a ${PV} restaurant on ${STREET}, serving lunch and dinner every day from ${HOURS}.`,
+  /* Lead with the location and ordering experience for first-time visitors. */
+  intro: `At ${name} in Anna Nagar East, Chennai, you can build your own dosa by choosing the batter, podi and toppings, filling and roast. The kitchen cooks it to order and serves it at your table. Visit for lunch or dinner from ${HOURS} every day.`,
   glance: [
     ["Who", `${name}, a ${PV} restaurant in Anna Nagar East`],
     ["Batters", `${byo.batterCount} batters, ${batterRange}`],
