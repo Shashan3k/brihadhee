@@ -20,6 +20,7 @@ import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import ContentSection from "../components/ContentSection.astro";
 import LeadForm from "../components/LeadForm.astro";
+import ClientLogos from "../components/ClientLogos.astro";
 import { site, responsive } from "../data/site.js";
 import { getFact } from "../data/entity-truth.ts";
 import { CATERING_DIET, CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
@@ -132,7 +133,9 @@ const cp = corporatePage;
     <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} primaryAction={quoteAction} showDirections={false} />
     <AtAGlance title="Brihadhee corporate catering: summary" rows={cp.glance} />
     <ContentSection {...cp.scale} />
+    {cp.clients && <ClientLogos {...cp.clients} />}
     <ContentSection {...cp.services} />
+    {cp.coffeeBar && <ContentSection {...cp.coffeeBar} />}
     <ContentSection {...cp.menus} />
     <ContentSection {...cp.process} />
     {cp.checklist && <ContentSection {...cp.checklist} />}

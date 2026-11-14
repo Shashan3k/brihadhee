@@ -170,7 +170,7 @@ Recorded in `src/data/entity-truth.ts` with source `B2B` and `verifiedOn: 2026-1
 | Corporate services | Daily office lunch supply, bulk lunch catering, employee meal programmes, office parties and corporate events | `corporateServices` |
 | Corporate process | Enquiry and headcount, kitchen tasting at Anna Nagar, trial week, daily rollout on a rotating menu | `corporateProcess` |
 | Food safety | FSSAI-licensed kitchen; 100% pure veg; packed in the kitchen; delivered to an agreed time slot | `foodSafety` |
-| Still pending | The FSSAI licence number (the page says it is shared on request until supplied: `fssaiLicence`); permission to name corporate clients (`corporateClients`); event catering staff and clean-up, prep mode and advance notice (config) | |
+| Still pending | The FSSAI licence number (the page says it is shared on request until supplied: `fssaiLicence`); corporate clients now named (section K); event catering staff and clean-up, prep mode and advance notice (config) | |
 | Lead capture | Owner decision (closes section C, "stored form"): the form posts to `/api/lead` and is emailed through Resend; nothing is stored on the website | `api/lead.js` |
 
 ## I. AI-citation brief (2026-11-12)
@@ -189,3 +189,11 @@ Recorded in `src/data/entity-truth.ts` with source `B2B` and `verifiedOn: 2026-1
 | Restaurant phone and WhatsApp | **+91 73587 14113** on every page, in the Restaurant schema, the footer and llms.txt (replaces +91 94442 24999 as the main number) | `entity-truth.ts` `phone`, `whatsapp` |
 | Catering phone and WhatsApp | **+91 94442 24999** on the catering pages only (event, corporate, event planner, small functions, quote): header call button, page header, summary, mobile CTA bar, forms, FAQ answers and the catering Service schema. The footer keeps the restaurant number as the site-wide NAP | `config/client-verification.json` `enquiry_channels` (`is_different_from_restaurant: true`); `pageContact()` in `src/data/site.js` |
 | To confirm | That +91 73587 14113 takes WhatsApp (the WhatsApp buttons now use it) | |
+
+## K. Corporate clients (2026-11-14), sent by the Brihadhee team
+
+| Item | Value | Where |
+|---|---|---|
+| Companies catered for | Aalam, Freehand, Pando, Bi3 Technologies, Nestlé, NDR, Selvarangam Hospitals, FRUTTA, Go Khana, HungerBox, Pro Chant, Prodapt, Stark Event Management. Names only: no headcounts, dates or contract details | `entity-truth.ts` `corporateClients` |
+| Shown on | `/corporate-catering-chennai/`: a "Companies We Have Catered For" logo wall after the daily volume section, plus a "Clients" row in the summary table | `src/components/ClientLogos.astro`, `corporatePage.clients` in `src/data/catering.js` |
+| Logos | One file per company in `public/images/clients/` (`<slug>.svg`, `.png` or `.webp`). A company without a logo file shows its name as a text tile | `ClientLogos.astro` `SLUGS` |

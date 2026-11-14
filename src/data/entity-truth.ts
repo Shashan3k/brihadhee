@@ -72,6 +72,8 @@ const D11 = "2026-11-11";
 const CLIENT = "client direction W11 to W13 (SEO_RANKING_STRATEGY.md), 2026-11-11";
 const B2B = "corporate and event catering brief confirmed by the Brihadhee team, 2026-11-12 (docs/seo/client-confirmations.md section H)";
 const D12 = "2026-11-12";
+const CLIENT_LIST = "corporate client list sent by the Brihadhee team for the website, 2026-11-14 (docs/seo/client-confirmations.md section K)";
+const D14 = "2026-11-14";
 const LISTINGS = "listing URLs from docs/geo/presence-audit.csv (seen 2026-11-05), confirmed as the restaurant's own profiles by the Brihadhee team, 2026-11-12";
 const ZOMATO = "https://www.zomato.com/chennai/brihadhee-anna-nagar-east";
 const SWIGGY_DINEOUT = "https://www.swiggy.com/restaurants/brihadhee-anna-nagar-chennai-1150652/dineout";
@@ -282,9 +284,29 @@ export const FACTS = {
   }),
   /** End-to-end event service (client W13): menu planning, cooking, service and setup. */
   eventService: verified("end-to-end service: menu planning, cooking, serving and setup", KW, D11),
-  /** Corporate catering (client W13). Client names and headcounts need the client's permission. */
+  /** Corporate catering (client W13). */
   corporateCatering: verified({ dailyCovers: CORPORATE_DAILY_MEALS, description: "daily corporate and office catering" }, KW, D11),
-  corporateClients: unverified<string[]>("permission to name corporate clients and show their headcounts"),
+  /** Companies Brihadhee has catered for, named with the client's permission (names only: no headcounts or dates).
+   *  Logos live in public/images/clients/ (src/components/ClientLogos.astro). */
+  corporateClients: verified(
+    [
+      "Aalam",
+      "Freehand",
+      "Pando",
+      "Bi3 Technologies",
+      "Nestlé",
+      "NDR",
+      "Selvarangam Hospitals",
+      "FRUTTA",
+      "Go Khana",
+      "HungerBox",
+      "Pro Chant",
+      "Prodapt",
+      "Stark Event Management",
+    ],
+    CLIENT_LIST,
+    D14
+  ),
   /** Corporate service areas (client confirmed). One "Areas we serve" section, never doorway pages. */
   corporateAreas: verified(
     ["Anna Nagar", "Ambattur Industrial Estate", "Guindy", "OMR", "Sholinganallur", "Siruseri", "Perungudi", "Taramani", "Tidel Park", "Ambit IT Park"],

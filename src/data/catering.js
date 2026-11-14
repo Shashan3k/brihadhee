@@ -378,12 +378,17 @@ import { ROUTES, href } from "./site.js";
 const corpAreas = cateringEnabled ? factOr("corporateAreas", []) : [];
 const corpProcess = cateringEnabled ? factOr("corporateProcess", []) : [];
 const corpServices = cateringEnabled ? factOr("corporateServices", []) : [];
+const corpClients = cateringEnabled ? factOr("corporateClients", []) : [];
+/* Names led with in copy: the most widely known, but only while they stay in the client list. */
+const clientLead = ["Nestlé", "Prodapt", "HungerBox"].filter((n) => corpClients.includes(n));
 const safety = cateringEnabled ? factOr("foodSafety", null) : null;
 const fssai = factOr("fssaiLicence", null);
 const DAILY = corporate ? `${fmt(corporate.dailyCovers)}+` : null;
 const lunchCat = cateringEnabled ? category("lunch") : null;
+const drinksCat = cateringEnabled ? category("beverages") : null;
 const mealDesc = (n) => lunchCat?.items.find((i) => i.name === n)?.description?.replace(/\.$/, "") ?? "";
 const lc1 = (t) => t.charAt(0).toLowerCase() + t.slice(1);
+const mealDescOf = (cat, n) => cat?.items.find((i) => i.name === n)?.description?.replace(/\.$/, "") ?? n;
 const hasService = (re) => corpServices.some((x) => re.test(x));
 
 export const corporateEnabled = Boolean(cateringEnabled && corporate);
@@ -403,6 +408,7 @@ export const corporatePage = corporateEnabled
         ["Daily corporate volume", `${DAILY} people served per day across the corporate catering operation`],
         ["Services", corpServices.join(", ")],
         ["Areas", joinNatural(corpAreas)],
+        ...(corpClients.length ? [["Clients", `Companies Brihadhee has catered for include ${joinNatural(corpClients)}`]] : []),
         ["Start", corpProcess.map((p, i) => `${i + 1}. ${p.title}`).join(", ")],
         ["Pricing", pricingText ?? "On enquiry"],
       ],
@@ -423,6 +429,38 @@ export const corporatePage = corporateEnabled
           },
         ],
       },
+      clients: corpClients.length
+        ? {
+            id: "clients",
+            title: "Companies We Have Catered For",
+            lead:
+              `Brihadhee has catered corporate events and office meals for ${corpClients.length} companies` +
+              (clientLead.length ? `, including ${clientLead.join(", ")} and ${corpClients.length - clientLead.length} more.` : "."),
+            names: corpClients,
+          }
+        : null,
+      /* Coffee bar for office events and meetings (client direction, 2026-11-14).
+       * Drinks come from the restaurant's beverages menu; no prices, since catering is quoted per event. */
+      coffeeBar: drinksCat
+        ? {
+            id: "coffee-bar",
+            title: "Coffee Bar for Office Events",
+            lead: `Brihadhee sets up a coffee bar for office events, meetings and celebrations, serving South Indian filter coffee alongside the other hot drinks from its restaurant menu. Share your guest count, venue and serving times when you ask for a quote.`,
+            dishes: drinksCat.items.map((i) => ({ name: i.name, note: i.description?.replace(/\.$/, "") })),
+            items: [
+              {
+                title: "Filter coffee, the South Indian way",
+                text: `The coffee bar is built around filter coffee (${lc1(mealDescOf(drinksCat, "Filter Coffee")).replace(/^south/, "South")}), the same filter coffee guests order at the restaurant on ${STREET}.`,
+              },
+              {
+                title: "With lunch or on its own",
+                text: "Add the coffee bar to a catered office lunch or event, or book it for a meeting, training day or client visit. Tell the team how many people to expect and when.",
+              },
+            ],
+            image: { name: "coffee", alt: "Filter coffee in a steel tumbler and davara" },
+            links: [{ label: "Ask about the coffee bar", href: "#enquiry", primary: true }],
+          }
+        : null,
       services: {
         id: "services",
         title: "Corporate Catering Services",
