@@ -11,7 +11,7 @@
  */
 
 import verification from "../../config/client-verification.json";
-import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl } from "./entity-truth.ts";
+import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl, addressLine, toE164 } from "./entity-truth.ts";
 import { CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
 import { MENU } from "./menu-canonical.ts";
 
@@ -64,13 +64,7 @@ const address = getFact("address");
 
 const geo = getFact("geo");
 
-const fullAddress = [
-  address.line1,
-  address.line2,
-  address.city,
-  address.state,
-  address.postalCode,
-].filter(Boolean).join(", ");
+const fullAddress = addressLine();
 
 const mapPoint = `${geo.latitude},${geo.longitude}`;
 const mapDirections = `https://www.google.com/maps/dir/?api=1&destination=${mapPoint}`;
@@ -136,7 +130,7 @@ export const site = {
     { label: "Dine-in", detail: "Lunch and dinner" },
     { label: "Families welcome", detail: "Kids and group outings" },
     { label: "Alcohol", detail: "Not served" },
-    { label: "Cuisine", detail: "100% pure vegetarian" },
+    { label: "Cuisine", detail: "South Indian vegetarian" },
   ],
   priceRange: factOr("priceRange")?.schema ?? "",
 
@@ -350,7 +344,7 @@ export const socialLinks = Object.entries(site.social)
   .map(([key, href]) => ({ key, href }));
 
 export const telHref = hasPhone
-  ? `tel:${site.contact.phone.replace(/[^\d+]/g, "")}`
+  ? `tel:${toE164(site.contact.phone)}`
   : "";
 
 export const whatsappHref = hasWhatsApp

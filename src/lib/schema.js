@@ -7,10 +7,8 @@
  *   WebPage (<page>#webpage)       isPartOf WebSite; mainEntity points at the page's subject
  *                                  when modeled; breadcrumb links to a real trail on inner pages
  *   FAQPage (<page>#faq)           isPartOf its WebPage; built from the SAME data as the visible FAQ
- *   Service (<page>#service)       provider -> Restaurant; "Event catering" (with an
- *                                  OfferCatalog, each Offer with eligibleQuantity >= 50
- *                                  guests) or "Corporate catering"; areaServed Chennai;
- *                                  availableChannel carries the distinct catering contact
+ *   Service (#catering)           shared catering identity, provider -> Restaurant
+ *   Service (<page>#service)      page-specific offer, related to #catering
  * Restaurant is already a schema.org FoodEstablishment subtype, so no second
  * FoodEstablishment node is emitted (it would read as a separate business).
  *   Article (/whats-new/#article)  author and publisher -> Restaurant, dated
@@ -26,7 +24,8 @@
  * here by hand.
  */
 import { site, ROUTES, hasHours, assetUrl } from "../data/site.js";
-import { getFact, factOr, CONTENT_UPDATED } from "../data/entity-truth.ts";
+import { getFact, factOr, CONTENT_UPDATED, RESTAURANT_ID, CATERING_ID, cateringContacts, toE164, BYO_DEFINITION } from "../data/entity-truth.ts";
+import verification from "../../config/client-verification.json";
 import { MENU_NOTES } from "../data/menu-canonical.ts";
 
 import { faqItems } from "../data/faq.js";
@@ -36,10 +35,9 @@ const CATERING_DIET_CAP = CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.
 
 const CONTEXT = "https://schema.org";
 
-export const ids = {
-  restaurant: `${site.url}/#restaurant`,
+const ids = {
+  restaurant: RESTAURANT_ID,
   website: `${site.url}/#website`,
-  cateringService: `${site.url}/catering-services-chennai/#service`,
 };
 export const pageUrl = (path) => `${site.url}${path}`;
 export const pageIds = (path) => ({
@@ -48,7 +46,10 @@ export const pageIds = (path) => ({
   faq: `${pageUrl(path)}#faq`,
 });
 
-const e164 = (n) => `+${String(n).replace(/\D/g, "")}`;
+/** Escape characters that HTML can interpret while reading a JSON-LD script. */
+export function serializeJsonLd(graph) {
+  return JSON.stringify(graph).replaceAll("<", "\\u003c");
+}
 
 /** Base Restaurant entity. Identical on every page that emits it. */
 export function restaurantSchema() {
@@ -57,8 +58,9 @@ export function restaurantSchema() {
   if (hasHours) {
     for (const d of site.hours.days.filter((x) => x.open && x.close)) {
       const same = hours.find((h) => h.opens === d.open && h.closes === d.close);
-      if (same) same.dayOfWeek.push(d.day);
-      else hours.push({ "@type": "OpeningHoursSpecification", dayOfWeek: [d.day], opens: d.open, closes: d.close });
+      const day = `${CONTEXT}/${d.day}`;
+      if (same) same.dayOfWeek.push(day);
+      else hours.push({ "@type": "OpeningHoursSpecification", dayOfWeek: [day], opens: d.open, closes: d.close });
     }
   }
   const alternateNames = [getFact("nameTamil"), ...getFact("alternateNames")];
@@ -73,7 +75,7 @@ export function restaurantSchema() {
     "@id": ids.restaurant,
     name: getFact("name"),
     alternateName: alternateNames,
-    description: site.shortDescription,
+    description: `${getFact("name")} is a ${getFact("typeLong")} on ${getFact("street")}, ${site.address.city}. It serves ${getFact("mealTimes")}.`,
     url: `${site.url}/`,
     image: [site.media.hero.src, site.media.about.src, site.media.signature.src].map(
       (src) => assetUrl(src)
@@ -96,7 +98,7 @@ export function restaurantSchema() {
     },
     ...(hours.length ? { openingHoursSpecification: hours } : {}),
     hasMap: getFact("mapUrl"),
-    telephone: e164(getFact("phone")),
+    telephone: toE164(getFact("phone")),
     email: getFact("email"),
     ...(sameAs.length ? { sameAs } : {}),
     hasMenu: pageUrl(ROUTES.menu),
@@ -135,7 +137,7 @@ export function webSiteSchema() {
  * WebPage + BreadcrumbList for one page.
  *   crumbs: [{ name, path }] from the home page down to this page.
  */
-export function webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId }) {
+export function webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId, subjectId = ids.restaurant }) {
   const pid = pageIds(path);
   const hasTrail = crumbs.length > 1;
   const webpage = {
@@ -147,7 +149,7 @@ export function webPageSchemas({ path, title, description, crumbs, primaryEntity
     description,
     inLanguage: site.locale.replace("_", "-"),
     isPartOf: { "@id": ids.website },
-    about: { "@id": ids.restaurant },
+    about: { "@id": subjectId },
     ...(primaryEntityId ? { mainEntity: { "@id": primaryEntityId } } : {}),
     ...(faqId ? { hasPart: { "@id": faqId } } : {}),
     ...(hasTrail ? { breadcrumb: { "@id": pid.breadcrumb } } : {}),
@@ -172,12 +174,10 @@ export function webPageSchemas({ path, title, description, crumbs, primaryEntity
 /**
  * Catering Service. Pass only confirmed values:
  *   areas: string[] from confirmed service_area
- *   phone: confirmed catering phone (or null to omit)
  * Never carries AggregateRating: there are no verified catering-specific reviews.
  */
 export function cateringServiceSchema({
   areas = [],
-  phone = null,
   serviceType = "Event catering",
   offerCatalog = [],
   path = "/catering-services-chennai/",
@@ -198,6 +198,7 @@ export function cateringServiceSchema({
     description,
     url: pageUrl(path),
     provider: { "@id": ids.restaurant },
+    isRelatedTo: { "@id": CATERING_ID },
     audience,
     ...(areas.length
       ? { areaServed: areas.length === 1 ? { "@type": "City", name: areas[0] } : areas.map((name) => ({ "@type": "City", name })) }
@@ -224,17 +225,38 @@ export function cateringServiceSchema({
           },
         }
       : {}),
-    ...(phone
-      ? {
-          availableChannel: {
-            "@type": "ServiceChannel",
-            servicePhone: {
-              "@type": "ContactPoint",
-              contactType: "catering enquiries",
-              telephone: e164(phone),
-            },
-          },
-        }
+    ...cateringChannel(),
+  };
+}
+
+function cateringChannel() {
+  const { phone } = cateringContacts();
+  if (!phone) return {};
+  return {
+    availableChannel: {
+      "@type": "ServiceChannel",
+      servicePhone: {
+        "@type": "ContactPoint",
+        contactType: "catering enquiries",
+        telephone: toE164(phone),
+      },
+    },
+  };
+}
+
+function cateringEntitySchema() {
+  const areas = verification.service_area ?? [];
+  return {
+    "@context": CONTEXT,
+    "@type": "Service",
+    "@id": CATERING_ID,
+    name: `${getFact("name")} Catering`,
+    serviceType: `${CATERING_DIET_CAP} catering`,
+    description: `${getFact("name")} offers ${CATERING_DIET} catering for events and offices.`,
+    url: pageUrl(ROUTES.eventCatering),
+    provider: { "@id": ids.restaurant },
+    ...(areas.length
+      ? { areaServed: areas.map((name) => ({ "@type": "City", name })) }
       : {}),
   };
 }
@@ -292,14 +314,18 @@ export function articleSchema({ path, headline, description, datePublished, imag
 /** Graph for a page: Restaurant + WebSite + WebPage + BreadcrumbList (+ extras). */
 export function pageGraph({ path, title, description, crumbs, extras = [] }) {
   const primaryContent = extras.find((node) => ["Menu", "Service", "Article"].includes(node?.["@type"]));
+  const isCateringPage = verification.offer_catering === true && (primaryContent?.["@type"] === "Service" || path === ROUTES.cateringQuote);
+  const includeCatering = isCateringPage || (path === ROUTES.home && verification.offer_catering === true);
+  const subjectId = isCateringPage ? (primaryContent?.["@id"] ?? CATERING_ID) : ids.restaurant;
   const isRestaurantPage = [ROUTES.home, ROUTES.about, ROUTES.book].includes(path);
-  const primaryEntityId = primaryContent?.["@id"] ?? (isRestaurantPage ? ids.restaurant : null);
-  const faqId = extras.find((node) => node?.["@type"] === "FAQPage")?.["@id"];
+  const primaryEntityId = primaryContent?.["@id"] ?? (isRestaurantPage || isCateringPage ? subjectId : null);
+  const faq = extras.find((node) => node?.["@type"] === "FAQPage");
   return [
     restaurantSchema(),
     webSiteSchema(),
-    ...webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId }),
-    ...extras,
+    ...webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId: faq?.["@id"], subjectId }),
+    ...extras.map((node) => node === faq ? { ...faq, about: { "@id": subjectId } } : node),
+    ...(includeCatering ? [cateringEntitySchema()] : []),
   ].filter(Boolean);
 }
 
@@ -350,7 +376,7 @@ export function menuSchema({ categories, extras = [], byo = null }) {
             {
               "@type": "MenuSection",
               name: "Build Your Own Dosa",
-              description: "Pick one batter, then add podi and toppings, a filling and your roast. Each add-on is priced separately.",
+              description: BYO_DEFINITION,
               hasMenuSection: [
                 ...byo.steps.map((step) => ({
                   "@type": "MenuSection",

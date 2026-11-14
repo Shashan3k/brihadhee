@@ -47,7 +47,7 @@ const PUBLIC_DIR = join(ROOT, "public");
 const load = (p: string) => import(pathToFileURL(join(ROOT, p)).href);
 
 const G = await load("config/seo-gates.ts");
-const { FACTS } = await load("src/data/entity-truth.ts");
+const { FACTS, openingTimes } = await load("src/data/entity-truth.ts");
 const LEAD = await load("src/lib/lead.js");
 const cfg = JSON.parse(readFileSync(join(ROOT, "config", "client-verification.json"), "utf8"));
 
@@ -131,7 +131,7 @@ const GATED: (Rule & { on: boolean; gate: string })[] = [
   {
     gate: "IS_CATERING_PURE_VEG (Q20)",
     on: G.IS_CATERING_PURE_VEG,
-    re: /\bpure[\s-]*veg(?:etarian)?\b(?:\s+[\w'’&%-]+){0,4}?\s+(?:cater(?:ing|er|ers)|caters)\b|\bcater(?:ing|er|ers|s)\b(?:\s+[\w'’&%-]+){0,3}?\s+(?:is\s+|are\s+)?(?:100\s*%\s+)?pure[\s-]*veg|சுத்த\s*சைவ\s*கேட்டரிங்/i,
+    re: G.CATERING_PURITY_CLAIM,
     why: "catering copy says 'vegetarian', not 'pure veg', until question 20",
   },
 ];
@@ -244,24 +244,12 @@ for (const [p, html] of pages) {
 }
 
 /* ---- C. Gate consistency ---------------------------------------------------------- */
-const hours = FACTS.hours?.value;
-if (!hours || hours.opens !== G.CONFIRMED_OPENS || hours.closes !== G.CONFIRMED_CLOSES) {
-  fail("C. Consistency", "config/seo-gates.ts", `CONFIRMED_OPENS/CLOSES (${G.CONFIRMED_OPENS}-${G.CONFIRMED_CLOSES}) != entity-truth.ts hours (${hours?.opens}-${hours?.closes})`);
-}
-const hhmm = (t: string) => {
-  const [h, m] = t.split(":").map(Number);
-  return `${h % 12 === 0 ? 12 : h % 12}:${String(m).padStart(2, "0")} ${h >= 12 ? "PM" : "AM"}`;
-};
-if (G.CONFIRMED_HOURS !== `${hhmm(G.CONFIRMED_OPENS)} – ${hhmm(G.CONFIRMED_CLOSES)}`) {
-  fail("C. Consistency", "config/seo-gates.ts", `CONFIRMED_HOURS "${G.CONFIRMED_HOURS}" does not match ${G.CONFIRMED_OPENS} to ${G.CONFIRMED_CLOSES}`);
-}
 if (cfg.min_guests !== G.CATERING_MIN_GUESTS) fail("C. Consistency", "config/client-verification.json", `min_guests ${cfg.min_guests} != CATERING_MIN_GUESTS ${G.CATERING_MIN_GUESTS}`);
 if (LEAD.QUOTE_MIN_GUESTS !== G.CATERING_MIN_GUESTS) fail("C. Consistency", "src/lib/lead.js", `QUOTE_MIN_GUESTS ${LEAD.QUOTE_MIN_GUESTS} != CATERING_MIN_GUESTS ${G.CATERING_MIN_GUESTS}`);
 if (LEAD.HEADCOUNTS.some((h: string) => /under|below|^(?:[1-9]|[1-4]\d)(?![\d,])/i.test(h))) fail("C. Consistency", "src/lib/lead.js", "HEADCOUNTS offers a band under the 50-guest minimum");
 const covers = FACTS.corporateCatering?.value?.dailyCovers;
 if (covers !== G.CORPORATE_DAILY_COVERS) fail("C. Consistency", "config/seo-gates.ts", `CORPORATE_DAILY_COVERS ${G.CORPORATE_DAILY_COVERS} != entity-truth.ts corporateCatering ${covers}`);
 if (!G.CORPORATE_DAILY_SCALE.startsWith(`${Number(G.CORPORATE_DAILY_COVERS).toLocaleString("en-IN")}+`)) fail("C. Consistency", "config/seo-gates.ts", `CORPORATE_DAILY_SCALE "${G.CORPORATE_DAILY_SCALE}" does not start with the daily covers`);
-if (G.IS_RESTAURANT_PURE_VEG && FACTS.dietary?.status !== "verified") fail("C. Consistency", "config/seo-gates.ts", "IS_RESTAURANT_PURE_VEG is on but the dietary fact is not verified");
 if (G.ENABLE_NO_ONION_NO_GARLIC_CLUSTER) {
   if (!G.NO_ONION_NO_GARLIC_DISHES.length) fail("C. Consistency", "config/seo-gates.ts", "ENABLE_NO_ONION_NO_GARLIC_CLUSTER is on but NO_ONION_NO_GARLIC_DISHES is empty (Q12)");
   if (!G.NO_ONION_NO_GARLIC_AVAILABILITY) fail("C. Consistency", "config/seo-gates.ts", "ENABLE_NO_ONION_NO_GARLIC_CLUSTER is on but NO_ONION_NO_GARLIC_AVAILABILITY is not set (Q12)");
@@ -289,7 +277,7 @@ else {
     pair(`<meta ${m[1]}>`, decode(m[2]));
   }
   const text = visible(home);
-  const open = `${hhmm(G.CONFIRMED_OPENS).replace(":00", "")} to ${hhmm(G.CONFIRMED_CLOSES).replace(":00", "")}`;
+  const open = openingTimes().range;
   if (!text.includes(open)) fail("D. Disambiguation", "/", `home page does not state the hours "${open}"`);
   if (!text.toLowerCase().includes(G.MEAL_FRAMING.toLowerCase())) fail("D. Disambiguation", "/", `home page does not state "${G.MEAL_FRAMING}"`);
 }

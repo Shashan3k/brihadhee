@@ -8,10 +8,7 @@
  * docs/seo/aeo-lint-report.md. Checks:
  *   1. FAQ JSON-LD text equals the visible FAQ text
  *   2. NAP: name, address, phone and email identical on every page and in schema
- *   3. Every FAQ answer is direct: its first sentence (5 to 35 words; a leading
- *      "Yes." or "No." is part of it) names the entity, the whole answer is at
- *      most 80 words and names "Brihadhee". Length follows the question
- *      (src/lib/answers.js qa() applies the fact/explain limits at build time).
+ *   3. Visible FAQ answers use the source fact/explain limits and name the entity
  *   4. No pending fact is rendered (probes from src/data/entity-truth.ts)
  *   5. No phrase from docs/seo/avoid-terms.txt, with one exception (the exact
  *      question NEGATIVE_FAQ_QUESTION in config/seo-gates.ts), on any
@@ -25,22 +22,23 @@
  *   9. Catering is absent from the build and the sitemap while offer_catering is false
  *  10. JSON-LD parses and has no empty values
  *  11. Pages are complete without JavaScript (one H1, menu items present in the HTML)
- *  12. One Q&A per route: no FAQ question on two pages; the street address in at
- *      most one answer on a page; a visible "Last updated" line with every Q&A
+ *  12. One Q&A per route and a visible "Last updated" line for each block
+ *  13. Visible business facts and density, with hidden DOM excluded
+ *  14. Both UTF-8 llms reference files reflect canonical facts and built links
  */
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
-import { pathToFileURL } from "node:url";
+import { answerProblems, questionKey } from "../src/lib/answers.js";
+import { addressLine, BYO_DEFINITION, canonicalAnswerLines, cateringContacts, FACTS, getFact, pendingFacts, SITE_ORIGIN } from "../src/data/entity-truth.ts";
+import { MENU } from "../src/data/menu-canonical.ts";
+import { stripPermittedNegatives } from "../config/seo-gates.ts";
+import { decodeHtml as decode, llmsProblems, normalizeText, pageCopyProblems, readPageCopy } from "./aeo-rules.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
 const REPORT = join(ROOT, "docs", "seo", "aeo-lint-report.md");
 
-const { FACTS, pendingFacts } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
-// The one permitted negative statement ("Does Brihadhee serve breakfast?" on /faq/), removed before the avoid scan.
-const { stripPermittedNegatives } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 const cfg = JSON.parse(readFileSync(join(ROOT, "config", "client-verification.json"), "utf8"));
-const { MENU } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
 const menu = { categories: MENU };
 
 if (!existsSync(dist)) {
@@ -55,7 +53,7 @@ const checks = new Map(); // id -> { title, errors: n }
 const CHECKS = {
   faq_equal: "FAQ JSON-LD equals visible FAQ",
   nap: "NAP identical everywhere",
-  answer_first: "Answer-first structure (first sentence 5 to 35 words, answer at most 80, names Brihadhee)",
+  answer_first: "Direct FAQ answers (factual 5–30 words first, 55 words total)",
   pending: "No pending fact rendered",
   avoid: "No avoid-list terms",
   superlatives: "No unsourced superlatives",
@@ -64,7 +62,10 @@ const CHECKS = {
   catering_gate: "Catering gated while unconfirmed",
   jsonld: "JSON-LD parses, no empty values",
   no_js: "Complete without JavaScript",
-  faq_route: "One Q&A per route, address once, Last updated shown",
+  faq_route: "One Q&A per route, Last updated shown",
+  facts: "Rendered business facts are consistent",
+  density: "At most one visible address and two exact dietary descriptors per language",
+  llms: "UTF-8 reference files use canonical answers and link to built content",
 };
 for (const [id, title] of Object.entries(CHECKS)) checks.set(id, { title, errors: 0 });
 const err = (id, page, msg) => {
@@ -77,20 +78,7 @@ function* walk(p) {
   if (statSync(p).isFile()) return yield p;
   for (const e of readdirSync(p)) yield* walk(join(p, e));
 }
-const decode = (s) =>
-  s
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;|&#x27;/g, "'")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
-    .replace(/&nbsp;/g, " ");
-const norm = (s) => decode(s).replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
-const words = (s) => s.trim().split(/\s+/).filter(Boolean).length;
-// "No." in addresses ("New No. W-41") is an abbreviation, not a sentence end.
-const firstSentence = (s) => s.trim().split(/(?<=[.!?])(?<!\b(?:No|Yes)\.)\s+/)[0];
+const norm = (s) => normalizeText(decode(s).replace(/<[^>]+>/g, ""));
 const digits = (s) => String(s).replace(/\D/g, "");
 
 function visibleText(html) {
@@ -124,11 +112,11 @@ const urlDecode = (s) =>
  * <script> and <style> blocks dropped. The markup carries the <title>, every
  * meta tag, alt/title/aria-label attributes, link and image URLs, and JSON-LD.
  */
-function surfaceText(html) {
+function surfaceText(html, text) {
   const markup = html
     .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
     .replace(/<script\b(?![^>]*type="application\/(?:ld\+)?json")[^>]*>[\s\S]*?<\/script>/gi, " ");
-  return `${visibleText(html)}\n${urlDecode(decode(markup))}`;
+  return `${text}\n${urlDecode(decode(markup))}`;
 }
 /** Built text files other than HTML that crawlers and AI agents fetch. */
 const TEXT_OUTPUT = /\.(?:txt|json|xml|webmanifest)$/i;
@@ -162,7 +150,8 @@ for (const file of walk(dist)) {
         err("jsonld", name, `JSON-LD block ${i + 1} is not valid JSON: ${e.message}`);
       }
     }
-    pages.push({ name, html, nodes, text: visibleText(html), head: headText(html), surface: surfaceText(html) });
+    const copy = readPageCopy(html);
+    pages.push({ name, html, nodes, copy, text: copy.text, head: headText(html), surface: surfaceText(html, copy.text) });
   } else if (TEXT_OUTPUT.test(file) && !rel.startsWith("/_astro/")) {
     outputs.push({ name: rel.slice(1), text: urlDecode(readFileSync(file, "utf8")) });
   }
@@ -179,16 +168,12 @@ if (!pages.length) {
 const typeOf = (n) => [].concat(n["@type"] ?? []);
 
 /* ---- Per-page checks --------------------------------------------------- */
-const F = (k) => FACTS[k].value;
-const addr = F("address");
-const expectedAddress = `${addr.line1}, ${addr.line2}, ${addr.city}, ${addr.state} ${addr.postalCode}`;
+const F = getFact;
+const expectedAddress = addressLine();
 const phoneDigits = digits(F("phone"));
 // When catering is confirmed with its own numbers, those are allowed too.
-const ch = cfg.enquiry_channels ?? {};
 const allowedPhones = [phoneDigits, digits(F("whatsapp"))].map((d) => d.slice(-10));
-if (cfg.offer_catering === true) {
-  for (const n of [ch.phone, ch.whatsapp]) if (n) allowedPhones.push(digits(n).slice(-10));
-}
+for (const n of Object.values(cateringContacts())) if (n) allowedPhones.push(digits(n).slice(-10));
 // The careers contact (Rakesh) on the home page, once the owner confirms the number.
 if (FACTS.careersContact?.status === "verified" && FACTS.careersContact.value?.phone) {
   allowedPhones.push(digits(FACTS.careersContact.value.phone).slice(-10));
@@ -196,18 +181,27 @@ if (FACTS.careersContact?.status === "verified" && FACTS.careersContact.value?.p
 const phoneOk = (raw) => allowedPhones.includes(digits(raw).slice(-10));
 const pending = pendingFacts();
 const faqOwners = new Map(); // question -> page that shows it
+function registerQuestion(page, question, location = "") {
+  const key = questionKey(question);
+  const owner = faqOwners.get(key);
+  if (owner && owner !== page) err("faq_route", page, `${location} question also on ${owner}: "${question}"`.trim());
+  faqOwners.set(key, page);
+}
 
 for (const p of pages) {
-  const { name, html, nodes, text, head } = p;
+  const { name, html, nodes, copy, text, head } = p;
+  for (const { rule, location, message } of pageCopyProblems(copy)) {
+    err(rule, name, location ? `${location}: ${message}` : message);
+  }
 
   /* 1 + 3: FAQ */
   const faqNode = nodes.find((n) => typeOf(n).includes("FAQPage"));
-  const visible = [];
-  for (const m of html.matchAll(/<details class="faq__item"[^>]*>\s*<summary>\s*<h3[^>]*>([\s\S]*?)<\/h3>[\s\S]*?<\/summary>\s*<p class="faq__answer"[^>]*>([\s\S]*?)<\/p>/g)) {
-    visible.push({ q: norm(m[1]), a: norm(m[2]) });
-  }
+  const visible = copy.faqs;
   if (faqNode) {
-    const schemaItems = (faqNode.mainEntity ?? []).map((e) => ({ q: norm(e.name ?? ""), a: norm(e.acceptedAnswer?.text ?? "") }));
+    const schemaItems = (faqNode.mainEntity ?? []).map((e) => ({
+      q: normalizeText(e.name ?? ""), a: normalizeText(e.acceptedAnswer?.text ?? ""),
+      lang: e.inLanguage ?? "en", answerLang: e.acceptedAnswer?.inLanguage ?? "en",
+    }));
     if (schemaItems.length !== visible.length) {
       err("faq_equal", name, `FAQ has ${schemaItems.length} items in JSON-LD but ${visible.length} visible`);
     }
@@ -216,41 +210,21 @@ for (const p of pages) {
       if (!v) return;
       if (s.q !== v.q) err("faq_equal", name, `question ${i + 1} differs: schema "${s.q}" vs page "${v.q}"`);
       if (s.a !== v.a) err("faq_equal", name, `answer ${i + 1} differs for "${s.q}"`);
+      if (s.lang !== v.lang || s.answerLang !== v.answerLang || v.lang !== v.answerLang) {
+        err("faq_equal", name, `rendered and schema languages must agree for "${v.q}"`);
+      }
     });
   } else if (visible.length) {
     err("faq_equal", name, "FAQ visible on the page but no FAQPage JSON-LD");
   }
-  /* 12: one Q&A per route, the street address in at most one answer, Last updated */
-  visible.forEach((v) => {
-    const owner = faqOwners.get(v.q.toLowerCase());
-    if (owner && owner !== name) err("faq_route", name, `question also on ${owner}: "${v.q}"`);
-    faqOwners.set(v.q.toLowerCase(), name);
-  });
-  const withStreet = visible.filter((v) => /W-41|W-Block/.test(v.a));
-  if (withStreet.length > 1) err("faq_route", name, `the street address appears in ${withStreet.length} answers (once per page): ${withStreet.map((v) => `"${v.q}"`).join(", ")}`);
   if (visible.length && !/Last updated:\s*[A-Z][a-z]+ \d{4}/.test(text)) err("faq_route", name, 'Q&A shown without a visible "Last updated: Month YYYY" line');
-  for (const v of visible) {
-    const w = words(v.a);
-    const fs = firstSentence(v.a);
-    const fw = words(fs);
-    if (w < 5 || w > 80) err("answer_first", name, `answer is ${w} words (needs 5 to 80): "${v.q}"`);
-    if (fw < 5 || fw > 35) err("answer_first", name, `first sentence is ${fw} words (needs 5 to 35): "${v.q}"`);
-    if (!/Brihadhee/.test(v.a)) err("answer_first", name, `answer does not name Brihadhee: "${v.q}"`);
-    if (!/Brihadhee|பிரிஹதீ/.test(fs)) err("answer_first", name, `first sentence does not name the entity: "${v.q}"`);
-  }
-  // other question headings outside the FAQ accordion
-  const outside = html.replace(/<details class="faq__item"[\s\S]*?<\/details>/g, "");
-  for (const m of outside.matchAll(/<h([2-4])[^>]*>([^<]*[?？])<\/h\1>\s*<p[^>]*>([\s\S]*?)<\/p>/g)) {
-    const w = words(norm(m[3]));
-    if (w < 15 || w > 60 || !/Brihadhee/.test(m[3])) {
-      err("answer_first", name, `question heading "${norm(m[2])}" is followed by a ${w}-word paragraph (needs 15 to 60 words naming Brihadhee)`);
+  for (const { q, a, answerLang, kind, location } of visible) {
+    registerQuestion(name, q, location);
+    for (const problem of answerProblems(q, a, { lang: answerLang, kind })) {
+      err("answer_first", name, `${location} "${q}": ${problem}`.trim());
     }
-    // Question headings (guides, dish pages) share the one-Q&A-per-route rule.
-    const q = norm(m[2]);
-    const owner = faqOwners.get(q.toLowerCase());
-    if (owner && owner !== name) err("faq_route", name, `question heading also asked on ${owner}: "${q}"`);
-    faqOwners.set(q.toLowerCase(), name);
   }
+  for (const heading of copy.questionHeadings) registerQuestion(name, heading.text, heading.location);
 
   /* 2: NAP */
   const rest = nodes.find((n) => typeOf(n).includes("Restaurant"));
@@ -264,9 +238,6 @@ for (const p of pages) {
   } else {
     err("nap", name, "no Restaurant node in JSON-LD");
   }
-  for (const m of text.matchAll(/(?:\+?\s?91[\s-]?)?\b\d{5}[\s-]?\d{5}\b/g)) {
-    if (!phoneOk(m[0])) err("nap", name, `unexpected phone number on the page: "${m[0].trim()}"`);
-  }
   for (const m of html.matchAll(/href="(?:tel:|https:\/\/wa\.me\/)([^"?]+)/g)) {
     if (!phoneOk(m[1])) err("nap", name, `tel/WhatsApp link ${m[1]} is not a confirmed number`);
   }
@@ -275,18 +246,6 @@ for (const p of pages) {
   }
   for (const m of text.matchAll(/\b[\w.+-]+@[\w-]+\.[\w.-]+\b/g)) {
     if (m[0].replace(/[.]+$/, "") !== F("email")) err("nap", name, `unexpected email on the page: ${m[0]}`);
-  }
-  // Door number must always be written exactly as in entity-truth.ts (line1 prefix).
-  const doorRe = /W-41\b/g;
-  const door = addr.line1.match(/^.*?W-124/)?.[0] ?? addr.line1;
-  for (const m of text.matchAll(doorRe)) {
-    const start = Math.max(0, m.index - (addr.line1.indexOf("W-41")));
-    const around = text.slice(start, start + door.length);
-    if (around !== door) err("nap", name, `door number written differently: "${text.slice(Math.max(0, m.index - 10), m.index + 25)}"`);
-  }
-  if (/\b6000\d\d\b/.test(text) && !text.includes(addr.postalCode)) err("nap", name, "postal code differs from 600040");
-  for (const m of text.matchAll(/\b6\d{5}\b/g)) {
-    if (m[0] !== addr.postalCode) err("nap", name, `unexpected postal code ${m[0]}`);
   }
 
   /* 4: pending facts */
@@ -421,9 +380,41 @@ if (cfg.offer_catering !== true) {
     if (/\bcatering\b/i.test(p.text)) err("catering_gate", p.name, "page text mentions catering while gated");
   }
 }
+
+/* Canonical llms answers and the destinations published beside them. */
+const knownLinks = new Set();
+for (const [, url] of sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)) {
+  const page = pages.find(({ name: path }) => url === `${SITE_ORIGIN}${path}`);
+  if (!page) continue;
+  if (!page.html.includes(`<link rel="canonical" href="${url}">`) || /<meta name="robots" content="noindex/i.test(page.html)) continue;
+  knownLinks.add(url);
+  for (const id of page.copy.ids) knownLinks.add(`${url}#${id}`);
+}
+for (const { name } of outputs) {
+  if (name === "menu.json" || name === "llms-full.txt") knownLinks.add(`${SITE_ORIGIN}/${name}`);
+}
+const expectedAnswers = canonicalAnswerLines();
+const requiredPaths = ["/", "/menu/", "/menu/dosa/", "/about/", "/book-a-table/"];
+if (cfg.offer_catering === true) requiredPaths.push("/catering-services-chennai/");
+for (const name of ["llms.txt", "llms-full.txt"]) {
+  const full = name === "llms-full.txt";
+  try {
+    const body = new TextDecoder("utf-8", { fatal: true }).decode(readFileSync(join(dist, name)));
+    const requiredLinks = [...requiredPaths, ...(full ? [] : ["/llms-full.txt"])].map((path) => SITE_ORIGIN + path);
+    for (const problem of llmsProblems(body, { expectedAnswers, knownLinks, requiredLinks, full })) err("llms", name, problem);
+  } catch (e) {
+    err("llms", name, `cannot read UTF-8 output: ${e.message}`);
+  }
+}
+for (const name of ["/", "/menu/", "/menu/dosa/"]) {
+  const page = pages.find((p) => p.name === name);
+  if (!page?.copy.text.includes(BYO_DEFINITION)) err("facts", name, "missing visible canonical Build Your Own Dosa definition");
+  if (name === "/" && !page?.copy.faqs.some(({ a }) => a === BYO_DEFINITION)) {
+    err("facts", name, "homepage FAQ must use the canonical Build Your Own Dosa definition");
+  }
+}
 // Every other text output (llms.txt, llms-full.txt, menu.json, sitemaps,
 // robots.txt, manifest) obeys the avoid list and the pending-fact probes too.
-if (!outputs.some((o) => o.name === "llms.txt")) warn("llms.txt", "llms.txt missing from the build");
 for (const o of outputs) {
   for (const a of avoid) {
     a.re.lastIndex = 0;

@@ -2,8 +2,7 @@
  * Answer-first Q&A for AI Overviews, AI Mode, ChatGPT and Perplexity. Every
  * visible Q&A on the site (and its FAQPage JSON-LD twin) is created with qa()
  * and grouped per page with qaRoute(). Answer length follows the question
- * (AEO audit 2026-11-12, issue 3: fixed 35-to-60-word answers padded simple
- * replies with repeated address and brand filler).
+ * and is checked against the rendered HTML by scripts/aeo-lint.mjs.
  *
  *  qa(question, answer, { kind }): every answer
  *   - opens with a first sentence that answers the question on its own and names
@@ -23,12 +22,8 @@
  *  qaRoute(route, items): every page
  *   - ONE Q&A PER ROUTE: a question may appear on one route only. Asking it on a
  *     second route fails the build (the dist check is in scripts/aeo-lint.mjs).
- *   - ADDRESS AT MOST ONCE: street-level detail (door number, W-Block, ward,
- *     postcode) may appear in one answer per page, never repeated.
  *   - LOCALITY ONCE: at least one answer on the page names Anna Nagar.
- *   - NO DESCRIPTOR STUFFING: the "100% pure vegetarian" brand descriptor may
- *     appear in at most MAX_DESCRIPTOR answers per page and language. Say it
- *     where the question is about diet or identity, not in every answer.
+ *   - Address and dietary descriptor density are checked across the rendered page.
  *
  * Restaurant and catering scopes stay separate: "100% pure vegetarian" describes
  * the restaurant and its kitchen; catering copy uses CATERING_DIET from
@@ -38,17 +33,9 @@
  * CONTENT_UPDATED in entity-truth.ts (src/components/Faq.astro).
  */
 
-/** Sentence break, except after a leading "Yes." or "No." (the first sentence carries on). */
-export const FIRST_SENTENCE = /(?<=[.!?])(?<!\b(?:No|Yes)\.)\s+/;
-/** Street-level detail that only one answer on a page may carry. */
-const STREET_DETAIL = /W-41|W-124|W-Block|Ward 100|600040/;
-/** The brand descriptor that used to be stuffed into every answer. */
-const DESCRIPTOR = /100% (?:pure veg|சுத்த சைவ)/i;
-export const MAX_DESCRIPTOR = 2;
-
 /** Questions that want one fact back: yes/no, when, where, how much, how many. */
 const FACT_QUESTION =
-  /^(?:is|are|does|do|did|can|could|will|should i|has|have|where|when|what time|what are .*timings|how much|how many|how far|how large|how big|what is the minimum|which areas)\b/i;
+  /^(?:is|are|does|do|did|can|could|will|should i|has|have|where|when|what time|what (?:are .*timings|are .*hours|is the (?:minimum|address|phone number))|how much|how many|how far|how large|how big|which areas)\b/i;
 
 export const LIMITS = {
   fact: { first: [5, 30], max: 55 },
@@ -61,43 +48,60 @@ const ENTITY = {
   ta: { re: /பிரிஹதீ/, label: "பிரிஹதீ" },
 };
 const SUPERLATIVE = /\b(?:best|finest|greatest|top[- ]rated|no\.?\s?1|number one)\b|#1\b|சிறந்த|நம்பர்\s*1|முதல்\s*தர/i;
+const GENERIC_OPENING = /^(?:(?:yes|no)[.,]\s*)?(?:when it comes to|it is (?:important|worth) to note|it['’]s important to note|as a general rule|in today['’]s world)\b/i;
 
 const wordCount = (s) => s.split(" ").filter(Boolean).length;
+const FACT_QUESTION_TA = /எத்தனை|எங்கு|எங்கே|எவ்வளவு|எந்தெந்த|முடியுமா|செய்யுமா|செய்கிறதா/;
+const FACT_QUESTION_TANGLISH = /\b(?:enga|eppo|evlo|ethana|mudiyuma)\b/i;
+function inferredKind(question, lang) {
+  const pattern = lang === "ta" ? FACT_QUESTION_TA : lang === "ta-Latn" ? FACT_QUESTION_TANGLISH : FACT_QUESTION;
+  return pattern.test(question.trim()) ? "fact" : "explain";
+}
 
-export function qa(question, answer, extra = {}) {
-  const lang = extra.lang ?? "en";
+/** Keep a leading yes/no with its answer and preserve the address abbreviation. */
+export function firstAnswerSentence(answer) {
+  const prefix = answer.match(/^(?:Yes|No)\.\s+/i)?.[0] ?? "";
+  return prefix + answer.slice(prefix.length).split(/(?<=[.!?])(?<!\bNo\.)\s+/, 1)[0];
+}
+
+export function answerProblems(question, answer, { lang = "en", kind = inferredKind(question, lang) } = {}) {
   const E = ENTITY[lang];
-  if (!E) throw new Error(`[answers] "${question}": no Q&A rules for language "${lang}"`);
-  const kind = extra.kind ?? (lang === "en" && FACT_QUESTION.test(question.trim()) ? "fact" : "explain");
   const L = LIMITS[kind];
-  if (!L) throw new Error(`[answers] "${question}": unknown kind "${kind}" (fact or explain)`);
+  if (!E) return [`no Q&A rules for language "${lang}"`];
+  if (!L) return [`unknown answer kind "${kind}" (fact or explain)`];
   const text = answer.replace(/\s+/g, " ").trim();
   const words = wordCount(text);
-  const first = text.split(FIRST_SENTENCE)[0];
+  const first = firstAnswerSentence(text);
   const firstWords = wordCount(first);
   const fails = [];
+  if (kind === "fact" && GENERIC_OPENING.test(text)) fails.push("factual answer starts with a generic introduction");
   if (words > L.max) fails.push(`${words} words (a ${kind} answer is at most ${L.max})`);
   if (firstWords < L.first[0] || firstWords > L.first[1]) fails.push(`first sentence ${firstWords} words (a ${kind} answer needs ${L.first[0]} to ${L.first[1]})`);
   if (!E.re.test(first)) fails.push(`first sentence does not name "${E.label}"`);
   if (!/Brihadhee/.test(text)) fails.push('does not name "Brihadhee" (Latin script, for entity matching)');
   const sup = text.match(SUPERLATIVE);
   if (sup) fails.push(`superlative claim "${sup[0]}" in the answer`);
+  return fails;
+}
+
+export function qa(question, answer, extra = {}) {
+  const text = answer.replace(/\s+/g, " ").trim();
+  const fails = answerProblems(question, text, extra);
   if (fails.length) throw new Error(`[answers] "${question}": ${fails.join("; ")}\n  ${text}`);
-  const { kind: _k, ...rest } = extra;
-  return { question, answer: text, ...rest };
+  return { question, answer: text, ...extra };
 }
 
 /** question (normalised) -> route that owns it, across every page in the build. */
 const owners = new Map();
 // Unicode-aware: letters, combining marks (Tamil vowel signs) and digits are kept.
-const norm = (q) => q.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, " ").trim();
+export const questionKey = (q) => q.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, " ").trim();
 
 /**
  * Claim a question for a route without an FAQ block (for example a guide's
  * question headings), so it cannot be asked as a Q&A on another route.
  */
 export function claimQuestion(route, question) {
-  const key = norm(question);
+  const key = questionKey(question);
   const owner = owners.get(key);
   if (owner && owner !== route) throw new Error(`[answers] "${question}" is on ${owner} and ${route}: one Q&A per route`);
   owners.set(key, route);
@@ -113,23 +117,8 @@ export function qaRoute(route, items) {
   list.forEach((item) => claimQuestion(route, item.question));
   if (!list.length) return list;
 
-  const withStreet = list.filter((i) => STREET_DETAIL.test(i.answer));
-  if (withStreet.length > 1) {
-    throw new Error(`[answers] ${route}: the street address appears in ${withStreet.length} answers (${withStreet.map((i) => `"${i.question}"`).join(", ")}); state it once per page`);
-  }
   if (!list.some((i) => /Anna Nagar|அண்ணா நகர/.test(i.answer))) {
     throw new Error(`[answers] ${route}: no answer names Anna Nagar; say where Brihadhee is at least once per page`);
-  }
-  const byLang = new Map();
-  for (const i of list) {
-    if (!DESCRIPTOR.test(i.answer)) continue;
-    const l = i.lang ?? "en";
-    byLang.set(l, [...(byLang.get(l) ?? []), i.question]);
-  }
-  for (const [l, qs] of byLang) {
-    if (qs.length > MAX_DESCRIPTOR) {
-      throw new Error(`[answers] ${route}: "100% pure vegetarian" is repeated in ${qs.length} ${l} answers (max ${MAX_DESCRIPTOR}): ${qs.map((q) => `"${q}"`).join(", ")}`);
-    }
   }
   return list;
 }

@@ -334,3 +334,9 @@ Reconciled Phases 1–8 and the complete SEO audit, AEO audit and remediation ag
 Phase 9 produced the integrated QA and release handover. [Implementation report](implementation-report.md) · [Measurement plan](measurement-plan.md) · [30/60/90-day roadmap](30-60-90-day-roadmap.md)
 
 The owner subsequently authorized the push to `main`. Release `9a4fc23` passed its hosted build and 17-URL availability smoke test. It exposed a trailing-slash mismatch on the project hostname. Follow-up `ac731ad` passed the hosted checks and 17 local routing assertions. The alias root, slash-terminated routes, sitemap and a query-bearing URL all returned the intended 301 from one network. The first measurement window begins 14 November 2026. Search Console, owner listing corrections and live lead receipt remain open.
+
+## AEO and GEO architecture follow-up (14 November 2026)
+
+- **Local implementation complete.** The Restaurant and catering Service now have stable IDs and separate contacts and diet scope. The site, markup and both reference files share the approved Build Your Own Dosa definition. The rendered lint detects FAQ, fact, address, descriptor and reference regressions. Existing Coffee Bar edits were included in browser verification.
+- **Verified locally.** Production build, all eight required preview checks, type check and 21 automated tests passed. The build contains 19 HTML pages, 17 sitemap URLs and 104 top-level JSON-LD nodes. Three representative graphs passed the Schema Markup Validator in code mode. Google’s anonymous rich-results run required sign-in.
+- **Release follow-ups.** Verify the candidate on the live site after approval, collect Google indexing and AI-answer observations, and coordinate one labelled enquiry receipt. The owner listing and claim checks in the original ledger still apply. [Architecture report and changed files](aeo-architecture-report.md)

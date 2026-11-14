@@ -12,7 +12,7 @@ The canonical origin is `https://www.brihadhee.com`. Phase 2 observed a live ape
 
 | Route | Primary keyword cluster | Intent | JSON-LD types (one @graph) | Render mode |
 |---|---|---|---|---|
-| `/` | Brand / navigational ("brihadhee anna nagar", "brihadhee restaurant", "pure veg restaurant in Anna Nagar") | Brand hub: who, what, where, both pillars | Restaurant, WebSite, WebPage, FAQPage | Static |
+| `/` | Brand / navigational ("brihadhee anna nagar", "brihadhee restaurant", "pure veg restaurant in Anna Nagar") | Brand hub: who, what, where, both pillars | Restaurant, WebSite, WebPage, FAQPage, shared catering Service | Static |
 | `/menu/` | Brihadhee menu, restaurant menu with prices Anna Nagar, current dish names | Look up dishes and prices, with links to the dosa and lunch pages | Restaurant, WebSite, WebPage, BreadcrumbList, Menu (MenuSection, MenuItem, Offer INR), FAQPage | Static |
 | `/about/` | "brihadhee address", "brihadhee timings", "near Anna Nagar Tower", local area terms | Location, hours, directions, founders | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
 | `/book-a-table/` | Brihadhee table booking, reserve a table in Anna Nagar | Choose a verified booking partner or call about a group | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
@@ -25,14 +25,16 @@ The canonical origin is `https://www.brihadhee.com`. Phase 2 observed a live ape
 | `/guides/what-are-nellai-meals/` | What are Nellai meals, what is sodhi, what is ulundhu kali, Tirunelveli cuisine, idiyappam pairings | Learn dish definitions and follow the link to the lunch page to plan a visit | Restaurant, WebSite, WebPage, BreadcrumbList, Article | Static (built 2026-11-12) |
 | `/catering-services-chennai/` | Vegetarian catering Chennai, South Indian event catering, wedding catering, live dosa counters for events | Evaluate general event catering for 50 to 1,500 guests | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built only while catering is confirmed) |
 | `/small-function-catering-chennai/` | Small function catering Chennai, birthday catering, private parties and 50+ guest menu planning | Choose catering for a confirmed family occasion | Restaurant, WebSite, WebPage, BreadcrumbList, Service (Offer eligibleQuantity >= 50 guests), FAQPage | Static (built 2026-11-12, catering gate) |
-| `/catering-quote-chennai/` | Catering quote Chennai, catering enquiry, catering price per plate | Understand quote inputs and enquire via `/api/lead`. Automated WhatsApp hand-off is gated. | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12, catering gate) |
+| `/catering-quote-chennai/` | Catering quote Chennai, catering enquiry, catering price per plate | Understand quote inputs and enquire via `/api/lead`. Automated WhatsApp hand-off is gated. | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage, shared catering Service | Static (built 2026-11-12, catering gate) |
 | `/family-dining-anna-nagar/` | "family restaurant Anna Nagar veg", "veg restaurant near temple Anna Nagar", "family lunch after temple visit", "birthday dinner veg restaurant Anna Nagar" | Owns the family-dining intent (the home page's family Q&A moved here); no temple named until Q24 | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12) |
 | `/faq/` | Brand questions from 4.2 and 4.7 that no other page owns: "Does Brihadhee serve breakfast?" (the one permitted mention; answer "No"), the Brihadeeswarar name, Swiggy/Zomato, table booking | Answer hub plus an index linking to every page's own Q&A block (no duplicated answers) | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12) |
 | `/no-onion-no-garlic-anna-nagar/` | Tier 1 no onion no garlic, tier 2 satvik, tier 3 Jain-friendly (3.15 to 3.17, 4.8) | Dietary spoke | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | **Gated** (`ENABLE_NO_ONION_NO_GARLIC_CLUSTER`, Q11 to Q14): not built in production; noindex draft in `npm run dev` |
 | `/event-planner-catering-partner/` | Catering partner for event management companies | B2B event partnership | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (same gate) |
 | `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/llms-full.txt`, `/site.webmanifest` | Machine endpoints | Discovery | n/a | Generated at build |
 
-The address and directions page covers verified nearby areas. Each Q&A question appears on one route only, enforced by `qaRoute()` in `src/lib/answers.js` and `aeo-lint` check 12. The full address appears only in the first Q&A on each page.
+The address and directions page covers verified nearby areas. `qaRoute()` and the rendered AEO check enforce one route per question. The full address appears in the visit or contact section where present, with the footer linking to that section. On other routes the footer carries the address.
+
+One `Restaurant` node uses `https://www.brihadhee.com/#restaurant` on every generated page. The homepage and five catering routes carry the shared `Service` node `https://www.brihadhee.com/#catering`. The four specialist catering pages also carry their own linked `Service` nodes. The quote page uses the shared entity as its main subject.
 
 ## Utility routes and owner gates
 

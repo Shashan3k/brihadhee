@@ -2,7 +2,7 @@
 /**
  * Home: brand hub, following the on-page blueprint of 2026-11-11. Required H2s,
  * in order: Customized Dosa, Your Way (was "Build Your Own Dosa, Your Way"; client
- * direction 2026-11-13); Lunch; Dinner Until 11 PM; Catering for Offices and Events;
+ * direction 2026-11-13); Lunch; Dinner Until 11 PM; Coffee Bar; Catering for Offices and Events;
  * Why Guests Choose Brihadhee; What Guests Say; Visit Us in Anna Nagar; Quick
  * Answers. The full menu (every dish in the HTML, checked by aeo-lint and verify),
  * offers and gallery sit between "Why" and "What Guests Say". Contact and Careers
@@ -35,11 +35,12 @@ import { ROUTES, href } from "../data/site.js";
 >
   <Nav />
   <main id="main" tabindex="-1">
-    <Hero h1={page.h1} />
+    <Hero h1={page.h1} coffeeBarId={page.coffeeBar.id} />
     <AtAGlance rows={page.glance} />
     <ContentSection {...page.byo} />
     <ContentSection {...page.lunch} />
     <ContentSection {...page.dinner} />
+    <ContentSection {...page.coffeeBar} />
     {page.catering && <ContentSection {...page.catering} />}
     <KolamDivider />
     <About />
@@ -53,5 +54,5 @@ import { ROUTES, href } from "../data/site.js";
     <Contact />
     <Careers />
   </main>
-  <Footer />
+  <Footer addressHref="#visit" />
 </Base>

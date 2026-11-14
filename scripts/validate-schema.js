@@ -17,7 +17,11 @@
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
-import { pathToFileURL } from "node:url";
+import { BYO_DEFINITION, CATERING_ID, RESTAURANT_ID, FACTS, SITE_ORIGIN, cateringContacts, getFact, isConfirmed, toE164 } from "../src/data/entity-truth.ts";
+import { MENU_NOTES } from "../src/data/menu-canonical.ts";
+import { CATERING_DIET } from "../config/seo-gates.ts";
+import { firstAnswerSentence } from "../src/lib/answers.js";
+import { cateringRelationshipProblems, factProblems, readPageCopy } from "./aeo-rules.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
@@ -27,21 +31,14 @@ const warnings = [];
 const err = (page, msg) => errors.push(`${page}: ${msg}`);
 
 /* ---- Facts the entity must match -------------------------------------- */
-// entity-truth.ts is importable by Node (type stripping), so the validator reads the same source as the site.
-const { FACTS, SITE_ORIGIN } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
-const { MENU_NOTES } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
-// Catering says "vegetarian" until the owner answers Q20 (config/seo-gates.ts).
-const { CATERING_DIET } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 const SITE = {
   name: FACTS.name.value,
   phone: FACTS.phone.value,
-  whatsapp: FACTS.whatsapp.value,
   cuisines: FACTS.cuisines.value,
   region: FACTS.address.value.state,
   locality: FACTS.address.value.city,
   postal: FACTS.address.value.postalCode,
 };
-const digits = (s) => String(s ?? "").replace(/\D/g, "");
 
 // Key.md is gitignored, so it only exists locally.
 const keyPath = join(ROOT, "Key.md");
@@ -71,19 +68,7 @@ const CATERING_PAGES = [...SERVICE_PAGES, QUOTE_PATH];
  * One Q&A per route: corporate questions live on /corporate-catering-chennai/
  * and the location question on /about/ (src/lib/answers.js qaRoute). */
 /* What each question needs confirmed in the config. */
-const ch = cfg.enquiry_channels ?? {};
-const confirmedPhone =
-  ch.is_different_from_restaurant === true
-    ? ch.phone
-    : ch.is_different_from_restaurant === false
-      ? ch.phone || SITE.phone
-      : null;
-const confirmedWhatsapp =
-  ch.is_different_from_restaurant === true
-    ? ch.whatsapp
-    : ch.is_different_from_restaurant === false
-      ? ch.whatsapp || SITE.whatsapp
-      : null;
+const { phone: confirmedPhone, whatsapp: confirmedWhatsapp } = cateringContacts();
 const nonEmpty = (a) => Array.isArray(a) && a.length > 0;
 const GATES = {
   "Does Brihadhee do wedding and event catering?": () => cfg.offer_catering === true && nonEmpty(cfg.confirmed_events),
@@ -116,7 +101,6 @@ function* walk(p) {
   for (const e of readdirSync(p)) yield* walk(join(p, e));
 }
 const sameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-const firstSentence = (t) => (String(t).match(/^[^.!?]*[.!?]/)?.[0] ?? t).trim();
 const htmlEntities = {
   amp: "&", apos: "'", quot: '"', lt: "<", gt: ">",
 };
@@ -177,7 +161,7 @@ for (const cp of CATERING_PAGES) {
 /* ---- Per-page structural checks -------------------------------------- */
 for (const { name, html, nodes } of pages) {
   if (!nodes.length) {
-    warnings.push(`${name}: no JSON-LD found`);
+    err(name, "no server-rendered JSON-LD found");
     continue;
   }
   const idSet = new Set(nodes.map((n) => n["@id"]).filter(Boolean));
@@ -191,29 +175,35 @@ for (const { name, html, nodes } of pages) {
     if (keys.length === 1 && keys[0] === "@id" && !idSet.has(o["@id"])) {
       err(name, `unresolved @id reference: ${o["@id"]}`);
     }
+    if (typeOf(o).includes("CateringService")) err(name, "CateringService is not a Schema.org type");
   }
-  // duplicate @id with different content
-  const seen = new Map();
+  const seen = new Set();
   for (const n of nodes) {
     if (!n["@id"]) continue;
-    if (seen.has(n["@id"]) && !sameJson(seen.get(n["@id"]), n)) err(name, `duplicate @id with different content: ${n["@id"]}`);
-    seen.set(n["@id"], n);
+    if (seen.has(n["@id"])) err(name, `duplicate top-level @id: ${n["@id"]}`);
+    seen.add(n["@id"]);
   }
 
   /* Restaurant entity */
-  const r = nodes.find((n) => typeOf(n).includes("Restaurant"));
+  const restaurants = nodes.filter((n) => typeOf(n).includes("Restaurant"));
+  const [r] = restaurants;
+  const address = getFact("address");
+  if (restaurants.length !== 1) err(name, `expected exactly one Restaurant entity, found ${restaurants.length}`);
   if (r) {
+    if (r["@id"] !== RESTAURANT_ID || r.url !== `${SITE_ORIGIN}/`) err(name, `Restaurant must use the stable ${RESTAURANT_ID} @id and home URL`);
     if (r.name !== SITE.name) err(name, `Restaurant.name "${r.name}" != "${SITE.name}"`);
-    if (JSON.stringify(r.servesCuisine) !== JSON.stringify(SITE.cuisines)) err(name, `servesCuisine ${JSON.stringify(r.servesCuisine)} != facts.js cuisines`);
+    if (!sameJson(r.servesCuisine, SITE.cuisines)) err(name, "Restaurant.servesCuisine differs from entity-truth.ts");
+    if (!r.description?.includes(getFact("dietary")) || !r.description.includes(getFact("mealTimes"))) {
+      err(name, "Restaurant.description must state the verified diet and meal service");
+    }
+    for (const problem of factProblems(r.description ?? "")) err(name, `Restaurant.description: ${problem}`);
     const a = r.address ?? {};
     if (a.addressLocality !== SITE.locality) err(name, `addressLocality "${a.addressLocality}"`);
     if (a.addressRegion !== SITE.region) err(name, `addressRegion "${a.addressRegion}"`);
     if (a.postalCode !== SITE.postal) err(name, `postalCode "${a.postalCode}"`);
-    for (const part of ["W-Block", "3rd Avenue", "Anna Nagar East"]) {
-      if (!String(a.streetAddress ?? "").includes(part)) err(name, `streetAddress missing "${part}"`);
-    }
-    if (digits(r.telephone) !== digits(SITE.phone)) err(name, `telephone ${r.telephone} != site phone ${SITE.phone}`);
-    if (r.telephone && !/^\+\d{10,15}$/.test(r.telephone)) err(name, `telephone not E.164: ${r.telephone}`);
+    if (a["@type"] !== "PostalAddress" || a.addressCountry !== address.country ||
+        a.streetAddress !== `${address.line1}, ${address.line2}`) err(name, "Restaurant PostalAddress differs from the verified physical address");
+    if (r.telephone !== toE164(SITE.phone)) err(name, `Restaurant.telephone must be the dining number in E.164 (${toE164(SITE.phone)})`);
     if (hasKey(r, "aggregateRating") || hasKey(r, "review")) err(name, "Restaurant carries aggregateRating or review (self-served)");
     if (hasKey(r, "makesOffer")) err(name, "Restaurant carries legacy makesOffer nodes");
     if (KEY) {
@@ -230,23 +220,26 @@ for (const { name, html, nodes } of pages) {
         }
       }
     }
-  } else {
-    err(name, "no Restaurant entity");
   }
 
   /* WebSite / WebPage / BreadcrumbList */
   const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
   const ws = nodes.filter((n) => typeOf(n).includes("WebSite"));
   if (ws.length !== 1) err(name, `expected exactly 1 WebSite node, found ${ws.length}`);
+  if (ws[0]?.publisher?.["@id"] !== RESTAURANT_ID) err(name, "WebSite.publisher must reference the Restaurant");
   const wp = nodes.find((n) => typeOf(n).includes("WebPage"));
-  const primaryContent = nodes.find((n) => typeOf(n).some((type) => ["Menu", "Service", "Article"].includes(type)));
-  const expectedPrimary = primaryContent ?? (["/", "/about/", "/book-a-table/"].includes(name) ? r : null);
+  const sharedCatering = nodes.find((n) => n["@id"] === CATERING_ID);
+  const pageService = nodes.find((n) => n["@id"] === `${canonical}#service`);
+  const primaryContent = nodes.find((n) => typeOf(n).some((type) => ["Menu", "Article"].includes(type)));
+  const subjectId = CATERING_PAGES.includes(name) ? (pageService?.["@id"] ?? CATERING_ID) : RESTAURANT_ID;
+  const expectedPrimary = primaryContent ?? pageService ?? (name === QUOTE_PATH ? sharedCatering : null) ??
+    (["/", "/about/", "/book-a-table/"].includes(name) ? r : null);
   if (!wp) err(name, "missing WebPage node");
   else {
     if (canonical && wp.url !== canonical) err(name, `WebPage.url ${wp.url} != canonical ${canonical}`);
     if (wp["@id"] !== `${wp.url}#webpage`) err(name, "WebPage @id does not match its URL");
     if (wp.isPartOf?.["@id"] !== ws[0]?.["@id"]) err(name, "WebPage.isPartOf does not reference the WebSite");
-    if (wp.about?.["@id"] !== r?.["@id"]) err(name, "WebPage.about does not reference the Restaurant");
+    if (wp.about?.["@id"] !== subjectId) err(name, `WebPage.about must reference ${subjectId}`);
     const title = decodeHtml(html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]);
     const description = decodeHtml(html.match(/<meta name="description" content="([^"]*)"/i)?.[1]);
     if (!title || wp.name !== title) err(name, "WebPage.name differs from the HTML title");
@@ -274,20 +267,46 @@ for (const { name, html, nodes } of pages) {
   }
   if (r && (r.hasMenu !== `${SITE_ORIGIN}${MENU_PATH}` || !canonicals.has(r.hasMenu))) err(name, "Restaurant.hasMenu must link to the built menu canonical");
   if (r && "priceRange" in r && FACTS.priceRange.status !== "verified") err(name, "priceRange emitted while the fact is pending");
-  if (r && "openingHoursSpecification" in r && FACTS.hours.status !== "verified") err(name, "openingHoursSpecification emitted while hours are pending");
+  if (r && isConfirmed("hours") && isConfirmed("openDays")) {
+    const rows = (r.openingHoursSpecification ?? []).flatMap((row) =>
+      [].concat(row.dayOfWeek ?? []).map((day) => `${day} ${row.opens} ${row.closes}`)
+    ).sort();
+    const expectedRows = getFact("hours").days.filter(({ open, close }) => open && close)
+      .map(({ day, open, close }) => `https://schema.org/${day} ${open} ${close}`).sort();
+    if (!sameJson(rows, expectedRows) || r.openingHoursSpecification?.some((row) => row["@type"] !== "OpeningHoursSpecification")) {
+      err(name, "Restaurant openingHoursSpecification differs from verified days or times");
+    }
+  } else if (r && "openingHoursSpecification" in r) {
+    err(name, "openingHoursSpecification emitted while hours or days are pending");
+  }
 
   /* Service (catering) */
-  for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {
-    if (!SERVICE_PAGES.includes(name)) err(name, "Service schema outside the catering service pages");
+  const sharedExpected = cfg.offer_catering === true && (name === "/" || CATERING_PAGES.includes(name));
+  if (Boolean(sharedCatering) !== sharedExpected) err(name, "presence of the shared catering entity contradicts the page role or catering gate");
+  const services = nodes.filter((n) => n["@id"] === CATERING_ID || typeOf(n).includes("Service"));
+  for (const s of services) {
+    const shared = s === sharedCatering;
+    for (const problem of cateringRelationshipProblems(s, { shared })) err(name, problem);
+    for (const text of [s.name, s.serviceType, s.description].filter(Boolean)) {
+      for (const problem of factProblems(text)) err(name, `Service ${s["@id"]}: ${problem}`);
+    }
     if (cfg.offer_catering !== true) err(name, "Service emitted while offer_catering is not true");
-    if (s.url !== canonical || s["@id"] !== `${canonical}#service`) err(name, "Service URL and @id must use the page canonical");
-    if (s.serviceType !== SERVICE_TYPES[name]) err(name, `serviceType "${s.serviceType}" != "${SERVICE_TYPES[name]}"`);
-    if (name === CATERING_PATH) {
+    if (shared) {
+      if (s.url !== `${SITE_ORIGIN}${CATERING_PATH}` || s.name !== `${SITE.name} Catering` ||
+          s.serviceType?.toLowerCase() !== `${CATERING_DIET} catering` || !s.description?.includes(`${CATERING_DIET} catering`)) {
+        err(name, "shared catering Service differs from the approved name, hub URL or diet");
+      }
+      if (s.hasOfferCatalog || s.availableChannel) err(name, "keep offer details and contact channels on specialist Services");
+    } else {
+      if (!SERVICE_PAGES.includes(name)) err(name, "specialist Service schema outside a catering service page");
+      if (s.url !== canonical || s["@id"] !== `${canonical}#service`) err(name, "specialist Service URL and @id must use the page canonical");
+      if (s.serviceType !== SERVICE_TYPES[name]) err(name, `serviceType "${s.serviceType}" != "${SERVICE_TYPES[name]}"`);
+    }
+    if (!shared && name === CATERING_PATH) {
       const offers = s.hasOfferCatalog?.itemListElement ?? [];
       if (!offers.length) err(name, "event catering Service has no hasOfferCatalog offers");
       for (const o of offers) if (!o.itemOffered?.name) err(name, "hasOfferCatalog offer without itemOffered.name");
     }
-    if (s.provider?.["@id"] !== r?.["@id"]) err(name, "Service.provider does not reference the Restaurant @id");
     if (hasKey(s, "aggregateRating") || hasKey(s, "review")) err(name, "Service carries AggregateRating/review (no verified catering reviews)");
     for (const offer of s.hasOfferCatalog?.itemListElement ?? []) {
       const quantity = offer.eligibleQuantity;
@@ -303,23 +322,23 @@ for (const { name, html, nodes } of pages) {
     if ("telephone" in s) err(name, "use ServiceChannel.servicePhone rather than telephone directly on Service");
     const channel = s.availableChannel;
     const contact = channel?.servicePhone;
-    if (confirmedPhone) {
+    if (!shared && confirmedPhone) {
       if (channel?.["@type"] !== "ServiceChannel" || contact?.["@type"] !== "ContactPoint" ||
-          digits(contact.telephone) !== digits(confirmedPhone) || !/^\+\d{10,15}$/.test(contact.telephone)) {
+          contact.telephone !== toE164(confirmedPhone)) {
         err(name, `ServiceChannel must use the confirmed catering phone ${confirmedPhone}`);
       }
-    } else if (contact) {
+    } else if (!shared && contact) {
       err(name, "ServiceChannel.servicePhone present but no confirmed catering phone");
     }
   }
-  if (SERVICE_PAGES.includes(name) && !nodes.some((n) => typeOf(n).includes("Service"))) err(name, "missing Service schema");
-  if (CATERING_PAGES.includes(name) && confirmedPhone && !html.includes(`href="tel:+${digits(confirmedPhone)}"`)) {
+  if (SERVICE_PAGES.includes(name) && !pageService) err(name, "missing page-specific Service schema");
+  if (CATERING_PAGES.includes(name) && confirmedPhone && !html.includes(`href="tel:${toE164(confirmedPhone)}"`)) {
     err(name, "confirmed catering phone is missing from the page's call links");
   }
 
   /* FAQPage */
   for (const f of nodes.filter((n) => typeOf(n).includes("FAQPage"))) {
-    const text = visibleText(html);
+    const { text } = readPageCopy(html);
     const qs = f.mainEntity ?? [];
     if (!qs.length) err(name, "FAQPage has no mainEntity");
     for (const q of qs) {
@@ -327,7 +346,7 @@ for (const { name, html, nodes } of pages) {
       const ans = q.acceptedAnswer?.text ?? "";
       if (!ans.trim()) err(name, `empty answer: ${qn}`);
       if (!text.includes(qn)) err(name, `FAQ question not visible on the page: ${qn}`);
-      if (!text.includes(firstSentence(ans))) err(name, `FAQ answer sentence 1 not visible on the page: ${qn}`);
+      if (!text.includes(firstAnswerSentence(ans))) err(name, `FAQ answer sentence 1 not visible on the page: ${qn}`);
       if (name === CATERING_PATH) {
         if (!TARGET_QUESTIONS.includes(qn)) err(name, `FAQ question is not one of the catering targets: ${qn}`);
         else if (!GATES[qn]()) err(name, `FAQ question not confirmed in config: ${qn}`);
@@ -335,7 +354,7 @@ for (const { name, html, nodes } of pages) {
     }
     const dup = qs.map((q) => q.name).filter((n, i, a) => a.indexOf(n) !== i);
     if (dup.length) err(name, `duplicate FAQ questions: ${dup.join("; ")}`);
-    if (f.about?.["@id"] !== r?.["@id"]) err(name, "FAQPage.about does not reference the Restaurant @id");
+    if (f.about?.["@id"] !== subjectId) err(name, `FAQPage.about must reference ${subjectId}`);
     if (f.isPartOf?.["@id"] !== wp?.["@id"] || wp?.hasPart?.["@id"] !== f["@id"]) err(name, "FAQPage and WebPage must have reciprocal part links");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dateModified ?? "")) err(name, "FAQPage missing dateModified (YYYY-MM-DD)");
   }
@@ -351,6 +370,9 @@ for (const { name, html, nodes } of pages) {
       err(name, "Menu description must match the visible tax and parcel notes");
     }
     const customization = m.hasMenuSection?.find((section) => section.name === "Build Your Own Dosa");
+    if (customization?.description !== BYO_DEFINITION || !text.includes(BYO_DEFINITION)) {
+      err(name, "Build Your Own Dosa MenuSection must share its definition with visible HTML");
+    }
     const steps = customization?.hasMenuSection?.filter((section) => /^Step \d+:/.test(section.name)) ?? [];
     if (!steps.length) err(name, "Menu is missing its build-your-own steps");
     for (const [index, step] of steps.entries()) {
@@ -377,6 +399,12 @@ const restaurants = pages
   .filter((x) => x.node);
 for (const x of restaurants.slice(1)) {
   if (!sameJson(x.node, restaurants[0].node)) err(x.page, `Restaurant entity differs from ${restaurants[0].page}`);
+}
+const cateringEntities = pages.flatMap(({ name, nodes }) =>
+  nodes.filter((n) => n["@id"] === CATERING_ID).map((node) => ({ name, node }))
+);
+for (const { name, node } of cateringEntities.slice(1)) {
+  if (!sameJson(node, cateringEntities[0].node)) err(name, `shared catering entity differs from ${cateringEntities[0].name}`);
 }
 
 /* ---- Report ----------------------------------------------------------- */

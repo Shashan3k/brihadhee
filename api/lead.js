@@ -15,8 +15,7 @@
  * Responses: JSON for fetch() callers ({ ok, errors? }); for a plain HTML form
  * post, an accessible result page with a link back to the enquiry.
  */
-import verification from "../config/client-verification.json" with { type: "json" };
-import { getFact } from "../src/data/entity-truth.ts";
+import { cateringContacts, getFact, toE164 } from "../src/data/entity-truth.ts";
 import { validateLead, leadPage, leadSummary, leadSubject } from "../src/lib/lead.js";
 
 const MAX_BODY = 16 * 1024;
@@ -34,9 +33,9 @@ function htmlResult(status, page, formType, errors = {}) {
   const details = sent ? "The Brihadhee team will review your request and contact you about the details you provided."
     : invalid ? "Return to the form to update your details and try again."
     : "Try again, or call the Brihadhee team to share your enquiry.";
-  const number = formType === "general" ? getFact("phone") : verification.enquiry_channels.phone;
+  const number = formType === "general" ? getFact("phone") : cateringContacts().phone;
   const call = !sent && !invalid && number
-    ? `<p><a href="tel:${number.replace(/[^+\d]/g, "")}">Call ${escapeHtml(number)}</a></p>` : "";
+    ? `<p><a href="tel:${toE164(number)}">Call ${escapeHtml(number)}</a></p>` : "";
   const errorList = Object.values(errors).map((message) => `<li>${escapeHtml(message)}</li>`).join("");
   const anchor = page === "/" ? "" : "#enquiry";
 

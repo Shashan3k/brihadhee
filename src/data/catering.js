@@ -16,14 +16,12 @@
  * since 2026-11-11 (keyword plan, client W13). Client names need permission first.
  */
 import verification from "../../config/client-verification.json";
-import { site } from "./site.js";
-import { getFact, factOr } from "./entity-truth.ts";
+import { getFact, factOr, cateringContacts, toE164, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { qa, qaRoute } from "../lib/answers.js";
 import { taCorporate } from "./faq-ta.js";
 import { CATERING_DIET, ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS } from "../../config/seo-gates.ts";
 
 const STREET = getFact("street");
-const PV = "100% pure vegetarian";
 /** Catering diet word: "vegetarian" until the owner answers Q20 (config/seo-gates.ts). */
 const CD = CATERING_DIET;
 const CDcap = CD.charAt(0).toUpperCase() + CD.slice(1);
@@ -97,21 +95,12 @@ const max = Number.isFinite(v.max_guests) ? v.max_guests : null;
 const guestRange = cateringEnabled && min !== null && max !== null && min <= max ? { min, max } : null;
 const fmt = (n) => n.toLocaleString("en-IN");
 
-/* Catering contact: the catering numbers if different, else the restaurant's. */
-const ch = v.enquiry_channels ?? {};
-function resolveChannel(own, restaurant) {
-  if (!cateringEnabled) return null;
-  if (ch.is_different_from_restaurant === true) return own || null;
-  if (ch.is_different_from_restaurant === false) return own || restaurant || null;
-  return null;
-}
-const phone = resolveChannel(ch.phone, site.contact.phone);
-const whatsapp = resolveChannel(ch.whatsapp, site.contact.whatsapp);
+const { phone, whatsapp } = cateringContacts();
 
 export const contact = {
   phone,
   whatsapp,
-  telHref: phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : "",
+  telHref: phone ? `tel:${toE164(phone)}` : "",
   whatsappHref: whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : "",
   any: Boolean(phone || whatsapp),
   hasPhone: Boolean(phone),
@@ -183,8 +172,6 @@ export const eventService = cateringEnabled ? factOr("eventService", null) : nul
  * the location question on /about/. */
 const faq = [];
 const add = (question, answer, options) => faq.push(qa(question, answer, options));
-const addr = () =>
-  `${site.address.line1}, ${site.address.line2}, ${site.address.city}, ${site.address.state} ${site.address.postalCode}`;
 const NEAR = "Anna Nagar East";
 
 /* Service details the owner has not confirmed yet (client-verification.json) are
@@ -204,8 +191,8 @@ if (cateringEnabled) {
   if (eventIds.length) {
     add(
       "Does Brihadhee do wedding and event catering?",
-      `Yes. Brihadhee caters weddings and events across ${AREA} for ${G}, from boutique weddings and betrothals to birthdays, housewarmings and get-togethers. ` +
-        `Its kitchen is at ${addr()}.`
+      `Yes. Brihadhee offers ${CD} wedding and event catering across ${AREA} for ${G}. ` +
+        "The team caters boutique weddings, betrothals, birthdays, housewarmings and get-togethers."
     );
   }
   add(
@@ -272,8 +259,7 @@ if (cateringEnabled) {
   plannerFaq.push(
     qa(
       `Which ${CD} caterer in Chennai works with event managers on boutique functions?`,
-      `Brihadhee, a restaurant in ${NEAR}, works with event management companies across ${AREA} as a ${CD} caterer for boutique functions and weddings of ${G}. ` +
-        `Its kitchen is at ${addr()}.`
+      `Brihadhee, a restaurant in ${NEAR}, works with event management companies across ${AREA} as a ${CD} caterer for boutique functions and weddings of ${G}.`
     ),
     qa(
       "Can Brihadhee run white-label or co-branded live counters for my event company?",
@@ -330,7 +316,6 @@ export function cateringSchema() {
     extras: [
       cateringServiceSchema({
         areas,
-        phone: contact.phone,
         serviceType: "Event catering",
         description: `${CDcap} event and wedding catering in Chennai with regional menus and live counters. Agree the event service and per-plate price in the quote.`,
         offerCatalog: eventCatalog,
@@ -354,7 +339,6 @@ export function plannerSchema() {
     extras: [
       cateringServiceSchema({
         areas,
-        phone: contact.phone,
         path: PLANNER_PATH,
         serviceType: "Event catering",
         name: "Brihadhee Catering Partner for Event Planners",
@@ -404,7 +388,7 @@ export const corporatePage = corporateEnabled
       path: CORPORATE_PATH,
       intro: `Brihadhee supplies ${CD} office lunches and recurring employee meals across Chennai. For a one-off packed bulk lunch or a staffed office event, share the date and headcount so the team can discuss what you need.`,
       glance: [
-        ["Who", `Brihadhee, a ${PV} restaurant on ${STREET} with a ${CD} catering service`],
+        ["Who", `The Brihadhee restaurant team in ${NEAR}`],
         ["Daily corporate volume", `${DAILY} people served per day across the corporate catering operation`],
         ["Services", corpServices.join(", ")],
         ["Areas", joinNatural(corpAreas)],
@@ -457,7 +441,6 @@ export const corporatePage = corporateEnabled
                 text: "Add the coffee bar to a catered office lunch or event, or book it for a meeting, training day or client visit. Tell the team how many people to expect and when.",
               },
             ],
-            image: { name: "coffee", alt: "Filter coffee in a steel tumbler and davara" },
             links: [{ label: "Ask about the coffee bar", href: "#enquiry", primary: true }],
           }
         : null,
@@ -547,8 +530,8 @@ export const corporatePage = corporateEnabled
       faq: qaRoute(CORPORATE_PATH, [
         qa(
           "Does Brihadhee do corporate catering?",
-          `Yes. Brihadhee runs ${CD} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day with office lunches, bulk meals, employee meal programmes and office events. ` +
-            `Its kitchen is at ${addr()}.`
+          `Yes. Brihadhee provides ${CD} corporate catering across Chennai from its kitchen in ${NEAR}. ` +
+            `Its office catering operation serves more than ${fmt(corporate.dailyCovers)} people daily. It also accepts bulk and office event enquiries.`
         ),
         /* Scale distinction (AEO audit 2026-11-12, 4.2 and 4.4): daily corporate volume is not single-event capacity. */
         qa(
@@ -621,7 +604,6 @@ export function corporateSchema() {
     extras: [
       cateringServiceSchema({
         areas,
-        phone: contact.phone,
         path: CORPORATE_PATH,
         serviceType: "Corporate catering",
         name: `Brihadhee ${CDcap} Corporate Catering`,

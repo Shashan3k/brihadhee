@@ -2,9 +2,8 @@
  * Tamil Q&As (அடிக்கடி கேட்கப்படும் கேள்விகள்) and Tanglish Q&As, appended
  * after the English Q&As on /, /menu/, /menu/dosa/, /menu/nellai-meals/,
  * /small-function-catering-chennai/ and /corporate-catering-chennai/, so the
- * one-Q&A-per-route and address-once rules (src/lib/answers.js qaRoute) cover
- * them too. Numbers come from the menu and entity-truth.ts; only the wording is
- * written here.
+ * route ownership and rendered address and diet checks cover them too.
+ * Numbers come from the menu and entity-truth.ts.
  *
  * Written the way people in Chennai ask and answer (AEO audit 2026-11-12, 4.6):
  * the first sentence answers the question directly, everyday words such as

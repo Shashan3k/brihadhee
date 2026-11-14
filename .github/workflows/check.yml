@@ -25,6 +25,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm test
       - run: npm run build
       # End-to-end SEO / AEO / GEO gate: raw HTML, entity and menu accuracy, schema,
       # links, and a preview-server status check (Lighthouse runs locally only).

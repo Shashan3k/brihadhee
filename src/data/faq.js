@@ -14,7 +14,7 @@
  * parking, delivery, the last-order time (on /faq/ and the dinner page).
  * Not answered at all: cost for two, the Google rating.
  */
-import { getFact, FACTS, addressLine, landmarkSentence, openingTimes, longDate } from "./entity-truth.ts";
+import { getFact, FACTS, openingTimes, longDate, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taHome, taMenu } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
@@ -30,17 +30,15 @@ import {
   rupees,
   summarise,
   byo,
-  customizedDosaDefinition,
+  BYO_DEFINITION,
   menuNotes,
 } from "../lib/menu-facts.js";
 
 const name = getFact("name");
-const PV = "100% pure vegetarian";
 const AREA = "Anna Nagar East";
 const phone = getFact("phone");
 const email = getFact("email");
 const { range: HOURS, open: OPEN } = openingTimes();
-const ADDRESS = addressLine();
 const offers = getFact("offers");
 const offer = (id) => {
   const o = offers.find((x) => x.id === id);
@@ -80,9 +78,8 @@ const num = (n) => n.toLocaleString("en-IN");
 export const faqItems = qaRoute("/", [
   qa(
     `What is ${name} in Anna Nagar?`,
-    `${name} is a ${PV} South Indian restaurant in ${AREA}, Chennai, open every day from ${HOURS} for lunch and dinner. ` +
-      `It is known for customized dosa and the ${sodhi.name}, and its kitchen also runs ${CATERING_DIET} corporate and event catering. ` +
-      `It is at ${ADDRESS}.`,
+    `${name} is a South Indian vegetarian restaurant in ${AREA}, Chennai, open every day from ${HOURS} for lunch and dinner. ` +
+      `It is known for customized dosa and the ${sodhi.name}. The team also offers ${CATERING_DIET} corporate and event catering.`,
     { id: "what-is-brihadhee" }
   ),
   /* P0 (AEO audit 2026-11-12, src/data/faq.js:70): the restaurant answer no longer
@@ -97,7 +94,7 @@ export const faqItems = qaRoute("/", [
      /menu/dosa/ explains it as build-your-own dosa. */
   qa(
     `What is a customized dosa at ${name}?`,
-    `${customizedDosaDefinition} Batters cost ${batterRange}, and each addition is priced separately.`,
+    BYO_DEFINITION,
     { id: "customized-dosa" }
   ),
   qa(
@@ -138,7 +135,7 @@ export const faqItems = qaRoute("/", [
 
 /* ---- /about/ (address, timings, contact) ---------------------------------- */
 export const aboutFaq = qaRoute("/about/", [
-  qa(`Where is ${name} located?`, `${name} is at ${ADDRESS}. Nearby landmarks: ${landmarkSentence()}.`, { id: "location" }),
+  qa(`Where is ${name} located?`, `${name} is on ${getFact("street")}, Chennai, near ${getFact("landmarks")[0]}. The full address and directions are in the address section above.`, { id: "location" }),
   qa(
     `What are ${name}'s timings?`,
     `${name} in Anna Nagar is open every day from ${HOURS}, for lunch and dinner. ` +

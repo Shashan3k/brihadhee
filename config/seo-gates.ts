@@ -18,9 +18,6 @@
 
 /* ---- Dietary and positioning -------------------------------------------- */
 
-/** The restaurant is 100% pure vegetarian (owner brief; menu lists no meat, egg or fish). */
-export const IS_RESTAURANT_PURE_VEG = true;
-
 /**
  * Q20: may catering copy say "pure veg"? The Wf call says one non-veg item could be
  * arranged from elsewhere for a very large order, so catering copy says
@@ -80,10 +77,6 @@ export const CORPORATE_DAILY_COVERS = 1000;
 
 /* ---- Restaurant ------------------------------------------------------------ */
 
-/** Confirmed hours (client W11). Must match entity-truth.ts hours (11:00 to 23:00). */
-export const CONFIRMED_HOURS = "11:00 AM – 11:00 PM";
-export const CONFIRMED_OPENS = "11:00";
-export const CONFIRMED_CLOSES = "23:00";
 /** Meal framing used on the home page and in llms.txt. */
 export const MEAL_FRAMING = "Lunch & Dinner Only";
 
@@ -133,3 +126,7 @@ export const GATE_SUMMARY = {
 
 /** "vegetarian" until Q20 is answered, then "pure vegetarian". */
 export const CATERING_DIET = IS_CATERING_PURE_VEG ? "pure vegetarian" : "vegetarian";
+// Match claims about catering itself, without reading "cooked in the pure
+// vegetarian restaurant kitchen" as a claim about every catering engagement.
+export const CATERING_PURITY_CLAIM =
+  /\bpure[\s-]*veg(?:etarian)?\b(?:[\s-]+(?:south indian|chennai|anna nagar|wedding|event|corporate|office|outdoor|local|small[- ]function|party|food|function|bulk|meal|(?:on|off)[- ]site)){0,5}[\s-]+cater(?:ing|ers?|s)\b|\bcater(?:ing|ers?|s)\b(?:\s+(?:services?|menus?|meals?|food|offerings?|options?|is|are|includes?|offers?|provides?|serves?|only|entirely|fully|strictly|all|as)){0,5}\s*(?::\s*)?(?:100\s*%\s*)?pure[\s-]*veg(?:etarian)?\b|சுத்த\s*சைவ\s*கேட்டரிங்/i;

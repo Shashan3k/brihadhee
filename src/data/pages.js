@@ -11,20 +11,17 @@
  * answer-first rules (src/lib/answers.js). No "best" claims in copy (question
  * headings only); no competitor names; lunch and dinner only.
  */
-import { getFact, factOr, openingTimes, addressLine, monthYear } from "./entity-truth.ts";
+import { getFact, factOr, openingTimes, monthYear, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { ROUTES, href, telHref } from "./site.js";
-import { cateringEnabled, corporate, guests, liveCounters } from "./catering.js";
+import { cateringEnabled, corporate, corporatePage, guests, liveCounters } from "./catering.js";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
-import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedDosaDefinition, customizedLabel } from "../lib/menu-facts.js";
+import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedLabel } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
-const ADDRESS = addressLine();
-const PV = "100% pure vegetarian";
 const postal = getFact("address").postalCode;
-const line1 = getFact("address").line1;
 const landmark = getFact("landmarks")[0];
 const phone = getFact("phone");
 const recipeStory = getFact("recipeStory");
@@ -96,7 +93,7 @@ export const homePage = {
   glance: [
     ["Open", `${HOURS} daily · ${MEAL_FRAMING}`],
     ["Food", "100% pure veg South Indian"],
-    ["Address", `${line1}, Anna Nagar East, near ${landmark}`],
+    ["Location", `${STREET}, near ${landmark}`],
     ["Famous for", getFact("knownFor").join(", ")],
   ],
   /* "Customized Dosa" replaces "Build your own dosa" on the home page (client direction,
@@ -105,7 +102,7 @@ export const homePage = {
     id: "home-dosa",
     eyebrow: "Signature",
     title: "Customized Dosa, Your Way",
-    lead: `${customizedDosaDefinition} Pick one of ${byo.batterCount} batters (${batterRange}) and add what you like, or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
+    lead: `Pick one of ${byo.batterCount} batters (${batterRange}) and choose your toppings, filling and roast. The kitchen cooks your dosa to order. You can also order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
     links: [{ label: "How customized dosa works", href: href(ROUTES.dosa), primary: true }],
     image: { name: "dosa", alt: "Golden dosa with visible filling and three bowls of sides", caption: "A dosa from the Brihadhee kitchen" },
   },
@@ -124,6 +121,19 @@ export const homePage = {
     title: `Dinner Until ${CLOSE}`,
     lead: `For dinner at ${name}, choose customized dosa, ${paanai.name} (${rupees(paanai.price)}), veg kothu parotta, idiyappam or ${poppers.name}, with filter coffee to finish. The restaurant closes at ${CLOSE} daily.`,
     links: [{ label: "Explore the dinner menu", href: href(ROUTES.dinner), primary: true }],
+  },
+  coffeeBar: {
+    id: "coffee-bar",
+    title: "Coffee Bar",
+    lead: `Have South Indian filter coffee at ${name} in Anna Nagar East. We brew it with a traditional filter and serve it with our lunch and dinner menu. ${menuNotes.gst}`,
+    dishes: category("beverages").items.map(dish),
+    links: [
+      { label: "See the drinks menu", href: `${href(ROUTES.menu)}#beverages`, primary: true },
+      ...(corporatePage?.coffeeBar
+        ? [{ label: "Coffee bar for office events", href: `${href(ROUTES.corporateCatering)}#${corporatePage.coffeeBar.id}` }]
+        : []),
+    ],
+    tint: true,
   },
   catering:
     cateringEnabled && corporate && guests
@@ -190,8 +200,8 @@ export const dosaPage = {
   ],
   definition: {
     id: "what-is-byo-dosa",
-    title: "What Is a Build-Your-Own Dosa?",
-    lead: `${BYO_DEFINITION.sentence} Guests do not cook: the ${name} kitchen in Anna Nagar East makes every dosa.`,
+    title: `What Is Build Your Own Dosa at ${name}?`,
+    lead: BYO_DEFINITION,
     items: [
       {
         title: "Classic dosa or build-your-own?",
@@ -248,19 +258,19 @@ export const dosaPage = {
   faq: qaRoute(ROUTES.dosa, [
     qa(
       "Where can I build my own dosa in Chennai?",
-      `You can build your own dosa at ${name} in Anna Nagar East, Chennai. Pick the batter, podi and toppings, filling and roast, and the kitchen cooks your choices to order. ` +
-        `The restaurant is at ${ADDRESS}.`,
+      `You can build your own dosa at ${name} in Anna Nagar East, Chennai, near ${landmark}. Choose the batter, podi and toppings, filling and roast. The kitchen cooks it to order and serves it at your table.`,
       { id: "which-restaurant-in-anna-nagar-lets-you-customise-your-dosa" }
     ),
     qa(
-      `Can I build my own dosa at ${name}?`,
-      `Yes. At ${name} you choose one of ${byo.batterCount} batters (${batterRange}), then podi and toppings, a filling and a roast, and the kitchen cooks it for you. ` +
-        `Or order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`
+      "Can customers choose the dosa batter and ingredients?",
+      `Yes. ${name} has ${byo.batterCount} batters (${batterRange}) to choose from, plus podi and toppings, fillings and roast options. ` +
+        `You can also order one of ${byo.suggestionCount} chef's combinations for ${suggestionRange}.`,
+      { id: "can-i-build-my-own-dosa-at-brihadhee" }
     ),
     qa(
-      `Is build-your-own dosa at ${name} a self-service counter?`,
-      `No. At ${name} you choose the ingredients and the kitchen cooks your dosa to order and serves it at your table; guests do not cook. ` +
-        `At catered events, the live dosa counter is run by ${name}'s own team.`
+      "Do customers cook their own dosa?",
+      `No. The ${name} kitchen cooks your dosa to order and brings it to your table. Guests pick the ingredients when they order.`,
+      { id: "is-build-your-own-dosa-at-brihadhee-a-self-service-counter" }
     ),
     qa(
       "Which restaurant serves the best dosa in Anna Nagar?",
@@ -290,7 +300,7 @@ export const nellaiPage = {
   h1: "Veg Lunch and Nellai Meals in Anna Nagar",
   intro: `${name} serves a ${PV} lunch every day from ${OPEN} on ${STREET}: the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), a Tirunelveli-style meal, and Tamil Nadu meals, all ${recipeStory}.`,
   glance: [
-    ["Who", `${name}, a ${PV} restaurant in Anna Nagar East`],
+    ["Who", `${name}, a South Indian vegetarian restaurant in Anna Nagar East`],
     ["Lunch from", `${OPEN}, every day`],
     ["Signature meal", `${sodhiMeals.name}, ${rupees(sodhiMeals.price)}`],
     ["Tamil Nadu meals", `${tnMeals.count} meals, ${priceRange(tnMeals)}`],
@@ -320,7 +330,7 @@ export const nellaiPage = {
   homeStyle: {
     id: "home-style-lunch",
     title: "Tamil Home-Style Lunch from Grandma's Recipes",
-    lead: `${name}'s lunch is ${recipeStory}: ${tnMeals.count} Tamil Nadu meals (${priceRange(tnMeals)}) alongside the ${sodhiMeals.name}, served at its ${PV} restaurant on ${STREET}.`,
+    lead: `${name}'s lunch is ${recipeStory}: ${tnMeals.count} Tamil Nadu meals (${priceRange(tnMeals)}) alongside the ${sodhiMeals.name}, served at its restaurant on ${STREET}.`,
     dishes: lunch.items.filter((i) => i.name !== sodhiMeals.name).map(dish),
     tint: true,
     items: [
@@ -363,7 +373,7 @@ export const nellaiPage = {
     ),
     qa(
       "Where can I get Nellai meals in Chennai?",
-      `${name} in Anna Nagar East, Chennai, serves the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) at lunch every day from ${OPEN}. ` + `It is at ${ADDRESS}.`
+      `${name} in Anna Nagar East, Chennai, serves the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) at lunch every day from ${OPEN}. The restaurant is near ${landmark}.`
     ),
     qa(
       "Where can I get a pure veg lunch in Anna Nagar East?",
@@ -448,7 +458,7 @@ export const dinnerPage = {
   faq: qaRoute(ROUTES.dinner, [
     qa(
       "Where can I get Paanai Parotta in Chennai?",
-      `${name} in Anna Nagar East, Chennai, lists Paanai Parotta (claypot parotta) for ${rupees(paanai.price)}. ` + `The restaurant is at ${ADDRESS}.`
+      `${name} in Anna Nagar East, Chennai, lists Paanai Parotta (claypot parotta) for ${rupees(paanai.price)}. The restaurant is near ${landmark}.`
     ),
     qa(
       `What is Paanai Parotta at ${name}?`,
@@ -534,8 +544,7 @@ export const whatsNewPage = {
   faq: qaRoute(ROUTES.whatsNew, [
     qa(
       `What's new at ${name} in ${NEW_MONTH}?`,
-      `In ${NEW_MONTH}, ${name}, the pure veg restaurant in Anna Nagar East, leads its new menu with build-your-own dosa, serves Nellai Special Sodhi Meals at lunch and stays open until ${CLOSE}. ` +
-        `It is at ${ADDRESS}.`
+      `In ${NEW_MONTH}, ${name}, the pure veg restaurant in Anna Nagar East, leads its new menu with build-your-own dosa, serves Nellai Special Sodhi Meals at lunch and stays open until ${CLOSE}.`
     ),
   ]),
 };
@@ -555,14 +564,14 @@ export const seasonalPage = {
   title: `Karthigai & Ayyappa Mala Pure Veg Food, Chennai | ${name}`,
   description: `100% pure veg lunch and dinner for Karthigai and Ayyappa mala, with no meat, egg, fish or alcohol, plus ${CATERING_DIET} group catering. ${name}, Anna Nagar.`,
   h1: "Pure Veg Food for Karthigai and Ayyappa Mala in Chennai",
-  intro: `${name} is a ${PV} restaurant in Anna Nagar East, Chennai, that also caters functions: no meat, egg or fish is cooked in its kitchen and alcohol is not served. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
+  intro: `${name} is a pure vegetarian restaurant in Anna Nagar East, Chennai. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
   sections: [
     {
       id: "ayyappa-mala",
       title: `Is ${name} Suitable During Ayyappa Mala?`,
       lead: noOnionGarlic
-        ? `${name} is ${PV}: no meat, egg or fish is cooked in its kitchen in Anna Nagar East, alcohol is not served, and the kitchen can cook dishes without onion and garlic on request for devotees observing the 41-day Ayyappa mala vratham.`
-        : `${name} is ${PV}: no meat, egg or fish is cooked in its kitchen in Anna Nagar East, and alcohol is not served. Some dishes contain onion or garlic, so if you avoid them during the 41-day Ayyappa mala vratham, ask the team which dishes suit you before you order.`,
+        ? `${name}'s restaurant is ${PV}. The kitchen can cook dishes without onion and garlic on request for devotees observing the 41-day Ayyappa mala vratham. Alcohol is not served.`
+        : `${name}'s restaurant is ${PV}. No meat, egg or fish is cooked in its kitchen in Anna Nagar East, and alcohol is not served. Some dishes contain onion or garlic. Ask which dishes suit you if you avoid them during the 41-day Ayyappa mala vratham.`,
       dishes: noOnionGarlic ? [] : [...onionGarlicDishes, ...onionGarlicToppings.map((t) => `${t} (dosa topping)`)].map((n) => ({ name: n })),
       note: noOnionGarlic ? "" : `Dishes and toppings above contain onion or garlic. Call or WhatsApp ${phone} to check others.`,
     },
@@ -572,7 +581,7 @@ export const seasonalPage = {
     {
       id: "karthigai-lunch",
       title: "Karthigai Month Lunch at Brihadhee",
-      lead: `${name} serves ${PV} lunch from ${OPEN}, seven days a week: the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), Tamil Nadu meals (${priceRange(tnMeals)}) and ${kali.name} (${rupees(kali.price)}), a Tirunelveli sweet of black urad dal and palm jaggery. To learn more about these dishes, read [what Nellai meals are](${ROUTES.nellaiGuide}).`,
+      lead: `${name} serves vegetarian lunch from ${OPEN}, seven days a week: the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), Tamil Nadu meals (${priceRange(tnMeals)}) and ${kali.name} (${rupees(kali.price)}), a Tirunelveli sweet of black urad dal and palm jaggery. To learn more about these dishes, read [what Nellai meals are](${ROUTES.nellaiGuide}).`,
       links: [{ label: "Lunch and Nellai meals", href: href(ROUTES.lunch), primary: true }],
       tint: true,
       image: { name: "meals", alt: "A banana-leaf plate with rice, papad and bowls of South Indian sides", caption: "A pure veg banana-leaf lunch" },
@@ -580,13 +589,13 @@ export const seasonalPage = {
     {
       id: "karthigai-deepam",
       title: "Karthigai Deepam Family Lunch and Dinner",
-      lead: `For a Karthigai Deepam family meal, ${name} takes table bookings on ${list(getFact("bookingLinks").map((b) => b.label))}, and serves ${PV} lunch and dinner from ${HOURS}. On festival days, call ${phone} to check before you set out.`,
+      lead: `For a Karthigai Deepam family meal, ${name} takes table bookings on ${list(getFact("bookingLinks").map((b) => b.label))}, and serves lunch and dinner from ${HOURS}. On festival days, call ${phone} to check before you set out.`,
       links: [{ label: "Book a table", href: href(ROUTES.book), primary: true }],
     },
     {
       id: "devotee-dinner",
       title: "Pure Veg Dinner for Families and Devotees",
-      lead: `${name} serves ${PV} dinner until ${CLOSE}: build-your-own dosa, idiyappam with coconut milk, ${idiyappamSodhi.name} and ${paanai.name}, with filter coffee to finish.`,
+      lead: `${name} serves vegetarian dinner until ${CLOSE}: build-your-own dosa, idiyappam with coconut milk, ${idiyappamSodhi.name} and ${paanai.name}, with filter coffee to finish.`,
       links: [{ label: `Dinner until ${CLOSE}`, href: href(ROUTES.dinner), primary: true }],
       tint: true,
     },
@@ -609,13 +618,12 @@ export const seasonalPage = {
   faq: qaRoute(ROUTES.seasonal, [
     qa(
       "Where can Ayyappa devotees eat pure veg food in Anna Nagar?",
-      `Ayyappa devotees can eat at ${name}, a ${PV} restaurant in Anna Nagar East where no meat, egg or fish is cooked and alcohol is not served. ` +
-        `It is at ${ADDRESS}.`
+      `Ayyappa devotees can eat at ${name}, a pure vegetarian restaurant in Anna Nagar East where no meat, egg or fish is cooked. Alcohol is not served.`
     ),
     noOnionGarlic
       ? qa(
           `Does ${name} cook without onion and garlic?`,
-          `Yes, ${name}, the ${PV} restaurant in Anna Nagar East, cooks dishes without onion and garlic on request for devotees observing the Ayyappa mala. ` +
+          `Yes, ${name}, the pure vegetarian restaurant in Anna Nagar East, cooks dishes without onion and garlic on request for devotees observing the Ayyappa mala. ` +
             `Tell the restaurant team when you order. For an event, ask separately about your menu and preparation requirements on the catering quote form.`
         )
       : qa(

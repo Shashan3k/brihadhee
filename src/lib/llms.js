@@ -2,14 +2,14 @@
  * Builds /llms.txt (summary) and /llms-full.txt (everything in one hop) from
  * the same sources the pages use: entity-truth.ts (verified facts only), menu-canonical.ts
  * (computed prices), the page Q&A arrays and the gated catering data.
- * Pending facts (Google rating, WhatsApp number, late-night offer) never appear.
+ * The short file is a directory. The full file includes menus, offers and FAQs.
  */
 import { site } from "../data/site.js";
-import { getFact, factOr, FACTS, addressLine, landmarkSentence, openingTimes } from "../data/entity-truth.ts";
+import { getFact, factOr, FACTS, canonicalAnswerLines, landmarkSentence, openingTimes } from "../data/entity-truth.ts";
 import { faqItems, aboutFaq, menuFaq, bookingFaq } from "../data/faq.js";
-import { dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
+import { homePage, dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
 import { nellaiGuide } from "../data/guides.js";
-import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes, byoDefinition } from "./menu-facts.js";
+import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes } from "./menu-facts.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
   cateringEnabled,
@@ -23,7 +23,6 @@ import {
   liveCounters,
   plannerModels,
   pricingText,
-  contact as cateringContact,
   faqs as cateringFaqs,
   plannerFaqs,
   CORPORATE_PATH,
@@ -35,7 +34,6 @@ import {
   CATERING_MIN_GUESTS,
   CORPORATE_DAILY_SCALE,
   MEAL_FRAMING,
-  IS_RESTAURANT_PURE_VEG,
   ENABLE_LIVE_WHATSAPP_QUOTE_FORM,
   QUOTE_WHATSAPP_NUMBER,
 } from "../../config/seo-gates.ts";
@@ -52,69 +50,31 @@ export function buildLlms({ full = false } = {}) {
 
   push(`# ${name}${full ? " (full reference)" : ""}`, "");
   push(
-    `> ${name} (${getFact("nameTamil")}), also known as ${getFact("alternateNames").join(" and ")}, is a ${getFact("typeLong")} on ${getFact("street")}, Chennai ${getFact("address").postalCode}, near ${getFact("landmarks")[0]}, serving ${getFact("mealTimes")}.`,
+    `> ${name} (${getFact("nameTamil")}) is a South Indian vegetarian restaurant in Anna Nagar East, Chennai, serving ${getFact("mealTimes")}. It is known for Build Your Own Dosa and Nellai meals.`,
     ""
   );
+  push("**Canonical answers**", "", ...canonicalAnswerLines(), "");
 
-  push(
-    getFact("nameStory"),
-    ""
-  );
-
-  /* Canonical answers first (AEO audit 2026-11-12): the current phone, the build-your-own
-     dosa definition and the restaurant/catering scope, so a retrieval agent that reads only
-     the top of the file gets them right. */
-  const { range: HOURS, open: OPEN, close: CLOSE } = openingTimes();
-  const corpFact = factOr("corporateCatering", null);
-  push("## Canonical answers", "");
-  push(`- Restaurant phone and WhatsApp: ${getFact("phone")}. Use this number for dining enquiries if an older restaurant listing shows a different one.`);
-  if (cateringEnabled && cateringContact.phone) {
-    push(`- Catering enquiries: call ${cateringContact.phone}.` + (cateringContact.whatsapp ? ` WhatsApp: ${cateringContact.whatsapp}.` : ""));
+  if (full) {
+    push("## Facts", "");
+    push(`- Also known as: ${getFact("alternateNames").join(" and ")}`);
+    push(`- Cuisine: ${getFact("cuisine")}`);
+    push(`- Landmarks: ${landmarkSentence()}`);
+    push(`- Email: ${getFact("email")}`);
+    push(`- Dining schedule: ${getFact("hours").summary}. ${MEAL_FRAMING}.`);
+    push(`- Reservations: ${getFact("acceptsReservations").how}`);
+    push(`- Alcohol: ${getFact("alcohol")}`);
+    push(`- Food: ${getFact("recipeStory")}.`);
+    if (founders) push(`- Founders: ${founders.story}`);
+    if (sub) push(`- Sub-brand: ${sub.name} (${sub.description})`);
+    push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`, "");
+    push(getFact("nameStory"), "");
   }
-  push(`- Hours: open every day, ${HOURS}, ${getFact("mealTimes")} only. There is no morning meal service; the restaurant opens at ${OPEN}.`);
-  push(`- Address: ${addressLine()}.`);
-  push(`- Build your own dosa: ${byoDefinition}`);
-  push(
-    `- Restaurant scope: the restaurant is ${IS_RESTAURANT_PURE_VEG ? "100% pure vegetarian" : "vegetarian"}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served.`
-  );
-  if (cateringEnabled) {
-    push(
-      `- Catering scope: ${CATERING_DIET} corporate catering${corpFact ? ` (${CORPORATE_DAILY_SCALE}, ongoing office meals)` : ""} and ${CATERING_DIET} event catering for single functions from a minimum of ${CATERING_MIN_GUESTS} guests${guests ? ` up to ${guests.max.toLocaleString("en-IN")}` : ""}. Daily corporate volume and single-event size are separate figures. Each function's menu is agreed in the quote.`
-    );
-  }
-  push(`- Food: ${getFact("recipeStory")}. Dish prices are on the menu page.`);
-  push(
-    `- Check with the restaurant on ${getFact("phone")} for parking, current restaurant delivery options, the last-order time before ${CLOSE}, and group seating.`
-  );
-  push("");
-
-  push("## Facts", "");
-  push(`- Name: ${name}`);
-  push(`- Also known as: ${getFact("alternateNames").join(", ")}`);
-  push(`- Type: ${getFact("typeLong")}`);
-  push(`- Cuisine: ${getFact("cuisine")}`);
-  push(`- Address: ${addressLine()}`);
-  push(`- Landmarks: ${landmarkSentence()}`);
-  push(`- Restaurant phone: ${getFact("phone")}`);
-  push(`- Email: ${getFact("email")}`);
-  push(`- Hours: ${openingTimes().range}, every day (Monday to Sunday) · ${MEAL_FRAMING}`);
-  push(`- Meal times: ${getFact("mealTimes")}`);
-  push(`- Price level: ${getFact("priceRange").schema}; dish prices are listed on the menu page`);
-  push(`- Reservations: ${getFact("acceptsReservations").how}`);
-  push(`- Alcohol: ${getFact("alcohol")}`);
-  push(`- Known for: ${getFact("knownFor").join(", ")}`);
-  push(`- Lead differentiator: build your own (customise your own) dosa, cooked to order by the kitchen (not self-service)`);
-  push(`- Signature dishes: Nellai (Tirunelveli-style) meals with sodhi and ulundhu kali, Paanai Parotta, veg kothu parotta, idiyappam`);
-  push(`- Food: ${getFact("recipeStory")}`);
-  if (founders) push(`- Founders: ${founders.story}`);
-  if (sub) push(`- Sub-brand: ${sub.name} (${sub.description})`);
-  push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`);
-  push(`- Name: ${getFact("nameStory")}`);
-  push("");
 
   push("## Pages", "");
-  push(`- [Home](${u("/")}): restaurant and catering overview, hours, location, FAQ`);
-  push(`- [Menu and prices](${u("/menu/")}): every dish with its price`);
+  push(`- [Home](${u("/")}): restaurant${cateringEnabled ? " and catering" : ""} overview, hours, location, FAQ`);
+  push(`- [Menu and prices](${u("/menu/")}): dine-in dishes and listed prices`);
+  push(`- [Coffee Bar](${u(`/#${homePage.coffeeBar.id}`)}): drinks at the restaurant${corporatePage ? " and a link for office events" : ""}`);
   push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
   push(`- [Address, timings and contact](${u("/about/")}): address, directions from Anna Nagar landmarks, hours, founders and the name story`);
   push(`- [Book a table](${u("/book-a-table/")}): choose a dining partner and check booking status in its app`);
@@ -131,10 +91,13 @@ export function buildLlms({ full = false } = {}) {
     if (corporatePage) push(`- [Corporate catering](${u(CORPORATE_PATH)}): daily office lunches, bulk meals, employee meal programmes and corporate events`);
     push(`- [Event planner partner](${u(PLANNER_PATH)}): catering partner for event management companies`);
   }
-  push(`- [What's new](${u(whatsNewPage.path)}): ${whatsNewPage.h1}: build-your-own dosa, Nellai lunch, dinner until ${openingTimes().close}, corporate catering`);
-  push(`- [Karthigai and Ayyappa mala](${u(seasonalPage.path)}): pure veg lunch and dinner, and ${CATERING_DIET} group catering, in Chennai during Karthigai month`);
+  push(`- [What's new](${u(whatsNewPage.path)}): build-your-own dosa, Nellai lunch, dinner until ${openingTimes().close}${corporatePage ? ", corporate catering" : ""}`);
+  push(`- [Karthigai and Ayyappa mala](${u(seasonalPage.path)}): pure veg lunch and dinner in Chennai${seasonalPage.sections.some(({ id }) => id === "group-catering") ? `, plus ${CATERING_DIET} group catering` : ""}`);
   push(`- [Guide: What are Nellai meals?](${u(nellaiGuide.path)}): sodhi, ulundhu kali, Tirunelveli cuisine and idiyappam pairings`);
-  push(`- [Full reference](${u("/llms-full.txt")}): everything above plus the full menu`);
+  if (!full) {
+    push("", "## Optional", "", `- [Full reference](${u("/llms-full.txt")}): full menu, offers, and customer questions`);
+    return out.join("\n").trimEnd() + "\n";
+  }
   push("");
 
   if (offers.length) {
@@ -144,13 +107,10 @@ export function buildLlms({ full = false } = {}) {
   }
 
   push("## Build Your Own Dosa", "");
-  push(byoDefinition, "");
   push(`Pick one of ${byo.batterCount} batters (${byo.batterNames.join(", ")}) from ${rupees(byo.batterMin)}, then add toppings, a stuffing and a garnish (the roast); each addition is priced separately. ${byo.suggestionCount} chef's suggestions cost ${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}. Classic dosas are fixed recipes at fixed prices.`);
-  if (full) {
-    push("");
-    for (const st of byo.steps) push(`- ${st.step}. ${st.name}: ${st.options.map((o) => `${o.name}${o.note ? ` (${o.note})` : ""} ${rupees(o.price)}`).join("; ")}`);
-    for (const d of byo.suggestions) push(`- Chef's suggestion ${d.name}: ${rupees(d.price)} (${d.build.join(", ")})`);
-  }
+  push("");
+  for (const st of byo.steps) push(`- ${st.step}. ${st.name}: ${st.options.map((o) => `${o.name}${o.note ? ` (${o.note})` : ""} ${rupees(o.price)}`).join("; ")}`);
+  for (const d of byo.suggestions) push(`- Chef's suggestion ${d.name}: ${rupees(d.price)} (${d.build.join(", ")})`);
   push("");
 
   push("## Menu price ranges", "");
@@ -158,19 +118,16 @@ export function buildLlms({ full = false } = {}) {
   for (const c of categories) push(`- ${c.name}: ${priceRange(c)} (${c.count} items)`);
   push("");
 
-  if (full) {
-    push("## Full menu", "");
-    for (const c of categories) {
-      push(`### ${c.name}`, "");
-      for (const i of c.items) push(`- ${i.name}: ${rupees(i.price)}. ${i.description}`);
-      push("");
-    }
-    const extras = UNPRICED_SIGNATURES;
-    if (extras.length) {
-      push("### Signature specials (price at the restaurant)", "");
-      for (const e of extras) push(`- ${e.name}: ${e.note}`);
-      push("");
-    }
+  push("## Full menu", "");
+  for (const c of categories) {
+    push(`### ${c.name}`, "");
+    for (const i of c.items) push(`- ${i.name}: ${rupees(i.price)}. ${i.description}`);
+    push("");
+  }
+  if (UNPRICED_SIGNATURES.length) {
+    push("### Signature specials (price at the restaurant)", "");
+    for (const e of UNPRICED_SIGNATURES) push(`- ${e.name}: ${e.note}`);
+    push("");
   }
 
   const qa = (title, items) => {
@@ -180,17 +137,15 @@ export function buildLlms({ full = false } = {}) {
     push("");
   };
   qa("Restaurant questions", [...faqHubPage.faq, ...faqItems].filter((i) => !i.lang || i.lang === "en"));
-  if (full) {
-    qa("Address, timings and contact questions", aboutFaq);
-    qa("Menu questions", menuFaq);
-    qa("Table booking questions", bookingFaq);
-    qa("Build your own dosa questions", dosaPage.faq.filter((i) => !i.lang || i.lang === "en"));
-    qa("Lunch and Nellai meals questions", nellaiPage.faq);
-    qa("Dinner questions", dinnerPage.faq);
-    qa("What's new", whatsNewPage.faq);
-    qa("Karthigai and Ayyappa mala questions", seasonalPage.faq);
-    qa("Family dining questions", familyPage.faq);
-  }
+  qa("Address, timings and contact questions", aboutFaq);
+  qa("Menu questions", menuFaq);
+  qa("Table booking questions", bookingFaq);
+  qa("Build your own dosa questions", dosaPage.faq.filter((i) => !i.lang || i.lang === "en"));
+  qa("Lunch and Nellai meals questions", nellaiPage.faq);
+  qa("Dinner questions", dinnerPage.faq);
+  qa("What's new", whatsNewPage.faq);
+  qa("Karthigai and Ayyappa mala questions", seasonalPage.faq);
+  qa("Family dining questions", familyPage.faq);
 
   if (cateringEnabled) {
     push("## Catering", "");
@@ -209,7 +164,6 @@ export function buildLlms({ full = false } = {}) {
     if (evs) push(`- Event service: ${evs}`);
     if (plannerModels.length) push(`- For event planners: ${plannerModels.join(", ")}`);
     if (pricingText) push(`- Pricing: ${pricingText}`);
-    if (cateringContact.phone) push(`- Catering phone: ${cateringContact.phone}${cateringContact.phone !== getFact("phone") ? ` (catering enquiries; the restaurant number is ${getFact("phone")})` : ""}`);
     if (quotePage) {
       push(
         ENABLE_LIVE_WHATSAPP_QUOTE_FORM && QUOTE_WHATSAPP_NUMBER
@@ -218,13 +172,11 @@ export function buildLlms({ full = false } = {}) {
       );
     }
     push("");
-    if (full) {
-      qa("Catering questions", cateringFaqs);
-      qa("Event planner questions", plannerFaqs);
-      if (corporatePage) qa("Corporate catering questions", corporatePage.faq);
-      if (smallFunctionsPage) qa("Small function catering questions", smallFunctionsPage.faq);
-      if (quotePage) qa("Catering quote questions", quotePage.faq);
-    }
+    qa("Catering questions", cateringFaqs);
+    qa("Event planner questions", plannerFaqs);
+    if (corporatePage) qa("Corporate catering questions", corporatePage.faq);
+    if (smallFunctionsPage) qa("Small function catering questions", smallFunctionsPage.faq);
+    if (quotePage) qa("Catering quote questions", quotePage.faq);
   }
 
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trimEnd() + "\n";

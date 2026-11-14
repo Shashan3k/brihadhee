@@ -12,7 +12,7 @@ const avenue = getFact("street").split(",")[0]; // "3rd Avenue"
 // Slideshow: the hero photo first (the LCP image), then the rest (site.js media.heroSlides).
 const slides = [media.hero, ...media.heroSlides];
 const slideSizes = "(max-width: 600px) 82vw, (max-width: 899px) 85vw, (max-width: 1180px) 42vw, 30rem";
-const { h1 } = Astro.props;
+const { h1, coffeeBarId } = Astro.props;
 ---
 
 <section class="hero" id="top">
@@ -41,7 +41,11 @@ const { h1 } = Astro.props;
       <div class="hero__features">
         <p class="hero__features-label" id="hero-features-label">On {avenue}</p>
         <ul class="hero__features-list" role="list" aria-labelledby="hero-features-label">
-          {site.heroFeatures.map((feature) => <li>{feature}</li>)}
+          {site.heroFeatures.map((feature) => (
+            <li>
+              {feature === "Coffee Bar" && coffeeBarId ? <a href={`#${coffeeBarId}`}>{feature}</a> : feature}
+            </li>
+          ))}
         </ul>
       </div>
 

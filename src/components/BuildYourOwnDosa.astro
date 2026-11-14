@@ -8,13 +8,13 @@
  *   show="steps"        heading and steps only (/menu/dosa/ "How It Works")
  *   show="suggestions"  heading and suggestions only (/menu/dosa/ combinations)
  */
-import { byo, rupees } from "../lib/menu-facts.js";
+import { byo, rupees, BYO_DEFINITION } from "../lib/menu-facts.js";
 
 const {
   id = "build-your-own-dosa",
   headingLevel = 2,
   title = "Build Your Own Dosa",
-  lead = `Pick one batter, then add podi and toppings, a filling and your roast. Batters start at ${rupees(byo.batterMin)}; each add-on is priced separately.`,
+  lead = `${BYO_DEFINITION} Batters start at ${rupees(byo.batterMin)}. Each add-on is priced separately.`,
   show = "all",
   suggestionsTitle = "Chef's suggestions",
   tint = false,

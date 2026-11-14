@@ -16,6 +16,9 @@
  * directly in scripts (type stripping) and Astro/Vite can bundle it.
  */
 
+import verification from "../../config/client-verification.json" with { type: "json" };
+import { CATERING_DIET } from "../../config/seo-gates.ts";
+
 export type Status = "verified" | "unverified";
 
 export interface Fact<T> {
@@ -93,6 +96,8 @@ function unverified<T>(needs: string, probes: RegExp[] = []): Fact<T> {
 }
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const DINING_OPENS = "11:00";
+const DINING_CLOSES = "23:00";
 
 /* Catering scale (client W13), shared by the brand description, knownFor and the
  * catering facts so the numbers are typed once. */
@@ -104,6 +109,12 @@ const EVENT_SCALE = `${num(EVENT_GUESTS.min)}–${num(EVENT_GUESTS.max)} guests`
 
 /** Canonical production origin (owner, 2026-11-06). No trailing slash. */
 export const SITE_ORIGIN = "https://www.brihadhee.com";
+export const RESTAURANT_ID = `${SITE_ORIGIN}/#restaurant`;
+export const CATERING_ID = `${SITE_ORIGIN}/#catering`;
+export const RESTAURANT_DIET = "100% pure vegetarian";
+const DINING_PHONE = "+91 73587 14113";
+export const BYO_DEFINITION =
+  "Build Your Own Dosa at Brihadhee lets guests choose their dosa batter and ingredients. Kitchen staff prepare the customized dosa to order and serve it at the table. It is not a self-service cooking station.";
 /** Date the site content was last reviewed; used for dateModified and sitemap lastmod. */
 export const CONTENT_UPDATED = D12;
 
@@ -115,17 +126,15 @@ export const FACTS = {
   alternateNames: verified(["Brihadhee Hotels", "Brihadhee Pure Veg Restaurant"]),
   subBrand: verified({ name: "Beyond Curry by Brihadhee", description: "North Indian meal boxes" }),
   type: verified("pure vegetarian restaurant"),
-  /** Catering says "vegetarian" until the owner answers Q20 (config/seo-gates.ts IS_CATERING_PURE_VEG). */
-  typeLong: verified("100% pure vegetarian South Indian restaurant and vegetarian caterer", KW12, D12),
-  /** Core brand description, led by the client's pillars (W11 to W13). `short` is the
-   *  default meta description, the Restaurant schema description and the footer line,
-   *  so it stays within 160 characters; `long` leads the About section. */
+  typeLong: verified(`${RESTAURANT_DIET} South Indian restaurant`, KW12, D12),
+  /** Core brand description. `short` is the default meta description and footer line.
+   *  `long` leads the About section. */
   brandDescription: verified(
     {
       short:
         "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals, Paanai Parotta and catering.",
       long:
-        "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
+        "Brihadhee is a pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
         `The restaurant kitchen prepares vegetarian office meals, with ${num(CORPORATE_DAILY_MEALS)}+ served daily across its corporate catering operation. ` +
         `The Brihadhee team also caters individual vegetarian events for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests, with preparation and service agreed in the quote.`,
@@ -133,9 +142,9 @@ export const FACTS = {
     CLIENT,
     D11
   ),
-  dietary: verified("100% pure vegetarian", "owner brief; menu PDF lists no meat, egg or fish"),
+  dietary: verified(RESTAURANT_DIET, "owner brief; menu PDF lists no meat, egg or fish"),
   cuisine: verified(
-    "100% pure vegetarian: South Indian with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese"
+    "South Indian with Tirunelveli (Nellai) and Karaikudi specialties, plus North Indian and Indo-Chinese"
   ),
   /** Lead cuisines from the 12 Nov keyword plan (section 5.1), then the rest of the menu. */
   cuisines: verified(["South Indian", "Tamil Vegetarian", "Tirunelveli (Nellai)", "Karaikudi", "North Indian", "Indo-Chinese"], KW12, D12),
@@ -197,8 +206,8 @@ export const FACTS = {
   /* ---- Contact ----------------------------------------------------------- */
   /** Restaurant number on every page (owner direction 2026-11-12; it is also the Google profile number).
    *  The catering pages keep +91 94442 24999: config/client-verification.json enquiry_channels. */
-  phone: verified("+91 73587 14113", PHONE_SWITCH, D12),
-  whatsapp: verified("+91 73587 14113", PHONE_SWITCH, D12),
+  phone: verified(DINING_PHONE, PHONE_SWITCH, D12),
+  whatsapp: verified(DINING_PHONE, PHONE_SWITCH, D12),
   email: verified("brihadhee@gmail.com", "repo since the first commit (owner to reconfirm)"),
   /** Careers section on the home page (client direction, 2026-11-13): job seekers call the
    *  restaurant number or Rakesh. Rakesh's number is from the client's audio note,
@@ -217,11 +226,11 @@ export const FACTS = {
   hours: verified<Hours>(
     {
       timeZone: "Asia/Kolkata",
-      summary: "Open daily, 11:00 AM to 11:00 PM",
-      short: "11:00 AM to 11:00 PM",
-      opens: "11:00",
-      closes: "23:00",
-      days: DAYS.map((day) => ({ day, open: "11:00", close: "23:00" })),
+      summary: `Open daily, ${clock(DINING_OPENS, true)} to ${clock(DINING_CLOSES, true)}`,
+      short: `${clock(DINING_OPENS, true)} to ${clock(DINING_CLOSES, true)}`,
+      opens: DINING_OPENS,
+      closes: DINING_CLOSES,
+      days: DAYS.map((day) => ({ day, open: DINING_OPENS, close: DINING_CLOSES })),
     },
     BLUEPRINT,
     D11
@@ -332,7 +341,7 @@ export const FACTS = {
       licensed: true,
       points: [
         "Cooked in Brihadhee's FSSAI-licensed restaurant kitchen in Anna Nagar East",
-        "100% pure vegetarian: no meat, egg or fish is cooked in the kitchen",
+        `${RESTAURANT_DIET}: no meat, egg or fish is cooked in the kitchen`,
         "Packed in the kitchen for delivery to your office",
         "Delivered to an agreed time slot for each office",
       ],
@@ -459,10 +468,10 @@ export function longDate(iso: string): string {
 }
 
 /** "23:00" -> "11 PM", "11:30" -> "11:30 AM". */
-export function clock(t: string): string {
+export function clock(t: string, includeMinutes = false): string {
   const [h, m] = t.split(":").map(Number);
   const hour = h % 12 === 0 ? 12 : h % 12;
-  return `${hour}${m ? `:${String(m).padStart(2, "0")}` : ""} ${h >= 12 ? "PM" : "AM"}`;
+  return `${hour}${m || includeMinutes ? `:${String(m).padStart(2, "0")}` : ""} ${h >= 12 ? "PM" : "AM"}`;
 }
 
 /** Opening and closing time from the verified hours: { open: "11 AM", close: "11 PM", range: "11 AM to 11 PM" }. */
@@ -485,4 +494,42 @@ export function landmarkSentence(): string {
 /** Absolute URL on the canonical origin. `path` must start with "/". */
 export function absoluteUrl(path: string): string {
   return `${SITE_ORIGIN}${path}`;
+}
+
+/** Format a verified international phone number for links and structured data. */
+export function toE164(phone: string): string {
+  return `+${phone.replace(/\D/g, "")}`;
+}
+
+/** The reference files and their linter share the same answer block. */
+export function canonicalAnswerLines(): string[] {
+  const name = getFact("name");
+  const address = getFact("address");
+  const meals = getFact("mealTimes");
+  const { short } = getFact("hours");
+  const catering = verification.offer_catering === true;
+  const cateringPhone = cateringContacts().phone;
+  return [
+    `- What is ${name}? ${name} is a South Indian vegetarian restaurant in Anna Nagar East, ${address.city}, serving ${meals}${catering ? ` and offering a separate ${CATERING_DIET} catering service` : ""}.`,
+    `- Is ${name} a pure vegetarian restaurant? Yes. ${name}’s physical restaurant is ${RESTAURANT_DIET}.`,
+    ...(catering ? [`- Does ${name} offer catering? Yes. ${name} offers ${CATERING_DIET} catering for events and functions.`] : []),
+    `- Where is ${name} located? ${addressLine()}, India.`,
+    `- What is ${name}’s phone number? ${getFact("phone")} for dining enquiries.`,
+    `- What are ${name}’s dining hours? ${short}, serving ${meals} only.`,
+    ...(cateringPhone ? [`- Catering enquiries: call ${cateringPhone}.`] : []),
+    `- Build Your Own Dosa: ${BYO_DEFINITION}`,
+  ];
+}
+
+/** Catering contacts are confirmed separately from the restaurant's contacts. */
+export function cateringContacts(): { phone: string | null; whatsapp: string | null } {
+  const { offer_catering, enquiry_channels: channels } = verification;
+  if (!offer_catering || !channels || typeof channels.is_different_from_restaurant !== "boolean") {
+    return { phone: null, whatsapp: null };
+  }
+  const separate = channels.is_different_from_restaurant;
+  return {
+    phone: channels.phone || (separate ? null : getFact("phone")),
+    whatsapp: channels.whatsapp || (separate ? null : factOr("whatsapp", null)),
+  };
 }

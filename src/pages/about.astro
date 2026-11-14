@@ -14,7 +14,7 @@ import AtAGlance from "../components/AtAGlance.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import LeadForm from "../components/LeadForm.astro";
-import { getFact, addressLine, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
+import { getFact, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
 import { aboutFaq } from "../data/faq.js";
 import { cateringEnabled } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
@@ -46,7 +46,7 @@ const schema = pageGraph({
     <PageHeader
       eyebrow="Address, timings and contact · Anna Nagar East"
       h1={`Visit ${name} in Anna Nagar`}
-      intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near ${landmark}, open every day from ${range} for ${getFact("mealTimes")}.`}
+      intro={`${name} is a pure vegetarian restaurant on ${street}, near ${landmark}, open every day from ${range} for ${getFact("mealTimes")}.`}
       menuHref={href(ROUTES.menu)}
       primaryAction={{ label: "Address and landmark directions", href: "#find-us" }}
     />
@@ -57,7 +57,7 @@ const schema = pageGraph({
         <div>
           <h2 class="section__title" id="find-us-title">Address and Directions from Anna Nagar Landmarks</h2>
           <p class="section__lead">
-            {name} is at {addressLine()}, near {landmark}. Pick the landmark you are starting from for Google Maps directions.
+            {name} is near {landmark}. Pick the landmark you are starting from for Google Maps directions.
           </p>
           <address class="catering__address">
             {site.address.line1}<br />
@@ -152,5 +152,5 @@ const schema = pageGraph({
       lead={`Ask the ${name} restaurant about a group visit or the menu. For a table today, call or WhatsApp.`}
     />
   </main>
-  <Footer homeBase={href("/")} />
+  <Footer homeBase={href("/")} addressHref="#find-us" />
 </Base>

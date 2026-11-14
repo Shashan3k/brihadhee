@@ -21,7 +21,7 @@ const listings = [
   ...getFact("bookingLinks").map((b) => ({ label: `Book on ${b.label}`, href: b.url })),
 ];
 
-const { homeBase = "" } = Astro.props;
+const { homeBase = "", addressHref = "" } = Astro.props;
 const link = (href) => (href.startsWith("#") ? `${homeBase}${href}` : href);
 const year = new Date().getFullYear();
 const base = import.meta.env.BASE_URL.endsWith("/")
@@ -82,11 +82,15 @@ const isCateringPage = Boolean(Astro.locals.contact);
 
       <div>
         <p class="footer__title">Visit</p>
-        <address class="footer__address">
-          {address.line1}<br />
-          {address.line2}<br />
-          {address.city}, {address.state}{address.postalCode ? ` ${address.postalCode}` : ""}
-        </address>
+        {addressHref ? (
+          <p class="footer__address"><a href={addressHref}>Restaurant address and directions</a></p>
+        ) : (
+          <address class="footer__address">
+            {address.line1}<br />
+            {address.line2}<br />
+            {address.city}, {address.state}{address.postalCode ? ` ${address.postalCode}` : ""}
+          </address>
+        )}
         {
           hasHoursText && (
             <p class="footer__hours">{site.hours.summary}</p>

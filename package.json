@@ -18,7 +18,7 @@
     "check:links:external": "node scripts/check-links.mjs dist --external",
     "indexnow": "node scripts/indexnow.mjs",
     "validate": "npm run check",
-    "test": "node --test scripts/lead.test.mjs",
+    "test": "node --test scripts/lead.test.mjs scripts/aeo.test.mjs",
     "typecheck": "tsc --noEmit",
     "verify": "node scripts/verify-seo-aeo-geo.mjs",
     "verify:lighthouse": "node scripts/verify-seo-aeo-geo.mjs --lighthouse"
@@ -27,6 +27,7 @@
     "astro": "^7.4.5"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "ultrahtml": "1.7.0"
   }
 }

@@ -1,10 +1,8 @@
 /**
  * Informational guides (P1): /guides/what-are-nellai-meals/.
  *
- * Each question section opens with an answer-first paragraph (15 to 60 words,
- * naming Brihadhee; checked by scripts/aeo-lint.mjs), then goes deeper. The
- * question headings are claimed with claimQuestion() so no other route can ask
- * them as a Q&A (one Q&A per route, src/lib/answers.js).
+ * Each question section opens with an answer and then gives more context.
+ * claimQuestion() reserves the headings for this route (src/lib/answers.js).
  *
  * Two kinds of statement live here, kept apart on purpose:
  *  - general culinary background about Tirunelveli food (what sodhi or ulundhu
@@ -13,7 +11,7 @@
  *    menu-canonical.ts and entity-truth.ts.
  * Copy may contain contextual links as [anchor](/path/) (src/lib/inline-links.js).
  */
-import { getFact, addressLine, openingTimes } from "./entity-truth.ts";
+import { getFact, openingTimes, RESTAURANT_DIET } from "./entity-truth.ts";
 import { ROUTES } from "./site.js";
 import { claimQuestion, list } from "../lib/answers.js";
 import { category, allItems, rupees } from "../lib/menu-facts.js";
@@ -81,7 +79,7 @@ export const nellaiGuide = {
     {
       id: "tirunelveli-cuisine",
       title: q("What Is Tirunelveli Cuisine Known For?"),
-      answer: `Tirunelveli cuisine is known for coconut-rich vegetarian dishes such as sodhi, palm jaggery sweets such as ulundhu kali, and the famous Tirunelveli halwa. In Chennai, ${name} serves the first two at its 100% pure vegetarian restaurant in Anna Nagar East.`,
+      answer: `Tirunelveli cuisine is known for coconut-rich vegetarian dishes such as sodhi, palm jaggery sweets such as ulundhu kali, and the famous Tirunelveli halwa. In Chennai, ${name} serves the first two at its ${RESTAURANT_DIET} restaurant in Anna Nagar East.`,
       paras: [
         "The district sits between the Western Ghats and the sea, and its cooking reflects both: coconut in stews and kootu, palm jaggery from the palmyra trees of the dry plains, and a preference for gentle, layered flavours over heavy spice.",
         `Tirunelveli halwa, a glossy wheat halwa, is the sweet the town is famous for, but it is not on ${name}'s menu. The restaurant's Nellai dishes are the sodhi meal, ulundhu kali and sodhi with idiyappam or idly, served next to dishes from Karaikudi, further north in Chettinad, such as ${poppers.name} (${rupees(poppers.price)}).`,
@@ -99,9 +97,9 @@ export const nellaiGuide = {
     {
       id: "where-to-eat",
       title: "Where to Eat Nellai Meals in Chennai",
-      answer: `${name} serves Nellai meals at ${addressLine()}, near Anna Nagar Tower Park. It is open every day from ${HOURS}, and lunch starts at ${OPEN}.`,
+      answer: `${name} serves Nellai meals on ${getFact("street")}, near ${getFact("landmarks")[0]}. It is open every day from ${HOURS}, and lunch starts at ${OPEN}.`,
       paras: [
-        `The restaurant is 100% pure vegetarian: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. Ask the restaurant about specific ingredients if you follow dietary rules for a festival or a vow.`,
+        `The restaurant is ${RESTAURANT_DIET}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. Ask the restaurant about specific ingredients if you follow dietary rules for a festival or a vow.`,
         `The full banana-leaf meal is a lunch dish. At dinner, you can try the same style of stew with ${idiyappamSodhi.name} or ${sodhiIdly.name}.`,
         `For current dishes and prices, see the [Brihadhee lunch menu](${ROUTES.lunch}). If you're visiting, check [directions to the restaurant](${ROUTES.about}#find-us).`,
       ],

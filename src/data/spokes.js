@@ -18,7 +18,7 @@
  * menu-canonical.ts, and every claim the client has not confirmed behind a gate in
  * config/seo-gates.ts. No competitor names; no "best" claims outside question headings.
  */
-import { getFact, addressLine, openingTimes } from "./entity-truth.ts";
+import { getFact, openingTimes, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import * as GATES from "../../config/seo-gates.ts";
 import { ROUTES, href, telHref } from "./site.js";
 import { qa, qaRoute, claimQuestion, list } from "../lib/answers.js";
@@ -47,10 +47,8 @@ const CD = GATES.CATERING_DIET;
 const MIN = GATES.CATERING_MIN_GUESTS;
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 const name = getFact("name");
-const PV = "100% pure vegetarian";
 const NEAR = "Anna Nagar East";
 const STREET = getFact("street");
-const ADDRESS = addressLine();
 const phone = getFact("phone"); // restaurant number (family dining, FAQ)
 /* The catering pages (small functions, quote) use the catering numbers (config enquiry_channels). */
 const cPhone = contact.phone ?? phone;
@@ -118,8 +116,8 @@ function buildSmallFunctions() {
   const faq = qaRoute(path, [
     qa(
       "Who does small function catering in Anna Nagar?",
-      `${name}, a restaurant in ${NEAR}, does small function catering from ${MIN} guests with ${CD} menus for birthdays, housewarmings and get-togethers. ` +
-        `It is at ${ADDRESS}.`
+      `${name}'s ${NEAR} team offers ${CD} catering for small functions from ${MIN} guests. ` +
+        "Ask about menus for birthdays, housewarmings and get-togethers at your venue."
     ),
     qa(
       `Does ${name} cater for ${MIN} guests?`,
@@ -234,7 +232,6 @@ function buildSmallFunctions() {
         extras: [
           cateringServiceSchema({
             areas: serviceAreas,
-            phone: contact.phone,
             path,
             serviceType: "Event catering",
             name: `${name} Small Function Catering`,
@@ -408,7 +405,7 @@ function buildFamily() {
     primaryAction: { label: "Book a family table", href: href(ROUTES.book) },
     glanceTitle: `Family dining at ${name}: summary`,
     glance: [
-      ["Who", `${name}, a ${PV} restaurant in ${NEAR}`],
+      ["Who", `${name}, a South Indian vegetarian restaurant in ${NEAR}`],
       ["Open", `${HOURS} daily · ${GATES.MEAL_FRAMING}`],
       ["Food", recipeStory],
       ["Good for", "lunch after a morning temple visit, birthdays, anniversaries and weekend family meals"],
@@ -421,7 +418,7 @@ function buildFamily() {
         id: "after-temple",
         title: "Family Lunch After a Morning Temple Visit",
         lead:
-          `${name} opens at ${OPEN} every day, so families can sit down to a ${PV} lunch after a morning temple visit: no meat, egg or fish is cooked in its kitchen, and lunch runs from the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) to Tamil Nadu meals (${priceRange(tnMeals)}).` +
+          `${name} opens at ${OPEN} every day for families coming in after a morning temple visit. The vegetarian lunch menu includes ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) and Tamil Nadu meals (${priceRange(tnMeals)}).` +
           (temple ? ` ${temple.name} is on ${temple.where}.` : ""),
         dishes: [dish(sodhiMeals), ...lunch.items.filter((i) => /TN Meals/.test(i.name)).map(dish)],
         links: [{ label: "Veg lunch and Nellai meals in Anna Nagar", href: href(ROUTES.lunch) }],
@@ -532,7 +529,7 @@ function buildFaqHub() {
     description,
     h1: `${name} Questions and Answers`,
     eyebrow: "FAQ · Anna Nagar East",
-    intro: `Short answers about ${name}, the ${PV} South Indian restaurant in ${NEAR}, Chennai, open every day from ${HOURS} for lunch and dinner only. Listings that still show a morning opening time are out of date. Each topic below links to the page with the full answers.`,
+    intro: `Short answers about ${name}, the South Indian vegetarian restaurant in ${NEAR}, Chennai, open every day from ${HOURS} for lunch and dinner only. Each topic below links to the page with the full answers.`,
     menuHref: href(ROUTES.menu),
     sections: [
       {
@@ -623,7 +620,7 @@ function buildNoOnion() {
   const faq = qaRoute(path, [
     qa(
       `Does ${name} serve food without onion and garlic?`,
-      `Yes, ${name}, the ${PV} restaurant in ${NEAR}, can prepare ${dishShort} without onion and garlic ${avail}; tell the team when you order. ` + `It is at ${ADDRESS}.`
+      `Yes, ${name}, the vegetarian restaurant in ${NEAR}, can prepare ${dishShort} without onion and garlic ${avail}. Tell the team when you order.`
     ),
     qa(
       `Can I get a no onion no garlic dosa at ${name}?`,
@@ -652,7 +649,7 @@ function buildNoOnion() {
     menuHref: href(ROUTES.menu),
     glanceTitle: `No onion, no garlic at ${name}: summary`,
     glance: [
-      ["Who", `${name}, a ${PV} restaurant in ${NEAR}`],
+      ["Who", `${name}, a South Indian vegetarian restaurant in ${NEAR}`],
       ["Without onion and garlic", `${dishText}, ${avail}`],
       ["Build your own dosa", `${byo.batterCount} batters; skip the ${list(onionGarlicToppings)}`],
       ["Hours", `${HOURS} daily · ${GATES.MEAL_FRAMING}`],

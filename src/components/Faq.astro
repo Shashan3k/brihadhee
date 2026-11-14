@@ -37,7 +37,7 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
                 <h3 class="faq__q">{item.question}</h3>
                 <span class="faq__icon" aria-hidden="true" />
               </summary>
-              <p class="faq__answer">{item.answer}</p>
+              <p class="faq__answer" data-answer-kind={item.kind}>{item.answer}</p>
             </details>
           ))}
         </div>
@@ -54,7 +54,7 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
                     <h3 class="faq__q" lang={item.lang}>{item.question}</h3>
                     <span class="faq__icon" aria-hidden="true" />
                   </summary>
-                  <p class="faq__answer" lang={item.lang}>{item.answer}</p>
+                  <p class="faq__answer" lang={item.lang} data-answer-kind={item.kind}>{item.answer}</p>
                 </details>
               ))}
             </div>
