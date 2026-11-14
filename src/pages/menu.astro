@@ -118,6 +118,7 @@ const schema = pageGraph({
           <div class="container">
             <h2 class="section__title" id={`${c.id}-title`}>{c.name}</h2>
             {c.blurb && <p class="section__lead">{c.blurb}</p>}
+            {c.id === "beverages" && <p class="section__lead">Filter coffee and other hot drinks are served at the <a href={`${href(ROUTES.home)}#coffee-bar`}>Brihadhee Coffee Bar</a> during lunch and dinner.</p>}
             <ul class="menu-page__list" role="list">
               {c.items.map((item) => (
                 <li class="menu-page__item">

@@ -197,3 +197,7 @@ Recorded in `src/data/entity-truth.ts` with source `B2B` and `verifiedOn: 2026-1
 | Companies catered for | Aalam, Freehand, Pando, Bi3 Technologies, Nestlé, NDR, Selvarangam Hospitals, FRUTTA, Go Khana, HungerBox, Pro Chant, Prodapt, Stark Event Management. Names only: no headcounts, dates or contract details | `entity-truth.ts` `corporateClients` |
 | Shown on | `/corporate-catering-chennai/`: a "Companies We Have Catered For" logo wall after the daily volume section, plus a "Clients" row in the summary table | `src/components/ClientLogos.astro`, `corporatePage.clients` in `src/data/catering.js` |
 | Logos | One file per company in `public/images/clients/` (`<slug>.svg`, `.png` or `.webp`). A company without a logo file shows its name as a text tile | `ClientLogos.astro` `SLUGS` |
+
+## L. Catering diet (15 November 2026)
+
+The user confirmed the owner's approval to describe **every catering order as pure vegetarian, including externally sourced items**. This answers Q20 and supersedes the sourcing exception in the 12 November keyword brief. The website applies the approved wording through `IS_CATERING_PURE_VEG` in `config/seo-gates.ts`. The dish and preparation approvals for no onion or garlic, Jain and satvik services are separate.

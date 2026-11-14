@@ -136,8 +136,8 @@ export const FACTS = {
       long:
         "Brihadhee is a pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
-        `The restaurant kitchen prepares vegetarian office meals, with ${num(CORPORATE_DAILY_MEALS)}+ served daily across its corporate catering operation. ` +
-        `The Brihadhee team also caters individual vegetarian events for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests, with preparation and service agreed in the quote.`,
+        `The restaurant kitchen prepares ${CATERING_DIET} office meals, with ${num(CORPORATE_DAILY_MEALS)}+ served daily across its corporate catering operation. ` +
+        `The Brihadhee team also offers ${CATERING_DIET} catering for individual events of ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests, with preparation and service agreed in the quote.`,
     },
     CLIENT,
     D11

@@ -76,7 +76,7 @@ const GATES = {
   "What kind of catering does Brihadhee provide?": () => nonEmpty(cfg.menu_formats),
   [`Is Brihadhee catering ${CATERING_DIET}?`]: () => nonEmpty(cfg.menu_formats),
   "Which events does Brihadhee cater?": () => nonEmpty(cfg.confirmed_events),
-  [`Where can I find ${CATERING_DIET} catering in Anna Nagar?`]: () => nonEmpty(cfg.service_area) && Boolean(confirmedPhone),
+  "Where can I find vegetarian catering in Anna Nagar?": () => nonEmpty(cfg.service_area) && Boolean(confirmedPhone),
   "How do I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
   /* Answered with the confirmed lead time, or "not published, call" while advance_notice_required is null. */
   "How far ahead should I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),

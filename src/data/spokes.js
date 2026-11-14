@@ -111,13 +111,14 @@ const hasBirthday = smallEvents.some((e) => e.id === "birthday");
 function buildSmallFunctions() {
   const path = ROUTES.smallFunctions;
   const quoteHref = `${href(ROUTES.cateringQuote)}#enquiry`;
+  const hasRegionalMenu = verification.menu_formats?.includes("regional_menus");
   const title = `Small Function Catering in Chennai, ${MIN}+ Guests | ${name}`;
   const description = `${cap(CD)} catering for birthdays, housewarmings and family gatherings in Chennai from ${MIN} guests. Share your date, venue and headcount.`;
   const faq = qaRoute(path, [
     qa(
       "Who does small function catering in Anna Nagar?",
-      `${name}'s ${NEAR} team offers ${CD} catering for small functions from ${MIN} guests. ` +
-        "Ask about menus for birthdays, housewarmings and get-togethers at your venue."
+      `${name}'s ${NEAR} team offers ${CD} small function catering across Chennai from ${MIN} guests. ` +
+        "For a birthday, housewarming or get-together, share the date, venue and headcount to discuss a menu and check availability."
     ),
     qa(
       `Does ${name} cater for ${MIN} guests?`,
@@ -148,6 +149,12 @@ function buildSmallFunctions() {
         `Yes. ${name} caters birthday parties across Chennai from ${MIN} guests, with a live dosa counter available to discuss. ` +
           `Send the quote form with your date, venue and guest count, or call ${cPhone}.`
       ),
+    hasRegionalMenu && qa(
+      `What is on a vegetarian catering menu for ${MIN} people?`,
+      `Brihadhee can plan a ${CD} function menu for ${MIN} people around rice, Nellai sodhi, regional sides and ${kali.name}. ` +
+        "Share the occasion and dishes you prefer. Confirm your menu and service with the team when you review the quote.",
+      { id: `vegetarian-catering-menu-for-${MIN}` }
+    ),
     ...taSmallFunctions,
   ]);
 
@@ -158,7 +165,7 @@ function buildSmallFunctions() {
     h1: `Small Function Catering in Chennai, From ${MIN} Guests`,
     eyebrow: "Small functions · Chennai",
     intro: `${name} provides ${CD} catering for birthdays, housewarmings and family get-togethers across Chennai from ${MIN} guests. Share your date, venue and estimated headcount with the Anna Nagar East team to discuss a South Indian menu for your gathering.`,
-    tamil: "பிறந்தநாள் விழா கேட்டரிங் சென்னை · சைவ கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்",
+    tamil: `அண்ணா நகர் கிழக்கில் உள்ள பிரிஹதீ குழு, சென்னையில் ${MIN} பேர் முதல் பங்கேற்கும் குடும்ப விழாக்களுக்கு ${GATES.CATERING_DIET_TA} கேட்டரிங் வழங்குகிறது. மெனுவைப் பற்றிப் பேச, விழாவின் தேதி, இடம், விருந்தினர் எண்ணிக்கை ஆகியவற்றைத் தெரிவியுங்கள்.`,
     cta: "quote",
     primaryAction: { label: "Request a small-function quote", shortLabel: "Function quote", href: quoteHref, event: "quote_cta_click" },
     showDirections: false,
@@ -191,6 +198,26 @@ function buildSmallFunctions() {
           },
         ],
       },
+      ...(hasRegionalMenu ? [{
+        id: "menu-for-50-guests",
+        title: `${cap(CD)} Catering Menu Ideas for ${MIN} Guests`,
+        lead: `Start with a South Indian meal for your private function and tell ${name} which dishes or live counters you want. Use these menu ideas to brief the catering team, then confirm the dishes and service in your quote.`,
+        items: [
+          {
+            title: "Tirunelveli-style lunch",
+            text: `Ask for a lunch built around rice, Nellai sodhi and regional sides, with ${kali.name} for dessert. [See the restaurant's Nellai meal](${ROUTES.lunch}#sodhi-meals) for a reference when choosing dishes.`,
+          },
+          {
+            title: "Parotta and idiyappam",
+            text: `For a birthday dinner or an evening gathering, discuss ${paanai.name} or ${idiyappamSodhi.name} with the catering team. Tell them what else you would like to serve and when guests will eat.`,
+          },
+          ...(liveCounters.some((counter) => /build your own dosa/i.test(counter)) ? [{
+            title: "Live dosa counter",
+            text: `Ask about adding a live counter so guests can pick their batter and toppings and the team can cook each dosa to order. [See the live dosa counter for events](${ROUTES.eventCatering}#live-dosa-counter) before choosing the setup.`,
+          }] : []),
+        ],
+        links: [{ label: "Request a quote with your menu choices", href: quoteHref, primary: true }],
+      }] : []),
       {
         id: "occasions",
         title: "Small Functions We Cater",
@@ -292,9 +319,10 @@ function buildQuote() {
             "Use WhatsApp to message the team directly. Enquiries sent through the form are followed up by phone."
         ),
     qa(
-      `What is on a ${CD} catering menu for ${MIN} people?`,
-      `Brihadhee's Anna Nagar East team can discuss dishes such as Nellai sodhi, ${kali.name} and ${paanai.name} for ${MIN} guests. ` +
-        "Ask about a live build-your-own dosa counter and confirm the final menu in your quote."
+      "Can I request specific dishes in my catering quote?",
+      `Yes. Tell Brihadhee's Anna Nagar East team which dishes you want when you submit the enquiry. ` +
+        "The catering team will discuss the choices with you and confirm the final menu in your quote.",
+      { id: `what-is-on-a-vegetarian-catering-menu-for-${MIN}-people` }
     ),
   ]);
 
@@ -329,7 +357,13 @@ function buildQuote() {
         title: "What Shapes Your Per-Plate Quote",
         lead: "The guest count, menu, live counters and service requirements all affect the quote. Share your planned spend per guest if you have one so the team can discuss suitable options.",
         items: [
-          { title: "Menu and counters", text: "The dishes, number of guests and any live counter service help the team work out the menu and quantities." },
+          {
+            title: "Menu and counters",
+            text: "The dishes, number of guests and any live counter service help the team work out the menu and quantities." +
+              (smallFunctionsPage && verification.menu_formats?.includes("regional_menus")
+                ? ` Start with [menu ideas for a ${MIN}-guest function](${ROUTES.smallFunctions}#menu-for-50-guests) if you are still choosing dishes.`
+                : ""),
+          },
           { title: "Venue and service", text: "Share the location and the support you need at the venue. Ask the team to confirm what is included in the quote." },
         ],
       },

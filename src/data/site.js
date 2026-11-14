@@ -11,7 +11,7 @@
  */
 
 import verification from "../../config/client-verification.json";
-import { getFact, factOr, isConfirmed, SITE_ORIGIN, absoluteUrl, addressLine, toE164 } from "./entity-truth.ts";
+import { getFact, factOr, isConfirmed, SITE_ORIGIN, CONTENT_UPDATED, absoluteUrl, addressLine, toE164 } from "./entity-truth.ts";
 import { CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
 import { MENU } from "./menu-canonical.ts";
 
@@ -45,6 +45,33 @@ export const ROUTES = {
   faq: "/faq/",
   noOnionNoGarlic: "/no-onion-no-garlic-anna-nagar/",
 };
+
+// Use the last significant content revision of each published page. A new
+// deployment alone does not change the date advertised to search engines.
+const KEYWORD_CONTENT_REVISION = "2026-11-15";
+const revisedPages = new Set([
+  ROUTES.home,
+  ROUTES.menu,
+  ROUTES.dosa,
+  ROUTES.about,
+  ROUTES.faq,
+  ROUTES.nellaiGuide,
+  ROUTES.whatsNew,
+  ROUTES.seasonal,
+  ROUTES.eventCatering,
+  ROUTES.plannerPartner,
+  ROUTES.corporateCatering,
+  ROUTES.smallFunctions,
+  ROUTES.cateringQuote,
+]);
+
+export function pageContentUpdated(path) {
+  const canonicalPath = path.endsWith("/") ? path : `${path}/`;
+  return revisedPages.has(canonicalPath) && KEYWORD_CONTENT_REVISION > CONTENT_UPDATED
+    ? KEYWORD_CONTENT_REVISION
+    : CONTENT_UPDATED;
+}
+
 /** Site-relative href for a route (respects the build base path). */
 export const href = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;
 

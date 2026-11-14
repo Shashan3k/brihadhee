@@ -1,5 +1,4 @@
 import { site } from "../data/site.js";
-import { BUILD_DATE } from "../lib/build-info.js";
 
 /**
  * /sitemap-index.xml points to the page sitemap. The page sitemap
@@ -12,7 +11,6 @@ export function GET() {
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
     <loc>${site.url}/sitemap.xml</loc>
-    <lastmod>${BUILD_DATE}</lastmod>
   </sitemap>
 </sitemapindex>
 `;

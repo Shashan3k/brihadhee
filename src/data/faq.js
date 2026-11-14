@@ -7,8 +7,7 @@
  * descriptor out of answers that are not about diet (src/lib/answers.js).
  *
  * Scope: "100% pure vegetarian" describes the restaurant and its kitchen.
- * Catering is described with CATERING_DIET ("vegetarian" until the owner answers
- * Q20, config/seo-gates.ts IS_CATERING_PURE_VEG).
+ * Catering uses the separately approved CATERING_DIET in config/seo-gates.ts.
  *
  * Unverified, so answered only with "call to check" and never with a value:
  * parking, delivery, the last-order time (on /faq/ and the dinner page).
@@ -82,8 +81,6 @@ export const faqItems = qaRoute("/", [
       `It is known for customized dosa and the ${sodhi.name}. The team also offers ${CATERING_DIET} corporate and event catering.`,
     { id: "what-is-brihadhee" }
   ),
-  /* P0 (AEO audit 2026-11-12, src/data/faq.js:70): the restaurant answer no longer
-     extends the pure-veg guarantee to catering, which stays CATERING_DIET until Q20. */
   qa(
     `Is ${name} pure veg?`,
     `Yes. ${name}'s restaurant in ${AREA} is ${PV}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. ` +

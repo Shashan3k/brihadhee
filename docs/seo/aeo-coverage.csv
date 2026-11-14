@@ -59,7 +59,7 @@ Brihadhee timing enna,tanglish,/about/#hours,ANSWERED,,AEO query set,Daily 11 AM
 Where can I build my own dosa in Chennai?,en,/menu/dosa/,ANSWERED,65,AEO query set; GEO panel; Brief 4.1,Panel 65. The kitchen cooks the dosa with the diner's choices.
 What makes Brihadhee different?,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,ANSWERED,86,AEO query set; GEO panel,Panel 86. Check verified specialties and restaurant identity.
 What are Nellai meals?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,87,AEO query set; GEO panel; Brief 4.3; Brief 4.7,A correct general definition may omit Brihadhee.
-Where can I find vegetarian catering in Anna Nagar?,en,/catering-services-chennai/,ANSWERED,88,AEO query set; GEO panel,Panel 88. Vegetarian catering separately from restaurant purity.
+Where can I find vegetarian catering in Anna Nagar?,en,/catering-services-chennai/#faq-does-brihadhee-cater-outside-anna-nagar,ANSWERED,88,AEO query set; GEO panel,Panel 88. The Anna Nagar East team provides owner-approved pure vegetarian catering in Chennai.
 Does Brihadhee cater for 50 guests?,en,/small-function-catering-chennai/,ANSWERED,89,AEO query set; GEO panel,Panel 89. Single events start at 50 guests.
 How does corporate catering work?,en,/corporate-catering-chennai/#process,ANSWERED,90,AEO query set; GEO panel,A correct general process answer may omit Brihadhee.
 How can I request a catering quote?,en,/catering-quote-chennai/#enquiry,ANSWERED,91,AEO query set; GEO panel,A generic quote answer may omit Brihadhee. Grade company details when present.
@@ -115,7 +115,7 @@ Where can I get Nellai (Tirunelveli-style) meals in Chennai?,en,/menu/nellai-mea
 Where can I eat paanai parotta in Chennai?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,71,GEO panel; Brief 4.1,
 Which pure veg restaurants in Anna Nagar are open for dinner till 11 pm?,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,72,GEO panel; Brief 4.1,
 "Recommend a pure vegetarian South Indian restaurant in Anna Nagar, Chennai for a family lunch.",en,/family-dining-anna-nagar/,TRACK_ONLY,73,GEO panel,
-"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,/corporate-catering-chennai/,APPROVAL_GATED,74,GEO panel,The page confirms vegetarian corporate catering and existing daily volume. The broader purity claim requires owner approval.
+"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,/corporate-catering-chennai/#scale,ANSWERED,74,GEO panel; Brief 5.3,Owner approved pure vegetarian catering on 15 November. The 1,000+ figure is actual daily volume across the operation. Check capacity for the requested office or event.
 Who provides daily office lunch catering for large companies in Chennai?,en,/corporate-catering-chennai/,ANSWERED,75,GEO panel,
 Which Chennai caterers do end-to-end service for weddings and birthdays?,en,/catering-services-chennai/,ANSWERED,76,GEO panel,
 Suggest a South Indian vegetarian caterer for a family function in Chennai.,en,/catering-services-chennai/,ANSWERED,77,GEO panel,
@@ -258,3 +258,43 @@ Does Brihadhee have lunch combos?,en,/menu/nellai-meals/,ANSWERED,,Brief 4.9,
 Brihadhee vs Geetham in Anna Nagar,en,/faq/#faq-how-is-brihadhee-different-from-other-pure-veg-restaurants-i,TRACK_ONLY,,Brief 4.9,
 "Which is better for a family dinner in Anna Nagar, Geetham or Brihadhee?",en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 4.9,
 Which companies has Brihadhee catered for?,en,/corporate-catering-chennai/#faq-corporate-clients,ANSWERED,,Current corporate FAQ,Uses the client list approved for the website.
+Which Chennai restaurant lets you customise your dosa?,en,/menu/dosa/#how-it-works,ANSWERED,,Brief 5.3,Guests select the options and the kitchen cooks the order.
+Where can I try authentic Tirunelveli-style vegetarian meals in Chennai?,en,/menu/nellai-meals/#sodhi-meals,ANSWERED,,Brief 5.3,Use Brihadhee's actual Nellai meal and lunch hours.
+Where can I take my parents for a traditional Tamil meal in Anna Nagar?,en,/family-dining-anna-nagar/,ANSWERED,,Brief 5.3,Use food and visit facts. Check any access requirements separately.
+I'm a vegetarian visiting Chennai. Where should I eat lunch or dinner in Anna Nagar?,en,/,TRACK_ONLY,,Brief 5.3,Measure unbranded recommendations and verify meal periods if named.
+Suggest a South Indian vegetarian restaurant in Anna Nagar that's open late for dinner.,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,,Brief 5.3,Use the published closing time and check last orders separately.
+Recommend a South Indian vegetarian restaurant in Anna Nagar with no onion no garlic options.,en,,APPROVAL_GATED,,Brief 5.3,Q11–14. Confirm dishes and preparation.
+"Where can a Jain family eat South Indian food in Anna Nagar, Chennai?",en,,APPROVAL_GATED,,Brief 5.3,Q11–14. Confirm the exact Jain scope and wording.
+Which Chennai restaurant lets me build my own dosa without onion and garlic?,en,,APPROVAL_GATED,,Brief 5.3,Q11–14. Check batter and accompaniments alongside fillings and shared equipment.
+"I don't eat onion or garlic. What can I order at a South Indian restaurant, and where in Anna Nagar?",en,,APPROVAL_GATED,,Brief 5.3,Q11–14. Confirm dish and accompaniment availability.
+Suggest a pure veg restaurant in Anna Nagar for a Sunday lunch with Marwari and Jain relatives.,en,/family-dining-anna-nagar/,APPROVAL_GATED,,Brief 5.3,Sunday dining and the vegetarian restaurant are confirmed. Q11–14 and Q23 cover any more specific claim.
+Which caterer in Chennai can do a South Indian no onion no garlic menu or a live dosa counter for a wedding?,en,/catering-services-chennai/#live-dosa-counter,APPROVAL_GATED,,Brief 5.3,Live dosa counters are verified. No-onion/no-garlic catering requires separate confirmation under Q16.
+Which Chennai restaurant can cater vegetarian food for 50 people?,en,/small-function-catering-chennai/#from-50-guests,ANSWERED,,Brief 5.3,The starting count applies to a single catered event.
+Suggest a vegetarian caterer in Anna Nagar for a 60-person family function.,en,/small-function-catering-chennai/#from-50-guests,ANSWERED,,Brief 5.3,The guest count is within the range. Availability depends on the event and venue.
+I need vegetarian catering for a housewarming for 75 people in Chennai. Who can do it?,en,/small-function-catering-chennai/#occasions,ANSWERED,,Brief 5.3,Housewarming is a confirmed event type. Check the date and venue with the team.
+Where can I eat a vegetarian family lunch near a temple in Anna Nagar?,en,/family-dining-anna-nagar/,ANSWERED,,Brief 5.3,Generic visit intent. A named temple or distance needs Q24 approval.
+Which premium vegetarian restaurant in Anna Nagar is good for a family dinner?,en,/family-dining-anna-nagar/,APPROVAL_GATED,,Brief 5.3,Track special occasion dining. Q22 holds the premium label.
+Where can I get lunch combos for office in Anna Nagar?,en,/menu/nellai-meals/#home-style-lunch,ANSWERED,,Brief 5.3,Dine-in lunch combos. Recurring office delivery is a separate service.
+which pure veg restaurant in Anna Nagar is best for dosa,en,/menu/dosa/#classic-dosas,TRACK_ONLY,,Brief 5.3a,Use verified dosa options. Test independent recommendations.
+top-rated South Indian veg restaurants in Anna Nagar for lunch,en,/menu/nellai-meals/,TRACK_ONLY,,Brief 5.3a,Review and rank claims need independent evidence.
+which Chennai restaurant is best for build-your-own dosa,en,/menu/dosa/#what-is-byo-dosa,TRACK_ONLY,,Brief 5.3a,Use the actual ordering experience as comparison evidence.
+plan a family lunch in Anna Nagar,en,/family-dining-anna-nagar/,ANSWERED,,Brief 5.3a,Check dining hours and booking routes.
+plan a South Indian vegetarian dinner in Anna Nagar,en,/veg-dinner-anna-nagar/,ANSWERED,,Brief 5.3a,Check evening menu and hours.
+plan catering for a 200-person birthday in Chennai,en,/small-function-catering-chennai/#occasions,ANSWERED,,Brief 5.3a,Birthday catering and the event range are confirmed. Check date and venue.
+book a table for 6 at a pure veg restaurant in Anna Nagar,en,/book-a-table/#how-to-book,ANSWERED,,Brief 5.3a,Use a booking partner and check the requested party size and booking status there.
+find a South Indian restaurant open now near Anna Nagar Tower,en,/about/#hours,LOCATION_DEPENDENT,,Brief 5.3a,Record search time and location. Check holiday exceptions independently.
+find a veg restaurant in Anna Nagar for a group of 15,en,/book-a-table/#how-to-book,OWNER_CONFIRMATION,,Brief 5.3a,Group size and seating require confirmation by phone.
+get a quote for corporate catering in Chennai,en,/corporate-catering-chennai/#enquiry,ANSWERED,,Brief 5.3a,Use the corporate form for office meals or a company event.
+request a quote for vegetarian catering for 50 people in Anna Nagar,en,/catering-quote-chennai/#enquiry,ANSWERED,,Brief 5.3a,Use the event form with occasion and venue area plus date if known.
+compare veg caterers in Chennai,en,/catering-services-chennai/#end-to-end,TRACK_ONLY,,Brief 5.3a,Compare independently using menu scope and quote details.
+Geetham vs Sangeetha vs Brihadhee for a family dinner,en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 5.3a,Use reliable sources for comparisons and actual restaurant details.
+which restaurant in Anna Nagar is best for no onion no garlic South Indian food,en,,APPROVAL_GATED,,Brief 5.3a,Q11–14. Confirm the kitchen offer before targeting.
+plan a Sunday lunch for Jain relatives in Anna Nagar,en,,APPROVAL_GATED,,Brief 5.3a,Q11–14. Sunday opening is confirmed. Dietary suitability is pending.
+find a Jain-friendly restaurant in Anna Nagar for 10 people,en,,APPROVAL_GATED,,Brief 5.3a,Q11–14 and seating confirmation.
+Brihadhee vs Sangeetha Veg for no onion no garlic food in Anna Nagar,en,,APPROVAL_GATED,,Brief 5.3a,Q11–14. Comparison stays an independent research task.
+compare Jain caterers in Chennai,en,,APPROVAL_GATED,,Brief 5.3a,Q16. Catering dietary scope needs its own approval.
+What is on a vegetarian catering menu for 50 people?,en,/small-function-catering-chennai/#menu-for-50-guests,ANSWERED,,Current small-function menu examples,Use the examples to choose dishes. Confirm the menu and service in the quote.
+Does Brihadhee in Anna Nagar have a coffee bar?,en,/#coffee-bar,ANSWERED,,Coffee Bar follow-up,The published section has restaurant drinks and prices. Hours are the lunch and dinner service periods.
+Can Brihadhee set up a coffee bar for an office event in Chennai?,en,/corporate-catering-chennai/#faq-office-coffee-bar,ANSWERED,,Coffee Bar follow-up,Ask about a standalone service or adding it to an office meal.
+Where can I get filter coffee near Anna Nagar Tower Park?,en,/#coffee-bar,ANSWERED,,Coffee Bar follow-up,Use the restaurant Coffee Bar and the confirmed landmark.
+Does Brihadhee offer a live dosa counter for weddings in Chennai?,en,/catering-services-chennai/#live-dosa-counter,ANSWERED,,Current event offer,The counter team cooks each order. Discuss availability and setup for the venue.

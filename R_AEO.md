@@ -2,6 +2,10 @@
 
 **Reporting date:** 14 November 2026
 
+[Combined SEO and AEO search visibility report](docs/seo/search-visibility-report.md) separates dated AI mentions, directory appearances, Google Maps visibility and any verified first-page website ranking.
+
+**15 November update.** The owner has since approved pure vegetarian catering for all orders, including externally sourced items. Observations below keep the scope approved on their test dates. See the [current keyword tracker](docs/seo/keyword-tracker.csv) and [owner approval](docs/seo/client-confirmations.md#l-catering-diet-15-november-2026).
+
 **Recorded result:** Google AI Overview recommended Brihadhee in Anna Nagar for the unbranded search **“where can I build my own dosa in Chennai”** on **12 November 2026**. The answer showed Instagram as its source and displayed an outdated restaurant number. The current restaurant number is **+91 73587 14113**. The official page for that query is [Build Your Own Dosa at Brihadhee](https://www.brihadhee.com/menu/dosa/). [Original AEO audit](docs/audits/2026-11-12/AEO-AUDIT.md#live-answer-engine-tests)
 
 | Exact search query | Search surface | Date | Observed result |

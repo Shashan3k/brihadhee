@@ -1,6 +1,7 @@
 ---
 import { faqItems, faqLanguageGroups } from "../data/faq.js";
-import { CONTENT_UPDATED, monthYear } from "../data/entity-truth.ts";
+import { monthYear } from "../data/entity-truth.ts";
+import { pageContentUpdated } from "../data/site.js";
 
 // Visible Q&A. Each page passes the SAME array it gives to faqPageSchema(), so
 // the text in the JSON-LD and on the page cannot drift apart (checked by
@@ -16,6 +17,7 @@ const {
 } = Astro.props;
 const english = items.filter((i) => !i.lang || i.lang === "en");
 const other = items.filter((i) => i.lang && i.lang !== "en");
+const updated = pageContentUpdated(Astro.url.pathname);
 const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60);
 ---
 
@@ -27,7 +29,7 @@ const slug = (q) => q.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g
           <p class="eyebrow">{eyebrow}</p>
           <h2 class="section__title" id="faq-title">{title}</h2>
           {lead && <p class="section__lead">{lead}</p>}
-          <p class="faq__updated">Last updated: <time datetime={CONTENT_UPDATED}>{monthYear(CONTENT_UPDATED)}</time></p>
+          <p class="faq__updated">Last updated: <time datetime={updated}>{monthYear(updated)}</time></p>
         </div>
 
         <div class="faq__list">

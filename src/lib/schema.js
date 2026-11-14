@@ -23,8 +23,8 @@
  * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
-import { site, ROUTES, hasHours, assetUrl } from "../data/site.js";
-import { getFact, factOr, CONTENT_UPDATED, RESTAURANT_ID, CATERING_ID, cateringContacts, toE164, BYO_DEFINITION } from "../data/entity-truth.ts";
+import { site, ROUTES, hasHours, assetUrl, pageContentUpdated } from "../data/site.js";
+import { getFact, factOr, RESTAURANT_ID, CATERING_ID, cateringContacts, toE164, BYO_DEFINITION } from "../data/entity-truth.ts";
 import verification from "../../config/client-verification.json";
 import { MENU_NOTES } from "../data/menu-canonical.ts";
 
@@ -153,7 +153,7 @@ export function webPageSchemas({ path, title, description, crumbs, primaryEntity
     ...(primaryEntityId ? { mainEntity: { "@id": primaryEntityId } } : {}),
     ...(faqId ? { hasPart: { "@id": faqId } } : {}),
     ...(hasTrail ? { breadcrumb: { "@id": pid.breadcrumb } } : {}),
-    dateModified: CONTENT_UPDATED,
+    dateModified: pageContentUpdated(path),
   };
   if (!hasTrail) return [webpage];
 
@@ -269,7 +269,7 @@ export function faqPageSchema(path, items) {
     "@context": CONTEXT,
     "@type": "FAQPage",
     "@id": pid.faq,
-    dateModified: CONTENT_UPDATED,
+    dateModified: pageContentUpdated(path),
     about: { "@id": ids.restaurant },
     isPartOf: { "@id": pid.webpage },
     mainEntity: items.map((i) => ({
@@ -288,10 +288,11 @@ export function faqPageSchema(path, items) {
 /**
  * Article for a dated page (/whats-new/, guides). Published by the Restaurant. A guide
  * passes `about` (topic names) and then only `mentions` the Restaurant; dateModified
- * follows CONTENT_UPDATED.
+ * follows the route's content revision.
  */
 export function articleSchema({ path, headline, description, datePublished, image, about = null }) {
   const pid = pageIds(path);
+  const dateModified = pageContentUpdated(path);
   return {
     "@context": CONTEXT,
     "@type": "Article",
@@ -299,7 +300,7 @@ export function articleSchema({ path, headline, description, datePublished, imag
     headline,
     description,
     datePublished,
-    dateModified: CONTENT_UPDATED > datePublished ? CONTENT_UPDATED : datePublished,
+    dateModified: dateModified > datePublished ? dateModified : datePublished,
     inLanguage: site.locale.replace("_", "-"),
     image: [assetUrl(image)],
     author: { "@id": ids.restaurant },

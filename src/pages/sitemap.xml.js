@@ -1,6 +1,5 @@
-import { site, ROUTES } from "../data/site.js";
+import { site, ROUTES, pageContentUpdated } from "../data/site.js";
 import { REDIRECTED_PATHS } from "../lib/build-info.js";
-import { CONTENT_UPDATED } from "../data/entity-truth.ts";
 import verification from "../../config/client-verification.json";
 import { corporateEnabled } from "../data/catering.js";
 import { smallFunctionsPage, quotePage, noOnionPage } from "../data/spokes.js";
@@ -9,10 +8,7 @@ import { smallFunctionsPage, quotePage, noOnionPage } from "../data/spokes.js";
 // (privacy, 404, gated drafts), gated pages whose gate is off
 // (config/seo-gates.ts) and every path vercel.json redirects are left out.
 //
-// <lastmod> is the date the page's content was last reviewed (CONTENT_UPDATED in
-// entity-truth.ts, or a page's own `updated` date), not the build date: a
-// lastmod that moves on every deploy tells crawlers nothing, so they learn to
-// ignore it.
+// Use the same per-route content revision as WebPage.dateModified.
 export function GET() {
   const catering = verification.offer_catering === true;
   const pages = [
@@ -44,7 +40,7 @@ export function GET() {
   const entries = pages
     .map(
       (p) =>
-        `  <url>\n    <loc>${site.url}${p.path}</loc>\n    <lastmod>${p.updated ?? CONTENT_UPDATED}</lastmod>\n    <priority>${p.priority}</priority>\n  </url>`
+        `  <url>\n    <loc>${site.url}${p.path}</loc>\n    <lastmod>${pageContentUpdated(p.path)}</lastmod>\n    <priority>${p.priority}</priority>\n  </url>`
     )
     .join("\n");
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`;

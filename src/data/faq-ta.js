@@ -12,24 +12,22 @@
  * Rules kept in Tamil as in English: lunch and dinner only (never காலை உணவு:
  * "காலை 11 மணி" is the opening time, not a meal); no superlative claims in
  * answers (the question may ask "சிறந்த", the answer states facts); the Latin
- * "Brihadhee" sits beside பிரிஹதீ for entity matching; "100% சுத்த சைவ" describes
- * the restaurant only, catering is சைவ until the owner answers Q20
- * (config/seo-gates.ts IS_CATERING_PURE_VEG).
+ * "Brihadhee" sits beside பிரிஹதீ for entity matching. Catering uses the wording
+ * approved under Q20 in config/seo-gates.ts.
  *
  * No imports from catering.js (it imports this file through pages.js and faq.js).
  */
 import { getFact, factOr } from "./entity-truth.ts";
 import { qa } from "../lib/answers.js";
 import { category, allItems, byo, filterCoffee, summarise } from "../lib/menu-facts.js";
-import { IS_CATERING_PURE_VEG, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
+import { CATERING_DIET_TA, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
 import verification from "../../config/client-verification.json";
 
 const TA = { lang: "ta" };
 const NAME = getFact("nameTamil");
 const BR = `${NAME} (Brihadhee)`;
 const PV = "100% சுத்த சைவ";
-/** Catering diet in Tamil: சைவ until Q20 is answered. */
-const CD_TA = IS_CATERING_PURE_VEG ? "சுத்த சைவ" : "சைவ";
+const CD_TA = CATERING_DIET_TA;
 const hours = getFact("hours");
 const rs = (n) => `₹${n}`;
 const num = (n) => n.toLocaleString("en-IN");

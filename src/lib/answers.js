@@ -25,12 +25,11 @@
  *   - LOCALITY ONCE: at least one answer on the page names Anna Nagar.
  *   - Address and dietary descriptor density are checked across the rendered page.
  *
- * Restaurant and catering scopes stay separate: "100% pure vegetarian" describes
- * the restaurant and its kitchen; catering copy uses CATERING_DIET from
- * config/seo-gates.ts (scripts/verify-seo-compliance.ts enforces the wording).
+ * Catering copy takes its diet wording from CATERING_DIET in config/seo-gates.ts
+ * so it follows the approved service facts independently of restaurant copy.
  *
- * The visible "Last updated" line under each Q&A block comes from
- * CONTENT_UPDATED in entity-truth.ts (src/components/Faq.astro).
+ * The visible "Last updated" line uses the route's content revision
+ * (src/components/Faq.astro).
  */
 
 /** Questions that want one fact back: yes/no, when, where, how much, how many. */

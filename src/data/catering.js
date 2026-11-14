@@ -19,12 +19,12 @@ import verification from "../../config/client-verification.json";
 import { getFact, factOr, cateringContacts, toE164, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { qa, qaRoute } from "../lib/answers.js";
 import { taCorporate } from "./faq-ta.js";
-import { CATERING_DIET, ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS } from "../../config/seo-gates.ts";
+import { CATERING_DIET, ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS, IS_CATERING_PURE_VEG } from "../../config/seo-gates.ts";
 
 const STREET = getFact("street");
-/** Catering diet word: "vegetarian" until the owner answers Q20 (config/seo-gates.ts). */
 const CD = CATERING_DIET;
 const CDcap = CD.charAt(0).toUpperCase() + CD.slice(1);
+const titleDiet = IS_CATERING_PURE_VEG ? "Pure Veg" : CDcap;
 import { pageGraph, cateringServiceSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 
 const v = verification;
@@ -221,7 +221,7 @@ if (cateringEnabled) {
   }
   if (areas.length && PHONE) {
     add(
-      `Where can I find ${CD} catering in Anna Nagar?`,
+      "Where can I find vegetarian catering in Anna Nagar?",
       `Brihadhee's Anna Nagar East team provides ${CD} event catering across ${AREA}, including Anna Nagar. ` +
         `Call the catering team on ${PHONE} with your venue area, date and headcount to discuss a menu and check availability.`,
       { id: "does-brihadhee-cater-outside-anna-nagar" }
@@ -282,7 +282,7 @@ export const plannerFaqs = qaRoute(PLANNER_PATH, plannerFaq);
 
 /* ---- Page metadata ----------------------------------------------------- */
 export const meta = {
-  title: `${CDcap} Event & Wedding Catering in Chennai | Brihadhee`,
+  title: `${titleDiet} Event & Wedding Catering in Chennai | Brihadhee`,
   description: `${CDcap} event and wedding catering in Chennai with regional South Indian menus, live counters and per-plate quotes from Brihadhee.`,
   h1: `${CDcap} Event and Wedding Catering in Chennai`,
 };
@@ -378,7 +378,7 @@ const hasService = (re) => corpServices.some((x) => re.test(x));
 export const corporateEnabled = Boolean(cateringEnabled && corporate);
 
 export const corporateMeta = {
-  title: `${CDcap} Corporate Catering in Chennai | Brihadhee`,
+  title: `${titleDiet} Corporate Catering in Chennai | Brihadhee`,
   description: `${CDcap} office lunch catering, bulk meals and recurring employee meal programmes in Chennai. Share your office location and headcount for a quote.`,
   h1: `${CDcap} Corporate Catering and Office Lunches in Chennai`,
 };
@@ -429,7 +429,7 @@ export const corporatePage = corporateEnabled
         ? {
             id: "coffee-bar",
             title: "Coffee Bar for Office Events",
-            lead: `Brihadhee sets up a coffee bar for office events, meetings and celebrations, serving South Indian filter coffee alongside the other hot drinks from its restaurant menu. Share your guest count, venue and serving times when you ask for a quote.`,
+            lead: `Brihadhee offers a coffee bar for office events, meetings and celebrations in Chennai. It serves South Indian filter coffee and other hot drinks from the [restaurant's Coffee Bar](/#coffee-bar). Share your guest count, venue and serving times when you ask for a quote.`,
             dishes: drinksCat.items.map((i) => ({ name: i.name, note: i.description?.replace(/\.$/, "") })),
             items: [
               {
@@ -590,6 +590,14 @@ export const corporatePage = corporateEnabled
           `Yes. Brihadhee caters office parties and corporate events across Chennai with ${CD} menus and live counters available to discuss. ` +
             `Staffed events have a guest range of ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "50 guests and up"}.`
         ),
+        ...(drinksCat ? [
+          qa(
+            "Can Brihadhee set up a coffee bar for an office event in Chennai?",
+            "Yes. Brihadhee offers a filter coffee bar for Chennai office meetings and events. " +
+              "Ask about a standalone coffee service or adding it to your office meal. Include the location, serving window and estimated guest count in your enquiry.",
+            { id: "office-coffee-bar" }
+          ),
+        ] : []),
         ...taCorporate,
       ]),
     }
@@ -635,10 +643,13 @@ export const endToEnd = cateringEnabled && eventService
 export const liveDosaCounter = cateringEnabled && liveCounters.some((c) => /build your own dosa/i.test(c))
   ? {
       id: "live-dosa-counter",
-      title: "Live Build-Your-Own Dosa Counter at Your Event",
-      lead: `Brihadhee runs a live Build Your Own Dosa counter at your event: guests pick one of ${byo.batterCount} batters, add podi, a filling and a ghee, butter or oil roast, and the counter team makes each dosa to order.`,
+      title: eventIds.includes("wedding") ? "Live Dosa Counter for Weddings and Events" : "Live Dosa Counter for Events",
+      lead: `Brihadhee offers a live Build Your Own Dosa counter for ${eventIds.includes("wedding") ? "weddings and other catered events" : "catered events"} in Chennai. Guests choose from ${byo.batterCount} batters, then select podi, a filling and a ghee, butter or oil roast. The counter team cooks each order.`,
       tint: true,
       dishes: byo.steps.map((st) => ({ name: `${st.label}`, note: st.options.map((o) => o.name).join(", ") })),
-      links: [{ label: "See how Build Your Own Dosa works", href: href(ROUTES.dosa) }],
+      links: [
+        { label: "Ask about a live dosa counter", href: "#enquiry", primary: true },
+        { label: "See how Build Your Own Dosa works", href: href(ROUTES.dosa) },
+      ],
     }
   : null;

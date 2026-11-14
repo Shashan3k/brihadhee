@@ -32,6 +32,7 @@ const sodhiMeals = item("Nellai Special Sodhi Meals");
 const kali = item("Karuppatti Ulundhu Kali");
 const idiyappamSodhi = item("Idiyappam Sodhi");
 const sodhiIdly = item("Sodhi Idly");
+const parottaSalna = item("Parotta Salna (2 pcs)");
 const poppers = item("Karaikudi Paneer Poppers");
 const idiyappam = category("idiyappam");
 const idiCoconut = item("Idiyappam Coconut Milk");
@@ -65,6 +66,7 @@ export const nellaiGuide = {
       paras: [
         "Sodhi is gentle rather than fiery. The coconut milk carries the flavour, and the sourness comes from lemon squeezed in at the end, not from tamarind as in a kuzhambu. In Tirunelveli it is a celebration dish, traditionally part of wedding feasts, and it is eaten with rice, idiyappam or idly.",
         "The mild stew pairs with sharper flavours such as rasam and pickle. With soft idiyappam, it makes a lighter meal.",
+        `Sodhi and salna are different dishes on the ${name} menu. Sodhi is the coconut milk stew in the Nellai meal and Idiyappam Sodhi. Salna is the gravy served with [${parottaSalna.name}](${ROUTES.menu}#parotta).`,
       ],
     },
     {

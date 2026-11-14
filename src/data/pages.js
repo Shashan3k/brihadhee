@@ -125,10 +125,11 @@ export const homePage = {
   coffeeBar: {
     id: "coffee-bar",
     title: "Coffee Bar",
-    lead: `Have South Indian filter coffee at ${name} in Anna Nagar East. We brew it with a traditional filter and serve it with our lunch and dinner menu. ${menuNotes.gst}`,
+    lead: `Find South Indian filter coffee at ${name}'s Coffee Bar near ${landmark} in Anna Nagar East. We brew it with a traditional filter and serve it during lunch and dinner. ${menuNotes.gst}`,
     dishes: category("beverages").items.map(dish),
     links: [
       { label: "See the drinks menu", href: `${href(ROUTES.menu)}#beverages`, primary: true },
+      { label: "Directions to Brihadhee", href: `${href(ROUTES.about)}#find-us` },
       ...(corporatePage?.coffeeBar
         ? [{ label: "Coffee bar for office events", href: `${href(ROUTES.corporateCatering)}#${corporatePage.coffeeBar.id}` }]
         : []),
@@ -179,6 +180,9 @@ const CLASSIC_DOSAS = [
 const ghee = item("Ghee Roast");
 const gheePodi = item("Ghee Podi Dosa");
 const plain = item("Plain Dosa");
+const popularDosaAdditions = byo.steps.flatMap(({ options }) =>
+  options.filter(({ name }) => ["Small Onion", "Cheese", "Paneer Chettinadu", "Mushroom Truffle"].includes(name))
+);
 const classicNames = new Set(CLASSIC_DOSAS.filter((d) => d.item).map((d) => d.item.name));
 const otherDosas = dosa.items.filter((i) => !classicNames.has(i.name));
 
@@ -243,6 +247,12 @@ export const dosaPage = {
       ...(otherDosas.length
         ? [{ title: "Also on the menu", text: `${name} also serves ${list(otherDosas.map((i) => `${i.name} (${rupees(i.price)})`))}.` }]
         : []),
+      ...(popularDosaAdditions.length
+        ? [{
+            title: "Choose toppings and fillings for your dosa",
+            text: `For a customized dosa, start with a batter and choose additions from the [Build Your Own Dosa menu](#how-it-works): ${list(popularDosaAdditions.map((option) => `${option.name} (+${rupees(option.price)})`))}. Choose how you want it roasted and the kitchen will cook your order.`,
+          }]
+        : []),
     ],
   },
   liveCounter:
@@ -274,8 +284,8 @@ export const dosaPage = {
     ),
     qa(
       "Which restaurant serves the best dosa in Anna Nagar?",
-      `${name}, in Anna Nagar East, is a dosa-led restaurant: you can build your own from ${byo.batterCount} batters or order one of ${dosa.count} classic dosas (${priceRange(dosa)}). ` +
-        `Taste is personal, so ${name} states its menu rather than a ranking; dosas are served for lunch and dinner from ${HOURS}.`
+      `${name} serves ${dosa.count} classic dosas and build-your-own dosa in Anna Nagar East. ` +
+        `Try the ${ghee.name} for a crisp dosa, the ${gheePodi.name} for a spiced topping, or choose your own batter and fillings. Dosas are served at lunch and dinner from ${HOURS}.`
     ),
     qa(
       `How much does a dosa cost at ${name}?`,
@@ -562,7 +572,7 @@ const liveDosaGroups = cateringEnabled && guests;
 export const seasonalPage = {
   path: ROUTES.seasonal,
   title: `Karthigai & Ayyappa Mala Pure Veg Food, Chennai | ${name}`,
-  description: `100% pure veg lunch and dinner for Karthigai and Ayyappa mala, with no meat, egg, fish or alcohol, plus ${CATERING_DIET} group catering. ${name}, Anna Nagar.`,
+  description: `Plan a pure veg lunch or dinner for Karthigai and Ayyappa mala at ${name} in Anna Nagar East, Chennai. See the menu and opening hours.`,
   h1: "Pure Veg Food for Karthigai and Ayyappa Mala in Chennai",
   intro: `${name} is a pure vegetarian restaurant in Anna Nagar East, Chennai. Families and Ayyappa devotees can eat lunch and dinner there every day from ${HOURS} through Karthigai month, mid-November to mid-December.`,
   sections: [

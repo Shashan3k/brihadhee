@@ -18,13 +18,9 @@
 
 /* ---- Dietary and positioning -------------------------------------------- */
 
-/**
- * Q20: may catering copy say "pure veg"? The Wf call says one non-veg item could be
- * arranged from elsewhere for a very large order, so catering copy says
- * "vegetarian catering" until the owner confirms. The kitchen itself stays a
- * "100% pure vegetarian kitchen" (that is a verified fact about the kitchen).
- */
-export const IS_CATERING_PURE_VEG = false;
+/** Q20: the owner approved pure vegetarian wording for all catering orders,
+ * including items sourced elsewhere, on 15 November 2026. */
+export const IS_CATERING_PURE_VEG = true;
 
 /** Q11 to Q14: the no-onion-no-garlic page, its FAQ and nav link (keyword plan 3.15a, 3.15c, 3.15d, 3.16, 4.8). */
 export const ENABLE_NO_ONION_NO_GARLIC_CLUSTER = false;
@@ -126,6 +122,7 @@ export const GATE_SUMMARY = {
 
 /** "vegetarian" until Q20 is answered, then "pure vegetarian". */
 export const CATERING_DIET = IS_CATERING_PURE_VEG ? "pure vegetarian" : "vegetarian";
+export const CATERING_DIET_TA = IS_CATERING_PURE_VEG ? "சுத்த சைவ" : "சைவ";
 // Match claims about catering itself, without reading "cooked in the pure
 // vegetarian restaurant kitchen" as a claim about every catering engagement.
 export const CATERING_PURITY_CLAIM =
