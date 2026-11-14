@@ -21,7 +21,7 @@ import { cateringEnabled, guests, liveCounters, corporate } from "./catering.js"
 import { CATERING_DIET } from "../../config/seo-gates.ts";
 
 const name = getFact("name");
-const { open: OPEN, close: CLOSE, range: HOURS } = openingTimes();
+const { open: OPEN, range: HOURS } = openingTimes();
 const item = (n) => {
   const hit = allItems.find((i) => i.name === n);
   if (!hit) throw new Error(`[guides] menu item "${n}" not found in menu-canonical.ts`);
@@ -49,15 +49,15 @@ export const nellaiGuide = {
   title: "What Are Nellai Meals? Sodhi, Ulundhu Kali, Tirunelveli Food",
   description: `What are Nellai meals? A guide to sodhi, ulundhu kali, idiyappam and Tirunelveli food, and where to eat a Nellai meal in Chennai at ${name}.`,
   h1: "What Are Nellai Meals? A Guide to Sodhi, Ulundhu Kali and Tirunelveli Food",
-  intro: `Nellai meals are Tirunelveli-style vegetarian lunches from the far south of Tamil Nadu, built around sodhi, a coconut milk stew, and finished with ulundhu kali. This guide explains each dish, what Tirunelveli food is known for, and where ${name} serves it in Anna Nagar, Chennai.`,
+  intro: `Nellai is another name for Tirunelveli in southern Tamil Nadu. At ${name} in Anna Nagar East, Chennai, Nellai meals are a vegetarian banana-leaf lunch with sodhi, a coconut milk stew, and ulundhu kali, a sweet made with palm jaggery.`,
   sections: [
     {
       id: "what-are-nellai-meals",
       title: q("What Are Nellai Meals?"),
-      answer: `Nellai meals are Tirunelveli-style vegetarian lunches served on a banana leaf: rice with sambar, rasam, kootu and poriyal, built around sodhi, a coconut milk stew, and finished with ulundhu kali. In Chennai, ${name} serves them as the [${sodhiMeals.name}](${ROUTES.lunch}) for ${rupees(sodhiMeals.price)}.`,
+      answer: `Nellai meals are Tirunelveli-style meals. At ${name} in Chennai, the [${sodhiMeals.name}](${ROUTES.lunch}) is a vegetarian banana-leaf lunch with rice, sodhi (a coconut milk stew), sambar, rasam, kootu, poriyal and ulundhu kali. It costs ${rupees(sodhiMeals.price)} before GST.`,
       paras: [
-        "Nellai is the short, everyday name for Tirunelveli, the district in the far south of Tamil Nadu, and a Nellai meal is the lunch its homes and wedding halls are known for. The idea is the same as any South Indian banana-leaf meal, with rice at the centre and a run of curries around it, but the flavours lean on coconut, gentle spice and palm jaggery rather than heat.",
-        `At ${name} the plate is the ${sodhiMeals.name}: ${lc(sodhiMeals.description)}. It is served for lunch from ${OPEN}, every day, at the 100% pure vegetarian restaurant in Anna Nagar East, alongside simpler Tamil Nadu meals for a lighter lunch.`,
+        `The menu lists ${lc(sodhiMeals.description)}. At ${name}, the coconut milk in the sodhi, the tart rasam and the palm jaggery in the kali give you distinct flavours in one lunch.`,
+        `${name} serves this meal from ${OPEN} daily at its pure vegetarian restaurant in Anna Nagar East. The [lunch menu](${ROUTES.lunch}) also lists the Tamil Nadu meals.`,
       ],
     },
     {
@@ -66,7 +66,7 @@ export const nellaiGuide = {
       answer: `Sodhi is a Tirunelveli-style stew of vegetables simmered in coconut milk, mildly spiced with green chilli and ginger and finished with lemon. ${name} serves it in the ${sodhiMeals.name}, with idiyappam as ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}) and with idly as ${sodhiIdly.name} (${rupees(sodhiIdly.price)}).`,
       paras: [
         "Sodhi is gentle rather than fiery. The coconut milk carries the flavour, and the sourness comes from lemon squeezed in at the end, not from tamarind as in a kuzhambu. In Tirunelveli it is a celebration dish, traditionally part of wedding feasts, and it is eaten with rice, idiyappam or idly.",
-        "Because it is mild, sodhi works well next to something sharper, which is why a Nellai meal sets it beside sambar, rasam and a pickle. On its own with soft idiyappam it makes a complete, light meal at any time of the day the kitchen is open.",
+        "The mild stew pairs with sharper flavours such as rasam and pickle. With soft idiyappam, it makes a lighter meal.",
       ],
     },
     {
@@ -101,9 +101,9 @@ export const nellaiGuide = {
       title: "Where to Eat Nellai Meals in Chennai",
       answer: `${name} serves Nellai meals at ${addressLine()}, near Anna Nagar Tower Park. It is open every day from ${HOURS}, and lunch starts at ${OPEN}.`,
       paras: [
-        `The restaurant is 100% pure vegetarian: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. That matters for a Nellai meal, which is vegetarian by tradition, and it makes the restaurant an easy choice for families, office teams and anyone eating vegetarian for a festival or a vow.`,
-        `Lunch is the usual way in, but sodhi is also on the menu at dinner as ${idiyappamSodhi.name} and ${sodhiIdly.name}, so you can try it after work as well. Groups can pre-book a table on ${list(getFact("bookingLinks").map((b) => b.label))}, and walk-in diners get ${getFact("offers").find((o) => o.id === "walk-in")?.description.replace(/ for walk-in dine-in$/, "") ?? "a discount"}.`,
-        `See every lunch dish and price on the [lunch and Nellai meals page](${ROUTES.lunch}), check the [full menu with prices](${ROUTES.menu}), or [book a table](${ROUTES.book}) for a family lunch. For dinner, the kitchen also serves [build-your-own dosa](${ROUTES.dosa}) and [Paanai Parotta until ${CLOSE}](${ROUTES.dinner}).`,
+        `The restaurant is 100% pure vegetarian: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. Ask the restaurant about specific ingredients if you follow dietary rules for a festival or a vow.`,
+        `The full banana-leaf meal is a lunch dish. At dinner, you can try the same style of stew with ${idiyappamSodhi.name} or ${sodhiIdly.name}.`,
+        `For current dishes and prices, see the [Brihadhee lunch menu](${ROUTES.lunch}). If you're visiting, check [directions to the restaurant](${ROUTES.about}#find-us).`,
       ],
     },
     ...(cateringEnabled && guests
@@ -113,9 +113,9 @@ export const nellaiGuide = {
             title: "Nellai Food at Your Function",
             answer: `${name}'s event catering brings Nellai cooking to functions across Chennai for ${num(guests.min)} to ${num(guests.max)} guests, with live counters for ${list(liveCounters)}.`,
             paras: [
-              `See [${CATERING_DIET} event catering in Chennai](${ROUTES.eventCatering}) for weddings, birthdays and family functions, where one team handles menu planning, cooking, serving and setup.` +
+              `For a wedding, birthday or family function, see [${CATERING_DIET} event catering in Chennai](${ROUTES.eventCatering}). Ask what the quote covers for preparation, serving and setup.` +
                 (corporate
-                  ? ` Offices can add a weekly Nellai Special Sodhi Meals day through [corporate catering](${ROUTES.corporateCatering}), which serves more than ${num(corporate.dailyCovers)} people every day.`
+                  ? ` For a recurring office lunch, discuss Nellai Special Sodhi Meals as part of the menu rotation with the [corporate catering team](${ROUTES.corporateCatering}).`
                   : ""),
             ],
           },

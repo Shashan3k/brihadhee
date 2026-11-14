@@ -20,6 +20,7 @@ const {
   id = "at-a-glance",
 } = Astro.props;
 const { phone, telHref } = pageContact(Astro);
+const phoneLabel = Astro.locals.contact ? "Catering phone" : "Restaurant phone";
 ---
 
 <section class="section glance" id={id} aria-labelledby={`${id}-title`}>
@@ -35,10 +36,12 @@ const { phone, telHref } = pageContact(Astro);
             </div>
           ))
         }
-        <div class="glance__row">
-          <dt>Phone</dt>
-          <dd><a href={telHref}>{phone}</a></dd>
-        </div>
+        {phone && (
+          <div class="glance__row">
+            <dt>{phoneLabel}</dt>
+            <dd><a href={telHref}>{phone}</a></dd>
+          </div>
+        )}
       </dl>
     </aside>
   </div>

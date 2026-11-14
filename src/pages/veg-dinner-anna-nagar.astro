@@ -15,7 +15,7 @@ import Offers from "../components/Offers.astro";
 import Faq from "../components/Faq.astro";
 import { dinnerPage as page } from "../data/pages.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { site, ROUTES, href } from "../data/site.js";
+import { ROUTES, href } from "../data/site.js";
 
 const schema = pageGraph({
   path: page.path,
@@ -28,13 +28,19 @@ const schema = pageGraph({
 
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
-    <PageHeader eyebrow="Dinner · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+  <main id="main" tabindex="-1">
+    <PageHeader
+      eyebrow="Dinner · Anna Nagar East"
+      h1={page.h1}
+      intro={page.intro}
+      menuHref={href(ROUTES.menu)}
+      primaryAction={{ label: "Book a table for dinner", href: href(ROUTES.book) }}
+    />
     <AtAGlance title="Dinner at Brihadhee: summary" rows={page.glance} />
 
     <ContentSection
       {...page.favourites}
-      image={{ name: "idiyappam", alt: "Idiyappam with coconut milk on a banana leaf, served for dinner at Brihadhee, Anna Nagar East", caption: "Idiyappam from the Brihadhee kitchen" }}
+      image={{ name: "idiyappam", alt: "Idiyappam with coconut milk on a banana leaf", caption: "Idiyappam from the Brihadhee kitchen" }}
     />
     <ContentSection {...page.family} />
     <ContentSection {...page.late} />
@@ -50,7 +56,7 @@ const schema = pageGraph({
           <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
           <li><a href={href(ROUTES.dosa)}>Build your own dosa</a></li>
           <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
-          <li><a href={`${href("/")}#visit`}>Find us on {site.address.line1}</a></li>
+          <li><a href={`${href(ROUTES.about)}#find-us`}>Directions to Brihadhee</a></li>
         </ul>
       </div>
     </section>

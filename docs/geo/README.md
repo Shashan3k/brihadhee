@@ -2,6 +2,8 @@
 
 Created 2026-11-05. Files in this folder:
 
+Use the [Phase 7 owner action plan](../seo/local-seo-owner-action-plan.md) for current listing facts and corrections. The original programme below is kept as a historical record.
+
 | File | Purpose |
 |---|---|
 | `entity-sheet.md` | Canonical descriptor, facts, disambiguation, `sameAs` list |
@@ -10,8 +12,8 @@ Created 2026-11-05. Files in this folder:
 | `own-gbp-social-guides.md` | GBP, website, social and guide-page briefs |
 | `earn-playbook.md` | Claim and contest, reviews, outreach, creators, community |
 | `outreach-targets.md` | Researched outlets and creators |
-| `query-panel.csv` | 55 queries (English, Tamil, Tanglish) |
-| `visibility-log.csv` | Empty log; one row per engine, query and run |
+| `query-panel.csv` | 93 queries (English, Tamil, Tanglish), including the nine core prompts |
+| `visibility-log.csv` | Historical engine observations from 9 November 2026 |
 | `corrections-log.csv` | Wrong facts found and their fixes |
 | `catering-geo.md` | Gated until catering is confirmed |
 
@@ -33,17 +35,8 @@ Honest only (no fake, bought, incentivised or gated reviews; no fake accounts or
 - Whether catering is offered (unlocks `catering-geo.md`)
 
 ## Monitoring panel (Step 6)
-- **Queries:** `query-panel.csv`, 55 rows.
-- **Engines:** Google (AI Overviews / AI Mode), ChatGPT with search, Perplexity, Gemini, Claude with search.
-- **Protocol:** each query three times per engine, from a Chennai location (or a Chennai VPN/device), signed out, new session each time. Log date, engine, query, and the fields in `visibility-log.csv`.
-- **Metrics (compute monthly):**
-  - mention rate = runs where Brihadhee is mentioned / all runs
-  - citation rate = runs where the Brihadhee site or Business Profile is cited / all runs
-  - average position among listed places when mentioned
-  - fact accuracy rate = runs with all stated facts correct / runs that mention Brihadhee
-  - share of voice vs each named competitor = runs mentioning that competitor / all runs
-- **Baseline first**, then repeat monthly. **Status: not started.** The engines cannot be queried from this working environment, so the first run needs a person with access (about 55 queries x 5 engines x 3 runs = 825 runs; start with the 25 discovery, local and brand queries to cut that to about 375).
-- An automated API runner is optional and costs money plus API keys; build it only if the owner asks.
+
+Start with the [nine core prompts and testing checklist](../seo/ai-answer-testing.md). Record the exact prompt, date and location, engine surface, observed web use, answer and claim-level evidence. For new sessions, use the dated run log format from that checklist. Keep the 9 November `visibility-log.csv` observations as historical context. Current visibility remains `NOT_VERIFIED`.
 
 ## Step 7: what to fix, by symptom
 | Symptom | Check and fix |

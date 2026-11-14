@@ -15,8 +15,7 @@ import {
 import Icon from "./Icon.astro";
 import { getFact } from "../data/entity-truth.ts";
 
-// Confirmed listings only (entity-truth.ts). Swiggy, Zomato, District and Justdial
-// are added here once the owner confirms each URL.
+// The confirmed Maps listing and table booking partners belong to the restaurant.
 const listings = [
   { label: "Google Maps", href: getFact("mapUrl") },
   ...getFact("bookingLinks").map((b) => ({ label: `Book on ${b.label}`, href: b.url })),
@@ -29,6 +28,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   ? import.meta.env.BASE_URL
   : `${import.meta.env.BASE_URL}/`;
 const address = site.address;
+const isCateringPage = Boolean(Astro.locals.contact);
 ---
 
 <footer class="site-footer on-dark">
@@ -64,8 +64,8 @@ const address = site.address;
         }
       </div>
 
-      <nav aria-labelledby="footer-explore">
-        <p class="footer__title" id="footer-explore">Explore</p>
+      <nav id="footer-explore" aria-labelledby="footer-explore-title" tabindex="-1">
+        <p class="footer__title" id="footer-explore-title">Explore</p>
         <ul class="footer__links" role="list">
           {site.footerLinks.map((item) => (
             <li><a href={link(item.href)}>{item.label}</a></li>
@@ -95,11 +95,12 @@ const address = site.address;
       </div>
 
       <div>
-        <p class="footer__title">Contact</p>
+        <p class="footer__title">Restaurant contact</p>
         <ul class="footer__links" role="list">
           {hasPhone && <li><a href={telHref}>{site.contact.phone}</a></li>}
           {hasWhatsApp && <li><a href={whatsappHref}>WhatsApp</a></li>}
           {hasEmail && <li><a href={emailHref}>{site.contact.email}</a></li>}
+          {isCateringPage && <li><a href={href(ROUTES.eventCatering)}>Catering contact and enquiries</a></li>}
           <li>
             <a href={site.maps.directions} target="_blank" rel="noopener" data-event="directions_click">
               Get directions
@@ -115,7 +116,6 @@ const address = site.address;
     <div class="footer__bottom">
       <p>© {year} {site.name}. All rights reserved.</p>
       <p>South Indian restaurant · Anna Nagar East, Chennai</p>
-      <p>Also searched as Brihadhi, Brihadee, Bruhadhee, Brahadhee</p>
       <p><a href={link("#top")}>Back to top ↑</a></p>
     </div>
   </div>

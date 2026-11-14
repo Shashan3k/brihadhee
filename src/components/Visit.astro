@@ -1,11 +1,10 @@
 ---
-import { site, hasHours, hasPhone, telHref } from "../data/site.js";
+import { site, hasHours, hasPhone, telHref, ROUTES, href } from "../data/site.js";
 import Icon from "./Icon.astro";
 import { getFact, openingTimes } from "../data/entity-truth.ts";
 
 const { address, hours, amenities } = site;
 const street = getFact("street");
-const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
 
 function formatTime(value) {
   if (!value) return "";
@@ -28,7 +27,8 @@ const hoursPayload = JSON.stringify({
       <h2 class="section__title" id="visit-title">Visit Us in Anna Nagar</h2>
       <p class="section__lead">
         {site.name} is on {street}, near {getFact("landmarks")[0]}, open every day from {openingTimes().range} for
-        {getFact("mealTimes")}. <a href={`${base}about/`}>Directions from Anna Nagar landmarks</a>.
+        {getFact("mealTimes")}. <a href={href(ROUTES.book)}>Book a table</a> or find
+        <a href={`${href(ROUTES.about)}#find-us`}>directions from Anna Nagar landmarks</a>.
       </p>
     </div>
 

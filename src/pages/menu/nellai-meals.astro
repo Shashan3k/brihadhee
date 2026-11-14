@@ -13,7 +13,7 @@ import ContentSection from "../../components/ContentSection.astro";
 import Faq from "../../components/Faq.astro";
 import { nellaiPage as page } from "../../data/pages.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../../lib/schema.js";
-import { site, ROUTES, href } from "../../data/site.js";
+import { ROUTES, href } from "../../data/site.js";
 import { openingTimes } from "../../data/entity-truth.ts";
 
 const { close } = openingTimes();
@@ -29,8 +29,14 @@ const schema = pageGraph({
 
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
-    <PageHeader eyebrow="Lunch · Tirunelveli and Karaikudi · Anna Nagar East" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+  <main id="main" tabindex="-1">
+    <PageHeader
+      eyebrow="Lunch · Anna Nagar East"
+      h1={page.h1}
+      intro={page.intro}
+      menuHref={href(ROUTES.menu)}
+      primaryAction={{ label: "Book a table for lunch", href: href(ROUTES.book) }}
+    />
     <AtAGlance title="Lunch at Brihadhee: summary" rows={page.glance} />
 
     <ContentSection {...page.sodhiSection} />
@@ -48,7 +54,7 @@ const schema = pageGraph({
           <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
           <li><a href={href(ROUTES.dosa)}>Build your own dosa</a></li>
           <li><a href={href(ROUTES.dinner)}>Dinner until {close}</a></li>
-          <li><a href={`${href("/")}#visit`}>Find us on {site.address.line1}</a></li>
+          <li><a href={`${href(ROUTES.about)}#find-us`}>Directions to Brihadhee</a></li>
         </ul>
       </div>
     </section>

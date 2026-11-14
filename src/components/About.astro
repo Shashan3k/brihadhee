@@ -26,8 +26,8 @@ const reasons = [
   ...(cateringEnabled && corporate && guests
     ? [
         {
-          title: "Catering from the same kitchen",
-          text: `Offices (more than ${num(corporate.dailyCovers)} meals a day) and events for ${num(guests.min)} to ${num(guests.max)} guests.`,
+          title: "Vegetarian office and event catering",
+          text: `Brihadhee serves ${num(corporate.dailyCovers)}+ corporate meals a day and caters individual events for ${num(guests.min)} to ${num(guests.max)} guests.`,
         },
       ]
     : []),
@@ -40,8 +40,8 @@ const reasons = [
       <p class="eyebrow">Why Brihadhee</p>
       <h2 class="section__title" id="about-title">Why Guests Choose {site.name}</h2>
       <p class="section__lead">
-        Guests choose {site.name} for 100% pure vegetarian South Indian food, a customized dosa made their way, Nellai dishes
-        from grandma's recipes and a kitchen open every day from {range}.
+        At {site.name} in Anna Nagar East, you choose the ingredients for your dosa and the kitchen cooks it to order.
+        The lunch menu features Nellai Special Sodhi Meals with coconut milk stew and Karuppatti Ulundhu Kali, a palm jaggery sweet.
       </p>
 
       <ul class="feature-list" role="list">

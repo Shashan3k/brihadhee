@@ -4,7 +4,7 @@ import { site, pageContact } from "../data/site.js";
 
 // Top of every inner page: eyebrow, the single H1, an answer-first intro and
 // the call / directions / menu actions.
-const { eyebrow, h1, intro, menuHref } = Astro.props;
+const { eyebrow, h1, intro, menuHref, primaryAction, showDirections = true } = Astro.props;
 const { phone, telHref, hasPhone } = pageContact(Astro);
 ---
 
@@ -14,14 +14,17 @@ const { phone, telHref, hasPhone } = pageContact(Astro);
     <h1 class="section__title page-head__title">{h1}</h1>
     {intro && <p class="section__lead page-head__intro">{intro}</p>}
     <div class="page-head__actions">
+      {primaryAction && <a class="btn btn--primary" href={primaryAction.href} data-event={primaryAction.event}>{primaryAction.label}</a>}
       {hasPhone && (
-        <a class="btn btn--primary" href={telHref}>
+        <a class:list={["btn", primaryAction ? "btn--ghost" : "btn--primary"]} href={telHref}>
           <Icon name="phone" size={17} /> Call {phone}
         </a>
       )}
-      <a class="btn btn--ghost" href={site.maps.directions} target="_blank" rel="noopener">
-        <Icon name="navigation" size={17} /> Get directions
-      </a>
+      {showDirections && (
+        <a class="btn btn--ghost" href={site.maps.directions} target="_blank" rel="noopener">
+          <Icon name="navigation" size={17} /> Get directions
+        </a>
+      )}
       {menuHref && (
         <a class="btn btn--ghost" href={menuHref}>
           <Icon name="utensils" size={17} /> Full menu and prices

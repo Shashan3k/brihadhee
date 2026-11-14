@@ -11,10 +11,12 @@ import BuildYourOwnDosa from "../components/BuildYourOwnDosa.astro";
 import Faq from "../components/Faq.astro";
 import { menuFaq } from "../data/faq.js";
 import { getFact, openingTimes } from "../data/entity-truth.ts";
-import { UNPRICED_SIGNATURES, BUILD_YOUR_OWN_DOSA } from "../data/menu-canonical.ts";
+import { ROUTES, href } from "../data/site.js";
+import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import { pageGraph, menuSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import {
   categories,
+  byo,
   category,
   itemCount,
   allVegetarian,
@@ -33,32 +35,34 @@ const extras = UNPRICED_SIGNATURES;
 const dosa = category("dosa");
 
 const { range } = openingTimes();
-const title = `${name} Menu | Dosa, Nellai Meals & Parotta, Anna Nagar`;
+const title = `${name} Menu and Prices | Anna Nagar East`;
 const description = `${name} menu with prices: build your own dosa, ${dosa.count} classic dosas, Nellai meals, parotta and filter coffee. Lunch and dinner, ${range} daily.`;
 const schema = pageGraph({
   path: "/menu/",
   title,
   description,
   crumbs: [...HOME_CRUMBS, { name: "Menu", path: "/menu/" }],
-  extras: [menuSchema({ categories, extras, byo: BUILD_YOUR_OWN_DOSA }), faqPageSchema("/menu/", menuFaq)],
+  extras: [menuSchema({ categories, extras, byo }), faqPageSchema("/menu/", menuFaq)],
 });
 ---
 
 <Base title={title} description={description} path="/menu/" schema={schema}>
   <Nav homeBase={base} />
-  <main id="main" class="menu-page">
+  <main id="main" tabindex="-1" class="menu-page">
     <section class="section menu-page__head">
       <div class="container">
         <p class="eyebrow">Menu</p>
-        <h1 class="section__title">{name} Menu</h1>
+        <h1 class="section__title">{name} Menu and Prices</h1>
         <p class="section__lead">
           {name} is a {getFact("type")} in Anna Nagar East, Chennai, serving {getFact("mealTimes")} every day from {range}.
           This page lists all {itemCount} dishes on the current menu{allVegetarian ? ", every one of them vegetarian" : ""}.
         </p>
         <p class="menu-page__note">Prices in {currencySymbol === "₹" ? "Indian rupees (₹)" : currencySymbol}, as on the current menu. {menuNotes.gst} {menuNotes.parcel} {menuNotes.prep}</p>
-        <p>
-          <a href={`${base}#visit`}>Visit us</a> ·
-          <a href={`${base}#contact`}>Contact</a>
+        <p class="section__lead">
+          Start with <a href={href(ROUTES.dosa)}>how to order a customized dosa</a> or explore
+          <a href={href(ROUTES.lunch)}>Nellai meals and lunch combos</a>.
+          Planning a visit? <a href={href(ROUTES.book)}>Book a table</a> or
+          <a href={`${href(ROUTES.about)}#find-us`}>get directions to Brihadhee</a>.
         </p>
       </div>
     </section>

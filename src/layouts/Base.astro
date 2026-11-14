@@ -14,7 +14,7 @@ const {
   schema = null, // optional: replaces the default Restaurant + FAQ JSON-LD
   noindex = false, // true for utility pages (privacy, 404); they are also kept out of the sitemap
   cta = "book", // mobile CTA bar: "book" (Book a table) or "quote" (Get a quote, catering pages)
-  quoteHref = "#enquiry", // where "Get a quote" goes: the page's own form, or the quote page
+  quoteAction, // optional intent-specific action in the mobile catering bar
 } = Astro.props;
 
 // GA4 loads only when PUBLIC_GA4_ID is set (Vercel env var). Unset = no tracking at all.
@@ -135,7 +135,7 @@ const base = import.meta.env.BASE_URL.endsWith("/")
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <slot />
-    <CallBar mode={cta} quoteHref={quoteHref} />
+    <CallBar mode={cta} quoteAction={quoteAction} />
     <script>
       import "../scripts/main.js";
     </script>

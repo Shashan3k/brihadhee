@@ -51,7 +51,7 @@ const EVENTS = {
   engagement: { label: "Betrothals and engagements", inline: "betrothals", text: "Betrothal and engagement functions, with live counters if you want them." },
   wedding: { label: "Boutique weddings", inline: "boutique weddings", text: "Boutique and mid-size weddings, with regional menus and live counters." },
   small_wedding: { label: "Small weddings", inline: "small weddings", text: "Small weddings with a regional vegetarian menu." },
-  birthday: { label: "Birthday parties", inline: "birthday parties", text: "Birthday parties at home or at a hall, including live dosa counters." },
+  birthday: { label: "Birthday parties", inline: "birthday parties", text: "Birthday meals for gatherings at home or in a hall, with a live dosa counter available to discuss." },
   get_together: { label: "Get-togethers", inline: "get-togethers", text: "Family get-togethers and private parties, at home or at a venue." },
   small_events: { label: "Small events", inline: "small events", text: "Small functions and get-togethers." },
 };
@@ -60,12 +60,12 @@ const FORMATS = {
   live_counters: {
     label: "Live food counters",
     text: `Live counters for ${liveCounters.join(", ")}, run by the Brihadhee kitchen team at your venue.`,
-    photo: { file: "dosa.jpg", alt: "Dosa from the Brihadhee kitchen, the kind served at a live dosa counter" },
+    photo: { file: "dosa.jpg", alt: "Folded golden dosa with filling and three small bowls of sides" },
   },
   regional_menus: {
     label: "Regional vegetarian menus",
     text: "Menus built around Tirunelveli (Nellai) and Karaikudi dishes, from sodhi meals to karupatti ulundhu kali, customised for your event.",
-    photo: { file: "meals.jpg", alt: "Regional South Indian vegetarian meal from the Brihadhee kitchen, served on a banana leaf" },
+    photo: { file: "meals.jpg", alt: "Rice, papad and bowls of sides arranged on a banana-leaf plate" },
   },
   south_indian_meals: {
     label: "South Indian meals",
@@ -76,7 +76,6 @@ const FORMATS = {
     label: "Snack boxes",
     text: "Snack boxes for small gatherings.",
     photo: null,
-    placeholderAlt: "Photo of a Brihadhee snack box to be added",
   },
   banana_leaf_service: {
     label: "Full banana-leaf service",
@@ -122,9 +121,7 @@ export const contact = {
 /* ---- Section data (null/empty = section hidden) ----------------------- */
 
 export const opening = eventIds.length
-  ? `Brihadhee provides ${CD} catering for ${joinNatural(
-      eventIds.map((id) => EVENTS[id].inline)
-    )} across ${joinNatural(areas.length ? areas : ["Chennai"])}, from its kitchen in Anna Nagar East.`
+  ? `Brihadhee provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and family functions" : "family functions"} across ${joinNatural(areas.length ? areas : ["Chennai"])}. The Anna Nagar East team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
   : null;
 
 export const entityLine = cateringEnabled
@@ -150,14 +147,14 @@ const serviceTail =
       ? " Serving and clean-up are arranged by you."
       : "";
 
-/* How it works needs a way to enquire and a known preparation mode. */
+/* The enquiry steps are useful even while the preparation mode is pending. */
 export const steps =
-  contact.any && prepText
+  contact.any
     ? [
-        { title: "Enquiry", text: "Call us with your event, date and number of guests." },
-        { title: "Menu selection", text: "Choose your regional menu and live counters." },
-        { title: "Confirmation", text: "We confirm the menu, per-plate price and date with you." },
-        { title: "Service", text: `${prepText}${serviceTail}` },
+        { title: "Send your event details", text: "Share the occasion, date, venue and estimated guest count. Say whether it is lunch or dinner and which live counters or dishes you are considering." },
+        { title: "Discuss the menu and service", text: "Tell the team what you need at the venue. Ask how the food will be prepared and what the quote covers for serving, transport, vessels and clean-up." },
+        { title: "Review the quote", text: "Confirm the menu, service scope, date and per-plate price with the team before booking." },
+        ...(prepText ? [{ title: "Preparation and service", text: `${prepText}${serviceTail}` }] : []),
       ]
     : [];
 export const advanceNotice =
@@ -168,14 +165,9 @@ export const freshlyPrepared = cateringEnabled && prepText !== null;
 
 export const guests = guestRange
   ? {
-      range: `Brihadhee caters for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests.`,
+      range: `Brihadhee caters for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests at a single event.`,
       min: guestRange.min,
       max: guestRange.max,
-      examples: [
-        guestRange.min <= 50 && "Catering for 50 guests in Chennai",
-        guestRange.min <= 100 && guestRange.max >= 100 && "Catering for 100 guests in Anna Nagar",
-        guestRange.max >= 500 && "Catering for 500 guests in Chennai",
-      ].filter(Boolean),
     }
   : null;
 export const serviceAreas = areas;
@@ -190,7 +182,7 @@ export const eventService = cateringEnabled ? factOr("eventService", null) : nul
  * One Q&A per route: corporate questions live on /corporate-catering-chennai/,
  * the location question on /about/. */
 const faq = [];
-const add = (question, answer) => faq.push(qa(question, answer));
+const add = (question, answer, options) => faq.push(qa(question, answer, options));
 const addr = () =>
   `${site.address.line1}, ${site.address.line2}, ${site.address.city}, ${site.address.state} ${site.address.postalCode}`;
 const NEAR = "Anna Nagar East";
@@ -218,19 +210,19 @@ if (cateringEnabled) {
   }
   add(
     "Does Brihadhee provide end-to-end event catering?",
-    `Yes. Brihadhee's end-to-end event catering covers ${SVC} by one team, for ${G} across ${AREA}. ` +
+      `Yes. Brihadhee can handle ${SVC} for events of ${G} across ${AREA}. ` +
       (liveCounters.length ? `Live counters can be added. ` : "") +
       cleanupLine
   );
   if (formatIds.length) {
     add(
       "What kind of catering does Brihadhee provide?",
-      `Brihadhee provides ${CD} catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, cooked in its restaurant kitchen in ${NEAR}. ` +
+      `Brihadhee provides ${CD} catering with ${joinNatural(formatIds.map((id) => FORMATS[id].label.toLowerCase()))}, planned by its Anna Nagar East restaurant team. ` +
         (liveCounters.length ? `The ${liveCounters.length} live counters are ${joinNatural(liveCounters)}.` : "")
     );
     add(
       `Is Brihadhee catering ${CD}?`,
-      `Yes. Brihadhee catering is ${CD}, cooked by the restaurant team in its ${PV} kitchen, where no meat, egg or fish is cooked. ` +
+      `Yes. Brihadhee offers ${CD} event menus through its restaurant team. ` +
         "Menus can mix Tirunelveli and Karaikudi specialties with North Indian and Indo-Chinese dishes, agreed with you for each function."
     );
   }
@@ -240,17 +232,19 @@ if (cateringEnabled) {
       `Brihadhee caters ${joinNatural(eventIds.map((id) => EVENTS[id].inline))} across ${AREA}, for ${G}.`
     );
   }
-  if (areas.length) {
+  if (areas.length && PHONE) {
     add(
-      "Does Brihadhee cater outside Anna Nagar?",
-      `Yes. Brihadhee caters events across ${AREA}, not only in Anna Nagar. ` + "Tell the team your venue and date, and they will confirm the menu and per-plate price."
+      `Where can I find ${CD} catering in Anna Nagar?`,
+      `Brihadhee's Anna Nagar East team provides ${CD} event catering across ${AREA}, including Anna Nagar. ` +
+        `Call the catering team on ${PHONE} with your venue area, date and headcount to discuss a menu and check availability.`,
+      { id: "does-brihadhee-cater-outside-anna-nagar" }
     );
   }
   if (contact.any) {
     add(
       "How do I book catering with Brihadhee?",
       `To book catering with Brihadhee, send the quote form on this page, or call or WhatsApp ${PHONE} with your event, date, venue and guest count (from ${fmt(guestRange?.min ?? 50)}). ` +
-        `The team calls you back with a suggested menu and a per-plate price; nothing is booked until you confirm.`
+        "The team follows up to discuss the menu and per-plate quote before booking."
     );
     add(
       "How far ahead should I book catering with Brihadhee?",
@@ -263,8 +257,8 @@ if (cateringEnabled) {
   if (v.pricing_model === "per_plate") {
     add(
       "How is Brihadhee catering priced?",
-      `Brihadhee prices its catering per plate, quoted for the menu, live counters and service you choose, so you know the full cost before you confirm. ` +
-        `No fixed rates are published; call ${PHONE} for a quote.`
+      "Brihadhee quotes catering per plate based on the menu, guest count, live counters and service you request. " +
+        "Ask the team to confirm what the quote includes before you book."
     );
   }
 }
@@ -287,14 +281,14 @@ if (cateringEnabled) {
         `The ${liveCounters.length} counters are ${joinNatural(liveCounters)}.`
     ),
     qa(
-      "Why do event planners choose a boutique caterer like Brihadhee?",
-      `Event planners work with Brihadhee for ${CD} menus customised for each client, live counters for dosa, parotta and Nellai sodhi, and per-plate pricing for ${G}. ` +
-        `Planners deal directly with the restaurant's own team.`
+      "What can event planners specify in a catering brief?",
+      `Event planners can give Brihadhee their client's menu preferences, branding model and live counter requirements. ` +
+        "Include the event schedule, venue, guest estimate and who will coordinate access and setup."
     ),
     qa(
       "How do event managers start a catering partnership with Brihadhee?",
-      `Event managers can start a partnership with Brihadhee by calling ${contact.phone ?? "the restaurant"} with an upcoming event, guest count and venue. ` +
-        `The team proposes a menu, live counters and per-plate pricing.`
+      `Event managers can send Brihadhee a partnership enquiry or call ${contact.phone ?? "the restaurant"} with their event date, guest count and venue. ` +
+        "Share the company name, counter or menu preferences and how the event is branded."
     )
   );
 }
@@ -302,15 +296,15 @@ export const plannerFaqs = qaRoute(PLANNER_PATH, plannerFaq);
 
 /* ---- Page metadata ----------------------------------------------------- */
 export const meta = {
-  title: "Event & Wedding Catering in Chennai | Brihadhee",
-  description: "End-to-end veg catering for weddings, birthdays and get-togethers in Chennai. Menu planning, cooking, serving and setup by one team. Get a quote.",
-  h1: "End-to-End Event Catering in Chennai",
+  title: `${CDcap} Event & Wedding Catering in Chennai | Brihadhee`,
+  description: `${CDcap} event and wedding catering in Chennai with regional South Indian menus, live counters and per-plate quotes from Brihadhee.`,
+  h1: `${CDcap} Event and Wedding Catering in Chennai`,
 };
 
 export const plannerMeta = {
   title: "Catering Partner for Event Planners in Chennai | Brihadhee",
-  description: `Brihadhee partners with Chennai event planners: white-label or co-branded live counters and ${CD} menus${guestRange ? ` for ${fmt(guestRange.min)} to ${fmt(guestRange.max)} guests` : ""}.`,
-  h1: `${CDcap} Catering Partner for Event Management Companies in Chennai`,
+  description: `Plan ${CD} menus and white-label or co-branded live counters for Chennai events with Brihadhee. Send your agency's event brief.`,
+  h1: "Catering Partner for Event Planners in Chennai",
 };
 
 /** Structured data for the catering pages: confirmed facts only. */
@@ -333,7 +327,17 @@ export function cateringSchema() {
     title: meta.title,
     description: meta.description,
     crumbs: [...HOME_CRUMBS, { name: "Catering", path: CATERING_PATH }],
-    extras: [cateringServiceSchema({ areas, phone: contact.phone, serviceType: "Event catering", offerCatalog: eventCatalog, guests: guestRange }), faqPageSchema(CATERING_PATH, faqs)],
+    extras: [
+      cateringServiceSchema({
+        areas,
+        phone: contact.phone,
+        serviceType: "Event catering",
+        description: `${CDcap} event and wedding catering in Chennai with regional menus and live counters. Agree the event service and per-plate price in the quote.`,
+        offerCatalog: eventCatalog,
+        guests: guestRange,
+      }),
+      faqPageSchema(CATERING_PATH, faqs),
+    ],
   });
 }
 
@@ -386,17 +390,17 @@ export const corporateEnabled = Boolean(cateringEnabled && corporate);
 
 export const corporateMeta = {
   title: `${CDcap} Corporate Catering in Chennai | Brihadhee`,
-  description: `${CDcap} corporate catering in Chennai from Brihadhee, serving ${DAILY ?? "1,000+"} people every day: daily office lunches, bulk meals and corporate events.`,
-  h1: `${CDcap} Corporate Catering in Chennai`,
+  description: `${CDcap} office lunch catering, bulk meals and recurring employee meal programmes in Chennai. Share your office location and headcount for a quote.`,
+  h1: `${CDcap} Corporate Catering and Office Lunches in Chennai`,
 };
 
 export const corporatePage = corporateEnabled
   ? {
       path: CORPORATE_PATH,
-      intro: `Brihadhee runs ${CD} corporate catering across Chennai, serving more than ${fmt(corporate.dailyCovers)} people every day from the ${PV} kitchen of its restaurant on ${STREET}: daily office lunches, bulk lunch orders, employee meal programmes and office events.`,
+      intro: `Brihadhee supplies ${CD} office lunches and recurring employee meals across Chennai. For a one-off packed bulk lunch or a staffed office event, share the date and headcount so the team can discuss what you need.`,
       glance: [
         ["Who", `Brihadhee, a ${PV} restaurant on ${STREET} with a ${CD} catering service`],
-        ["Scale", `more than ${fmt(corporate.dailyCovers)} people served every day`],
+        ["Daily corporate volume", `${DAILY} people served per day across the corporate catering operation`],
         ["Services", corpServices.join(", ")],
         ["Areas", joinNatural(corpAreas)],
         ["Start", corpProcess.map((p, i) => `${i + 1}. ${p.title}`).join(", ")],
@@ -404,40 +408,42 @@ export const corporatePage = corporateEnabled
       ],
       scale: {
         id: "scale",
-        title: `Serving ${DAILY} People Every Day Across Chennai`,
-        lead: `Brihadhee cooks for more than ${fmt(corporate.dailyCovers)} people every day, so its kitchen is built for daily office volume. Every meal is ${CD}, cooked in the same ${PV} kitchen and by the same team that runs the restaurant on ${STREET}.`,
+        title: "Daily Office Meal Volume",
+        lead: `Brihadhee serves ${DAILY} people per day across its corporate catering operation. Share your headcount and delivery schedule so the team can confirm capacity for your office.`,
         items: [
           {
-            title: "Daily Capacity and Scale",
-            text: `The kitchen already serves more than ${fmt(corporate.dailyCovers)} people a day across Chennai, so adding your team does not change how the food is cooked. For one-off bulk orders and events, Brihadhee also caters ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "large"} guests.`,
+            title: "One-off events",
+            text: guests
+              ? `A single catered event has its own guest range of ${fmt(guests.min)} to ${fmt(guests.max)}. For a staffed office celebration, see [event catering](/catering-services-chennai/) or discuss it with the corporate team.`
+              : "For a staffed office celebration, share your guest count, date and venue with the corporate team.",
           },
           {
-            title: "Restaurant-Kitchen Quality for Offices",
-            text: `Office meals come from a working restaurant, not a contract canteen: the sambar, kootu, poriyal and Nellai sodhi your team eats are the same recipes served to diners in Anna Nagar East, ${lc1(getFact("recipeStory"))}. Your admin team can taste them at the restaurant before the first order.`,
+            title: "The restaurant kitchen",
+            text: `The team cooks office meals at Brihadhee's restaurant kitchen on ${STREET}. Your admin or HR team can discuss a tasting when planning a recurring service.`,
           },
         ],
       },
       services: {
         id: "services",
         title: "Corporate Catering Services",
-        lead: `Brihadhee offers four corporate catering services, all ${CD}: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
+        lead: `Choose recurring office lunches, a packed bulk meal order or a staffed office event. Brihadhee offers ${CD} menus for each service.`,
         tint: true,
         items: [
           hasService(/daily office lunch/) && {
             title: "Daily Office Lunch Supply",
-            text: "A fixed daily lunch for your office, packed in the Brihadhee kitchen and delivered to an agreed time slot. Your team gets a South Indian meal on a rotating menu, on the days your office works.",
+            text: "For regular workdays, share the number of meals, office address, delivery days and preferred lunch window. Agree the menu rotation and delivery slot with the team.",
           },
           hasService(/bulk lunch/) && {
             title: "Bulk Lunch Catering",
-            text: "One-off or occasional bulk lunches for training days, audits, offsites, all-hands meetings and client visits. Send the headcount, the address and the time, and the order arrives packed and ready to serve.",
+            text: "For a packed lunch order for a training day, meeting or client visit, share the date, venue, meal count and delivery window.",
           },
           hasService(/employee meal/) && {
             title: "Employee Meal Programmes",
-            text: "A recurring meal programme for your employees, planned with HR or admin: the menu cycle, portions and delivery times are agreed up front, and the headcount can change as your team grows.",
+            text: "HR and admin teams can discuss menu rotation, portions, dietary requirements and how headcount will vary during the week.",
           },
           hasService(/office parties|corporate events/) && {
             title: "Office Parties and Corporate Events",
-            text: `Festival lunches, team celebrations and product launches, with live counters for ${joinNatural(liveCounters)}. Events can run from ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "a few dozen to several hundred"} guests.`,
+            text: `For a staffed festival lunch or team celebration, share the venue, guest count and meal time. Tell the team which live counters or serving setup you are considering.`,
           },
         ].filter(Boolean),
       },
@@ -448,11 +454,11 @@ export const corporatePage = corporateEnabled
         items: [
           {
             title: "Standard South Indian Office Lunch",
-            text: `A balanced weekday lunch based on the restaurant's Tamil Nadu meals: ${lc1(mealDesc("Limited TN Meals"))}. It is the default for daily office lunch supply.`,
+            text: `A weekday lunch example based on the restaurant's Tamil Nadu meals: ${lc1(mealDesc("Limited TN Meals"))}.`,
           },
           {
             title: "Nellai Special Sodhi Meals Day",
-            text: `A weekly special based on the Nellai Special Sodhi Meals: ${lc1(mealDesc("Nellai Special Sodhi Meals"))}. It gives a rotating menu one day your team looks forward to.`,
+            text: `A menu rotation example based on the Nellai Special Sodhi Meals: ${lc1(mealDesc("Nellai Special Sodhi Meals"))}.`,
           },
           {
             title: "Executive & Celebration Menu",
@@ -471,7 +477,7 @@ export const corporatePage = corporateEnabled
         ? {
             id: "food-safety",
             title: "Food Safety, Hygiene and Punctuality",
-            lead: `Brihadhee cooks every corporate meal in its FSSAI-licensed restaurant kitchen on ${STREET}, packs it in the kitchen and delivers it to the time slot agreed with your office. Because it is a working restaurant as well as a caterer, the same kitchen standards apply to an office lunch as to a plate served to a diner, and because the kitchen is ${PV}, there is no risk of meat, egg or fish reaching a vegetarian employee's plate.`,
+            lead: `Brihadhee prepares and packs corporate meals in its FSSAI-licensed restaurant kitchen on ${STREET}. For recurring office meals, agree the delivery time slot and discuss any dietary requirements with the team.`,
             dishes: safety.points.map((x) => ({ name: x })),
             note: fssai
               ? `FSSAI licence number: ${fssai}.`
@@ -490,14 +496,14 @@ export const corporatePage = corporateEnabled
       checklist: {
         id: "choose-a-caterer",
         title: "Choosing a Corporate Caterer in Chennai: a 5-Point Checklist",
-        lead: `Brihadhee's checklist for choosing an office caterer comes from cooking more than ${fmt(corporate.dailyCovers)} meals a day: check volume, hygiene, menu rotation, punctuality, and a trial before you sign. Ask any caterer the same five questions.`,
+        lead: "Before arranging recurring office lunches, discuss daily volume, kitchen practices, menu rotation, delivery timing and the trial.",
         tint: true,
         items: [
-          { title: "1. Daily volume it already handles", text: `A caterer already cooking at your scale will not change its kitchen to add your team. Brihadhee serves more than ${fmt(corporate.dailyCovers)} people a day.` },
+          { title: "1. Daily volume for your site", text: "Share your usual and peak meal counts. For more than one office, provide the headcount and delivery window at each site." },
           { title: "2. Kitchen hygiene and licence", text: `Ask where the food is cooked and see the kitchen. Brihadhee cooks in its FSSAI-licensed restaurant kitchen on ${STREET}, and shares the licence number with your admin team on request.` },
           { title: "3. Menu rotation", text: "Ask how often the menu changes. Brihadhee runs a rotating menu, with special days such as Nellai Special Sodhi Meals built into the cycle." },
           { title: "4. Delivery punctuality", text: "Ask for an agreed delivery slot for each office. Brihadhee packs meals in its kitchen and delivers them to the time slot agreed with you." },
-          { title: "5. A tasting and a trial", text: "Ask to taste the menu and run a trial before committing. Brihadhee starts every office with a kitchen tasting and a one-week trial." },
+          { title: "5. A tasting and a trial", text: "Discuss a kitchen tasting and one-week trial so your office can assess the proposed menu, portions and delivery timing." },
         ],
       },
       faq: qaRoute(CORPORATE_PATH, [
@@ -509,8 +515,9 @@ export const corporatePage = corporateEnabled
         /* Scale distinction (AEO audit 2026-11-12, 4.2 and 4.4): daily corporate volume is not single-event capacity. */
         qa(
           "How many people can Brihadhee cater for?",
-          `Brihadhee serves more than ${fmt(corporate.dailyCovers)} corporate meals every day, and caters a single event from a minimum of ${guests ? `${fmt(guests.min)} guests up to ${fmt(guests.max)}` : "50 guests"}. ` +
-            `The daily figure is ongoing office catering; the event figure is one function.`
+          `Brihadhee serves ${DAILY} people per day across its corporate catering operation. ` +
+            (guests ? `A single event has a separate guest range of ${fmt(guests.min)} to ${fmt(guests.max)}. ` : "") +
+            "Share your office headcount to check capacity for your site."
         ),
         qa(
           `How do I choose a corporate caterer in Chennai?`,
@@ -524,8 +531,10 @@ export const corporatePage = corporateEnabled
             `Lunches rotate through a menu cycle agreed with each office.`
         ),
         qa(
-          "How does Brihadhee start a corporate catering account?",
-          `Brihadhee starts a corporate catering account in ${corpProcess.length} steps: an enquiry about your office location and daily headcount, a tasting at its kitchen, a trial week, then daily service on a rotating menu.`
+          "How does Brihadhee's corporate catering work?",
+          `For regular office lunches, give Brihadhee your Chennai office location, daily meal count and delivery schedule. ` +
+            `Discuss a tasting at its Anna Nagar East kitchen and a one-week trial before agreeing a rotating menu and delivery slot. You can also enquire about a packed bulk lunch or a staffed office event.`,
+          { id: "how-does-brihadhee-start-a-corporate-catering-account" }
         ),
         qa(
           "Is Brihadhee's corporate catering kitchen FSSAI licensed?",
@@ -535,7 +544,7 @@ export const corporatePage = corporateEnabled
         qa(
           "How much does corporate catering from Brihadhee cost?",
           `Brihadhee prices corporate catering per plate, quoted for your menu, headcount and delivery location. ` +
-            `Send your daily headcount through the quote form or call ${contact.phone}, and the team replies with a per-plate price.`
+            "Share your meal schedule and whether the order is recurring or one-off so the team can discuss the quote."
         ),
         qa(
           "Does Brihadhee deliver corporate lunches to OMR and Tidel Park?",
@@ -544,13 +553,13 @@ export const corporatePage = corporateEnabled
         ),
         qa(
           "Can my office try Brihadhee before signing up for daily catering?",
-          `Yes. Every new office starts with a kitchen tasting at Brihadhee in ${NEAR}, then a trial week at your office. ` +
-            `Your team rates the food, portions and delivery timing before daily service begins.`
+          `Yes. Brihadhee offers a kitchen tasting in ${NEAR} and a one-week trial for office meal programmes. ` +
+            "Discuss timing and arrangements with the team before daily service begins."
         ),
         qa(
           "Can Brihadhee cater office parties and corporate events in Chennai?",
-          `Yes. Brihadhee caters office parties and corporate events across Chennai with ${CD} menus and live counters for ${joinNatural(liveCounters)}. ` +
-            `Events run ${guests ? `from ${fmt(guests.min)} to ${fmt(guests.max)}` : "from 50"} guests.`
+          `Yes. Brihadhee caters office parties and corporate events across Chennai with ${CD} menus and live counters available to discuss. ` +
+            `Staffed events have a guest range of ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "50 guests and up"}.`
         ),
         ...taCorporate,
       ]),
@@ -570,7 +579,7 @@ export function corporateSchema() {
         path: CORPORATE_PATH,
         serviceType: "Corporate catering",
         name: `Brihadhee ${CDcap} Corporate Catering`,
-        description: `${CDcap} corporate catering in Chennai for more than ${fmt(corporate.dailyCovers)} people a day: daily office lunch supply, bulk lunch catering, employee meal programmes, and office parties and corporate events.`,
+        description: `${CDcap} corporate catering in Chennai: daily office lunches, bulk lunch catering, employee meal programmes and corporate events. Brihadhee serves ${DAILY} people per day across its corporate catering operation.`,
         audience: [{ "@type": "BusinessAudience", audienceType: "Companies, HR and office administration teams" }],
       }),
       faqPageSchema(CORPORATE_PATH, corporatePage.faq),
@@ -583,14 +592,15 @@ const steps4 = eventService ? eventService.replace(/^end-to-end service: /, "").
 export const endToEnd = cateringEnabled && eventService
   ? {
       id: "end-to-end",
-      title: "What End-to-End Catering Includes",
-      lead: `End-to-end catering from Brihadhee means one team handles ${eventService.replace(/^end-to-end service: /, "")} for your function, for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests across Chennai.`,
+      title: "Event Catering Services to Discuss",
+      lead: `Brihadhee can handle ${eventService.replace(/^end-to-end service: /, "")} for events across Chennai. Tell the team what you need and agree which services the quote will cover.`,
       items: [
         steps4.includes("menu planning") && { title: "Menu planning", text: `Choose a regional menu with the team: Tirunelveli and Karaikudi dishes, South Indian meals, North Indian and Indo-Chinese options, and the live counters you want, all ${CD}.` },
         steps4.includes("cooking") && { title: "Cooking", text: `The food is cooked by the team that runs the restaurant on ${STREET}, from the same recipes guests eat there.` },
-        steps4.includes("serving") && { title: "Serving", text: "Brihadhee's team serves your guests at the function and runs the live counters." },
-        steps4.includes("setup") && { title: "Setup", text: "The team sets up the serving area and counters at your venue before guests arrive." },
+        steps4.includes("serving") && { title: "Serving", text: "Discuss how food should be served at the function, and whether your event needs serving staff or live counter service." },
+        steps4.includes("setup") && { title: "Setup", text: "Tell the team about your venue so you can agree the serving area, counter setup and access arrangements." },
       ].filter(Boolean),
+      note: "Confirm the preparation arrangements and what the quote covers for staffing, transport, vessels and clean-up with the catering team.",
     }
   : null;
 

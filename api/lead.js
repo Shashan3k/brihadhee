@@ -13,10 +13,11 @@
  *                    account owner's own address.
  *
  * Responses: JSON for fetch() callers ({ ok, errors? }); for a plain HTML form
- * post (no JavaScript) a 303 back to the page with ?lead=sent|invalid|error#enquiry.
- * Spam (honeypot or too-fast submit) gets a quiet success so bots learn nothing.
+ * post, an accessible result page with a link back to the enquiry.
  */
-import { validateLead, leadSummary, leadSubject } from "../src/lib/lead.js";
+import verification from "../config/client-verification.json" with { type: "json" };
+import { getFact } from "../src/data/entity-truth.ts";
+import { validateLead, leadPage, leadSummary, leadSubject } from "../src/lib/lead.js";
 
 const MAX_BODY = 16 * 1024;
 
@@ -26,12 +27,43 @@ const json = (status, body) =>
 const escapeHtml = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+function htmlResult(status, page, formType, errors = {}) {
+  const sent = status === 200;
+  const invalid = status === 400 || status === 422;
+  const title = sent ? "Enquiry submitted" : invalid ? "Check your enquiry details" : "Enquiry could not be submitted";
+  const details = sent ? "The Brihadhee team will review your request and contact you about the details you provided."
+    : invalid ? "Return to the form to update your details and try again."
+    : "Try again, or call the Brihadhee team to share your enquiry.";
+  const number = formType === "general" ? getFact("phone") : verification.enquiry_channels.phone;
+  const call = !sent && !invalid && number
+    ? `<p><a href="tel:${number.replace(/[^+\d]/g, "")}">Call ${escapeHtml(number)}</a></p>` : "";
+  const errorList = Object.values(errors).map((message) => `<li>${escapeHtml(message)}</li>`).join("");
+  const anchor = page === "/" ? "" : "#enquiry";
+
+  return new Response(`<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow"><title>${title} | Brihadhee</title>
+<style>body { font-family: system-ui, sans-serif; line-height: 1.55; margin: 2rem auto; max-width: 40rem; padding: 0 1rem; } a { color: #235238; } a:focus-visible { outline: 2px solid; outline-offset: 3px; }</style>
+</head><body><main>
+<h1>${title}</h1><p>${details}</p>${errorList ? `<ul>${errorList}</ul>` : ""}
+${call}<p><a href="${escapeHtml(page)}${anchor}">${page === "/" ? "Return to Brihadhee" : "Return to the enquiry form"}</a></p>
+</main></body></html>`, {
+    status,
+    headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" },
+  });
+}
+
 async function readBody(request) {
+  if (Number(request.headers.get("content-length")) > MAX_BODY) throw new Error("too_large");
   const raw = await request.text();
-  if (raw.length > MAX_BODY) throw new Error("too_large");
-  const type = request.headers.get("content-type") || "";
-  if (type.includes("application/json")) return JSON.parse(raw || "{}");
-  return Object.fromEntries(new URLSearchParams(raw));
+  if (Buffer.byteLength(raw) > MAX_BODY) throw new Error("too_large");
+  const type = (request.headers.get("content-type") || "").split(";", 1)[0].trim().toLowerCase();
+  if (type === "application/x-www-form-urlencoded") return Object.fromEntries(new URLSearchParams(raw));
+  if (type !== "application/json") throw new Error("unsupported_body");
+  const input = JSON.parse(raw);
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("invalid_body");
+  return input;
 }
 
 async function sendEmail(lead, env) {
@@ -53,32 +85,30 @@ async function sendEmail(lead, env) {
 
 export async function handleLead(request, env = process.env, now = Date.now()) {
   const wantsJson = (request.headers.get("accept") || "").includes("application/json");
-  const back = (page, status) =>
-    new Response(null, { status: 303, headers: { Location: `${page}?lead=${status}#enquiry`, "Cache-Control": "no-store" } });
 
   let input;
   try {
     input = await readBody(request);
   } catch {
-    return wantsJson ? json(400, { ok: false, error: "bad_request" }) : back("/", "invalid");
+    return wantsJson ? json(400, { ok: false, error: "bad_request" }) : htmlResult(400, "/", "general");
   }
 
   const result = validateLead(input, { now });
-  const page = result.ok ? result.lead.page : /^\/[\w\-/]*$/.test(String(input.page || "")) ? input.page : "/";
-  if (!result.ok && result.spam) return wantsJson ? json(200, { ok: true }) : back(page, "sent");
-  if (!result.ok) return wantsJson ? json(422, { ok: false, errors: result.errors }) : back(page, "invalid");
+  const page = leadPage(input.page);
+  if (!result.ok && result.spam) return wantsJson ? json(200, { ok: false }) : htmlResult(422, page, input.formType);
+  if (!result.ok) return wantsJson ? json(422, { ok: false, errors: result.errors }) : htmlResult(422, page, input.formType, result.errors);
 
   if (!env.RESEND_API_KEY || !env.LEAD_TO_EMAIL) {
     console.error("[lead] RESEND_API_KEY or LEAD_TO_EMAIL is not set; lead not delivered");
-    return wantsJson ? json(503, { ok: false, error: "not_configured" }) : back(page, "error");
+    return wantsJson ? json(503, { ok: false, error: "not_configured" }) : htmlResult(503, page, result.lead.formType);
   }
   try {
     await sendEmail(result.lead, env);
   } catch (e) {
     console.error("[lead] email failed:", e.message);
-    return wantsJson ? json(502, { ok: false, error: "send_failed" }) : back(page, "error");
+    return wantsJson ? json(502, { ok: false, error: "send_failed" }) : htmlResult(502, page, result.lead.formType);
   }
-  return wantsJson ? json(200, { ok: true }) : back(page, "sent");
+  return wantsJson ? json(200, { ok: true }) : htmlResult(200, page, result.lead.formType);
 }
 
 export function POST(request) {

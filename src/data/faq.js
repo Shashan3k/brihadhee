@@ -130,7 +130,7 @@ export const faqItems = qaRoute("/", [
   qa(
     `Does ${name} do catering?`,
     `Yes. ${name} runs ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
-      `Both are cooked in the restaurant's kitchen in ${AREA}.`,
+      `The ${AREA} kitchen prepares corporate meals; confirm preparation and service arrangements for your event in the quote.`,
     { id: "catering" }
   ),
   ...taHome,
@@ -158,14 +158,14 @@ export const aboutFaq = qaRoute("/about/", [
   ),
   qa(
     `Which areas is ${name} close to?`,
-    `${name} is in ${AREA}, near Anna Nagar Tower Park, and draws diners from ${list(getFact("nearbyAreas").filter((a) => a !== AREA))}. ` +
-      `This page has Google Maps directions from ${getFact("directionLandmarks").length} nearby landmarks.`,
+    `${name} is in ${AREA}, near ${getFact("landmarks")[0]}. ` +
+      `Use the directions on this page if you are coming from Anna Nagar East Metro or other nearby landmarks.`,
     { id: "areas" }
   ),
   qa(
     `How do I contact ${name}?`,
-    `Call or WhatsApp ${name} on ${phone}, or email ${email}. ` +
-      `This is the restaurant's current number; a different number on an older post or listing is out of date.`,
+    `Call or WhatsApp the ${name} restaurant on ${phone}, or email ${email}. ` +
+      `Use this number for restaurant enquiries if an older dining listing shows a different one. Brihadhee has a separate contact for catering.`,
     { id: "contact" }
   ),
 ]);
@@ -201,9 +201,10 @@ const prebook = offer("pre-booking").description.replace(/ when you pre-book a t
 const walkIn = offer("walk-in").description.replace(/ for walk-in dine-in$/, ""); // "10% off"
 export const bookingFaq = qaRoute("/book-a-table/", [
   qa(
-    `Is a table booking at ${name} confirmed instantly?`,
-    `It depends on the app: ${name}'s website does not take bookings itself, so you pre-book on ${bookingOr}, and that app shows whether your booking is confirmed. ` +
-      `To confirm a table directly with the restaurant in ${AREA}, call ${phone}.`
+    `How can I book a table at ${name}?`,
+    `Book a table at ${name} in ${AREA} through ${bookingOr}. ` +
+      `Choose the date, time and party size, then check the partner's booking status before you travel. For group seating, call the restaurant on ${phone}.`,
+    { id: "is-a-table-booking-at-brihadhee-confirmed-instantly" }
   ),
   qa(
     `Can ${name} seat a large group?`,

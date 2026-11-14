@@ -13,7 +13,7 @@ import PageHeader from "../../components/PageHeader.astro";
 import { nellaiGuide as page } from "../../data/guides.js";
 import { longDate } from "../../data/entity-truth.ts";
 import { pageGraph, articleSchema, HOME_CRUMBS } from "../../lib/schema.js";
-import { ROUTES, href } from "../../data/site.js";
+import { ROUTES, href, responsive } from "../../data/site.js";
 import { linkify } from "../../lib/inline-links.js";
 
 const schema = pageGraph({
@@ -36,7 +36,7 @@ const schema = pageGraph({
 
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
+  <main id="main" tabindex="-1">
     <PageHeader eyebrow="Guide · Tirunelveli food" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
     <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
 
@@ -58,8 +58,8 @@ const schema = pageGraph({
             </div>
             {i === 0 && (
               <figure class="dish-page__photo">
-                <img src={href("images/meals.webp")} srcset={`${href("images/meals-480.webp")} 480w, ${href("images/meals-800.webp")} 800w, ${href("images/meals.webp")} 1200w`} sizes="(max-width: 900px) 92vw, 45vw" width="1200" height="900" loading="lazy" decoding="async"
-                  alt="A Nellai-style vegetarian meal on a banana leaf with rice, sodhi and sides at Brihadhee, Anna Nagar East" />
+                <img {...responsive("meals", 1200)} sizes="auto, (max-width: 662px) 92vw, (max-width: 1180px) 46vw, 34rem" width="1200" height="900" loading="lazy" decoding="async"
+                  alt="Rice, papad and bowls of South Indian accompaniments on a banana leaf" />
                 <figcaption>A Nellai-style banana-leaf meal</figcaption>
               </figure>
             )}

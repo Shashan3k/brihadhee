@@ -25,7 +25,7 @@ id,query,language,group,notes
 24,family restaurant Anna Nagar East vegetarian,en,local,
 25,what is Brihadhee,en,brand,
 26,is Brihadhee vegetarian,en,brand,Third-party listings may say veg and non-veg
-27,Brihadhee Anna Nagar opening hours,en,brand,Hours are pending; expect wrong or missing answers
+27,Brihadhee Anna Nagar opening hours,en,brand,Current hours are daily 11 AM to 11 PM for lunch and dinner. Record stale hours with their source.
 28,Brihadhee reviews,en,brand,
 29,Brihadhee menu,en,brand,
 30,Brihadhee address,en,brand,
@@ -58,12 +58,12 @@ id,query,language,group,notes
 57,Is Brihadhee pure veg?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 58,What are Brihadhee's timings?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 59,Does Brihadhee serve breakfast?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Correct answer: no; lunch and dinner only. Tracks whether old listings still drive a wrong 'yes'
-60,Is Brihadhee open on Sundays?,en,brand,"monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Answer depends on owner-todo P1; GBP says closed, the website says open every day"
+60,Is Brihadhee open on Sundays?,en,brand,Current website confirms Sunday opening from 11 AM to 11 PM. Check for any residual closed-on-Sunday answers.
 61,Can I build my own dosa at Brihadhee?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 62,Does Brihadhee do corporate catering?,en,brand,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 63,Tell me about Brihadhee in Anna Nagar. Is it worth visiting?,en,brand,"monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A1 (2026-11-09): mentioned, with budget framing and 'closed on Sundays'"
 64,What is the best pure veg restaurant in Anna Nagar?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A2 (2026-11-09): absent. Brihadhee must not claim 'best'
-65,Where can I build my own dosa in Chennai?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A3 (2026-11-09): absent
+65,Where can I build my own dosa in Chennai?,en,discovery,Phase 6 core prompt. Historical A3 (2026-11-09) remains in the visibility log.
 66,Which restaurant in Anna Nagar lets you customise your dosa?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 67,Where to eat authentic Tamil meals in Anna Nagar?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 68,Which is the best South Indian restaurant in Anna Nagar for lunch?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
@@ -72,7 +72,7 @@ id,query,language,group,notes
 71,Where can I eat paanai parotta in Chennai?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 72,Which pure veg restaurants in Anna Nagar are open for dinner till 11 pm?,en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 73,"Recommend a pure vegetarian South Indian restaurant in Anna Nagar, Chennai for a family lunch.",en,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
-74,"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month; Baseline A4 (2026-11-09): absent
+74,"Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,catering,Historical wording retained for repeatability. Vegetarian catering and pure vegetarian restaurant kitchen are distinct. Daily scale is existing corporate volume.
 75,Who provides daily office lunch catering for large companies in Chennai?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 76,Which Chennai caterers do end-to-end service for weddings and birthdays?,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 77,Suggest a South Indian vegetarian caterer for a family function in Chennai.,en,catering,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
@@ -84,3 +84,11 @@ id,query,language,group,notes
 83,Chennai la veg catering yaar nalla pannuvanga?,tanglish,discovery,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 84,Brihadhee vs Saravana Bhavan vs A2B in Anna Nagar,en,comparison,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
 85,alternatives to Saravana Bhavan in Anna Nagar,en,comparison,monthly panel (AEO_GEO_STRATEGY.md 13.1); run once per engine per month
+86,What makes Brihadhee different?,en,brand,Phase 6 core prompt. Check verified specialties and identity.
+87,What are Nellai meals?,en,informational,Phase 6 core prompt. A correct generic definition can omit Brihadhee.
+88,Where can I find vegetarian catering in Anna Nagar?,en,discovery,Phase 6 core prompt. Check event coverage and catering contact.
+89,Does Brihadhee cater for 50 guests?,en,brand,Phase 6 core prompt. Check the single-event minimum and enquiry path.
+90,How does corporate catering work?,en,informational,Phase 6 core prompt. Keep daily office volume separate from one-off events.
+91,How can I request a catering quote?,en,enquiry,Phase 6 core prompt. Use exact wording and record generic answers as returned.
+92,Where is Brihadhee located?,en,brand,Phase 6 core prompt. Check address and restaurant contact.
+93,How can I book a table?,en,enquiry,Phase 6 core prompt. Use exact wording and record generic answers as returned.

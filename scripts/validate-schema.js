@@ -9,10 +9,11 @@
  *  - every { "@id": ... } reference resolves to a node on the same page
  *  - Restaurant entity matches Key.md / site data and is identical on every page
  *  - the catering pages exist only when offer_catering is true
- *  - Service: serviceType Catering, provider -> Restaurant @id, areaServed and
- *    telephone only from confirmed config, and NO AggregateRating
- *  - FAQPage: only the 11 target questions, each backed by a confirmed config
- *    value, visible on the page, with the direct answer in sentence 1
+ *  - Service: provider -> Restaurant, confirmed service areas and event guest
+ *    quantities, and a ServiceChannel phone that matches the visible action
+ *  - WebPage: canonical metadata, primary entity, breadcrumb and FAQ links
+ *  - FAQPage: visible questions with confirmed event answers and a direct first answer
+ *  - Menu: canonical page identity and descriptions for build-your-own add-on prices
  */
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
@@ -27,7 +28,8 @@ const err = (page, msg) => errors.push(`${page}: ${msg}`);
 
 /* ---- Facts the entity must match -------------------------------------- */
 // entity-truth.ts is importable by Node (type stripping), so the validator reads the same source as the site.
-const { FACTS } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
+const { FACTS, SITE_ORIGIN } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
+const { MENU_NOTES } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
 // Catering says "vegetarian" until the owner answers Q20 (config/seo-gates.ts).
 const { CATERING_DIET } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 const SITE = {
@@ -61,7 +63,10 @@ const CATERING_PATH = "/catering-services-chennai/";
 const PLANNER_PATH = "/event-planner-catering-partner/";
 const CORPORATE_PATH = "/corporate-catering-chennai/";
 const SMALL_FUNCTIONS_PATH = "/small-function-catering-chennai/";
-const CATERING_PAGES = [CATERING_PATH, PLANNER_PATH, CORPORATE_PATH, SMALL_FUNCTIONS_PATH];
+const QUOTE_PATH = "/catering-quote-chennai/";
+const MENU_PATH = "/menu/";
+const SERVICE_PAGES = [CATERING_PATH, PLANNER_PATH, CORPORATE_PATH, SMALL_FUNCTIONS_PATH];
+const CATERING_PAGES = [...SERVICE_PAGES, QUOTE_PATH];
 /* Questions allowed on the event catering page, each gated on a confirmed value.
  * One Q&A per route: corporate questions live on /corporate-catering-chennai/
  * and the location question on /about/ (src/lib/answers.js qaRoute). */
@@ -86,7 +91,7 @@ const GATES = {
   "What kind of catering does Brihadhee provide?": () => nonEmpty(cfg.menu_formats),
   [`Is Brihadhee catering ${CATERING_DIET}?`]: () => nonEmpty(cfg.menu_formats),
   "Which events does Brihadhee cater?": () => nonEmpty(cfg.confirmed_events),
-  "Does Brihadhee cater outside Anna Nagar?": () => nonEmpty(cfg.service_area),
+  [`Where can I find ${CATERING_DIET} catering in Anna Nagar?`]: () => nonEmpty(cfg.service_area) && Boolean(confirmedPhone),
   "How do I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
   /* Answered with the confirmed lead time, or "not published, call" while advance_notice_required is null. */
   "How far ahead should I book catering with Brihadhee?": () => Boolean(confirmedPhone || confirmedWhatsapp),
@@ -112,14 +117,20 @@ function* walk(p) {
 }
 const sameJson = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const firstSentence = (t) => (String(t).match(/^[^.!?]*[.!?]/)?.[0] ?? t).trim();
+const htmlEntities = {
+  amp: "&", apos: "'", quot: '"', lt: "<", gt: ">",
+};
+const decodeHtml = (text) => String(text ?? "").replace(
+  /&(?:#(\d+)|#x([\da-f]+)|(amp|apos|quot|lt|gt));/gi,
+  (_, decimal, hex, named) => named ? htmlEntities[named.toLowerCase()] : String.fromCodePoint(decimal ? Number(decimal) : parseInt(hex, 16)),
+);
 const visibleText = (html) =>
-  html
+  decodeHtml(html
     .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
     .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&#39;|&#x27;/g, "'")
-    .replace(/\s+/g, " ");
+    .replace(/<[^>]+>/g, " "))
+    .replace(/\s+/g, " ")
+    .trim();
 
 /** Find every object in a JSON tree. */
 function* objects(node) {
@@ -156,6 +167,7 @@ for (const file of walk(dist)) {
 }
 
 const catering = pages.find((p) => p.name === CATERING_PATH);
+const canonicals = new Set(pages.flatMap(({ html }) => html.match(/<link rel="canonical" href="([^"]+)"/)?.[1] ?? []));
 for (const cp of CATERING_PAGES) {
   const built = pages.some((p) => p.name === cp);
   if (cfg.offer_catering !== true && built) err(cp, "page was built while offer_catering is not true");
@@ -227,34 +239,48 @@ for (const { name, html, nodes } of pages) {
   const ws = nodes.filter((n) => typeOf(n).includes("WebSite"));
   if (ws.length !== 1) err(name, `expected exactly 1 WebSite node, found ${ws.length}`);
   const wp = nodes.find((n) => typeOf(n).includes("WebPage"));
+  const primaryContent = nodes.find((n) => typeOf(n).some((type) => ["Menu", "Service", "Article"].includes(type)));
+  const expectedPrimary = primaryContent ?? (["/", "/about/", "/book-a-table/"].includes(name) ? r : null);
   if (!wp) err(name, "missing WebPage node");
   else {
     if (canonical && wp.url !== canonical) err(name, `WebPage.url ${wp.url} != canonical ${canonical}`);
+    if (wp["@id"] !== `${wp.url}#webpage`) err(name, "WebPage @id does not match its URL");
     if (wp.isPartOf?.["@id"] !== ws[0]?.["@id"]) err(name, "WebPage.isPartOf does not reference the WebSite");
     if (wp.about?.["@id"] !== r?.["@id"]) err(name, "WebPage.about does not reference the Restaurant");
-    if (!wp.name || !wp.description) err(name, "WebPage missing name or description");
+    const title = decodeHtml(html.match(/<title>([\s\S]*?)<\/title>/i)?.[1]);
+    const description = decodeHtml(html.match(/<meta name="description" content="([^"]*)"/i)?.[1]);
+    if (!title || wp.name !== title) err(name, "WebPage.name differs from the HTML title");
+    if (!description || wp.description !== description) err(name, "WebPage.description differs from the HTML description");
+    if (expectedPrimary && wp.mainEntity?.["@id"] !== expectedPrimary["@id"]) {
+      err(name, `WebPage.mainEntity does not reference this page's ${typeOf(expectedPrimary).join("/")} node`);
+    }
     const bcId = wp.breadcrumb?.["@id"];
     const bc = nodes.find((n) => n["@id"] === bcId && typeOf(n).includes("BreadcrumbList"));
-    if (!bc) err(name, "WebPage.breadcrumb does not resolve to a BreadcrumbList");
+    if (name === "/") {
+      if (wp.breadcrumb || nodes.some((n) => typeOf(n).includes("BreadcrumbList"))) err(name, "homepage should omit its one-item breadcrumb trail");
+    } else if (!bc) err(name, "WebPage.breadcrumb does not resolve to a BreadcrumbList");
     else {
       const items = bc.itemListElement ?? [];
+      if (items.length < 2) err(name, "BreadcrumbList needs at least two items");
       items.forEach((it, i) => {
+        if (it["@type"] !== "ListItem") err(name, "breadcrumb item must be a ListItem");
         if (it.position !== i + 1) err(name, `breadcrumb position ${it.position} != ${i + 1}`);
-        if (!it.name || !it.item) err(name, "breadcrumb item missing name or item URL");
+        if (!it.name || !it.item?.startsWith(`${SITE_ORIGIN}/`) || !canonicals.has(it.item)) {
+          err(name, `breadcrumb item needs a name and a built same-site canonical: ${it.item}`);
+        }
       });
       if (items.at(-1)?.item !== wp.url) err(name, "last breadcrumb does not point at this page");
     }
   }
-  if (r?.hasMenu) {
-    if (!pages.some((p) => p.name.endsWith("/menu/"))) err(name, "hasMenu is set but no /menu/ page was built");
-  }
+  if (r && (r.hasMenu !== `${SITE_ORIGIN}${MENU_PATH}` || !canonicals.has(r.hasMenu))) err(name, "Restaurant.hasMenu must link to the built menu canonical");
   if (r && "priceRange" in r && FACTS.priceRange.status !== "verified") err(name, "priceRange emitted while the fact is pending");
   if (r && "openingHoursSpecification" in r && FACTS.hours.status !== "verified") err(name, "openingHoursSpecification emitted while hours are pending");
 
   /* Service (catering) */
   for (const s of nodes.filter((n) => typeOf(n).includes("Service"))) {
-    if (!CATERING_PAGES.includes(name)) err(name, "Service schema outside the catering pages");
+    if (!SERVICE_PAGES.includes(name)) err(name, "Service schema outside the catering service pages");
     if (cfg.offer_catering !== true) err(name, "Service emitted while offer_catering is not true");
+    if (s.url !== canonical || s["@id"] !== `${canonical}#service`) err(name, "Service URL and @id must use the page canonical");
     if (s.serviceType !== SERVICE_TYPES[name]) err(name, `serviceType "${s.serviceType}" != "${SERVICE_TYPES[name]}"`);
     if (name === CATERING_PATH) {
       const offers = s.hasOfferCatalog?.itemListElement ?? [];
@@ -263,15 +289,33 @@ for (const { name, html, nodes } of pages) {
     }
     if (s.provider?.["@id"] !== r?.["@id"]) err(name, "Service.provider does not reference the Restaurant @id");
     if (hasKey(s, "aggregateRating") || hasKey(s, "review")) err(name, "Service carries AggregateRating/review (no verified catering reviews)");
+    for (const offer of s.hasOfferCatalog?.itemListElement ?? []) {
+      const quantity = offer.eligibleQuantity;
+      const maxMismatch = (name === CATERING_PATH || quantity?.maxValue !== undefined) && quantity?.maxValue !== cfg.max_guests;
+      if (quantity?.minValue !== cfg.min_guests || maxMismatch || quantity?.unitText !== "guests") {
+        err(name, `Service offer "${offer.itemOffered?.name}" does not use the approved single-event guest range`);
+      }
+    }
+    if (name === CORPORATE_PATH && hasKey(s, "eligibleQuantity")) err(name, "corporate Service must not apply the single-event guest range to office meal programmes");
     const areas = [].concat(s.areaServed ?? []).map((x) => x?.name ?? x);
     for (const a of areas) if (!(cfg.service_area ?? []).includes(a)) err(name, `areaServed "${a}" is not in confirmed service_area`);
     if (!nonEmpty(cfg.service_area) && areas.length) err(name, "areaServed present but service_area is empty");
-    if (s.telephone) {
-      if (!confirmedPhone) err(name, "Service.telephone present but no confirmed catering phone");
-      else if (digits(s.telephone) !== digits(confirmedPhone)) err(name, `Service.telephone ${s.telephone} != confirmed ${confirmedPhone}`);
+    if ("telephone" in s) err(name, "use ServiceChannel.servicePhone rather than telephone directly on Service");
+    const channel = s.availableChannel;
+    const contact = channel?.servicePhone;
+    if (confirmedPhone) {
+      if (channel?.["@type"] !== "ServiceChannel" || contact?.["@type"] !== "ContactPoint" ||
+          digits(contact.telephone) !== digits(confirmedPhone) || !/^\+\d{10,15}$/.test(contact.telephone)) {
+        err(name, `ServiceChannel must use the confirmed catering phone ${confirmedPhone}`);
+      }
+    } else if (contact) {
+      err(name, "ServiceChannel.servicePhone present but no confirmed catering phone");
     }
   }
-  if (CATERING_PAGES.includes(name) && !nodes.some((n) => typeOf(n).includes("Service"))) err(name, "missing Service schema");
+  if (SERVICE_PAGES.includes(name) && !nodes.some((n) => typeOf(n).includes("Service"))) err(name, "missing Service schema");
+  if (CATERING_PAGES.includes(name) && confirmedPhone && !html.includes(`href="tel:+${digits(confirmedPhone)}"`)) {
+    err(name, "confirmed catering phone is missing from the page's call links");
+  }
 
   /* FAQPage */
   for (const f of nodes.filter((n) => typeOf(n).includes("FAQPage"))) {
@@ -292,11 +336,30 @@ for (const { name, html, nodes } of pages) {
     const dup = qs.map((q) => q.name).filter((n, i, a) => a.indexOf(n) !== i);
     if (dup.length) err(name, `duplicate FAQ questions: ${dup.join("; ")}`);
     if (f.about?.["@id"] !== r?.["@id"]) err(name, "FAQPage.about does not reference the Restaurant @id");
+    if (f.isPartOf?.["@id"] !== wp?.["@id"] || wp?.hasPart?.["@id"] !== f["@id"]) err(name, "FAQPage and WebPage must have reciprocal part links");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dateModified ?? "")) err(name, "FAQPage missing dateModified (YYYY-MM-DD)");
   }
 
   /* Menu: every MenuItem declares the vegetarian diet */
   for (const m of nodes.filter((n) => typeOf(n).includes("Menu"))) {
+    if (name !== MENU_PATH || m.url !== canonical || m["@id"] !== `${canonical}#menu` ||
+        m.mainEntityOfPage?.["@id"] !== wp?.["@id"]) {
+      err(name, "Menu identity must match the canonical menu and WebPage");
+    }
+    const text = visibleText(html);
+    if (m.description !== `${MENU_NOTES.gst} ${MENU_NOTES.parcel}` || !text.includes(m.description)) {
+      err(name, "Menu description must match the visible tax and parcel notes");
+    }
+    const customization = m.hasMenuSection?.find((section) => section.name === "Build Your Own Dosa");
+    const steps = customization?.hasMenuSection?.filter((section) => /^Step \d+:/.test(section.name)) ?? [];
+    if (!steps.length) err(name, "Menu is missing its build-your-own steps");
+    for (const [index, step] of steps.entries()) {
+      if (!text.includes(step.name)) err(name, `Menu step heading differs from visible HTML: ${step.name}`);
+      for (const option of step.hasMenuItem ?? []) {
+        const describedAsExtra = option.offers?.description === "Add-on price for Build Your Own Dosa.";
+        if (describedAsExtra !== (index > 0)) err(name, `Menu option "${option.name}" has incorrect add-on price context`);
+      }
+    }
     (function walk(sections) {
       for (const sec of sections ?? []) {
         for (const it of sec.hasMenuItem ?? []) {

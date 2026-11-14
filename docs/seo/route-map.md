@@ -1,8 +1,10 @@
-# Route map and Key.md cluster coverage (Stage 2, 2026-11-07; updated 2026-11-12)
+# Route map and search intent
+
+The [Phase 3 keyword-to-page map](keyword-to-page-map.md) is the current reference for keyword ownership, priorities, and the disposition of all 514 audit rows. This route map records the site's page structure.
 
 **2026-11-12, keyword plan of 12 November (`keyword (1).md`):** the plan's section 6 pages map onto the live URLs, which were kept (no renames, no new redirects): Build Your Own Dosa = `/menu/dosa/`, Lunch / Meals = `/menu/nellai-meals/`, Dinner = `/veg-dinner-anna-nagar/`, Event Catering = `/catering-services-chennai/`, Corporate Catering = `/corporate-catering-chennai/`. New spokes: `/small-function-catering-chennai/`, `/catering-quote-chennai/`, `/family-dining-anna-nagar/`, `/faq/`, and the gated `/no-onion-no-garlic-anna-nagar/`. Gates live in `config/seo-gates.ts`; section 7 is enforced by `scripts/verify-seo-compliance.ts`. Catering copy says "vegetarian catering" until Q20.
 
-Canonical origin: `https://www.brihadhee.com` (`brihadhee.vercel.app` and the bare `brihadhee.com` 301 to it in `vercel.json`). Sitemap `<lastmod>` is the build date; redirected paths are never in the sitemap. Every route is pre-rendered static HTML (Astro `output: "static"`); no route needs JavaScript to show its content.
+The canonical origin is `https://www.brihadhee.com`. Phase 2 observed a live apex redirect and prepared the automatic Vercel hostname correction for deployment. Page sitemap `<lastmod>` uses the reviewed content date. Redirected routes are excluded. The Astro build pre-renders the public page content as static HTML. See the [Phase 2 verification log](phase-progress.md#phase-2--technical-seo-implementation-13-november-2026).
 
 **2026-11-11, client direction W11 to W13** (`docs/seo/client-confirmations.md` section F): lunch and dinner only, 11:00 AM to 11:00 PM. Breakfast, tiffin, Mini Tiffin, the 6:30 AM opening, budget or cheap framing and "500+ dosa varieties" are hard-blocked on every surface (`docs/seo/avoid-terms.txt`). No route, slug, title or Q&A may target them. Corporate catering is now a client service.
 
@@ -10,81 +12,39 @@ Canonical origin: `https://www.brihadhee.com` (`brihadhee.vercel.app` and the ba
 
 | Route | Primary keyword cluster | Intent | JSON-LD types (one @graph) | Render mode |
 |---|---|---|---|---|
-| `/` | Brand / navigational ("brihadhee anna nagar", "brihadhee restaurant", "pure veg restaurant in Anna Nagar") | Brand hub: who, what, where, both pillars | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
-| `/menu/` | "brihadhee menu", "restaurant menu with prices Anna Nagar", build-your-own dosa, filter coffee | Look up dishes and prices | Restaurant, WebSite, WebPage, BreadcrumbList, Menu (MenuSection, MenuItem, Offer INR), FAQPage | Static |
+| `/` | Brand / navigational ("brihadhee anna nagar", "brihadhee restaurant", "pure veg restaurant in Anna Nagar") | Brand hub: who, what, where, both pillars | Restaurant, WebSite, WebPage, FAQPage | Static |
+| `/menu/` | Brihadhee menu, restaurant menu with prices Anna Nagar, current dish names | Look up dishes and prices, with links to the dosa and lunch pages | Restaurant, WebSite, WebPage, BreadcrumbList, Menu (MenuSection, MenuItem, Offer INR), FAQPage | Static |
 | `/about/` | "brihadhee address", "brihadhee timings", "near Anna Nagar Tower", local area terms | Location, hours, directions, founders | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
-| `/menu/dosa/` (was `/best-dosa-parotta-anna-nagar/`, now a 301 in `vercel.json`) | "build your own dosa Chennai", "customised dosa", "best dosa in Anna Nagar" (question heading only), classic dosas | Build Your Own Dosa: definition, the 4 menu steps, chef's combinations, 8 classic dosas, live counter | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
-| `/menu/nellai-meals/` (was `/nellai-meals-south-indian-veg-anna-nagar/`, now a 301) | "veg lunch Anna Nagar", "Nellai meals", "Nellai Special Sodhi Meals", "sodhi", "ulundhu kali", "grandma-style Tamil meals" | Lunch from 11 AM: Nellai meals, Tamil home-style lunch, family and office lunch, booking | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
-| `/veg-dinner-anna-nagar/` | "veg dinner Anna Nagar", "dinner open till 11 pm Anna Nagar", "family dinner restaurant Anna Nagar", "paanai parotta", "veg kothu parotta" | Dinner until 11 PM: favourites (dosa, parotta, idiyappam, poppers), family and group dinners, late dinner, reserve | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-11; holds parotta until `/menu/parotta-kothu/` exists) |
-| `/corporate-catering-chennai/` | "corporate catering Chennai", "pure veg corporate catering Chennai", "office catering Chennai", "bulk lunch catering Chennai", area modifiers (OMR, Guindy, Tidel Park and others in one section) | HR, admin and facilities buyers: scale, services, sample menus, process, food safety, areas, quote form | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built 2026-11-12; same catering gate) |
+| `/book-a-table/` | Brihadhee table booking, reserve a table in Anna Nagar | Choose a verified booking partner or call about a group | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
+| `/menu/dosa/` (legacy `/best-dosa-parotta-anna-nagar/` redirects here) | Build your own dosa Chennai, customizable dosa, best dosa in Anna Nagar, classic dosas | Learn how the kitchen prepares custom orders and choose a dosa for a visit | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
+| `/menu/nellai-meals/` (legacy `/nellai-meals-south-indian-veg-anna-nagar/` redirects here) | Nellai meals Anna Nagar, veg lunch Anna Nagar, Nellai Special Sodhi Meals, home-style Tamil lunch | Choose a dine-in lunch, including meals with colleagues, and book or visit | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
+| `/veg-dinner-anna-nagar/` | Veg dinner Anna Nagar, dinner open till 11 pm Anna Nagar, dosa or parotta for dinner | Check evening dishes, hours and booking | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-11) |
+| `/corporate-catering-chennai/` | Corporate catering Chennai, vegetarian corporate catering, office lunch catering, bulk lunch catering, approved service areas | HR, admin and facilities buyers evaluating recurring meals or corporate events | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built 2026-11-12, catering gate) |
 | `/whats-new/` | "what's new at Brihadhee", "brihadhee new menu" | Dated page (Article): the current offer stated positively; never names a retired service | Restaurant, WebSite, WebPage, BreadcrumbList, Article, FAQPage | Static (built 2026-11-12) |
 | `/seasonal/karthigai-ayyappa-pure-veg/` | "Ayyappa mala vegetarian food Chennai", "Karthigai pure veg restaurant Chennai", "Karthigai Deepam family lunch Chennai" | Seasonal, time-bound (reuse yearly); onion and garlic, pooja catering and a seasonal menu stay "ask the team" until confirmed | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12) |
-| `/guides/what-are-nellai-meals/` | "what are Nellai meals", "what is sodhi", "what is ulundhu kali", "Tirunelveli cuisine", "what goes with idiyappam" | Dish definitions (P1 guide); the dish-definition questions live here only, and `/menu/nellai-meals/` links to it | Restaurant, WebSite, WebPage, BreadcrumbList, Article | Static (built 2026-11-12) |
-| `/catering-services-chennai/` | End-to-end event catering (families, 50 to 1,500 guests) | Book function catering | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built only while catering is confirmed) |
-| `/small-function-catering-chennai/` | "small function catering Chennai", "small party catering Chennai", "vegetarian catering for 50 people Chennai", "vegetarian catering price per plate Chennai" (answered with what sets the price, no rates) | Priority 1 of the 12 Nov plan (section 1a): functions from 50 guests | Restaurant, WebSite, WebPage, BreadcrumbList, Service (Offer eligibleQuantity >= 50 guests), FAQPage | Static (built 2026-11-12; catering gate) |
-| `/catering-quote-chennai/` | "catering quote Chennai", "book caterer Chennai", "catering menu for 50 people Chennai", "order catering on WhatsApp Chennai" | Quote builder (7 fields from the Wf call); posts to `/api/lead`, WhatsApp hand-off behind `ENABLE_LIVE_WHATSAPP_QUOTE_FORM` | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12; catering gate) |
+| `/guides/what-are-nellai-meals/` | What are Nellai meals, what is sodhi, what is ulundhu kali, Tirunelveli cuisine, idiyappam pairings | Learn dish definitions and follow the link to the lunch page to plan a visit | Restaurant, WebSite, WebPage, BreadcrumbList, Article | Static (built 2026-11-12) |
+| `/catering-services-chennai/` | Vegetarian catering Chennai, South Indian event catering, wedding catering, live dosa counters for events | Evaluate general event catering for 50 to 1,500 guests | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built only while catering is confirmed) |
+| `/small-function-catering-chennai/` | Small function catering Chennai, birthday catering, private parties and 50+ guest menu planning | Choose catering for a confirmed family occasion | Restaurant, WebSite, WebPage, BreadcrumbList, Service (Offer eligibleQuantity >= 50 guests), FAQPage | Static (built 2026-11-12, catering gate) |
+| `/catering-quote-chennai/` | Catering quote Chennai, catering enquiry, catering price per plate | Understand quote inputs and enquire via `/api/lead`. Automated WhatsApp hand-off is gated. | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12, catering gate) |
 | `/family-dining-anna-nagar/` | "family restaurant Anna Nagar veg", "veg restaurant near temple Anna Nagar", "family lunch after temple visit", "birthday dinner veg restaurant Anna Nagar" | Owns the family-dining intent (the home page's family Q&A moved here); no temple named until Q24 | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12) |
 | `/faq/` | Brand questions from 4.2 and 4.7 that no other page owns: "Does Brihadhee serve breakfast?" (the one permitted mention; answer "No"), the Brihadeeswarar name, Swiggy/Zomato, table booking | Answer hub plus an index linking to every page's own Q&A block (no duplicated answers) | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-12) |
 | `/no-onion-no-garlic-anna-nagar/` | Tier 1 no onion no garlic, tier 2 satvik, tier 3 Jain-friendly (3.15 to 3.17, 4.8) | Dietary spoke | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | **Gated** (`ENABLE_NO_ONION_NO_GARLIC_CLUSTER`, Q11 to Q14): not built in production; noindex draft in `npm run dev` |
 | `/event-planner-catering-partner/` | Catering partner for event management companies | B2B event partnership | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (same gate) |
 | `/sitemap.xml`, `/robots.txt`, `/llms.txt`, `/llms-full.txt`, `/site.webmanifest` | Machine endpoints | Discovery | n/a | Generated at build |
 
-No street, ZIP or landmark doorway pages. Each Q&A question appears on one route only (enforced by `qaRoute()` in `src/lib/answers.js` and `aeo-lint` check 12); the full address appears only in the first Q&A on each page.
+The address and directions page covers verified nearby areas. Each Q&A question appears on one route only, enforced by `qaRoute()` in `src/lib/answers.js` and `aeo-lint` check 12. The full address appears only in the first Q&A on each page.
 
-## Active P1 routes (client direction W11 to W13, 2026-11-11)
+## Utility routes and owner gates
 
-Approved and in scope. `/veg-dinner-anna-nagar/` (2026-11-11) and `/corporate-catering-chennai/` (2026-11-12) are built (see Routes). **The others are not built yet**: each gets a sitemap, `llms.txt` and navigation link only when its page ships, so nothing links to a missing page. Keywords come from `SEO_RANKING_STRATEGY.md` section 3.2 and the page specs in section 5.
-
-| Route | Primary keyword cluster | Intent | JSON-LD types (one @graph) | Status |
-|---|---|---|---|---|
-
-## Key.md clusters
-
-| Key.md cluster | Where it lives | Notes |
+| Route | Purpose | Crawl or index eligibility |
 |---|---|---|
-| Brand / navigational: brihadhee anna nagar, restaurant, menu, timings, address, contact number, dosa, nellai meals | `/`, `/menu/`, `/about/`, dish pages | |
-| Brand: brihadhee reviews | Skipped | Google rating unverified (no dated source) |
-| Brand: table booking | `/` (offers, families Q&A) | Pre-booking via Swiggy Dineout, EazyDiner, District only |
-| Brand: order online, swiggy, zomato, instagram | Skipped | Listings and profiles not confirmed as owner-controlled (`sameAs` is null) |
-| Brand: beyond curry by brihadhee | `/` (services card, Q&A) | |
-| Spelling variants (brihadhi, brihadee, பிரிஹாதீ...) | Skipped on page | Not stuffed into copy; add confirmed variants to `alternateNames` in entity-truth.ts |
-| Primary: pure veg / South Indian / vegetarian / dosa restaurant in Anna Nagar, family restaurant | `/`, `/best-dosa-parotta-anna-nagar/` | "best ..." is used only as a question heading, never as a claim. Price-led terms are retired (client W11 to W13) |
-| Primary: morning-service and price-led head terms | **Retired** | Client direction W11 to W13: lunch and dinner only; hard-blocked in `avoid-terms.txt` |
-| Stretch (aggregator-dominated head terms) | Skipped | Owned by aggregators; not worth a page |
-| Secondary: dosa variety-count claims | **Retired** | Not a client claim (the menu lists 11 dosa items); hard-blocked |
-| Secondary: build-your-own dosa, customised dosa, dosa varieties, pure veg restaurant in Chennai, Nellai meals, Tirunelveli-style meals, paanai parotta, veg kothu parotta, Karaikudi paneer poppers | Dish pages, `/menu/` | |
-| Secondary: authentic / traditional / home-style Tamil food | `/nellai-meals.../` intro | Described, not claimed as "authentic" in answers |
-| Long-tail dishes: idli, ghee podi idli, mini idli sambar, sodhi idli, idiyappam, kothu idiyappam, filter coffee | `/menu/` | Only dishes on the canonical menu (`new menu.pdf`), served at lunch and dinner |
-| Long-tail dosa types (masala, ghee roast, podi, rava, ...) | `/menu/`, dosa page list | Only the 11 types on the menu |
-| Long-tail meals and mains: veg meals, Nellai meals, executive meals, banana leaf meals, ulundhu kali, sodhi, kothu parotta, paanai parotta, paneer poppers | `/menu/`, dish pages | |
-| Use-case: family lunch, family dinner, group dining, kid-friendly | `/` (families Q&A), `/menu/nellai-meals/`, `/veg-dinner-anna-nagar/` | Price-led use-case terms are retired and hard-blocked |
-| Time and occasion: lunch, dinner, open till 11 PM, weekend family lunch | `/about/` (timings), `/menu/nellai-meals/`, `/veg-dinner-anna-nagar/` | Morning terms retired. Open daily confirmed 2026-11-11; the last-order time is still pending |
-| Time: late-night dosa | **Skipped** | Late-night offer unverified (contradicts the 11 PM close) |
-| Service: takeaway, parcel, delivery | **Skipped** | Not confirmed |
-| Seasonal pure-veg demand (Karthigai, Ayyappa; later Purattasi, Navaratri) | `/seasonal/karthigai-ayyappa-pure-veg/` (P1, not built) | Purattasi and Navaratri get sections ahead of September and October 2027 |
-| Local: Anna Nagar East / West, Shenoy Nagar, Kilpauk, Mogappair, Thirumangalam | `/about/` (areas Q&A) | Other Key.md areas not listed in the verified facts |
-| Landmarks: Anna Nagar Tower / Tower Park, 3rd Avenue, W Block | `/about/`, `/`, every answer | Metro stations and VR Mall not used (no verified distance) |
-| High-intent: near me, open now | All pages carry NAP, hours and geo | "open now" depends on the engine; hours are in schema |
-| High-intent: parking | **Skipped** | Parking unverified |
-| Tamil / Tanglish | `/about/` Tamil line; "dosai", "Nellai virundhu" in copy | Natural use only; no keyword lists. Tamil morning-service terms are hard-blocked |
-| Competitor-adjacent | **Skipped** | Rule: no competitor names on the site |
-| AEO discovery, brand, dish-definition questions | Q&A on `/`, `/menu/`, `/about/`, dish pages | 39 answer-first Q&As built by `qa()` (7 home, 4 menu, 5 about, 5 dosa, 5 Nellai, 9 catering, 4 event planner); each names Brihadhee, the street, pure veg status and a concrete fact |
-| AEO: Is Brihadhee on Swiggy or Zomato / does it deliver / parking | Skipped | Unverified |
-| GEO entities and topic clusters | `/llms.txt`, `/llms-full.txt`, schema, summary boxes | |
-| Catering clusters | `/catering-services-chennai/` (end-to-end event catering), `/event-planner-catering-partner/`, `/corporate-catering-chennai/` | Corporate and office catering is a client service (W13, 1,000+ meals a day) |
+| `/privacy/` | Privacy and optional analytics disclosure | Noindex and outside the page sitemap |
+| `/404.html` | Custom missing-page HTML | Noindex and outside the page sitemap |
+| `/menu.json` | Machine-readable canonical menu and prices | Generated endpoint outside the page sitemap |
+| `/sitemap-index.xml` | Points to `/sitemap.xml` and is referenced from robots.txt | Discovery endpoint |
+| `/<INDEXNOW_KEY>.txt` | IndexNow key file | Generated when the environment variable is set |
 
-## Added 2026-11-08
-
-| Route | Purpose | Indexed? | JSON-LD |
-|---|---|---|---|
-| `/book-a-table/` | How to reserve: walk-in offer, partner pre-booking (EazyDiner linked; Swiggy Dineout and District named until their URLs are confirmed), groups | Yes (in sitemap) | Restaurant, WebSite, WebPage, BreadcrumbList |
-| `/privacy/` | What the site stores; analytics paragraph switches with `PUBLIC_GA4_ID` | noindex, not in sitemap | same base graph |
-| `/404` | Helpful links | noindex | same base graph |
-| `/menu.json` | Machine-readable menu (name, price, INR, veg, section, url, lastUpdated) | n/a | n/a |
-| `/sitemap-index.xml` | Points to `/sitemap.xml`; robots.txt now references the index | n/a | n/a |
-| `/<INDEXNOW_KEY>.txt` | IndexNow key file, built only when the env var is set | n/a | n/a |
-
-Planned routes from the 2026-11-08 brief (not built yet; see `docs/strategy/competitor-attack-plan.md` section 3.1): `/menu/dosa/[slug]/`, `/menu/parotta-kothu/`, `/menu/filter-coffee/`, `/location/anna-nagar/` (will absorb the location part of `/about/`), `/guides/*`, `/events/group-dining/`, `/reviews/`, `/faq/`. Gated: `/order/` (Swiggy/Zomato URLs), `/ta/` (human Tamil copy), `/compare/*` (dated competitor data; never named on the site).
+The page sitemap lists eligible routes. Google indexing requires Search Console verification. The existing booking profiles and social links serve their own channels. Delivery, takeaway, parking, last order, and named temple details need confirmation. The [keyword-to-page map](keyword-to-page-map.md#fact-checks-and-exclusions) covers held claims and the retired terms from older briefs.
 
 ## Navigation and internal links (2026-11-12)
 

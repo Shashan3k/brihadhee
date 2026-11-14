@@ -1,37 +1,44 @@
 ---
 /**
  * Quote / enquiry form, posted to the Vercel function /api/lead (validated there
- * with src/lib/lead.js and emailed to the owner). Works without JavaScript (plain
- * form post and redirect); with JavaScript, src/scripts/main.js sends it with
- * fetch, shows the result in place and fires the GA4 event catering_quote_submit.
- * A direct WhatsApp button sits beside it.
+ * with src/lib/lead.js and emailed to the team). A plain form POST gets a
+ * confirmation or error page; with JavaScript the result appears inline.
  *
- *   variant: "corporate" | "event" | "general"   (sets the hidden formType and wording)
+ *   variant: "corporate" | "event" | "planner" | "general"
  */
 import Icon from "./Icon.astro";
-import { pageContact } from "../data/site.js";
-import { FORM_TYPES, HEADCOUNTS, SOURCES, HONEYPOT } from "../lib/lead.js";
+import { ROUTES, href, pageContact } from "../data/site.js";
+import { CORPORATE_SERVICE, FORM_TYPES, SOURCES, HONEYPOT, QUOTE_MIN_GUESTS, QUOTE_MAX_GUESTS, QUOTE_SERVICE } from "../lib/lead.js";
 
 const {
   variant = "general",
   id = "enquiry",
   title = "Request a quote",
-  lead = "Tell us what you need and the Brihadhee team will call you back with a menu and a per-plate price.",
+  lead = "Share the details so the Brihadhee team can follow up about your requirements.",
   page = "/",
   headingLevel = 2,
 } = Astro.props;
 const H = `h${headingLevel}`;
 const { phone, whatsapp, hasPhone, hasWhatsApp, telHref, whatsappHref } = pageContact(Astro);
-const org = variant === "corporate" ? "Company name" : variant === "event" ? "Event type (wedding, birthday, housewarming…)" : "Company / Event type";
-const dateLabel = variant === "corporate" ? "Preferred start date" : "Service date";
+const corporate = variant === "corporate";
+const planner = variant === "planner";
+const event = variant === "event";
+const general = variant === "general";
+const privateEvent = planner || event;
+const org = corporate ? "Company name" : planner ? "Agency or team name" : "Event type";
+const dateLabel = corporate ? "Preferred start or event date" : privateEvent ? "Event date" : "Visit date";
+const headcountLabel = corporate ? "Meals per day or guests for one event" : privateEvent ? "Estimated guest count" : "Party size";
+const messageLabel = corporate ? "Schedule and service notes" : privateEvent ? "Venue and service notes" : "How can we help?";
+const button = general ? "Send enquiry" : planner ? "Send partnership enquiry" : corporate ? "Request a corporate quote" : "Request an event quote";
 const waText = encodeURIComponent(
-  variant === "corporate"
-    ? "Hi Brihadhee, I'd like a quote for corporate catering. Company: , office location: , daily headcount: ."
-    : variant === "event"
-      ? "Hi Brihadhee, I'd like a quote for event catering. Event: , date: , guests: , venue: ."
-      : "Hi Brihadhee, I have an enquiry: "
+  corporate
+    ? "Hi Brihadhee, I'd like a corporate catering quote. Company: , recurring meals / packed lunch / staffed event: , location: , meal or guest count: , preferred start or event date: ."
+    : planner
+      ? "Hi Brihadhee, I'd like to discuss a catering partnership. Agency: , event: , date: , guests: , venue: , counter or branding requirements: ."
+      : event
+        ? "Hi Brihadhee, I'd like an event catering quote. Event: , date: , guests: , venue: , service needs: ."
+        : "Hi Brihadhee, I have an enquiry: "
 );
-const today = new Date().toISOString().slice(0, 10);
 const f = (name) => `${id}-${name}`;
 ---
 
@@ -42,7 +49,7 @@ const f = (name) => `${id}-${name}`;
       <p class="section__lead">{lead}</p>
       <div class="catering__cta">
         {hasWhatsApp && (
-          <a class="btn btn--primary" href={`${whatsappHref}?text=${waText}`} target="_blank" rel="noopener" data-event="click_whatsapp">
+          <a class:list={["btn", general ? "btn--primary" : "btn--ghost"]} href={`${whatsappHref}?text=${waText}`} target="_blank" rel="noopener" data-event="click_whatsapp">
             <Icon name="whatsapp" size={17} /> WhatsApp {whatsapp}
           </a>
         )}
@@ -52,13 +59,11 @@ const f = (name) => `${id}-${name}`;
           </a>
         )}
       </div>
-      <p class="lead-form__note" data-lead-result hidden></p>
     </div>
 
     <form class="contact__form lead-form" action="/api/lead" method="post" data-lead-form data-form-type={variant}>
       <input type="hidden" name="formType" value={variant} />
       <input type="hidden" name="page" value={page} />
-      <input type="hidden" name="startedAt" value="" data-started-at />
       <div class="lead-form__trap" aria-hidden="true">
         <label for={f(HONEYPOT)}>Leave this empty</label>
         <input type="text" id={f(HONEYPOT)} name={HONEYPOT} tabindex="-1" autocomplete="off" />
@@ -66,36 +71,75 @@ const f = (name) => `${id}-${name}`;
 
       <p class="field__hint">{FORM_TYPES[variant]} · fields marked * are required</p>
 
-      <div class="field">
-        <label for={f("name")}>Name *</label>
-        <input type="text" id={f("name")} name="name" autocomplete="name" maxlength="80" required />
-      </div>
-      <div class="field">
+      {corporate && (
+        <div class="field">
+          <label for={f("service")}>What do you need? *</label>
+          <select id={f("service")} name="service" required>
+            <option value="">Choose a service</option>
+            {CORPORATE_SERVICE.map((s) => <option value={s}>{s}</option>)}
+          </select>
+        </div>
+      )}
+      {!general && <div class="field">
         <label for={f("organisation")}>{org} *</label>
-        <input type="text" id={f("organisation")} name="organisation" autocomplete={variant === "corporate" ? "organization" : "off"} maxlength="120" required />
-      </div>
-      <div class="field">
-        <label for={f("phone")}>Phone *</label>
-        <input type="tel" id={f("phone")} name="phone" autocomplete="tel" inputmode="tel" maxlength="20" pattern="[+0-9 \-]{10,20}" required />
-      </div>
-      <div class="field">
-        <label for={f("email")}>Work email</label>
-        <input type="email" id={f("email")} name="email" autocomplete="email" maxlength="120" />
-      </div>
-      <div class="field">
-        <label for={f("location")}>Location in Chennai *</label>
+        <input type="text" id={f("organisation")} name="organisation" autocomplete={corporate || planner ? "organization" : undefined} maxlength="120" placeholder={event ? "e.g. wedding, birthday, housewarming" : undefined} required />
+      </div>}
+      {planner && (
+        <div class="field">
+          <label for={f("eventType")}>Event type</label>
+          <input type="text" id={f("eventType")} name="eventType" maxlength="120" placeholder="e.g. wedding, launch, private function" />
+        </div>
+      )}
+      {!general && <div class="field">
+        <label for={f("location")}>{corporate ? "Office or venue area in Chennai" : "Venue area in Chennai"} *</label>
         <input type="text" id={f("location")} name="location" maxlength="120" placeholder="e.g. Guindy, OMR, Anna Nagar" required />
-      </div>
+      </div>}
       <div class="field">
-        <label for={f("headcount")}>Estimated headcount *</label>
-        <select id={f("headcount")} name="headcount" required>
-          <option value="">Choose</option>
-          {HEADCOUNTS.map((h) => <option value={h}>{h}</option>)}
-        </select>
+        <label for={f("headcount")}>{headcountLabel}{!general && " *"}</label>
+        <input type="number" id={f("headcount")} name="headcount" min={privateEvent ? QUOTE_MIN_GUESTS : 1} max={privateEvent ? QUOTE_MAX_GUESTS : undefined} step="1" inputmode="numeric" required={!general} aria-describedby={!general ? f("headcount-note") : undefined} />
+        {privateEvent && (
+          <p class="field__hint" id={f("headcount-note")}>
+            {QUOTE_MIN_GUESTS}–{QUOTE_MAX_GUESTS.toLocaleString("en-IN")} guests per event.
+            {event && <> For a smaller group, <a href={href(ROUTES.book)}>ask about a restaurant table</a>.</>}
+          </p>
+        )}
+        {corporate && <p class="field__hint" id={f("headcount-note")}>Enter the meal count per day for recurring service, or the total for a one-off order.</p>}
       </div>
       <div class="field">
         <label for={f("date")}>{dateLabel}</label>
-        <input type="date" id={f("date")} name="date" min={today} />
+        <input type="date" id={f("date")} name="date" aria-describedby={f("date-note")} />
+        <p class="field__hint" id={f("date-note")}>Leave blank if the date is still flexible.</p>
+      </div>
+      {event && (
+        <div class="field">
+          <label for={f("service")}>Serving staff preference</label>
+          <select id={f("service")} name="service">
+            <option value="">Choose if known</option>
+            {QUOTE_SERVICE.map((s) => <option value={s}>{s}</option>)}
+          </select>
+        </div>
+      )}
+      {planner && (
+        <div class="field">
+          <label for={f("service")}>Counter or branding requirements</label>
+          <input type="text" id={f("service")} name="service" maxlength="120" placeholder="e.g. white-label live dosa counter" />
+        </div>
+      )}
+      <div class="field">
+        <label for={f("message")}>{messageLabel}{general && " *"}</label>
+        <textarea id={f("message")} name="message" maxlength="1000" rows="3" required={general} placeholder={corporate ? "e.g. weekdays, lunch slot, packed meals, access instructions" : privateEvent ? "e.g. lunch or dinner, menu ideas, serving, venue access" : "e.g. menu, group seating or a question about your visit"}></textarea>
+      </div>
+      <div class="field">
+        <label for={f("name")}>Your name *</label>
+        <input type="text" id={f("name")} name="name" autocomplete="name" maxlength="80" required />
+      </div>
+      <div class="field">
+        <label for={f("phone")}>Indian phone number *</label>
+        <input type="tel" id={f("phone")} name="phone" autocomplete="tel" inputmode="tel" maxlength="20" required />
+      </div>
+      <div class="field">
+        <label for={f("email")}>{corporate || planner ? "Work email" : "Email"}</label>
+        <input type="email" id={f("email")} name="email" autocomplete="email" maxlength="120" />
       </div>
       <div class="field">
         <label for={f("source")}>How did you hear about us?</label>
@@ -104,17 +148,14 @@ const f = (name) => `${id}-${name}`;
           {SOURCES.map((s) => <option value={s}>{s}</option>)}
         </select>
       </div>
-      <div class="field">
-        <label for={f("message")}>Anything else</label>
-        <textarea id={f("message")} name="message" maxlength="1000" placeholder="Menu ideas, meal times, venue, dietary needs"></textarea>
-      </div>
 
       <div class="form__foot">
-        <button class="btn btn--primary" type="submit">{variant === "general" ? "Send enquiry" : "Request a quote"}</button>
-        <p class="form__status" role="status" aria-live="polite" data-lead-status></p>
+        <button class="btn btn--primary" type="submit">{button}</button>
       </div>
+      <p class="form__status" role="status" aria-atomic="true" tabindex="-1" data-lead-status></p>
+      {hasPhone && <p class="form__contact" data-lead-contact hidden><a href={telHref} data-event="click_call">Call {phone}</a></p>}
       <p class="field__hint">
-        Your details are emailed to the Brihadhee team only, to reply to you. See the <a href="/privacy/">privacy policy</a>.
+        Brihadhee uses your details to respond to this enquiry. See the <a href={href("/privacy/")}>privacy policy</a>.
       </p>
     </form>
   </div>

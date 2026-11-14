@@ -196,7 +196,8 @@ for (const s of BUILD_YOUR_OWN_DOSA.suggestions) priceByName.set(s.name, s.price
 const CATERING = ["/catering-services-chennai/", "/event-planner-catering-partner/", "/corporate-catering-chennai/"];
 for (const p of pages) {
   if (!p.jsonOk || p.path === "/404.html") continue;
-  const need = ["Restaurant", "WebSite", "WebPage", "BreadcrumbList"];
+  const need = ["Restaurant", "WebSite", "WebPage"];
+  if (p.path !== "/") need.push("BreadcrumbList");
   if (p.path === "/menu/") need.push("Menu");
   if (CATERING.includes(p.path)) need.push("Service");
   for (const t of need) if (!byType(p, t).length) fail("6 JSON-LD", `${p.path}: missing ${t} node`);

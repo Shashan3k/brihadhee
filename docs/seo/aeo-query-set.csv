@@ -1,58 +1,67 @@
-﻿query,language,intent,target_page,answer_exists,note
-best dosa in Anna Nagar,en,discovery,/menu/#dosa,no,superlative: the site never claims 'best'; it states dosa prices and items. Earned through third-party mentions (GEO)
-best parotta in Anna Nagar,en,discovery,/#faq-parotta,no,superlative; a parotta answer exists but makes no 'best' claim
-best vegetarian restaurant in Anna Nagar,en,discovery,/#faq-vegetarian,no,superlative; not claimed
-best South Indian restaurant in Anna Nagar,en,discovery,/#faq-known-for,no,superlative; not claimed
-dosa restaurant in Anna Nagar,en,discovery,/#faq-dosa-price,yes,answer gives dosa count and price range
-vegetarian restaurant in Anna Nagar,en,discovery,/#faq-vegetarian,yes,
-veg hotel in Anna Nagar,en,local,/#faq-vegetarian,yes,also a Tanglish FAQ
-South Indian restaurant near Anna Tower,en,local,/#faq-near-anna-tower,yes,
-restaurant near Anna Tower Anna Nagar,en,local,/#faq-near-anna-tower,yes,
-restaurant near Aadhaar Seva Kendra Anna Nagar,en,local,/#faq-location,yes,"landmark is in the supporting sentence, not sentence 1"
-banana leaf meals in Anna Nagar,en,discovery,/#faq-banana-leaf,yes,
-banana leaf meals in Chennai,en,discovery,/#faq-banana-leaf,yes,answer names Chennai
-filter coffee near Anna Tower,en,discovery,/#faq-filter-coffee,no,answer says Anna Nagar East but not Anna Tower; consider adding
-filter coffee in Anna Nagar,en,discovery,/#faq-filter-coffee,yes,
-family lunch in Anna Nagar East,en,discovery,/#faq-family,yes,
-family restaurant in Anna Nagar,en,discovery,/#faq-family,yes,
-affordable South Indian meals in Anna Nagar,en,discovery,/#faq-meal-price,no,'affordable' is not claimed; the answer gives computed meal prices instead
-how much does a meal cost at a South Indian restaurant in Anna Nagar,en,price,/#faq-meal-price,yes,
-dosa price in Anna Nagar restaurant,en,price,/#faq-dosa-price,yes,
-does Brihadhee serve parotta,en,brand,/#faq-parotta,yes,
-parotta dishes in Anna Nagar,en,discovery,/#faq-parotta,yes,lists the six parotta dishes
-kothu parotta in Anna Nagar,en,discovery,/menu/#parotta,yes,Special Kothu Parotta is in the list
-restaurant open now in Anna Nagar,en,hours,/#visit,pending,hours not confirmed
-South Indian restaurant open on Sunday Anna Nagar,en,hours,/#visit,pending,hours not confirmed
-Anna Nagar South Indian restaurant opening hours,en,hours,/#visit,pending,hours not confirmed
-South Indian restaurant near me,en,local,/#faq-location,yes,'near me' depends on the engine's location
-vegetarian restaurant near me,en,local,/#faq-vegetarian,yes,same
-what is Brihadhee,en,brand,/#faq-known-for,yes,
-is Brihadhee vegetarian,en,brand,/#faq-vegetarian,yes,
-Brihadhee Anna Nagar address,en,brand,/#faq-location,yes,
-Brihadhee opening hours,en,brand,/#visit,pending,hours not confirmed
+query,language,intent,target_page,answer_exists,note
+best dosa in Anna Nagar,en,discovery,/menu/dosa/,no,The page shows offerings and prices. Independent results determine recommendations.
+best parotta in Anna Nagar,en,discovery,/menu/#parotta,no,Use the menu to check offerings. The site makes no ranking claim.
+best vegetarian restaurant in Anna Nagar,en,discovery,/,no,The site describes the restaurant. Independent results determine recommendations.
+best South Indian restaurant in Anna Nagar,en,discovery,/,no,The site describes the restaurant. Independent results determine recommendations.
+dosa restaurant in Anna Nagar,en,discovery,/menu/dosa/,yes,Classic and kitchen-cooked customized dosa.
+vegetarian restaurant in Anna Nagar,en,discovery,/#faq-pure-veg,yes,The restaurant is pure vegetarian.
+veg hotel in Anna Nagar,en,local,/,yes,Use the restaurant location and vegetarian description.
+South Indian restaurant near Anna Tower,en,local,/about/#find-us,yes,The location page names Anna Nagar Tower Park.
+restaurant near Anna Tower Anna Nagar,en,local,/about/#find-us,yes,
+restaurant near Aadhaar Seva Kendra Anna Nagar,en,local,/about/#find-us,yes,The location page names the landmark.
+banana leaf meals in Anna Nagar,en,discovery,/menu/nellai-meals/,yes,Nellai-style vegetarian lunch on a banana leaf.
+banana leaf meals in Chennai,en,discovery,/menu/nellai-meals/,yes,
+filter coffee near Anna Tower,en,discovery,/menu/#faq-filter-coffee,yes,Match the menu with the landmark on /about/.
+filter coffee in Anna Nagar,en,discovery,/menu/#faq-filter-coffee,yes,Use the current menu price.
+family lunch in Anna Nagar East,en,discovery,/family-dining-anna-nagar/,yes,
+family restaurant in Anna Nagar,en,discovery,/family-dining-anna-nagar/,yes,
+affordable South Indian meals in Anna Nagar,en,discovery,/menu/#faq-meal-cost,no,Use dish prices without judging affordability.
+how much does a meal cost at a South Indian restaurant in Anna Nagar,en,price,/menu/#faq-meal-cost,yes,Use current prices for individual meals.
+dosa price in Anna Nagar restaurant,en,price,/menu/dosa/,yes,Classic dosa prices differ from the build-your-own batter and extras.
+does Brihadhee serve parotta,en,brand,/menu/#parotta,yes,Use the current menu names.
+parotta dishes in Anna Nagar,en,discovery,/menu/#parotta,yes,Use the current menu inventory.
+kothu parotta in Anna Nagar,en,discovery,/menu/#parotta,yes,The menu lists Special Kothu Parotta.
+restaurant open now in Anna Nagar,en,hours,/about/#hours,yes,Check actual Chennai local time against published daily 11 AM to 11 PM hours. Holiday changes need confirmation.
+South Indian restaurant open on Sunday Anna Nagar,en,hours,/about/#faq-sundays,yes,The restaurant is open 11 AM to 11 PM on Sundays.
+Anna Nagar South Indian restaurant opening hours,en,hours,/about/#hours,yes,Daily 11 AM to 11 PM for lunch and dinner.
+South Indian restaurant near me,en,local,/about/#find-us,yes,Record location because near me depends on the engine context.
+vegetarian restaurant near me,en,local,/about/#find-us,yes,Record location because near me depends on the engine context.
+what is Brihadhee,en,brand,/#faq-what-is-brihadhee,yes,
+is Brihadhee vegetarian,en,brand,/#faq-pure-veg,yes,Pure vegetarian restaurant. Catering scope is vegetarian.
+Brihadhee Anna Nagar address,en,brand,/about/#find-us,yes,
+Brihadhee opening hours,en,brand,/about/#hours,yes,Daily 11 AM to 11 PM for lunch and dinner.
 Brihadhee menu,en,brand,/menu/,yes,
 Brihadhee menu prices,en,brand,/menu/#price-table,yes,
-Brihadhee reviews,en,brand,/#reviews,pending,Google rating and count not confirmed with a date; hidden
-Brihadhee rating,en,brand,/#reviews,pending,same
-Brihadhee phone number,en,brand,/#faq-contact,yes,
-does Brihadhee serve alcohol,en,brand,/#faq-alcohol,yes,
-is Brihadhee family friendly,en,brand,/#faq-family,yes,
-Brihadhee parking,en,brand,,no,parking not confirmed; on the avoid list
-Brihadhee home delivery,en,brand,,no,delivery not confirmed; on the avoid list
-Brihadhee table booking,en,brand,,no,booking not confirmed; on the avoid list
-Brihadhee price range per person,en,brand,,pending,price range per person not confirmed
-Brihadhee customizable dosa,en,brand,,pending,customizable dosas not confirmed
-Brihadhee vs other South Indian restaurants,en,comparison,,no,"comparison content is not published, and no competitor names appear on the site"
-restaurants like Brihadhee,en,comparison,,no,not published
+Brihadhee reviews,en,brand,/#reviews,pending,There are review links. A current aggregate rating and review count are not published on the site.
+Brihadhee rating,en,brand,/#reviews,pending,A current aggregate rating and review count are not published on the site.
+Brihadhee phone number,en,brand,/about/#faq-contact,yes,Restaurant +91 73587 14113. Catering has a separate number.
+does Brihadhee serve alcohol,en,brand,/#faq-pure-veg,yes,The restaurant does not serve alcohol.
+is Brihadhee family friendly,en,brand,/family-dining-anna-nagar/,yes,
+Brihadhee parking,en,brand,/faq/,pending,Parking details remain unconfirmed. Call the restaurant to ask.
+Brihadhee home delivery,en,brand,/faq/,pending,Home delivery is unconfirmed. Call the restaurant about current options.
+Brihadhee table booking,en,brand,/book-a-table/#how-to-book,yes,Check booking status with Swiggy Dineout or EazyDiner or District.
+Brihadhee price range per person,en,brand,/menu/,pending,Menu item prices are published. A per-person spend is not confirmed.
+Brihadhee customizable dosa,en,brand,/menu/dosa/,yes,Diners choose ingredients and the kitchen cooks the dosa.
+Brihadhee vs other South Indian restaurants,en,comparison,/faq/,yes,Verified Brihadhee differences only. No competitor rankings or claims.
+restaurants like Brihadhee,en,comparison,,no,The site gives no list of comparable restaurants.
 அண்ணா நகர் சைவ உணவகம்,ta,local,/#faq-ta-veg-restaurant,yes,
 அண்ணா நகரில் சைவ உணவகம் எது,ta,local,/#faq-ta-veg-restaurant,yes,
-அண்ணா நகர் தோசை,ta,discovery,/#faq-dosa-price,no,only the English dosa answer exists
+அண்ணா நகர் தோசை,ta,discovery,/menu/dosa/#faq-ta-byo-dosa,yes,Tamil answers cover build-your-own and classic dosa prices.
 பிரிஹதீ உணவகம் அண்ணா நகர்,ta,brand,/#faq-ta-veg-restaurant,yes,
-பிரிஹதீ சைவ உணவகமா,ta,brand,/#faq-ta-vegetarian,yes,
-அண்ணா நகர் வாழை இலை சாப்பாடு,ta,discovery,/#faq-banana-leaf,no,only the English banana-leaf answer exists
-Anna Nagar veg hotel,tanglish,local,/#faq-tanglish-veg-hotel,yes,
-Anna Nagar-la nalla veg hotel edhu,tanglish,discovery,/#faq-tanglish-veg-hotel,no,'nalla' (good/best) is a superlative; the site does not claim it
-Brihadhee address enna,tanglish,brand,/#faq-tanglish-address,yes,
-Brihadhee filter coffee irukka,tanglish,brand,/#faq-tanglish-filter-coffee,yes,
-Anna Tower pakkathula veg restaurant,tanglish,local,/#faq-tanglish-veg-hotel,yes,
-Brihadhee timing enna,tanglish,hours,/#visit,pending,hours not confirmed
+பிரிஹதீ சைவ உணவகமா,ta,brand,/#faq-ta-veg-restaurant,yes,
+அண்ணா நகர் வாழை இலை சாப்பாடு,ta,discovery,/menu/nellai-meals/#faq-ta-nellai-meals,yes,Tamil answer describes the banana-leaf Nellai lunch.
+Anna Nagar veg hotel,tanglish,local,/,yes,Use the restaurant location and vegetarian description.
+Anna Nagar-la nalla veg hotel edhu,tanglish,discovery,/,no,The site describes the restaurant. Independent results determine recommendations.
+Brihadhee address enna,tanglish,brand,/about/#find-us,yes,
+Brihadhee filter coffee irukka,tanglish,brand,/menu/#faq-filter-coffee,yes,
+Anna Tower pakkathula veg restaurant,tanglish,local,/about/#find-us,yes,
+Brihadhee timing enna,tanglish,hours,/about/#hours,yes,Daily 11 AM to 11 PM for lunch and dinner.
+Where can I build my own dosa in Chennai?,en,discovery,/menu/dosa/,yes,Panel 65. The kitchen cooks the dosa with the diner's choices.
+What makes Brihadhee different?,en,brand,/faq/,yes,Panel 86. Check verified specialties and restaurant identity.
+What are Nellai meals?,en,informational,/guides/what-are-nellai-meals/,yes,Panel 87. A generic answer can be correct without mentioning Brihadhee.
+Where can I find vegetarian catering in Anna Nagar?,en,discovery,/catering-services-chennai/,yes,Panel 88. Vegetarian catering separately from restaurant purity.
+Does Brihadhee cater for 50 guests?,en,brand,/small-function-catering-chennai/,yes,Panel 89. Single events start at 50 guests.
+How does corporate catering work?,en,informational,/corporate-catering-chennai/,yes,Panel 90. Ongoing office volume and event capacity are distinct.
+How can I request a catering quote?,en,enquiry,/catering-quote-chennai/#enquiry,yes,Panel 91. The form is followed up by phone and manual WhatsApp is separate.
+Where is Brihadhee located?,en,brand,/about/#find-us,yes,Panel 92. Anna Nagar East and restaurant phone.
+How can I book a table?,en,enquiry,/book-a-table/#how-to-book,yes,Panel 93. The dining partner shows booking status.

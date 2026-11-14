@@ -2,8 +2,14 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
+      "source": "/",
+      "has": [{ "type": "header", "key": "host", "value": "^brihadhee\\.vercel\\.app$" }],
+      "destination": "https://www.brihadhee.com/",
+      "statusCode": 301
+    },
+    {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "brihadhee.vercel.app" }],
+      "has": [{ "type": "header", "key": "host", "value": "^brihadhee\\.vercel\\.app$" }],
       "destination": "https://www.brihadhee.com/:path*",
       "statusCode": 301
     },
@@ -20,7 +26,7 @@
   ],
   "headers": [
     {
-      "source": "/:path*",
+      "source": "/(.*)",
       "headers": [
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
@@ -34,8 +40,8 @@
       ]
     },
     {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "(?<preview>.+)\\.vercel\\.app" }],
+      "source": "/(.*)",
+      "has": [{ "type": "header", "key": "host", "value": "^.+\\.vercel\\.app$" }],
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
     }
   ]

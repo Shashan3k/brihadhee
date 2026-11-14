@@ -74,7 +74,7 @@ const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
 
     {image && (
       <figure class="dish-page__photo">
-        <img {...responsive(image.name, 1200)} sizes="(max-width: 900px) 92vw, 45vw" width="1200" height="900" loading="lazy" decoding="async" alt={image.alt} />
+        <img {...responsive(image.name, 1200)} sizes="auto, (max-width: 662px) 92vw, (max-width: 1180px) 46vw, 34rem" width="1200" height="900" loading="lazy" decoding="async" alt={image.alt} />
         {image.caption && <figcaption>{image.caption}</figcaption>}
       </figure>
     )}

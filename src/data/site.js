@@ -72,8 +72,15 @@ const fullAddress = [
   address.postalCode,
 ].filter(Boolean).join(", ");
 
-const mapQuery = encodeURIComponent(fullAddress);
 const mapPoint = `${geo.latitude},${geo.longitude}`;
+const mapDirections = `https://www.google.com/maps/dir/?api=1&destination=${mapPoint}`;
+
+export function directionsFrom(origin, travelMode) {
+  const url = new URL(mapDirections);
+  url.searchParams.set("origin", origin);
+  if (travelMode) url.searchParams.set("travelmode", travelMode);
+  return url.href;
+}
 
 export const site = {
   /* ---- Identity ------------------------------------------------------- */
@@ -102,9 +109,7 @@ export const site = {
   geo,
   fullAddress,
   maps: {
-    // Public Google Maps links built from the coordinates above. Replace with
-    // the exact place URL from your Business Profile if you have one.
-    directions: `https://www.google.com/maps/dir/?api=1&destination=${mapPoint}`,
+    directions: mapDirections,
     embed: `https://www.google.com/maps?q=${mapPoint}&z=17&output=embed`,
   },
   landmarks: getFact("landmarks").map((l) => `Near ${l}`),
@@ -137,7 +142,7 @@ export const site = {
 
   /* ---- Social handles (empty hides the link) -------------------------- */
   social: {
-    instagram: "https://www.instagram.com/brihadhee", // owner brief 2026-11-08
+    instagram: getFact("sameAs").find((url) => new URL(url).hostname === "www.instagram.com") ?? "",
     facebook: "", // [ADD] full URL
   },
 
@@ -149,7 +154,7 @@ export const site = {
       ...responsive("hero", 1600),
       width: 1600,
       height: 1200,
-      alt: "Crisp South Indian dosa served with sambar and chutneys on a banana leaf",
+      alt: "Folded golden dosa on a dark plate with three small bowls of sides",
     },
     /* Hero slideshow (Hero.astro, src/scripts/main.js). Slide 1 is `hero` above (the
        LCP image); it plays automatically and shows the first slide without JavaScript.
@@ -159,7 +164,7 @@ export const site = {
         ...responsive("dosa", 1200),
         width: 1200,
         height: 900,
-        alt: "Golden dosa on a banana-leaf tray with sambar and chutney bowls",
+        alt: "Golden dosa folded over its filling on a banana leaf, with three bowls behind it",
       },
       {
         ...responsive("meals", 1200),
@@ -237,7 +242,7 @@ export const site = {
         ...responsive("sweets", 1200),
         width: 1200,
         height: 900,
-        alt: "Dessert served in a brass bowl with chocolate sauce poured over it",
+        alt: "Brass bowl with a scoop of dessert and chocolate sauce",
         caption: "Dessert with chocolate sauce",
       },
     ],
@@ -371,9 +376,6 @@ export const restaurantContact = {
 };
 export const pageContact = (astro) => astro?.locals?.contact ?? restaurantContact;
 
-/** Google Maps directions from a named place (origin) to the restaurant. */
-export const directionsFrom = (origin) =>
-  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${site.geo.latitude},${site.geo.longitude}`;
 
 /** Absolute canonical URL for a local asset src (strips the build base path). */
 export const assetUrl = (src) => absoluteUrl(`/${src.startsWith(BASE_URL) ? src.slice(BASE_URL.length) : src.replace(/^\//, "")}`);

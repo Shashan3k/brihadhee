@@ -1,4 +1,6 @@
-# Brihadhee entity sheet (GEO Step 1)
+# Brihadhee entity sheet (GEO Step 1, historical)
+
+**For current work, use the [Phase 7 owner action plan](../seo/local-seo-owner-action-plan.md) and [client confirmations](../seo/client-confirmations.md).** The November 5 baseline below predates the approved site URL, daily hours, customized dosa, catering services and separate dining/catering contact roles.
 
 Created 2026-11-05. One source of wording for every profile, listing, bio and pitch. Facts marked **pending** must not be used anywhere until the client confirms them (see `docs/seo/client-confirmations.md`).
 

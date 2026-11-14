@@ -8,8 +8,11 @@ import {
   telHref,
   whatsappHref,
   emailHref,
+  ROUTES,
+  href,
 } from "../data/site.js";
 import Icon from "./Icon.astro";
+import { cateringEnabled } from "../data/catering.js";
 
 const hasChannels = hasPhone || hasWhatsApp || hasEmail;
 ---
@@ -21,8 +24,8 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
         <p class="eyebrow">Contact</p>
         <h2 class="section__title" id="contact-title">Come in, or say hello</h2>
         <p class="section__lead">
-          Questions about the menu, a table for a group, or a celebration? Reach
-          out — we are happy to help.
+          Call or WhatsApp the restaurant about the menu or a table for your group.
+          {cateringEnabled && <> For food at your own venue, <a href={href(ROUTES.eventCatering)}>contact the catering team</a>.</>}
         </p>
 
         <ul class="contact__channels" role="list">
@@ -122,7 +125,7 @@ const hasChannels = hasPhone || hasWhatsApp || hasEmail;
                 <Icon name="navigation" size={17} />
                 Get directions
               </a>
-              <a class="btn btn--primary" href="/about/#enquiry">
+              <a class="btn btn--primary" href={`${href(ROUTES.about)}#enquiry`}>
                 <Icon name="mail" size={17} />
                 Send an enquiry
               </a>

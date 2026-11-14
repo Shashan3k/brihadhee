@@ -1,5 +1,5 @@
 ---
-import { site } from "../data/site.js";
+import { site, ROUTES, href } from "../data/site.js";
 import Icon from "./Icon.astro";
 import Stars from "./Stars.astro";
 import Wordmark from "./Wordmark.astro";
@@ -11,6 +11,7 @@ const { range } = openingTimes(); // "11 AM to 11 PM"
 const avenue = getFact("street").split(",")[0]; // "3rd Avenue"
 // Slideshow: the hero photo first (the LCP image), then the rest (site.js media.heroSlides).
 const slides = [media.hero, ...media.heroSlides];
+const slideSizes = "(max-width: 600px) 82vw, (max-width: 899px) 85vw, (max-width: 1180px) 42vw, 30rem";
 const { h1 } = Astro.props;
 ---
 
@@ -47,7 +48,7 @@ const { h1 } = Astro.props;
       {/* Two actions only: "Call now" is already in the header (every width) and the
           mobile call bar, so a third hero button only pushed the row onto two lines. */}
       <div class="hero__actions">
-        <a class="btn btn--primary" href="#menu">
+        <a class="btn btn--primary" href={href(ROUTES.menu)}>
           <Icon name="utensils" size={18} />
           View menu
         </a>
@@ -87,17 +88,31 @@ const { h1 } = Astro.props;
                   aria-label={`${i + 1} of ${slides.length}`}
                   aria-hidden={i === 0 ? undefined : "true"}
                 >
-                  <img
-                    src={slide.src}
-                    srcset={slide.srcset}
-                    sizes="(max-width: 900px) 92vw, 46vw"
-                    width={slide.width}
-                    height={slide.height}
-                    alt={slide.alt}
-                    loading={i === 0 ? "eager" : "lazy"}
-                    fetchpriority={i === 0 ? "high" : "low"}
-                    decoding="async"
-                  />
+                  {i === 0 ? (
+                    <img
+                      src={slide.src}
+                      srcset={slide.srcset}
+                      sizes={slideSizes}
+                      width={slide.width}
+                      height={slide.height}
+                      alt={slide.alt}
+                      fetchpriority="high"
+                      decoding="async"
+                    />
+                  ) : (
+                    <template>
+                      <img
+                        src={slide.src}
+                        srcset={slide.srcset}
+                        sizes={slideSizes}
+                        width={slide.width}
+                        height={slide.height}
+                        alt={slide.alt}
+                        fetchpriority="low"
+                        decoding="async"
+                      />
+                    </template>
+                  )}
                 </figure>
               ))
             }

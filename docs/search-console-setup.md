@@ -16,34 +16,21 @@ For www.brihadhee.com. About 30 minutes. Needs access to the domain's DNS settin
 1. Search Console → **Sitemaps** → enter `sitemap-index.xml` → Submit.
 2. Status should become "Success" within a day. It lists the indexable pages (drafts, noindex and privacy pages are left out on purpose).
 
-## 3. Request indexing for the first 10 URLs
+## 3. Inspect the canonical URLs
 
-Search Console → **URL inspection** (top bar) → paste each URL → **Request indexing**. Google allows roughly 10–12 requests a day, so do these first:
-
-1. https://www.brihadhee.com/
-2. https://www.brihadhee.com/menu/
-3. https://www.brihadhee.com/about/
-4. https://www.brihadhee.com/book-a-table/
-5. https://www.brihadhee.com/best-dosa-parotta-anna-nagar/
-6. https://www.brihadhee.com/nellai-meals-south-indian-veg-anna-nagar/
-7. https://www.brihadhee.com/catering-services-chennai/
-8. https://www.brihadhee.com/event-planner-catering-partner/
-9. The next new page you publish (for example /menu/dosa/)
-10. The next new page after that
-
-After each new page goes live, inspect and request indexing for it the same day.
+Use the 17-URL inventory in the [implementation report](seo/implementation-report.md#release-candidate-route-inventory). Start with the homepage, `/menu/`, `/menu/dosa/`, `/menu/nellai-meals/`, and the catering and booking pages. Record the indexed and live results separately. Request indexing selectively for new or substantially changed canonical pages after checking their live eligibility. Inspect retired paths only to verify their redirects. [URL Inspection help](https://support.google.com/webmasters/answer/9012289)
 
 ## 4. Check these reports weekly
 
 - **Performance → Search results:** filter queries containing "brihadhee" (brand), and track the 20 priority keywords from `docs/strategy/competitor-attack-plan.md` section 6.2.
-- **Pages (Indexing):** every sitemap URL should be "Indexed". Investigate "Crawled – currently not indexed" and "Duplicate" messages.
-- **Enhancements / Rich results:** FAQ, breadcrumbs, and any structured-data errors.
+- **Page indexing:** compare individual sitemap URLs with the indexed and excluded rows. Review "Crawled – currently not indexed" and duplicate classifications with URL-level evidence.
+- **Enhancements / Rich results:** breadcrumbs and applicable structured-data errors. The site’s matching FAQ markup describes visible content. Google retired FAQ rich results. [Google Search updates](https://developers.google.com/search/updates#may-2026)
 - **Links:** new referring sites (KPI: referring domains).
 - **Search generative AI setting:** leave on "Include" so Brihadhee stays eligible for AI Overviews and AI Mode.
 
 ## 5. Old hosts
 
-`brihadhee.vercel.app` already redirects to www (vercel.json). The GitHub Pages copy (`shashan3k.github.io/brihadhee/`) declares www.brihadhee.com as canonical, so Google consolidates it. Do not add the github.io site as a separate property.
+`vercel.json` has the project-host redirect correction. The 14 November release audit still received 200 from the public Vercel alias. Confirm the root and a subpage redirect after the candidate is deployed. GitHub Pages was retired. Record the current response if an old URL is still discovered. [Release checklist](seo/implementation-report.md#deployment-verification-checklist)
 
 ## 6. Bing Webmaster Tools (also feeds Copilot, DuckDuckGo and ChatGPT's Bing results)
 
@@ -69,7 +56,7 @@ After each new page goes live, inspect and request indexing for it the same day.
 
 1. https://analytics.google.com → Admin → Create property "Brihadhee website" (India, INR, Asia/Kolkata) → Web stream for `https://www.brihadhee.com`.
 2. Copy the Measurement ID (`G-…`) into Vercel as `PUBLIC_GA4_ID` and redeploy. The privacy page updates itself.
-3. Admin → Events: mark `click_call`, `click_whatsapp`, `book_table_click` and `catering_quote_submit` as **key events** (conversions).
+3. Admin → Events: verify `catering_quote_submit` and `restaurant_enquiry_submit` before marking the submission events as key events. Keep Call, WhatsApp and booking clicks as intent signals in reporting. [Measurement plan](seo/measurement-plan.md)
 4. Link GA4 to Search Console (Admin → Product links → Search Console links).
 
-Events the site sends: `click_call` (any tel: link, including the mobile CTA bar), `click_whatsapp` (any WhatsApp link), `book_table_click` (`/book-a-table/` and partner booking links), `catering_quote_submit` (a quote or enquiry form accepted by `/api/lead`, with `form_type` and `headcount`; no personal data), `directions_click`, `order_click` (Swiggy/Zomato links, once added), `quote_cta_click` (the mobile bar's Get a quote button on catering pages), `menu_filter_use` (menu tabs).
+The release candidate sends `book_table_view_click` for an internal booking-page link and `book_table_click` for a partner handoff. `catering_quote_submit` and `restaurant_enquiry_submit` record accepted submissions in their respective forms. See the measurement plan for proxy versus confirmed-outcome definitions and the cutover note.

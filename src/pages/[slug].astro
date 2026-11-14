@@ -9,14 +9,13 @@
  *   /corporate-catering-chennai/      corporate and office catering (needs the
  *                                     verified corporateCatering fact)
  * Every block reads from src/data/catering.js and is omitted unless confirmed.
- * Corporate catering (1,000+ people a day) is shown on the flagship page; client names need permission.
+ * The event, corporate and planner pages each have their own enquiry route.
  */
 import Base from "../layouts/Base.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import PageHeader from "../components/PageHeader.astro";
 import AtAGlance from "../components/AtAGlance.astro";
-import CompareTable from "../components/CompareTable.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import ContentSection from "../components/ContentSection.astro";
@@ -53,7 +52,6 @@ import {
   plannerSchema,
   joinNatural,
   corporate,
-  eventService,
   CORPORATE_PATH,
   corporateEnabled,
   corporateMeta,
@@ -91,33 +89,28 @@ const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL :
 const m = isCorporate ? corporateMeta : isPlanner ? plannerMeta : meta;
 const path = isCorporate ? CORPORATE_PATH : isPlanner ? PLANNER_PATH : CATERING_PATH;
 const fmt = (n) => n.toLocaleString("en-IN");
+const quoteAction = {
+  label: isCorporate ? "Request an office catering quote" : isPlanner ? "Discuss an event partnership" : "Request an event catering quote",
+  shortLabel: isCorporate ? "Office quote" : isPlanner ? "Partner enquiry" : "Event quote",
+  href: "#enquiry",
+  event: "quote_cta_click",
+};
 
-const glance = [
-  ["Who", `Brihadhee, a pure vegetarian restaurant in Anna Nagar East with a ${CATERING_DIET} catering service`],
+const eventGlance = [
   ["Events", events.map((e) => e.label).join(", ")],
-  ["Guests", guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "On enquiry"],
+  ...(guests ? [["Guests per event", `${fmt(guests.min)} to ${fmt(guests.max)}`]] : []),
   ["Area served", serviceAreas.join(", ")],
   ["Live counters", liveCounters.join(", ")],
-  ...(corporate ? [["Corporate", `more than ${corporate.dailyCovers.toLocaleString("en-IN")} people served every day`]] : []),
   ["Pricing", pricingText ?? "On enquiry"],
-  ...(isPlanner ? [["For event planners", plannerModels.join(", ")]] : []),
 ];
 
-const compare = {
-  id: "compare-catering",
-  title: isPlanner ? "Why planners work with a boutique caterer" : "Boutique catering compared",
-  lead: "Brihadhee's column lists confirmed facts. The other column describes a typical type of caterer, not a specific business.",
-  caption: "Brihadhee boutique event catering compared with a typical large-scale caterer",
-  columns: ["Brihadhee boutique catering", "Typical large-scale caterer"],
-  rows: [
-    ["Event planner flexibility", `Menu customised for each event; ${joinNatural(plannerModels)}`, "Varies; often fixed packages"],
-    ["Live custom counters", joinNatural(liveCounters), "Varies"],
-    ["Guest count", guests ? `${fmt(guests.min)} to ${fmt(guests.max)} guests` : "On enquiry", "Varies; many focus on very large weddings"],
-    ["Regional menu customisation", `Tirunelveli and Karaikudi specialties, plus North Indian and Indo-Chinese, all ${CATERING_DIET}`, "Varies"],
-    ["Pricing", pricingText ?? "On enquiry", "Varies"],
-  ],
-  note: "Typical categories only; compare current quotes from each caterer before booking.",
-};
+const plannerGlance = [
+  ["For", "Event planners and production teams"],
+  ["Branding", joinNatural(plannerModels)],
+  ["Menus", `${CATERING_DIET} menus and live food counters`],
+  ...(guests ? [["Guests per event", `${fmt(guests.min)} to ${fmt(guests.max)}`]] : []),
+  ["Area served", serviceAreas.join(", ")],
+];
 const isGated = kind === "no-onion";
 // Catering pages show the catering numbers (config enquiry_channels) in the header,
 // page header, summary, CTA bar and forms; see pageContact() in src/data/site.js.
@@ -132,11 +125,11 @@ const cp = corporatePage;
     <QuoteBuilder page={quotePage.path} {...quotePage.builder} />
   </SpokePage>
 ) : (
-<Base title={m.title} description={m.description} path={path} schema={schema} cta="quote">
+<Base title={m.title} description={m.description} path={path} schema={schema} cta="quote" quoteAction={quoteAction}>
   <Nav homeBase={base} />
   {isCorporate ? (
-  <main id="main">
-    <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} />
+  <main id="main" tabindex="-1">
+    <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} primaryAction={quoteAction} showDirections={false} />
     <AtAGlance title="Brihadhee corporate catering: summary" rows={cp.glance} />
     <ContentSection {...cp.scale} />
     <ContentSection {...cp.services} />
@@ -145,20 +138,20 @@ const cp = corporatePage;
     {cp.checklist && <ContentSection {...cp.checklist} />}
     {cp.safety && <ContentSection {...cp.safety} />}
     {cp.areas && <ContentSection {...cp.areas} />}
-    <Faq items={cp.faq} title="Corporate catering questions" lead="" eyebrow="Questions" />
     <LeadForm
       variant="corporate"
       page={path}
       title="Request a corporate catering quote"
-      lead="Share your office location and daily headcount, and the Brihadhee team will call you back with a menu, a tasting date and a per-plate price."
+      lead="For recurring meals, share your office location, headcount and delivery days. For a packed bulk order, give the date, meal count and delivery window. For a staffed office event, include the venue, guest count and serving requirements."
     />
+    <Faq items={cp.faq} title="Corporate catering questions" lead="" eyebrow="Questions" />
     <section class="section" id="more" aria-labelledby="more-title">
       <div class="container">
         <h2 class="section__title" id="more-title">More catering from Brihadhee</h2>
         <ul class="link-list" role="list">
           <li><a href={`${base}${CATERING_PATH.slice(1)}`}>End-to-end event and wedding catering</a></li>
           <li><a href={href(ROUTES.smallFunctions)}>Small function catering from {CATERING_MIN_GUESTS} guests</a></li>
-          <li><a href={href(ROUTES.cateringQuote)}>Get a catering quote</a></li>
+          <li><a href={href(ROUTES.cateringQuote)}>Request a quote for a single event</a></li>
           <li><a href={`${base}${PLANNER_PATH.slice(1)}`}>Catering partner for event management companies</a></li>
           <li><a href={`${base}menu/nellai-meals/`}>Lunch and Nellai meals at the restaurant</a></li>
         </ul>
@@ -166,20 +159,22 @@ const cp = corporatePage;
     </section>
   </main>
   ) : (
-  <main id="main">
+  <main id="main" tabindex="-1">
     <PageHeader
       eyebrow={isPlanner ? "For event management companies · Chennai" : "Event catering · Chennai"}
       h1={m.h1}
       intro={isPlanner
-        ? `Brihadhee works with event management companies across ${joinNatural(serviceAreas)} as a ${CATERING_DIET} catering partner, with ${joinNatural(plannerModels)} and regional menus for ${guests ? `${fmt(guests.min)} to ${fmt(guests.max)}` : "your"} guests.`
+        ? `Brihadhee works with event management companies in Chennai on ${CATERING_DIET} regional menus and ${joinNatural(plannerModels)}. Share your client brief, venue and event schedule to discuss the menu, branding and service setup.`
         : opening}
+      primaryAction={quoteAction}
+      showDirections={false}
     />
-    <AtAGlance title={isPlanner ? "Catering partnership: summary" : "Brihadhee catering: summary"} rows={glance} />
+    <AtAGlance title={isPlanner ? "Catering partnership at a glance" : "Event catering at a glance"} rows={isPlanner ? plannerGlance : eventGlance} />
 
     {entityLine && (
       <section class="section" id="about-catering" aria-labelledby="about-catering-title">
         <div class="container">
-          <h2 class="section__title" id="about-catering-title">{isPlanner ? "A restaurant kitchen behind every counter" : "Catering from a working restaurant kitchen"}</h2>
+          <h2 class="section__title" id="about-catering-title">{isPlanner ? "Meet your catering partner" : "Brihadhee’s catering team"}</h2>
           <p class="section__lead">{entityLine}</p>
           <p class="section__lead catering__tamil tamil" lang="ta">{isPlanner
             ? "சைவ கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்"
@@ -210,10 +205,10 @@ const cp = corporatePage;
           <h2 class="section__title" id="partnership-title">How the partnership works</h2>
           <ul class="catering-list" role="list">
             {plannerModels.map((p) => (
-              <li><h3>{p.charAt(0).toUpperCase() + p.slice(1)}</h3><p>Brihadhee's kitchen team runs the counter at your venue, under {p.startsWith("white") ? "your brand" : "both brands"}.</p></li>
+              <li><h3>{p.charAt(0).toUpperCase() + p.slice(1)}</h3><p>Discuss how the Brihadhee team will present and run the counter under {p.startsWith("white") ? "your brand" : "both brands"}.</p></li>
             ))}
             <li><h3>Regional menus</h3><p>Menus built around Tirunelveli and Karaikudi dishes, customised for each of your clients.</p></li>
-            <li><h3>Per-plate pricing</h3><p>{pricingText}, so you can quote your client before booking.</p></li>
+            {pricingText && <li><h3>Per-plate pricing</h3><p>Share the proposed menu, guest count and service requirements for a quote to review with your client.</p></li>}
           </ul>
         </div>
       </section>
@@ -222,9 +217,9 @@ const cp = corporatePage;
     {!isPlanner && corporate && (
       <section class="section" id="corporate" aria-labelledby="corporate-title">
         <div class="container">
-          <h2 class="section__title" id="corporate-title">Corporate and office catering</h2>
+          <h2 class="section__title" id="corporate-title">Office lunches and employee meals</h2>
           <p class="section__lead">
-            Brihadhee runs daily corporate catering across {joinNatural(serviceAreas)}, serving more than {corporate.dailyCovers.toLocaleString("en-IN")} people every day with {CATERING_DIET} food from its 100% pure vegetarian kitchen on {getFact("street")}.
+            For recurring lunch deliveries, bulk office meals or an employee meal programme, share your office location, schedule and headcount with the corporate catering team.
           </p>
           <p><a class="btn btn--ghost" href={`${base}${CORPORATE_PATH.slice(1)}`}>Corporate catering details</a></p>
         </div>
@@ -235,13 +230,12 @@ const cp = corporatePage;
       <section class="section" id="menus" aria-labelledby="menus-title">
         <div class="container">
           <h2 class="section__title" id="menus-title">Live counters and menus</h2>
+          {formats.some((f) => f.photo) && <p class="section__lead">These photos show dishes from the Brihadhee restaurant. Ask the catering team which dishes and counters are available for your event.</p>}
           <ul class="catering-menu" role="list">
             {formats.map((f) => (
               <li class="catering-menu__item">
-                {f.photo ? (
+                {f.photo && (
                   <img {...responsive(f.photo.file.replace(/\.jpg$/, ""), 1200)} sizes="(max-width: 700px) 92vw, 30vw" width="1200" height="900" alt={f.photo.alt} loading="lazy" decoding="async" />
-                ) : (
-                  <div class="catering-menu__placeholder" role="img" aria-label={f.placeholderAlt}>Photo to be added</div>
                 )}
                 <h3>{f.label}</h3>
                 <p>{f.text}</p>
@@ -252,19 +246,20 @@ const cp = corporatePage;
       </section>
     )}
 
-    {steps.length > 0 && (
+    {!isPlanner && steps.length > 0 && (
       <section class="section section--tint" id="how" aria-labelledby="how-title">
         <div class="container">
-          <h2 class="section__title" id="how-title">How it works</h2>
+          <h2 class="section__title" id="how-title">From event enquiry to booking</h2>
           <ol class="catering-steps">
             {steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
           </ol>
           {advanceNotice && <p class="catering__note">Please book {advanceNotice} in advance.</p>}
+          <p><a href={`${href(ROUTES.cateringQuote)}#what-to-send`}>See what to include in your catering quote request</a></p>
         </div>
       </section>
     )}
 
-    {guests && (
+    {!isPlanner && guests && (
       <section class="section" id="area" aria-labelledby="area-title">
         <div class="container">
           <h2 class="section__title" id="area-title">Guest count and area served</h2>
@@ -272,15 +267,29 @@ const cp = corporatePage;
           <p>
             Planning a birthday, housewarming or get-together closer to {CATERING_MIN_GUESTS} guests? See <a href={href(ROUTES.smallFunctions)}>small function catering in Chennai</a>, or send your details through the <a href={href(ROUTES.cateringQuote)}>catering quote form</a>.
           </p>
-          {guests.examples.length > 0 && (
-            <ul class="catering-chips" role="list">{guests.examples.map((x) => <li>{x}</li>)}</ul>
-          )}
         </div>
       </section>
     )}
 
-    <CompareTable {...compare} />
+    {isPlanner && <ContentSection
+      id="planner-brief"
+      title="What to include in your event brief"
+      lead="Share the client’s event date, venue and estimated guest count along with the branding and service requirements."
+      items={[
+        { title: "Client brief and branding", text: "Tell us who you are planning for, how the catering should be presented and which dishes or counters your client is considering." },
+        { title: "Venue and service", text: "Share the meal times, venue access and setup constraints. Confirm who will handle equipment, serving and clean-up before booking." },
+        { title: "Quote for client approval", text: "Review the proposed menu, service scope, per-plate quote and date with the catering team before confirming with your client." },
+      ]}
+    />}
 
+    <LeadForm
+      variant={isPlanner ? "planner" : "event"}
+      page={path}
+      title={isPlanner ? "Send your event brief" : "Get an event catering quote"}
+      lead={isPlanner
+        ? "Share your company name, event date, venue and estimated headcount. Include the branding model, live counters and service setup your client needs."
+        : "Share the event type, date, venue and estimated guest count. The catering team follows up to discuss the menu, service requirements and per-plate quote."}
+    />
     <Faq
       items={isPlanner ? plannerFaqs : faqs}
       title={isPlanner ? "Questions from event planners" : "Catering questions"}
@@ -288,18 +297,10 @@ const cp = corporatePage;
       eyebrow="Questions"
     />
 
-    <LeadForm
-      variant="event"
-      page={path}
-      title={isPlanner ? "Start a partnership" : "Get an event catering quote"}
-      lead={isPlanner
-        ? "Tell us about your next event, and the Brihadhee team will call you back with a counter plan and per-plate pricing."
-        : "Share the event, date, venue and guest count, and the Brihadhee team will call you back with a menu and a per-plate price."}
-    />
-
     <section class="section" id="contact" aria-labelledby="contact-title">
       <div class="container">
-        <h2 class="section__title" id="contact-title">{isPlanner ? "Meet the team in Anna Nagar East" : "Visit the kitchen in Anna Nagar East"}</h2>
+        <h2 class="section__title" id="contact-title">Catering enquiries and the Anna Nagar East restaurant</h2>
+        <p>The map shows the Brihadhee restaurant. Contact the catering team to discuss service at your own venue.</p>
         <address class="catering__address">
           {site.address.line1}<br />
           {site.address.line2}<br />
@@ -309,19 +310,18 @@ const cp = corporatePage;
         {contact.any && (
           <div class="catering__cta">
             {contact.phone && (
-              <a class="btn btn--primary" href={contact.telHref}><Icon name="phone" size={17} /> Call {contact.phone}</a>
+              <a class="btn btn--primary" href={contact.telHref} data-event="click_call"><Icon name="phone" size={17} /> Call catering: {contact.phone}</a>
             )}
             {contact.whatsapp && (
-              <a class="btn btn--ghost" href={contact.whatsappHref} target="_blank" rel="noopener"><Icon name="whatsapp" size={17} /> WhatsApp</a>
+              <a class="btn btn--ghost" href={contact.whatsappHref} target="_blank" rel="noopener" data-event="click_whatsapp"><Icon name="whatsapp" size={17} /> WhatsApp catering</a>
             )}
           </div>
         )}
         <p>
           {isPlanner
-            ? <a href={`${base}${CATERING_PATH.slice(1)}`}>See the functions Brihadhee caters for families</a>
+            ? <a href={`${base}${CATERING_PATH.slice(1)}`}>Planning your own function? See event catering</a>
             : <a href={`${base}${PLANNER_PATH.slice(1)}`}>Event management company? See the partner page</a>}
         </p>
-        {isPlanner && <p><a href={href(ROUTES.cateringQuote)}>Send event details through the catering quote form</a></p>}
         <div class="visit__map catering__map">
           <iframe src={site.maps.embed} title={`Map showing ${site.name} on ${getFact("street")}, Chennai`} width="600" height="450" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
         </div>

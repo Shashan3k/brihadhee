@@ -78,6 +78,7 @@ const SWIGGY_DINEOUT = "https://www.swiggy.com/restaurants/brihadhee-anna-nagar-
 const EAZYDINER = "https://www.eazydiner.com/chennai/brihadhee-anna-nagar-east-chennai-703877";
 const DISTRICT = "https://www.district.in/dining/chennai/brihadhee-anna-nagar-east";
 const INSTAGRAM = "https://www.instagram.com/brihadhee";
+const MAP_URL = "https://www.google.com/maps/place/BRIHADHEE/@13.0879662,80.2178222,17z/data=!4m6!3m5!1s0x3a5265ec5076e09b:0xa0425a2bd8cf093c!8m2!3d13.0879662!4d80.2178222!16s%2Fg%2F11x16tzgsf";
 const KW12 = "keyword plan of 12 November 2026 ('keyword (1).md'), with config/seo-gates.ts";
 const PHONE_SWITCH = "owner direction 2026-11-12: +91 73587 14113 site-wide; +91 94442 24999 on the catering pages only";
 const BLUEPRINT = "on-page SEO blueprint confirmed by the Brihadhee team, 2026-11-11 (docs/seo/client-confirmations.md section G)";
@@ -124,8 +125,8 @@ export const FACTS = {
       long:
         "Brihadhee is a 100% pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
-        `The same kitchen runs vegetarian corporate catering for ${num(CORPORATE_DAILY_MEALS)}+ meals a day and end-to-end vegetarian event catering ` +
-        `for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests.`,
+        `The restaurant kitchen prepares vegetarian office meals, with ${num(CORPORATE_DAILY_MEALS)}+ served daily across its corporate catering operation. ` +
+        `The Brihadhee team also caters individual vegetarian events for ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests, with preparation and service agreed in the quote.`,
     },
     CLIENT,
     D11
@@ -164,7 +165,7 @@ export const FACTS = {
   ),
   street: verified("3rd Avenue, W-Block, Anna Nagar East", "derived from the verified address"),
   landmarks: verified(["Anna Nagar Tower Park", "3rd Avenue and 9th Street", "Aadhaar Seva Kendra"], "Ho.md (Google map), owner brief"),
-  /** Neighbourhoods diners come from (Restaurant areaServed). Shanthi Colony and Aminjikarai border Anna Nagar East (keyword plan 3.10). */
+  /** Nearby neighbourhoods, useful for trip planning. Catering coverage is a separate fact. */
   nearbyAreas: verified(
     ["Anna Nagar East", "Anna Nagar West", "Shanthi Colony", "Thirumangalam", "Shenoy Nagar", "Kilpauk", "Aminjikarai", "Mogappair"],
     KW12,
@@ -175,7 +176,7 @@ export const FACTS = {
   directionLandmarks: verified(
     [
       { label: "Anna Nagar Tower Park", query: "Anna Nagar Tower Park, Chennai" },
-      { label: "Anna Nagar East Metro", query: "Anna Nagar East Metro Station, Chennai" },
+      { label: "Anna Nagar East Metro", query: "Anna Nagar East Metro Station, Chennai", travelMode: "walking" },
       { label: "Roundana", query: "Anna Nagar Roundana, Chennai" },
       { label: "VR Mall", query: "VR Chennai mall, Anna Nagar" },
       { label: "Shanthi Colony", query: "Shanthi Colony, Anna Nagar, Chennai" },
@@ -186,7 +187,7 @@ export const FACTS = {
   ),
   geo: verified<Geo>({ latitude: 13.0879662, longitude: 80.2178222 }, "Google Maps place URL (docs/geo/presence-audit.csv)", D6),
   mapUrl: verified(
-    "https://www.google.com/maps/place/BRIHADHEE/@13.0879662,80.2178222,17z/data=!4m6!3m5!1s0x3a5265ec5076e09b:0xa0425a2bd8cf093c!8m2!3d13.0879662!4d80.2178222!16s%2Fg%2F11x16tzgsf",
+    MAP_URL,
     "Google Maps place URL (docs/geo/presence-audit.csv)",
     D6
   ),
@@ -230,7 +231,7 @@ export const FACTS = {
   familyFriendly: verified(true, "owner brief; Google profile notes (Ho.md)"),
   alcohol: verified("not served", "owner brief; reservation listing (Ho.md)"),
   acceptsReservations: verified({ value: true, how: "pre-booking through Swiggy Dineout, EazyDiner and District" }),
-  /** Booking pages confirmed for linking. Swiggy Dineout and District URLs are not confirmed yet (named, not linked). */
+  /** Owner-confirmed booking pages for this restaurant. */
   bookingLinks: verified(
     [
       { label: "Swiggy Dineout", url: SWIGGY_DINEOUT },
@@ -320,12 +321,11 @@ export const FACTS = {
   fssaiLicence: unverified<string>("the 14-digit FSSAI licence number", [/\bFSSAI\s*(?:licen[cs]e)?\s*(?:no\.?|number|#)?\s*:?\s*\d{14}\b/i]),
 
   /* ---- Unverified: null until the owner confirms ------------------------- */
-  /** Owner-supplied profiles only. Add Google Business Profile, Swiggy, Zomato, District,
-   *  Justdial, Apple Maps and Bing Places URLs once the owner confirms each is theirs. */
+  /** Verified identity links. Listing fields and hours are audited separately. */
   sameAs: verified<string[]>(
     [
       INSTAGRAM,
-      "https://www.google.com/maps/place/BRIHADHEE/@13.0879662,80.2178222,17z/data=!4m6!3m5!1s0x3a5265ec5076e09b:0xa0425a2bd8cf093c!8m2!3d13.0879662!4d80.2178222!16s%2Fg%2F11x16tzgsf",
+      MAP_URL,
       ZOMATO,
       SWIGGY_DINEOUT,
       EAZYDINER,

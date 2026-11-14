@@ -4,12 +4,13 @@
  *
  * Graph (stable @ids):
  *   Restaurant (#restaurant)       <- publisher of -> WebSite (#website)
- *   WebPage (<page>#webpage)       isPartOf WebSite, about Restaurant, breadcrumb -> BreadcrumbList
- *   FAQPage (<page>#faq)           about Restaurant, dateModified, built from the SAME data as the visible FAQ
+ *   WebPage (<page>#webpage)       isPartOf WebSite; mainEntity points at the page's subject
+ *                                  when modeled; breadcrumb links to a real trail on inner pages
+ *   FAQPage (<page>#faq)           isPartOf its WebPage; built from the SAME data as the visible FAQ
  *   Service (<page>#service)       provider -> Restaurant; "Event catering" (with an
  *                                  OfferCatalog, each Offer with eligibleQuantity >= 50
- *                                  guests) or "Corporate catering"; areaServed Chennai
- *   Restaurant.areaServed          the neighbourhoods diners come from (nearbyAreas)
+ *                                  guests) or "Corporate catering"; areaServed Chennai;
+ *                                  availableChannel carries the distinct catering contact
  * Restaurant is already a schema.org FoodEstablishment subtype, so no second
  * FoodEstablishment node is emitted (it would read as a separate business).
  *   Article (/whats-new/#article)  author and publisher -> Restaurant, dated
@@ -24,8 +25,9 @@
  * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
-import { site, hasHours, assetUrl } from "../data/site.js";
+import { site, ROUTES, hasHours, assetUrl } from "../data/site.js";
 import { getFact, factOr, CONTENT_UPDATED } from "../data/entity-truth.ts";
+import { MENU_NOTES } from "../data/menu-canonical.ts";
 
 import { faqItems } from "../data/faq.js";
 import { CATERING_DIET } from "../../config/seo-gates.ts";
@@ -77,8 +79,6 @@ export function restaurantSchema() {
       (src) => assetUrl(src)
     ),
     servesCuisine: getFact("cuisines"),
-    // Neighbourhoods diners come from (entity-truth.ts nearbyAreas). Catering areas live on the Service nodes.
-    areaServed: getFact("nearbyAreas").map((name) => ({ "@type": "Place", name: `${name}, Chennai` })),
     ...(site.priceRange ? { priceRange: site.priceRange } : {}),
     currenciesAccepted: "INR",
     address: {
@@ -99,7 +99,7 @@ export function restaurantSchema() {
     telephone: e164(getFact("phone")),
     email: getFact("email"),
     ...(sameAs.length ? { sameAs } : {}),
-    hasMenu: pageUrl("/menu/"),
+    hasMenu: pageUrl(ROUTES.menu),
     ...(reservations?.value ? { acceptsReservations: true } : {}),
     ...(founders
       ? { founder: founders.names.map((name) => ({ "@type": "Person", name })) }
@@ -135,8 +135,9 @@ export function webSiteSchema() {
  * WebPage + BreadcrumbList for one page.
  *   crumbs: [{ name, path }] from the home page down to this page.
  */
-export function webPageSchemas({ path, title, description, crumbs }) {
+export function webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId }) {
   const pid = pageIds(path);
+  const hasTrail = crumbs.length > 1;
   const webpage = {
     "@context": CONTEXT,
     "@type": "WebPage",
@@ -147,9 +148,13 @@ export function webPageSchemas({ path, title, description, crumbs }) {
     inLanguage: site.locale.replace("_", "-"),
     isPartOf: { "@id": ids.website },
     about: { "@id": ids.restaurant },
-    breadcrumb: { "@id": pid.breadcrumb },
+    ...(primaryEntityId ? { mainEntity: { "@id": primaryEntityId } } : {}),
+    ...(faqId ? { hasPart: { "@id": faqId } } : {}),
+    ...(hasTrail ? { breadcrumb: { "@id": pid.breadcrumb } } : {}),
     dateModified: CONTENT_UPDATED,
   };
+  if (!hasTrail) return [webpage];
+
   const breadcrumb = {
     "@context": CONTEXT,
     "@type": "BreadcrumbList",
@@ -177,7 +182,7 @@ export function cateringServiceSchema({
   offerCatalog = [],
   path = "/catering-services-chennai/",
   name = `Brihadhee ${CATERING_DIET_CAP} Event and Wedding Catering`,
-  description = `End-to-end ${CATERING_DIET} event catering in Chennai for weddings, birthdays, housewarmings and family functions: menu planning, cooking, serving and setup, with live food counters.`,
+  description = `${CATERING_DIET_CAP} event and wedding catering in Chennai with regional menus and live counters. Agree the requested services in the quote.`,
   guests = null, // { min, max? }: guest count each catering offer is for (Offer.eligibleQuantity)
   audience = [
     { "@type": "Audience", audienceType: "Families planning functions" },
@@ -219,7 +224,18 @@ export function cateringServiceSchema({
           },
         }
       : {}),
-    ...(phone ? { telephone: e164(phone) } : {}),
+    ...(phone
+      ? {
+          availableChannel: {
+            "@type": "ServiceChannel",
+            servicePhone: {
+              "@type": "ContactPoint",
+              contactType: "catering enquiries",
+              telephone: e164(phone),
+            },
+          },
+        }
+      : {}),
   };
 }
 
@@ -233,7 +249,7 @@ export function faqPageSchema(path, items) {
     "@id": pid.faq,
     dateModified: CONTENT_UPDATED,
     about: { "@id": ids.restaurant },
-    mainEntityOfPage: { "@id": pid.webpage },
+    isPartOf: { "@id": pid.webpage },
     mainEntity: items.map((i) => ({
       "@type": "Question",
       name: i.question,
@@ -275,10 +291,14 @@ export function articleSchema({ path, headline, description, datePublished, imag
 
 /** Graph for a page: Restaurant + WebSite + WebPage + BreadcrumbList (+ extras). */
 export function pageGraph({ path, title, description, crumbs, extras = [] }) {
+  const primaryContent = extras.find((node) => ["Menu", "Service", "Article"].includes(node?.["@type"]));
+  const isRestaurantPage = [ROUTES.home, ROUTES.about, ROUTES.book].includes(path);
+  const primaryEntityId = primaryContent?.["@id"] ?? (isRestaurantPage ? ids.restaurant : null);
+  const faqId = extras.find((node) => node?.["@type"] === "FAQPage")?.["@id"];
   return [
     restaurantSchema(),
     webSiteSchema(),
-    ...webPageSchemas({ path, title, description, crumbs }),
+    ...webPageSchemas({ path, title, description, crumbs, primaryEntityId, faqId }),
     ...extras,
   ].filter(Boolean);
 }
@@ -297,17 +317,21 @@ export function homeSchema({ title, description }) {
 }
 
 /**
- * Menu / MenuSection / MenuItem for /menu, generated from menu-canonical.ts.
- * Prices come straight from the data (confirmed current on 2026-11-05).
+ * Menu / MenuSection / MenuItem for /menu/, generated from the same data as the page.
+ * Build-your-own options show the batter price or the price of one add-on.
  * Signature extras without a listed price are MenuItems without an offer.
  */
 export function menuSchema({ categories, extras = [], byo = null }) {
+  const path = ROUTES.menu;
   return {
     "@context": CONTEXT,
     "@type": "Menu",
-    "@id": `${pageUrl("/menu/")}#menu`,
+    "@id": `${pageUrl(path)}#menu`,
+    url: pageUrl(path),
     name: `${getFact("name")} menu`,
+    description: `${MENU_NOTES.gst} ${MENU_NOTES.parcel}`,
     inLanguage: site.locale.replace("_", "-"),
+    mainEntityOfPage: { "@id": pageIds(path).webpage },
     hasMenuSection: [
       ...categories.map((c) => ({
         "@type": "MenuSection",
@@ -326,17 +350,22 @@ export function menuSchema({ categories, extras = [], byo = null }) {
             {
               "@type": "MenuSection",
               name: "Build Your Own Dosa",
-              description: "Pick one batter, then add toppings, a stuffing and a garnish.",
+              description: "Pick one batter, then add podi and toppings, a filling and your roast. Each add-on is priced separately.",
               hasMenuSection: [
-                ...byo.steps.map((s) => ({
+                ...byo.steps.map((step) => ({
                   "@type": "MenuSection",
-                  name: `${s.step}. ${s.name}`,
-                  hasMenuItem: s.options.map((o) => ({
+                  name: `Step ${step.step}: ${step.label}`,
+                  hasMenuItem: step.options.map((option) => ({
                     "@type": "MenuItem",
-                    name: o.name,
-                    ...(o.note ? { description: o.note } : {}),
+                    name: option.name,
+                    ...(option.note ? { description: option.note } : {}),
                     suitableForDiet: "https://schema.org/VegetarianDiet",
-                    offers: { "@type": "Offer", price: String(o.price), priceCurrency: "INR" },
+                    offers: {
+                      "@type": "Offer",
+                      price: String(option.price),
+                      priceCurrency: "INR",
+                      ...(step.step > 1 ? { description: "Add-on price for Build Your Own Dosa." } : {}),
+                    },
                   })),
                 })),
                 {

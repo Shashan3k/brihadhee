@@ -34,7 +34,7 @@ const glance = [
 
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
+  <main id="main" tabindex="-1">
     <PageHeader eyebrow="Karthigai · Ayyappa mala · Chennai" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
     <AtAGlance title="Karthigai and Ayyappa mala at Brihadhee: summary" rows={glance} />
     {page.sections.map((sec) => <ContentSection {...sec} />)}

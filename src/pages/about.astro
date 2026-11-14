@@ -16,6 +16,7 @@ import Icon from "../components/Icon.astro";
 import LeadForm from "../components/LeadForm.astro";
 import { getFact, addressLine, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
 import { aboutFaq } from "../data/faq.js";
+import { cateringEnabled } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href } from "../data/site.js";
 
@@ -29,7 +30,7 @@ const landmark = getFact("landmarks")[0];
 const { range } = openingTimes();
 const path = ROUTES.about;
 const title = `${name} Anna Nagar: Address, Timings & Contact`;
-const description = `${name} address and timings: ${street}, near ${landmark}. Open daily ${range}. Call ${phone}.`;
+const description = `Visit ${name} on ${street}, near ${landmark}. Open daily ${range}. Get directions or call ${phone}.`;
 const schema = pageGraph({
   path,
   title,
@@ -41,12 +42,13 @@ const schema = pageGraph({
 
 <Base title={title} description={description} path={path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
+  <main id="main" tabindex="-1">
     <PageHeader
       eyebrow="Address, timings and contact · Anna Nagar East"
       h1={`Visit ${name} in Anna Nagar`}
       intro={`${name} is a 100% pure vegetarian restaurant at ${addressLine()}, near ${landmark}, open every day from ${range} for ${getFact("mealTimes")}.`}
       menuHref={href(ROUTES.menu)}
+      primaryAction={{ label: "Address and landmark directions", href: "#find-us" }}
     />
     <AtAGlance />
 
@@ -64,16 +66,21 @@ const schema = pageGraph({
           </address>
           <p>Landmarks: {landmarkSentence()}.</p>
           <ul class="link-list" role="list">
-            {getFact("directionLandmarks").map((l) => (
-              <li><a href={directionsFrom(l.query)} target="_blank" rel="noopener">Directions from {l.label}</a></li>
+            {getFact("directionLandmarks").map(({ label, query, travelMode }) => (
+              <li>
+                <a href={directionsFrom(query, travelMode)} target="_blank" rel="noopener">
+                  {travelMode === "walking" ? "Walking directions" : "Directions"} from {label}
+                </a>
+              </li>
             ))}
           </ul>
           <p>
-            Phone: <a href={telHref}>{phone}</a> · Email: <a href={emailHref}>{email}</a>
+            Restaurant phone: <a href={telHref}>{phone}</a> · Email: <a href={emailHref}>{email}</a>
           </p>
+          {cateringEnabled && <p>For off-site events, <a href={href(ROUTES.eventCatering)}>contact the catering team</a>.</p>}
           <div class="page-head__actions">
-            <a class="btn btn--primary" href={getFact("mapUrl")} target="_blank" rel="noopener">
-              <Icon name="navigation" size={17} /> Open in Google Maps
+            <a class="btn btn--primary" href={site.maps.directions} target="_blank" rel="noopener">
+              <Icon name="navigation" size={17} /> Get directions in Google Maps
             </a>
             <a class="btn btn--ghost" href={telHref}>
               <Icon name="phone" size={17} /> Call {phone}
@@ -86,12 +93,23 @@ const schema = pageGraph({
       </div>
     </section>
 
+    <section class="section" id="arrival" aria-labelledby="arrival-title">
+      <div class="container">
+        <h2 class="section__title" id="arrival-title">Before you arrive</h2>
+        <p class="section__lead">
+          If you need step-free entry, room for a mobility aid, a drop-off point or parking information, <a href={telHref}>call {phone}</a> before your visit so the restaurant can check what is available.
+        </p>
+      </div>
+    </section>
+
     <section class="section section--tint" id="hours" aria-labelledby="hours-title">
       <div class="container">
-        <h2 class="section__title" id="hours-title">Opening Hours: {range} for Lunch and Dinner</h2>
+        <h2 class="section__title" id="hours-title">Opening Hours</h2>
         <p class="section__lead">
           {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")}. For a table, call
-          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>book online</a>. These are the current hours; see <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for this month's changes.
+          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>.
+          If you're arriving late, call ahead to check when the kitchen takes its last orders.
+          See <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for recent changes.
         </p>
         {hasHours && (
           <table class="menu-page__table">
@@ -111,8 +129,9 @@ const schema = pageGraph({
         <h2 class="section__title" id="story-title">Our Story: Founded by {founders.names.join(" and ")}</h2>
         <p class="section__lead">{founders.story}</p>
         <p>
-          Today {name} serves {getFact("recipeStory")}, from the Nellai Special Sodhi Meals to build-your-own dosa, at its
-          100% pure vegetarian restaurant on {street}.
+          Today {name} serves {getFact("recipeStory")} at its pure vegetarian restaurant on {street}.
+          Try the <a href={href(ROUTES.lunch)}>Nellai Special Sodhi Meals</a> or see
+          <a href={href(ROUTES.dosa)}>how to customize a dosa</a>.
         </p>
       </div>
     </section>
@@ -129,8 +148,8 @@ const schema = pageGraph({
     <LeadForm
       variant="general"
       page={path}
-      title="Send an Enquiry or Request a Quote"
-      lead={`Ask about a group table, corporate meals or event catering, and the ${name} team will call you back. For a table today, call or WhatsApp instead.`}
+      title="Send a restaurant enquiry"
+      lead={`Ask the ${name} restaurant about a group visit or the menu. For a table today, call or WhatsApp.`}
     />
   </main>
   <Footer homeBase={href("/")} />

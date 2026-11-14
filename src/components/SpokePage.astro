@@ -25,17 +25,17 @@ const home = href("/");
   path={page.path}
   schema={page.schema()}
   cta={page.cta ?? "book"}
-  quoteHref={page.quoteHref ?? "#enquiry"}
+  quoteAction={page.primaryAction}
   noindex={page.noindex ?? false}
 >
   <Nav homeBase={home} />
-  <main id="main">
+  <main id="main" tabindex="-1">
     {page.draftNote && (
       <div class="draft-banner" role="note">
         <div class="container"><strong>Draft.</strong> {page.draftNote}</div>
       </div>
     )}
-    <PageHeader eyebrow={page.eyebrow} h1={page.h1} intro={page.intro} menuHref={page.menuHref} />
+    <PageHeader eyebrow={page.eyebrow} h1={page.h1} intro={page.intro} menuHref={page.menuHref} primaryAction={page.primaryAction} showDirections={page.showDirections} />
     {page.tamil && (
       <div class="container">
         <p class="section__lead catering__tamil tamil" lang="ta">{page.tamil}</p>
@@ -72,7 +72,7 @@ const home = href("/");
           <h2 class="section__title" id="topics-title">More answers by topic</h2>
           <p class="section__lead">Every page on this site answers its own questions. Pick a topic to read them.</p>
           <ul class="link-list" role="list">
-            {page.topics.map((t) => <li><a href={t.href}>{t.label}</a></li>)}
+          {page.topics.map((t) => <li id={t.id}><a href={t.href}>{t.label}</a></li>)}
           </ul>
         </div>
       </section>

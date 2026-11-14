@@ -1,6 +1,6 @@
 /* Brihadhee — small progressive enhancements. No dependencies (the quote message
    builder is shared with the server, from src/lib/lead.js). */
-import { quoteWhatsAppText } from "../lib/lead.js";
+import { CORPORATE_STAFFED_EVENT, indiaDate, QUOTE_MIN_GUESTS, QUOTE_MAX_GUESTS, quoteWhatsAppText } from "../lib/lead.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -52,22 +52,35 @@ if (heroSlides && slideControls && slideItems.length > 1) {
   const track = heroSlides.querySelector(".hero-slides__track");
   const dots = [...slideControls.querySelectorAll("[data-slide-to]")];
   const toggle = slideControls.querySelector("[data-slide-toggle]");
-  let current = 0;
+  let requested = 0;
+  let requestId = 0;
   let timer = 0;
+  let inView = false;
+  let pageLoaded = document.readyState === "complete";
   let paused = reducedMotion; // set by the pause button
   let hovering = false;
   let focused = false;
 
-  const show = (index) => {
-    current = (index + slideItems.length) % slideItems.length;
+  const show = async (index) => {
+    const id = ++requestId;
+    requested = (index + slideItems.length) % slideItems.length;
+    const target = requested;
+    const slide = slideItems[target];
+    const template = slide.querySelector("template");
+    const image = slide.querySelector("img") ?? template?.content.firstElementChild.cloneNode(true);
+    if (template) template.replaceWith(image);
+    try {
+      await image.decode();
+    } catch { return; }
+    if (id !== requestId) return;
     slideItems.forEach((slide, i) => {
-      const active = i === current;
+      const active = i === target;
       slide.classList.toggle("is-active", active);
       if (active) slide.removeAttribute("aria-hidden");
       else slide.setAttribute("aria-hidden", "true");
     });
     dots.forEach((dot, i) => {
-      if (i === current) dot.setAttribute("aria-current", "true");
+      if (i === target) dot.setAttribute("aria-current", "true");
       else dot.removeAttribute("aria-current");
     });
   };
@@ -78,8 +91,11 @@ if (heroSlides && slideControls && slideItems.length > 1) {
   };
   const start = () => {
     stop();
-    if (paused || hovering || focused || document.hidden) return;
-    timer = setInterval(() => show(current + 1), SLIDE_MS);
+    if (!pageLoaded || !inView || paused || hovering || focused || document.hidden) return;
+    timer = setTimeout(async () => {
+      await show(requested + 1);
+      start();
+    }, SLIDE_MS);
   };
 
   const syncToggle = () => {
@@ -90,11 +106,11 @@ if (heroSlides && slideControls && slideItems.length > 1) {
   };
 
   slideControls.querySelector("[data-slide-prev]")?.addEventListener("click", () => {
-    show(current - 1);
+    show(requested - 1);
     start();
   });
   slideControls.querySelector("[data-slide-next]")?.addEventListener("click", () => {
-    show(current + 1);
+    show(requested + 1);
     start();
   });
   dots.forEach((dot) =>
@@ -139,7 +155,7 @@ if (heroSlides && slideControls && slideItems.length > 1) {
     const dx = event.clientX - swipeX;
     swipeX = null;
     if (Math.abs(dx) < 40) return;
-    show(current + (dx < 0 ? 1 : -1));
+    show(requested + (dx < 0 ? 1 : -1));
     start();
   }, { passive: true });
   heroSlides.addEventListener("pointercancel", () => {
@@ -148,6 +164,19 @@ if (heroSlides && slideControls && slideItems.length > 1) {
 
   slideControls.hidden = false;
   syncToggle();
+  if (!pageLoaded) window.addEventListener("load", () => {
+    pageLoaded = true;
+    start();
+  }, { once: true });
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      start();
+    });
+    observer.observe(heroSlides);
+  } else {
+    inView = true;
+  }
   start();
 }
 
@@ -193,11 +222,19 @@ if (navToggle && navPanel) {
     }
   });
 
+  // Keep keyboard focus out of the dimmed page while the drawer is open.
+  document.addEventListener("focusin", (event) => {
+    if (!navPanel.hidden && event.target !== navToggle && !navPanel.contains(event.target)) {
+      setMenuOpen(false);
+    }
+  });
+
   window
     .matchMedia("(min-width: 900px)")
     .addEventListener("change", (event) => {
       if (event.matches) setMenuOpen(false);
     });
+  header?.setAttribute("data-nav-ready", "");
 }
 
 /* ---------------- Scroll spy ---------------- */
@@ -426,53 +463,101 @@ if (revealItems.length) {
 }
 
 /* ---------------- Lead / quote forms (LeadForm.astro -> /api/lead) ----------------
- * Without JavaScript the form posts normally and the function redirects back with
- * ?lead=sent|invalid|error. With JavaScript it is sent with fetch and the result is
- * shown in place. catering_quote_submit fires only after the server accepts the lead.
- * No personal data is sent to analytics: only the form type and headcount band. */
+ * Plain form POSTs get an HTML response. Enhanced forms keep errors and feedback
+ * next to the inputs. Analytics records a submission only after email acceptance. */
 const LEAD_MESSAGES = {
-  sent: "Thank you. Your request has reached the Brihadhee team, and they will call you back.",
+  sent: "Thank you. Your enquiry was sent. Brihadhee will use the contact details you provided to follow up.",
   whatsapp: "WhatsApp has opened with your details. Press send there to reach the Brihadhee catering team.",
-  invalid: "Some details were missing or not valid. Please check the form and send it again.",
-  error: "Sorry, the form could not be sent just now. Please call or WhatsApp us instead.",
+  invalid: "Check the highlighted details and send the form again.",
+  error: "We couldn't confirm your enquiry was sent. Your details are still in the form. You can try again.",
 };
-const leadForms = [...document.querySelectorAll("form[data-lead-form]")];
-const leadStatusFromUrl = new URLSearchParams(location.search).get("lead");
 
-leadForms.forEach((form) => {
-  const started = form.querySelector("[data-started-at]");
-  if (started) started.value = String(Date.now());
+function leadHeadcountBand(value) {
+  if (!/^\d+$/.test(value)) return value;
+  const n = Number(value);
+  if (n < 50) return "Under 50";
+  if (n <= 100) return "50 to 100";
+  if (n <= 300) return "100 to 300";
+  if (n <= 600) return "300 to 600";
+  if (n <= 1000) return "600 to 1,000";
+  return n <= 1500 ? "1,000 to 1,500" : "1,500+";
+}
+
+document.querySelectorAll("form[data-lead-form]").forEach((form) => {
   const status = form.querySelector("[data-lead-status]");
-  const result = form.closest("section")?.querySelector("[data-lead-result]");
+  const fallback = form.querySelector("[data-lead-contact]");
   const button = form.querySelector('button[type="submit"]');
-  const show = (key) => {
-    if (result) {
-      result.textContent = LEAD_MESSAGES[key] || "";
-      result.hidden = !result.textContent;
+  const date = form.querySelector('input[type="date"]');
+  const updateDate = () => { if (date) date.min = indiaDate(); };
+  updateDate();
+  date?.addEventListener("focus", updateDate);
+
+  const service = form.dataset.formType === "corporate" ? form.elements.namedItem("service") : null;
+  const headcount = service ? form.elements.namedItem("headcount") : null;
+  const headcountNote = headcount ? document.getElementById(headcount.getAttribute("aria-describedby")) : null;
+  const updateCorporateCount = () => {
+    if (!service || !headcount) return;
+    const oneOffEvent = service.value === CORPORATE_STAFFED_EVENT;
+    headcount.min = oneOffEvent ? QUOTE_MIN_GUESTS : 1;
+    if (oneOffEvent) headcount.max = QUOTE_MAX_GUESTS;
+    else headcount.removeAttribute("max");
+    if (headcountNote) {
+      headcountNote.textContent = oneOffEvent
+        ? `Enter the guest count for one event: ${QUOTE_MIN_GUESTS}–${QUOTE_MAX_GUESTS.toLocaleString("en-IN")} guests.`
+        : "Enter the meal count per day for recurring service, or the total for a one-off order.";
     }
-    if (status) status.textContent = LEAD_MESSAGES[key] || "";
   };
-  if (leadStatusFromUrl && LEAD_MESSAGES[leadStatusFromUrl]) show(leadStatusFromUrl);
+  service?.addEventListener("change", updateCorporateCount);
+  updateCorporateCount();
 
-  /* Quote builder: the 50-guest floor, shown inline while typing (QuoteBuilder.astro). */
-  const minGuests = Number(form.dataset.minGuests || 0);
-  const guestsInput = form.querySelector('input[name="guests"]');
-  const guestsNote = form.querySelector("[data-guests-note]");
-  if (minGuests && guestsInput) {
-    const checkGuests = () => {
-      const v = guestsInput.value.trim();
-      const low = v !== "" && Number(v) < minGuests;
-      if (guestsNote) guestsNote.hidden = !low;
-      guestsInput.setCustomValidity(low ? `Brihadhee caters functions from ${minGuests} guests.` : "");
-    };
-    guestsInput.addEventListener("input", checkGuests);
-    checkGuests();
-  }
+  const show = (state, message = LEAD_MESSAGES[state] || "", focus = false) => {
+    if (fallback) fallback.hidden = state !== "error";
+    if (!status) return;
+    status.dataset.state = state;
+    status.textContent = message;
+    if (focus) status.focus();
+  };
+  const fieldErrors = new Map();
+  const clearFieldError = (field) => {
+    const previous = fieldErrors.get(field);
+    if (!previous) return;
+    previous.note.remove();
+    if (previous.description) field.setAttribute("aria-describedby", previous.description);
+    else field.removeAttribute("aria-describedby");
+    field.removeAttribute("aria-invalid");
+    fieldErrors.delete(field);
+    if (!fieldErrors.size && status?.dataset.state === "invalid") show("");
+  };
+  form.addEventListener("input", (event) => clearFieldError(event.target));
+  form.addEventListener("change", (event) => clearFieldError(event.target));
+  const showValidationErrors = (errors) => {
+    for (const field of form.elements) {
+      const message = errors && Object.hasOwn(errors, field.name) ? errors[field.name] : null;
+      if (!field.id || !field.closest(".field") || typeof message !== "string") continue;
+      const note = document.createElement("p");
+      note.id = `${field.id}-error`;
+      note.className = "field__error";
+      note.textContent = message;
+      const description = field.getAttribute("aria-describedby");
+      field.setAttribute("aria-describedby", [description, note.id].filter(Boolean).join(" "));
+      field.setAttribute("aria-invalid", "true");
+      field.closest(".field").append(note);
+      fieldErrors.set(field, { note, description });
+    }
+    const first = fieldErrors.keys().next().value;
+    show("invalid", first ? LEAD_MESSAGES.invalid : "Some details could not be accepted. Check the form or call the number above.", !first);
+    first?.focus();
+  };
 
+  let sending = false;
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+    if (sending) return;
+    updateDate();
     if (!form.reportValidity()) return;
+    for (const field of fieldErrors.keys()) clearFieldError(field);
     const data = Object.fromEntries(new FormData(form));
+    const headcountBand = leadHeadcountBand(data.headcount || data.guests || "");
 
     /* WhatsApp quote mode, only when ENABLE_LIVE_WHATSAPP_QUOTE_FORM is on (the
        attribute is rendered only then). Open WhatsApp inside the click, then post
@@ -487,12 +572,13 @@ leadForms.forEach((form) => {
         body: JSON.stringify(data),
       }).catch(() => {});
       show("whatsapp");
-      track("catering_quote_whatsapp", { form_type: "quote", headcount: data.guests || "" });
+      track("catering_quote_whatsapp", { form_type: "quote", headcount: headcountBand });
       return;
     }
 
+    sending = true;
     if (button) button.disabled = true;
-    if (status) status.textContent = "Sending…";
+    show("sending", "Sending…");
     try {
       const res = await fetch(form.action, {
         method: "POST",
@@ -500,17 +586,22 @@ leadForms.forEach((form) => {
         body: JSON.stringify(data),
       });
       const body = await res.json().catch(() => ({}));
-      if (res.ok && body.ok) {
-        show("sent");
+      if (res.ok && body?.ok === true) {
         form.reset();
-        if (started) started.value = String(Date.now());
-        track("catering_quote_submit", { form_type: form.dataset.formType || "general", headcount: data.headcount || data.guests || "" });
+        updateCorporateCount();
+        show("sent", LEAD_MESSAGES.sent, true);
+        const formType = form.dataset.formType || "general";
+        if (formType === "general") track("restaurant_enquiry_submit", { form_type: formType });
+        else track("catering_quote_submit", { form_type: formType, headcount: headcountBand });
+      } else if (res.status === 422) {
+        showValidationErrors(body?.errors);
       } else {
-        show(res.status === 422 ? "invalid" : "error");
+        show("error", LEAD_MESSAGES.error, true);
       }
     } catch {
-      show("error");
+      show("error", LEAD_MESSAGES.error, true);
     } finally {
+      sending = false;
       if (button) button.disabled = false;
     }
   });
@@ -519,9 +610,9 @@ leadForms.forEach((form) => {
 /* ---------------- Analytics (GA4 and Meta Pixel, each only when its ID is set) ----------------
  * One delegated listener. An explicit data-event="name" wins; otherwise the
  * event is inferred from the link: tel: -> click_call, wa.me -> click_whatsapp,
- * Google Maps -> directions_click, booking partners and /book-a-table/ ->
- * book_table_click, delivery apps -> order_click. A lead form fires
- * catering_quote_submit only after /api/lead accepts it (see above).
+ * Google Maps -> directions_click, booking partners -> book_table_click,
+ * internal booking-page links -> book_table_view_click, and delivery apps ->
+ * order_click. The appropriate enquiry event fires after /api/lead accepts it.
  * Menu tabs carry data-event="menu_filter_use". No personal data is sent.
  *
  * The same names map to Meta standard events (META_EVENTS) so ads can optimise
@@ -534,6 +625,7 @@ const META_EVENTS = {
   book_table_click: ["Schedule", {}],
   order_click: ["Contact", { content_name: "order" }],
   catering_quote_submit: ["Lead", { content_name: "catering quote form" }],
+  restaurant_enquiry_submit: ["Lead", { content_name: "restaurant enquiry form" }],
 };
 function trackMeta(name) {
   const mapped = META_EVENTS[name];
@@ -552,7 +644,8 @@ function inferEvent(el) {
   if (href.startsWith("tel:")) return "click_call";
   if (/wa\.me|api\.whatsapp\.com/.test(href)) return "click_whatsapp";
   if (/google\.[a-z.]+\/maps|maps\.app\.goo\.gl|goo\.gl\/maps/.test(href)) return "directions_click";
-  if (/eazydiner\.com|\/dineout|district\.in|\/book-a-table\/?(?:[#?]|$)/.test(href)) return "book_table_click";
+  if (/eazydiner\.com|\/dineout|district\.in/.test(href)) return "book_table_click";
+  if (/\/book-a-table\/?(?:[#?]|$)/.test(href)) return "book_table_view_click";
   if (/swiggy\.com|zomato\.com/.test(href)) return "order_click";
   return "";
 }

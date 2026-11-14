@@ -29,7 +29,7 @@ const schema = pageGraph({
 
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
-  <main id="main">
+  <main id="main" tabindex="-1">
     <PageHeader eyebrow={`Updated ${longDate(page.published)}`} h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
     <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
     {page.sections.map((sec) => <ContentSection {...sec} />)}

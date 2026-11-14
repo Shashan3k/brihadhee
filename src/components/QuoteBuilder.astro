@@ -6,16 +6,15 @@
  *
  * Two modes, set by config/seo-gates.ts (ENABLE_LIVE_WHATSAPP_QUOTE_FORM, Q19):
  *  - gate off (default): posts to /api/lead like LeadForm (emailed to the team;
- *    works without JavaScript), with call and the restaurant's WhatsApp beside it.
+ *    works without JavaScript), with call and the existing manual WhatsApp link.
  *  - gate on: src/scripts/main.js formats the answers into a WhatsApp message
  *    (quoteWhatsAppText in src/lib/lead.js) and opens wa.me for the office number,
  *    and still posts a copy to /api/lead.
- * The 50-guest floor is enforced three times: min="50" on the input (no JS), an
- * inline notice while typing (main.js), and validateLead() on the server.
- * No rupee figure appears: the spend options are tiers.
+ * Guest limits apply to one event, not recurring office meals.
  */
 import Icon from "./Icon.astro";
 import { ROUTES, href, pageContact } from "../data/site.js";
+import { corporateEnabled } from "../data/catering.js";
 import {
   HONEYPOT,
   QUOTE_EVENT_TYPES,
@@ -33,24 +32,25 @@ if (min !== QUOTE_MIN_GUESTS) {
 const { phone, whatsapp, hasPhone, hasWhatsApp, telHref, whatsappHref } = pageContact(Astro);
 const waDigits = whatsappNumber ? whatsappNumber.replace(/\D/g, "") : "";
 const f = (n) => `${id}-${n}`;
-const today = new Date().toISOString().slice(0, 10);
-const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote. Event: , lunch or dinner: , guests: , date: , venue: .");
+const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like an event catering quote. Event: , lunch or dinner: , guests: , date: , venue area: , serving or setup needs: .");
 ---
 
 <section class="section section--tint" id={id} aria-labelledby={`${id}-title`}>
   <div class="container contact__grid">
     <div>
-      <h2 class="section__title" id={`${id}-title`}>Build your catering quote</h2>
+      <h2 class="section__title" id={`${id}-title`}>Request an event catering quote</h2>
       <p class="section__lead">
         {waDigits
           ? "Fill in the details, and the form opens WhatsApp with a message ready to send to the Brihadhee catering team."
-          : "Fill in the details, and the Brihadhee team calls you back with a menu and a per-plate price."}
+          : "Share the occasion, estimated guest count and venue area. The Brihadhee team uses these details to discuss availability, menu options and what to include in your quote."}
       </p>
       <ul class="dish-list" role="list">
-        <li><strong>From {min} guests</strong></li>
-        <li><strong>Lunch or dinner</strong></li>
-        <li><strong>No fixed rates:</strong> each quote is built for your event</li>
+        <li><strong>{min}–{QUOTE_MAX_GUESTS.toLocaleString("en-IN")} guests per event</strong></li>
+        <li><strong>Menu and service priced for your event</strong></li>
       </ul>
+      {corporateEnabled && (
+        <p>Planning regular office lunches, a packed lunch order or an office event? <a href={href(ROUTES.corporateCatering) + "#enquiry"}>Use the corporate catering form</a>.</p>
+      )}
       {!waDigits && (
         <div class="catering__cta">
           {hasPhone && (
@@ -65,7 +65,6 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote
           )}
         </div>
       )}
-      <p class="lead-form__note" data-lead-result hidden></p>
     </div>
 
     <form
@@ -74,12 +73,10 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote
       method="post"
       data-lead-form
       data-form-type="quote"
-      data-min-guests={min}
       data-whatsapp-quote={waDigits || undefined}
     >
       <input type="hidden" name="formType" value="quote" />
       <input type="hidden" name="page" value={page} />
-      <input type="hidden" name="startedAt" value="" data-started-at />
       <div class="lead-form__trap" aria-hidden="true">
         <label for={f(HONEYPOT)}>Leave this empty</label>
         <input type="text" id={f(HONEYPOT)} name={HONEYPOT} tabindex="-1" autocomplete="off" />
@@ -88,25 +85,18 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote
       <p class="field__hint">Catering quote · fields marked * are required</p>
 
       <div class="field">
-        <label for={f("eventType")}>1. Event type *</label>
+        <label for={f("eventType")}>Event type *</label>
         <select id={f("eventType")} name="eventType" required>
           <option value="">Choose</option>
           {QUOTE_EVENT_TYPES.map((x) => <option value={x}>{x}</option>)}
         </select>
       </div>
       <div class="field">
-        <label for={f("meal")}>2. Lunch or dinner *</label>
-        <select id={f("meal")} name="meal" required>
-          <option value="">Choose</option>
-          {QUOTE_MEALS.map((x) => <option value={x}>{x}</option>)}
-        </select>
-      </div>
-      <div class="field">
-        <label for={f("occasion")}>3. Occasion</label>
+        <label for={f("occasion")}>Occasion details</label>
         <input type="text" id={f("occasion")} name="occasion" maxlength="120" placeholder="e.g. 60th birthday, housewarming, team celebration" />
       </div>
       <div class="field">
-        <label for={f("guests")}>4. Number of guests * (from {min})</label>
+        <label for={f("guests")}>Estimated guest count *</label>
         <input
           type="number"
           id={f("guests")}
@@ -118,43 +108,55 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote
           required
           aria-describedby={f("guests-note")}
         />
-        <p class="field__hint" id={f("guests-note")} data-guests-note hidden>
-          Brihadhee caters functions from {min} guests. For a smaller group, <a href={href(ROUTES.book)}>book a table at the restaurant</a> instead.
+        <p class="field__hint" id={f("guests-note")}>
+          {min}–{QUOTE_MAX_GUESTS.toLocaleString("en-IN")} guests per event. For a smaller group, <a href={href(ROUTES.book)}>ask about a restaurant table</a>.
         </p>
       </div>
       <div class="field">
-        <label for={f("spend")}>5. What spend do you have in mind?</label>
-        <select id={f("spend")} name="spend">
-          <option value="">Choose</option>
-          {QUOTE_SPEND.map((x) => <option value={x}>{x}</option>)}
-        </select>
-      </div>
-      <div class="field">
-        <label for={f("mustHave")}>6. Must-have dishes</label>
-        <textarea id={f("mustHave")} name="mustHave" maxlength="600" placeholder="e.g. Nellai sodhi, Paanai Parotta, a live build-your-own dosa counter"></textarea>
-      </div>
-      <div class="field">
-        <label for={f("service")}>7. Serving staff needed? *</label>
-        <select id={f("service")} name="service" required>
-          <option value="">Choose</option>
-          {QUOTE_SERVICE.map((x) => <option value={x}>{x}</option>)}
-        </select>
-      </div>
-      <div class="field">
         <label for={f("date")}>Event date</label>
-        <input type="date" id={f("date")} name="date" min={today} />
+        <input type="date" id={f("date")} name="date" aria-describedby={f("date-note")} />
+        <p class="field__hint" id={f("date-note")}>Leave blank if the date is still flexible.</p>
       </div>
       <div class="field">
         <label for={f("location")}>Venue area in Chennai *</label>
         <input type="text" id={f("location")} name="location" maxlength="120" placeholder="e.g. Anna Nagar, Kilpauk, OMR" required />
       </div>
       <div class="field">
+        <label for={f("meal")}>Lunch or dinner *</label>
+        <select id={f("meal")} name="meal" required>
+          <option value="">Choose</option>
+          {QUOTE_MEALS.map((x) => <option value={x}>{x}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={f("spend")}>What kind of spread are you planning?</label>
+        <select id={f("spend")} name="spend">
+          <option value="">Choose</option>
+          {QUOTE_SPEND.map((x) => <option value={x}>{x}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={f("mustHave")}>Must-have dishes</label>
+        <textarea id={f("mustHave")} name="mustHave" maxlength="600" rows="2" placeholder="e.g. Tirunelveli dishes or a live dosa counter"></textarea>
+      </div>
+      <div class="field">
+        <label for={f("service")}>Serving staff preference</label>
+        <select id={f("service")} name="service">
+          <option value="">Choose if known</option>
+          {QUOTE_SERVICE.map((x) => <option value={x}>{x}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for={f("message")}>Venue and service notes</label>
+        <textarea id={f("message")} name="message" maxlength="1000" rows="3" placeholder="e.g. venue name, access, setup, equipment or service times"></textarea>
+      </div>
+      <div class="field">
         <label for={f("name")}>Your name *</label>
         <input type="text" id={f("name")} name="name" autocomplete="name" maxlength="80" required />
       </div>
       <div class="field">
-        <label for={f("phone")}>Phone *</label>
-        <input type="tel" id={f("phone")} name="phone" autocomplete="tel" inputmode="tel" maxlength="20" pattern="[+0-9 \-]{10,20}" required />
+        <label for={f("phone")}>Indian phone number *</label>
+        <input type="tel" id={f("phone")} name="phone" autocomplete="tel" inputmode="tel" maxlength="20" required />
       </div>
       <div class="field">
         <label for={f("email")}>Email</label>
@@ -163,12 +165,13 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like a catering quote
 
       <div class="form__foot">
         <button class="btn btn--primary" type="submit">
-          {waDigits ? <><Icon name="whatsapp" size={17} /> Send on WhatsApp</> : "Request my quote"}
+          {waDigits ? <><Icon name="whatsapp" size={17} /> Send on WhatsApp</> : "Request an event quote"}
         </button>
-        <p class="form__status" role="status" aria-live="polite" data-lead-status></p>
       </div>
+      <p class="form__status" role="status" aria-atomic="true" tabindex="-1" data-lead-status></p>
+      {hasPhone && <p class="form__contact" data-lead-contact hidden><a href={telHref} data-event="click_call">Call {phone}</a></p>}
       <p class="field__hint">
-        Your details go to the Brihadhee team only, to reply to you. See the <a href={href("/privacy/")}>privacy policy</a>.
+        Brihadhee uses your details to respond to this enquiry. See the <a href={href("/privacy/")}>privacy policy</a>.
       </p>
     </form>
   </div>

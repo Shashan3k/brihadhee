@@ -20,7 +20,7 @@
  */
 import { getFact, addressLine, openingTimes } from "./entity-truth.ts";
 import * as GATES from "../../config/seo-gates.ts";
-import { ROUTES, href } from "./site.js";
+import { ROUTES, href, telHref } from "./site.js";
 import { qa, qaRoute, claimQuestion, list } from "../lib/answers.js";
 import { taSmallFunctions } from "./faq-ta.js";
 import verification from "../../config/client-verification.json";
@@ -73,7 +73,6 @@ const prebook = offer("pre-booking").description.replace(/ when you pre-book a t
 const walkIn = offer("walk-in").description.replace(/ for walk-in dine-in$/, ""); // "10% off"
 const bookingLabels = getFact("bookingLinks").map((b) => b.label);
 const bookingAnd = list(bookingLabels);
-const bookingOr = bookingLabels.length > 1 ? `${bookingLabels.slice(0, -1).join(", ")} or ${bookingLabels.at(-1)}` : bookingLabels.join("");
 
 const item = (n) => {
   const hit = allItems.find((i) => i.name === n);
@@ -113,27 +112,30 @@ const hasBirthday = smallEvents.some((e) => e.id === "birthday");
 
 function buildSmallFunctions() {
   const path = ROUTES.smallFunctions;
+  const quoteHref = `${href(ROUTES.cateringQuote)}#enquiry`;
   const title = `Small Function Catering in Chennai, ${MIN}+ Guests | ${name}`;
-  const description = `${cap(CD)} catering for birthdays, housewarmings and get-togethers in Chennai from ${MIN} guests, cooked in ${name}'s Anna Nagar kitchen. Get a quote.`;
+  const description = `${cap(CD)} catering for birthdays, housewarmings and family gatherings in Chennai from ${MIN} guests. Share your date, venue and headcount.`;
   const faq = qaRoute(path, [
     qa(
       "Who does small function catering in Anna Nagar?",
-      `${name}, a restaurant in ${NEAR}, does small function catering from ${MIN} guests: ${CD} food for birthdays, housewarmings and get-togethers, cooked in its own kitchen. ` +
+      `${name}, a restaurant in ${NEAR}, does small function catering from ${MIN} guests with ${CD} menus for birthdays, housewarmings and get-togethers. ` +
         `It is at ${ADDRESS}.`
     ),
     qa(
-      `What is the minimum guest count for ${name} catering?`,
-      `${name} caters functions from a minimum of ${MIN} guests, up to ${num(guests.max)}. ` + `For a smaller group, book a table at the restaurant instead.`
+      `Does ${name} cater for ${MIN} guests?`,
+      `Yes. ${name} caters for ${MIN} guests at a single event in Chennai. ` +
+        `${MIN} is the event minimum and ${num(guests.max)} is the maximum. Share your date, venue and menu preferences with the catering team.`,
+      { id: "what-is-the-minimum-guest-count-for-brihadhee-catering" }
     ),
     qa(
       "How much does vegetarian catering cost per plate in Chennai?",
-      `${name} quotes ${CD} catering per plate for each function, so it has no fixed rate card. ` +
-        `The price depends on the guest count (from ${MIN}), lunch or dinner, the dishes and live counters you choose, whether you need serving staff, and the spend per guest you have in mind.`,
+      `${name} quotes ${CD} catering per plate for each function. ` +
+        "The menu, headcount, counters and service requirements help shape the price. Share these details and what you plan to spend when you request a quote.",
       { kind: "explain" }
     ),
     qa(
       `What does ${name}'s end-to-end catering include?`,
-      `${name}'s end-to-end catering covers ${svc} by one team, with live counters for ${joinNatural(liveCounters)} if you want them. ` + cleanupLine
+      `${name}'s event team can handle ${svc}, with live counters available to discuss. ` + cleanupLine
     ),
     qa(
       `How far ahead should I book catering for ${MIN} guests?`,
@@ -145,7 +147,7 @@ function buildSmallFunctions() {
     hasBirthday &&
       qa(
         `Can ${name} cater a birthday party for ${MIN} guests in Chennai?`,
-        `Yes. ${name} caters birthday parties across Chennai from ${MIN} guests, with a live build-your-own dosa counter if you want one. ` +
+        `Yes. ${name} caters birthday parties across Chennai from ${MIN} guests, with a live dosa counter available to discuss. ` +
           `Send the quote form with your date, venue and guest count, or call ${cPhone}.`
       ),
     ...taSmallFunctions,
@@ -157,33 +159,33 @@ function buildSmallFunctions() {
     description,
     h1: `Small Function Catering in Chennai, From ${MIN} Guests`,
     eyebrow: "Small functions · Chennai",
-    intro: `${name}, a ${PV} restaurant in ${NEAR}, caters small and mid-size functions across Chennai from ${MIN} guests up to ${num(guests.max)}: ${CD} food cooked in its own restaurant kitchen, with ${svc} by one team.`,
+    intro: `${name} provides ${CD} catering for birthdays, housewarmings and family get-togethers across Chennai from ${MIN} guests. Share your date, venue and estimated headcount with the Anna Nagar East team to discuss a South Indian menu for your gathering.`,
     tamil: "பிறந்தநாள் விழா கேட்டரிங் சென்னை · சைவ கேட்டரிங் சென்னை · சைவ கேட்டரிங் அண்ணா நகர்",
     cta: "quote",
-    quoteHref: href(ROUTES.cateringQuote),
-    glanceTitle: `${name} small function catering: summary`,
+    primaryAction: { label: "Request a small-function quote", shortLabel: "Function quote", href: quoteHref, event: "quote_cta_click" },
+    showDirections: false,
+    glanceTitle: "Small function catering at a glance",
     glance: [
-      ["Who", `${name}, a ${PV} restaurant in ${NEAR}`],
-      ["Guests", `from ${MIN}, up to ${num(guests.max)}`],
+      ["Starting guest count", `${MIN} guests per event`],
       ["Functions", smallEvents.map((e) => e.label).join(", ")],
-      ["Food", `${CD}, cooked in the restaurant kitchen; live counters for ${joinNatural(liveCounters)}`],
-      ["Service", svc],
+      ["Food", `${CD} regional menus; live counters for ${joinNatural(liveCounters)}`],
+      ["Service to discuss", svc],
       ["Price", "a per-plate quote for each function, after you share the details"],
       ["Area", joinNatural(serviceAreas)],
     ],
     sections: [
       {
         id: "from-50-guests",
-        title: `Catering From ${MIN} Guests, Cooked in a Restaurant Kitchen`,
-        lead: `${name} takes catering orders from ${MIN} guests, so a birthday, housewarming or family get-together is cooked by the same kitchen that serves its restaurant on ${STREET}. If your guest list is closer to ${MIN} than 500, the food is still the restaurant's own: ${recipeStory}.`,
+        title: `Planning a Function for ${MIN} Guests`,
+        lead: `For a family function from ${MIN} guests, start with the date, venue and estimated headcount. If you are planning a smaller celebration, [ask about family dining and group seating](${ROUTES.familyDining}).`,
         items: [
           {
-            title: "One team from menu to service",
-            text: `${name}'s end-to-end service covers ${svc}, so the team that plans your menu also cooks it and serves your guests.`,
+            title: "At home or in a hall",
+            text: "Tell the team where guests will eat, when the meal should be served and whether you need help with serving or a live counter. Confirm the setup and service details for your venue in the quote.",
           },
           {
-            title: "Dishes your guests already know",
-            text: `Menus are built around the restaurant's Tirunelveli and Karaikudi dishes, from Nellai sodhi to karupatti ulundhu kali, with live counters for ${joinNatural(liveCounters)}.`,
+            title: "A South Indian menu for your gathering",
+            text: `Discuss dishes from Tirunelveli and Karaikudi, such as Nellai sodhi or ${kali.name}, and tell the team which dishes matter most to your guests.`,
           },
           {
             title: "A live build-your-own dosa counter",
@@ -200,26 +202,17 @@ function buildSmallFunctions() {
       },
       {
         id: "catering-price",
-        title: "What Sets the Price of Your Catering",
-        lead: `${name} builds a quote for each function instead of selling fixed per-plate packages, so five details set the price: the guest count, lunch or dinner, the occasion and dishes, serving staff, and the spend you have in mind.`,
-        items: [
-          { title: "1. Guest count", text: `How many guests you expect, from ${MIN}. A range is fine if the final number is not fixed yet.` },
-          { title: "2. Lunch or dinner", text: "Whether the function is a lunch or a dinner, which shapes the menu the team suggests." },
-          { title: "3. Occasion and dishes", text: `The occasion and the dishes you want, including live counters such as build-your-own dosa or ${paanai.name}.` },
-          { title: "4. Serving staff", text: `Whether you need ${name}'s team to serve and set up at the venue, as part of its end-to-end service.` },
-          {
-            title: "5. The spend you have in mind",
-            text: `Tell the team roughly what you plan to spend per guest, and the menu is shaped around it. ${name} publishes no fixed rates, because each quote is built from these five details.`,
-          },
-        ],
+        title: "How the Per-Plate Quote Works",
+        lead: `${name} quotes each function separately. The headcount, meal, dishes, live counters and serving requirements shape the quote. Share your planned spend if you have one.`,
+        links: [{ label: "See what to include in a catering quote", href: `${href(ROUTES.cateringQuote)}#what-to-send` }],
       },
       {
         id: "get-a-quote",
         title: "Get a Quote for Your Function",
-        lead: `Send ${name} your event type, lunch or dinner, guest count, must-have dishes and whether you need serving staff, and the team at its restaurant in ${NEAR} calls you back with a menu and a per-plate price.`,
+        lead: "Share the occasion, date, venue and estimated guest count. Include your meal and service preferences so the team can discuss a menu and per-plate quote.",
         tint: true,
         links: [
-          { label: "Build your catering quote", href: href(ROUTES.cateringQuote), primary: true },
+          { label: "Request a small-function quote", href: quoteHref, primary: true },
           ...(contact.telHref ? [{ label: `Call ${cPhone}`, href: contact.telHref }] : []),
         ],
       },
@@ -245,7 +238,7 @@ function buildSmallFunctions() {
             path,
             serviceType: "Event catering",
             name: `${name} Small Function Catering`,
-            description: `${cap(CD)} catering in Chennai from ${MIN} guests for ${joinNatural(smallEvents.map((e) => e.inline))}, cooked in ${name}'s restaurant kitchen in ${NEAR}: ${svc}.`,
+            description: `${cap(CD)} catering in Chennai from ${MIN} guests for ${joinNatural(smallEvents.map((e) => e.inline))}, with regional menus and live counters to discuss.`,
             offerCatalog: smallEvents.map((e) => ({ name: `${e.label} catering`, description: e.text })),
             guests: { min: MIN },
             audience: [{ "@type": "Audience", audienceType: "Families planning small functions" }],
@@ -268,26 +261,27 @@ if (GATES.ENABLE_LIVE_WHATSAPP_QUOTE_FORM && !GATES.QUOTE_WHATSAPP_NUMBER) {
 function buildQuote() {
   const path = ROUTES.cateringQuote;
   const title = `Catering Quote in Chennai for ${MIN}+ Guests | ${name}`;
-  const description = `Request a ${CD} catering quote from ${name}, Anna Nagar: share the event, lunch or dinner, guests from ${MIN}, must-have dishes and serving needs.`;
-  const reply = whatsappQuote ? "replies on WhatsApp with a menu and a per-plate price" : "calls you back with a menu and a per-plate price";
+  const description = `Request a ${CD} catering quote in Chennai for events from ${MIN} guests. Share your date, venue, guest count, menu and service requirements.`;
+  const reply = whatsappQuote ? "follows up on WhatsApp" : "follows up by phone";
   const whatToSend = claimQuestion(path, "What Do I Need to Tell a Caterer to Get a Quote?");
   const faq = qaRoute(path, [
     qa(
-      `How do I get a catering quote from ${name}?`,
-      `To get a ${name} catering quote, send the form on this page with your event, lunch or dinner, guest count (from ${MIN}), must-have dishes, spend per guest and serving needs, or call ${cPhone}. ` +
+      `How can I request a catering quote from ${name}?`,
+      `Use the ${name} event quote form with the occasion, Chennai venue area, estimated guest count from ${MIN}, and date if known. ` +
         (whatsappQuote
-          ? "The form opens WhatsApp with your details, and the team replies there with a menu and a per-plate price."
-          : "The form is emailed to the catering team, who call you back with a suggested menu and a per-plate price.")
+          ? "The form opens WhatsApp with your details ready to send."
+          : `Add menu and serving preferences for the catering team, or call ${cPhone} to discuss them.`),
+      { id: "how-do-i-get-a-catering-quote-from-brihadhee" }
     ),
     qa(
       `What happens after I send ${name} a catering enquiry?`,
-      `${name}'s catering team ${reply}, then confirms the menu, date and price with you before anything is booked. ` +
-        `Nothing is confirmed automatically; the enquiry is a request for a quote.`
+      `${name}'s catering team ${reply} to discuss the menu, venue, service and per-plate quote. ` +
+        "Your event is booked after you and the team confirm availability and agree the details."
     ),
     qa(
       `Does ${name} provide serving staff with catering?`,
-      `Yes. ${name}'s end-to-end catering includes ${svc}, for functions of ${MIN} to ${num(guests.max)} guests across Chennai. ` +
-        `Say in the form whether you need serving staff. ${cleanupLine}`
+      `${name} can provide serving as part of its end-to-end event service. ` +
+        `Tell the team whether you need staff and confirm the scope in your quote. ${cleanupLine}`
     ),
     whatsappQuote
       ? qa(
@@ -298,12 +292,12 @@ function buildQuote() {
       : qa(
           `Can I send a catering enquiry to ${name} on WhatsApp?`,
           `Yes. WhatsApp ${name}'s catering team on ${cWhatsapp} with your event, date, venue and guest count (from ${MIN}). ` +
-            "A team member replies; there is no automated WhatsApp quote yet, and the form on this page is answered with a call."
+            "Use WhatsApp to message the team directly. Enquiries sent through the form are followed up by phone."
         ),
     qa(
       `What is on a ${CD} catering menu for ${MIN} people?`,
-      `A ${name} catering menu for ${MIN} guests is built from the restaurant's own dishes, such as Nellai sodhi, karupatti ulundhu kali and ${paanai.name}, made in its Anna Nagar East kitchen. ` +
-        `A live build-your-own dosa counter can be added, and the final menu and per-plate price are agreed with the team.`
+      `Brihadhee's Anna Nagar East team can discuss dishes such as Nellai sodhi, ${kali.name} and ${paanai.name} for ${MIN} guests. ` +
+        "Ask about a live build-your-own dosa counter and confirm the final menu in your quote."
     ),
   ]);
 
@@ -313,8 +307,10 @@ function buildQuote() {
     description,
     h1: `Get a ${cap(CD)} Catering Quote in Chennai`,
     eyebrow: "Catering quote · Chennai",
-    intro: `Tell ${name} about your function in one form: the event type, lunch or dinner, the occasion, your guest count from ${MIN}, the spend you have in mind, must-have dishes and whether you need serving staff. The team at its ${PV} restaurant in ${NEAR} ${reply}.`,
+    intro: `Share your event date, Chennai venue and estimated headcount from ${MIN} guests. Brihadhee ${reply} to discuss the ${CD} menu, service requirements and per-plate quote.`,
     cta: "quote",
+    primaryAction: { label: "Go to the quote form", shortLabel: "Quote form", href: "#enquiry", event: "quote_cta_click" },
+    showDirections: false,
     builder: {
       whatsappNumber: whatsappQuote,
       min: MIN,
@@ -324,26 +320,31 @@ function buildQuote() {
       {
         id: "what-to-send",
         title: whatToSend,
-        lead: `To quote a function, ${name} needs seven details: the event type, lunch or dinner, the occasion, the guest count, the spend you have in mind, any must-have dishes, and whether you need serving staff.`,
+        lead: `Tell Brihadhee what you are planning, where and when it will take place, and how many guests you expect. Add any preferences that will help the team put together a quote.`,
         items: [
-          { title: "Event type", text: "Corporate, wedding, birthday, or a small function or get-together." },
-          { title: "Lunch or dinner", text: "The meal sets the menu the team proposes." },
-          { title: "Occasion", text: "A housewarming, an engagement or a team celebration: the occasion guides the dishes." },
-          { title: "Guest count", text: `From ${MIN} guests. An estimate is fine.` },
-          { title: "The spend you have in mind", text: "A rough figure per guest, so the menu fits it. No rates are published; every quote is built for the event." },
-          { title: "Must-have dishes", text: `Dishes your family or team expects, such as Nellai sodhi, ${paanai.name} or a build-your-own dosa counter.` },
-          { title: "Serving staff", text: "Whether the team should serve and set up at the venue." },
+          { title: "Event, date and venue", text: "Give the occasion, date or approximate timing and venue area in Chennai. Add your meal time if you know it." },
+          { title: "Headcount and meal", text: `An estimated guest count from ${MIN} is enough to start. Indicate lunch or dinner and note any must-have dishes or dietary requirements for discussion.` },
+          { title: "Serving and setup", text: "Tell the team if you need help with serving or live counters. Ask what the quote covers for setup, transport, vessels and clean-up." },
+        ],
+      },
+      {
+        id: "price-factors",
+        title: "What Shapes Your Per-Plate Quote",
+        lead: "The guest count, menu, live counters and service requirements all affect the quote. Share your planned spend per guest if you have one so the team can discuss suitable options.",
+        items: [
+          { title: "Menu and counters", text: "The dishes, number of guests and any live counter service help the team work out the menu and quantities." },
+          { title: "Venue and service", text: "Share the location and the support you need at the venue. Ask the team to confirm what is included in the quote." },
         ],
       },
       {
         id: "how-quotes-work",
         title: `How a ${name} Catering Quote Works`,
-        lead: `A catering quote from ${name} takes three steps: you send the details, the team suggests a menu and live counters, then it confirms the menu, date and per-plate price with you.`,
+        lead: `Send your enquiry, discuss the proposed menu and service with ${name}, then review the agreed details before booking.`,
         tint: true,
         items: [
           { title: "1. Send the details", text: whatsappQuote ? "Fill in the form; it opens WhatsApp with your details ready to send." : `Fill in the form, or call ${cPhone}.` },
-          { title: "2. Menu and live counters", text: `The team suggests a ${CD} menu and live counters for ${joinNatural(liveCounters)}.` },
-          { title: "3. Confirmation", text: "The team confirms the menu, the per-plate price and the date with you." },
+          { title: "2. Review the proposal", text: `Discuss a ${CD} menu, any live counters and the service scope with the team.` },
+          { title: "3. Confirm before booking", text: "Agree availability, menu, service and per-plate pricing with the team." },
         ],
       },
     ],
@@ -352,7 +353,8 @@ function buildQuote() {
     related: [
       { label: `Small function catering from ${MIN} guests`, href: href(ROUTES.smallFunctions) },
       { label: "Event and wedding catering in Chennai", href: href(ROUTES.eventCatering) },
-      ...(corporateEnabled ? [{ label: `${cap(CD)} corporate catering in Chennai`, href: href(ROUTES.corporateCatering) }] : []),
+      ...(corporateEnabled ? [{ label: "Request recurring office lunch catering", href: `${href(ROUTES.corporateCatering)}#enquiry` }] : []),
+      { label: "Catering for event planners", href: href(ROUTES.plannerPartner) },
       { label: "Pure veg restaurant in Anna Nagar", href: href("/") },
     ],
     schema: () =>
@@ -374,7 +376,7 @@ export const quotePage = cateringEnabled && guests ? buildQuote() : null;
 function buildFamily() {
   const path = ROUTES.familyDining;
   const title = `Pure Veg Family Restaurant in Anna Nagar | ${name}`;
-  const description = `Family lunch after a temple visit, birthday dinners and weekend meals at ${name}, a pure veg restaurant in Anna Nagar East, open ${OPEN} to ${CLOSE} daily.`;
+  const description = `Plan a vegetarian family lunch, birthday or anniversary dinner at ${name} in Anna Nagar East. View the menu and call ahead for group seating.`;
   const temple = GATES.ENABLE_NAMED_TEMPLE && GATES.NEARBY_TEMPLE ? GATES.NEARBY_TEMPLE : null;
   const faq = qaRoute(path, [
     qa(
@@ -403,6 +405,7 @@ function buildFamily() {
     eyebrow: "Family dining · Anna Nagar East",
     intro: `${name} is a ${PV} family restaurant in ${NEAR}, open every day from ${HOURS} for lunch and dinner. No meat, egg or fish is cooked in its kitchen and alcohol is not served, so vegetarian families can order anything on the menu.`,
     menuHref: href(ROUTES.menu),
+    primaryAction: { label: "Book a family table", href: href(ROUTES.book) },
     glanceTitle: `Family dining at ${name}: summary`,
     glance: [
       ["Who", `${name}, a ${PV} restaurant in ${NEAR}`],
@@ -426,14 +429,14 @@ function buildFamily() {
       {
         id: "celebrations",
         title: "Birthday and Anniversary Dinners",
-        lead: `${name} serves dinner every day until ${CLOSE}, so a birthday or anniversary dinner can run into the evening: pre-book a table on ${bookingAnd} for ${prebook}, or walk in for ${walkIn}.`,
+        lead: `For a birthday or anniversary dinner at ${name}, choose a date and time through one of the booking partners. For a large group, call ahead so the restaurant can check seating for your party.`,
         tint: true,
-        items: [
+        items: smallFunctionsPage ? [
           {
             title: `Celebrating with ${MIN} or more guests?`,
             text: `For a family function of ${MIN} guests or more, ${name} caters at your home or venue: see [small function catering in Chennai](${ROUTES.smallFunctions}).`,
           },
-        ],
+        ] : [],
         links: [{ label: `Veg dinner in Anna Nagar until ${CLOSE}`, href: href(ROUTES.dinner) }],
       },
       {
@@ -449,9 +452,12 @@ function buildFamily() {
       {
         id: "family-booking",
         title: "Booking a Table for a Family Group",
-        lead: `Book a family table at ${name} on ${bookingAnd}, call ${phone}, or walk in: pre-booked tables get ${prebook}, and walk-in diners get ${walkIn}.`,
+        lead: `When you call about a group table at ${name}, share your date, preferred time and party size so the team can check seating. For a regular table, use ${bookingAnd} or walk in. See [the address and directions](${ROUTES.about}#find-us) before you leave.`,
         tint: true,
-        links: [{ label: "How to book a table", href: href(ROUTES.book), primary: true }],
+        links: [
+          { label: "How to book a table", href: href(ROUTES.book), primary: true },
+          { label: "Call about group seating", href: telHref },
+        ],
       },
     ],
     faqTitle: "Family dining questions",
@@ -494,10 +500,10 @@ function buildFaqHub() {
         `Its catering is ${CD}, and each function's menu is agreed in the quote.`
     ),
     qa(
-      `How is ${name} different from other pure veg restaurants in Anna Nagar?`,
-      `${name} is a ${PV} South Indian restaurant on ${STREET}, known for chef-cooked build-your-own dosa, Tirunelveli (Nellai) sodhi meals at lunch, and ${CD} catering from ${MIN} guests. ` +
-        `It is open ${HOURS} for lunch and dinner, and makes no claims about other restaurants.`,
-      { kind: "explain" }
+      `What makes ${name} different?`,
+      `${name} is a ${PV} South Indian restaurant in ${NEAR} where diners choose their dosa ingredients and the kitchen cooks each dosa to order. ` +
+        `The menu also features ${sodhiMeals.name}, a Tirunelveli lunch with coconut milk stew, and Karaikudi dishes such as ${poppers.name}.`,
+      { id: "how-is-brihadhee-different-from-other-pure-veg-restaurants-i" }
     ),
     qa(
       `Is ${name} related to the Brihadeeswarar Temple?`,
@@ -512,10 +518,6 @@ function buildFaqHub() {
       `Does ${name} deliver food?`,
       `${name} has not confirmed a delivery service on its website, so call ${phone} to check current delivery and parcel options for your area. ` +
         `${menuNotes.parcel}`
-    ),
-    qa(
-      `Can I book a table at ${name}?`,
-      `Yes. Pre-book a table at ${name} on ${bookingOr}, or call ${phone}. ` + `Pre-booked tables get ${prebook}, and walk-in diners get ${walkIn}.`
     ),
     qa(
       `Is there parking at ${name}?`,
@@ -563,9 +565,11 @@ function buildFaqHub() {
     topics: [
       topic(`What ${name} is and what to order`, "/"),
       topic("Address, timings and Sunday hours", ROUTES.about),
+      { id: "faq-can-i-book-a-table-at-brihadhee", label: "How to book a table and check confirmation", href: `${href(ROUTES.book)}#how-to-book` },
       topic("Menu, prices and filter coffee", ROUTES.menu),
       topic("Build your own dosa", ROUTES.dosa),
       topic("Nellai meals and veg lunch", ROUTES.lunch),
+      { label: "What Nellai meals are", href: `${href(ROUTES.nellaiGuide)}#what-are-nellai-meals` },
       topic(`Dinner until ${CLOSE}`, ROUTES.dinner),
       topic("Family dining", ROUTES.familyDining),
       ...(smallFunctionsPage ? [topic(`Small function catering from ${MIN} guests`, ROUTES.smallFunctions)] : []),
