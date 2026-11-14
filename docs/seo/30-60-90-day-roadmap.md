@@ -1,6 +1,6 @@
 # Brihadhee release and 30/60/90-day roadmap
 
-Prepared 14 November 2026. Day 0 begins with an owner-authorized production release. The developer and SEO lead can hand the validated workspace to the owner now. This plan uses verified observations and records access gaps as `NOT_VERIFIED`. [Implementation report](implementation-report.md) · [Measurement plan](measurement-plan.md)
+Prepared 14 November 2026, Day 0 of the authorized production release. This plan keeps pre-release steps as the record of what to capture and uses `NOT_VERIFIED` for each remaining access gap. [Implementation report](implementation-report.md) · [Measurement plan](measurement-plan.md)
 
 | When | Owner | Action | Exit evidence |
 |---|---|---|---|

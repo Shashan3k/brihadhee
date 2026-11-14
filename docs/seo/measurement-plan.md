@@ -1,10 +1,10 @@
 # Brihadhee 90-day search and enquiry measurement plan
 
-Prepared 14 November 2026. Day 0 is the authorized production release. The SEO lead owns the weekly scorecard and can record `NOT_VERIFIED` until each data owner supplies access or a dated export. Current Google rankings, indexing, demand, Maps interactions, lead counts, and AI-answer rates have no verified baseline in this workspace.
+Prepared 14 November 2026, Day 0 of the authorized production release. The SEO lead owns the weekly scorecard and can record `NOT_VERIFIED` until each data owner supplies access or a dated export. Current Google rankings, indexing, demand, Maps interactions, lead counts, and AI-answer rates have no verified baseline in this workspace.
 
 ## Baseline and review cadence
 
-1. Before release, archive the most recent 28 complete pre-release days available from Search Console, Google Business Profile, analytics, and operations. Keep dates and reporting time zone for each source. If a report has a lag, end its period on its latest complete day and record the gap.
+1. Archive the most recent 28 complete pre-release days available from Search Console, Google Business Profile, analytics, and operations. Export the historical window when access is granted. Keep dates and reporting time zone for each source. If a report has a lag, end its period on its latest complete day and record the gap.
 2. Keep a weekly log by completed Monday–Sunday week in IST for operations, site changes, listing corrections and known issues. Keep each platform's native reporting dates in exports. Annotate holidays, promotions, outages, tracking changes and visible demand shifts.
 3. At Days 30, 60 and 90, compare the latest 28 complete days with the saved baseline and preceding review window when both are comparable. Keep mobile and desktop visible. Show counts alongside rate changes and flag small samples, tracking discontinuities and missing data. Review year-over-year evidence only if a comparable historical period exists.
 4. Agree commercial targets at the first review with enough baseline data. Track operational targets immediately. Inspect all 17 sitemap URLs, receive and verify a labelled end-to-end test quote, record a disposition for every received enquiry, and complete the answer panel with each attempt or access limitation recorded.
