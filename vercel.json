@@ -2,13 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
     {
-      "source": "/",
-      "has": [{ "type": "header", "key": "host", "value": "^brihadhee\\.vercel\\.app$" }],
-      "destination": "https://www.brihadhee.com/",
-      "statusCode": 301
-    },
-    {
-      "source": "/:path*",
+      "source": "/:path(.*)",
       "has": [{ "type": "header", "key": "host", "value": "^brihadhee\\.vercel\\.app$" }],
       "destination": "https://www.brihadhee.com/:path*",
       "statusCode": 301

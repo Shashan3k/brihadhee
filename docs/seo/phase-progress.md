@@ -332,3 +332,5 @@ Reconciled Phases 1–8 and the complete SEO audit, AEO audit and remediation ag
 - **Release and owner follow-ups.** Verify the hosting alias and one labelled enquiry through the deployed provider and inbox. Capture Search Console indexed and live evidence. Check the restaurant contact and arrival details on Business Profile, Instagram and third-party listings. Obtain practical service approvals and genuine catering proof. Measure AI-answer accuracy with the established panel and capture the source of any wrong phone answer.
 
 Phase 9 is complete in the workspace and ready for human review. The release and first measurement window await the owner. [Implementation report](implementation-report.md) · [Measurement plan](measurement-plan.md) · [30/60/90-day roadmap](30-60-90-day-roadmap.md)
+
+The owner subsequently authorized the push to `main`. The first deployment passed its hosted build and 17-URL availability smoke test. It exposed a trailing-slash mismatch on the project hostname. The follow-up expands the host-specific redirect matcher to preserve and handle root, slash-terminated URLs, and file paths. The existing www and legacy routing remain in place.

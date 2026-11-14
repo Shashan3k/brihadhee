@@ -65,6 +65,8 @@ All 17 generated sitemap locations are on `https://www.brihadhee.com`. Each serv
 
 ## Remaining work by owner and type
 
+The first authorized release, `9a4fc23`, passed GitHub Actions and Vercel. The updated menu and event catering titles were live and all 17 sitemap URLs returned 200. On the project hostname, the root and no-slash paths redirected, while slash-terminated paths served noindexed copies. Vercel's route compiler reproduced the mismatch. The release follow-up preserves the path, including any trailing slash, in the host-specific 301. [First production build](https://github.com/Shashan3k/brihadhee/actions/runs/43580304518)
+
 | Priority | Classification and owner | Requirement and exit evidence |
 |---|---|---|
 | P0 | Code/release · hosting and developer | Test the prepared redirect on an authorized preview and then on the production alias. If the candidate still serves the alias as 200, inspect the Vercel project root and active redirect/header rules. Record status, Location and headers. |
