@@ -1,6 +1,6 @@
 query,language,target,site_disposition,panel_ids,sources,notes
 best dosa in Anna Nagar,en,/menu/dosa/,TRACK_ONLY,1,AEO query set; GEO panel,The page shows offerings and prices. Independent results determine recommendations.
-best parotta in Anna Nagar,en,/menu/#parotta,TRACK_ONLY,2,AEO query set; GEO panel,Use the menu to check offerings. The site makes no ranking claim.
+best parotta in Anna Nagar,en,/parotta-anna-nagar/,TRACK_ONLY,2,AEO query set; GEO panel,Dedicated dish guide with verified prices and preparations. Ranking target only; no best claim.
 best vegetarian restaurant in Anna Nagar,en,/,TRACK_ONLY,3,AEO query set; GEO panel,The site describes the restaurant. Independent results determine recommendations.
 best South Indian restaurant in Anna Nagar,en,/,TRACK_ONLY,4,AEO query set; GEO panel,The site describes the restaurant. Independent results determine recommendations.
 dosa restaurant in Anna Nagar,en,/menu/dosa/,ANSWERED,,AEO query set,Classic and kitchen-cooked customized dosa.
@@ -18,9 +18,9 @@ family restaurant in Anna Nagar,en,/family-dining-anna-nagar/,ANSWERED,,AEO quer
 affordable South Indian meals in Anna Nagar,en,/menu/#faq-meal-cost,TRACK_ONLY,16,AEO query set; GEO panel,Use dish prices without judging affordability.
 how much does a meal cost at a South Indian restaurant in Anna Nagar,en,/menu/#faq-meal-cost,ANSWERED,,AEO query set,Use current prices for individual meals.
 dosa price in Anna Nagar restaurant,en,/menu/dosa/,ANSWERED,,AEO query set,Classic dosa prices differ from the build-your-own batter and extras.
-does Brihadhee serve parotta,en,/menu/#parotta,ANSWERED,,AEO query set,Use the current menu names.
-parotta dishes in Anna Nagar,en,/menu/#parotta,ANSWERED,,AEO query set,Use the current menu inventory.
-kothu parotta in Anna Nagar,en,/menu/#parotta,ANSWERED,,AEO query set,The menu lists Special Kothu Parotta.
+does Brihadhee serve parotta,en,/parotta-anna-nagar/,ANSWERED,,AEO query set,Use the current menu names.
+parotta dishes in Anna Nagar,en,/parotta-anna-nagar/,ANSWERED,,AEO query set,Use the current menu inventory.
+kothu parotta in Anna Nagar,en,/parotta-anna-nagar/,ANSWERED,,AEO query set,The menu lists Special Kothu Parotta.
 restaurant open now in Anna Nagar,en,/about/#hours,LOCATION_DEPENDENT,,AEO query set,Check actual Chennai local time against published daily 11 AM to 11 PM hours. Holiday changes need confirmation.
 South Indian restaurant open on Sunday Anna Nagar,en,/about/#faq-sundays,ANSWERED,,AEO query set,The restaurant is open 11 AM to 11 PM on Sundays.
 Anna Nagar South Indian restaurant opening hours,en,/about/#hours,ANSWERED,,AEO query set,Daily 11 AM to 11 PM for lunch and dinner.
@@ -71,7 +71,7 @@ where to eat dosa in Anna Nagar East,en,/menu/dosa/,ANSWERED,11,GEO panel,
 Tamil Nadu meals in Anna Nagar,en,/menu/nellai-meals/,ANSWERED,12,GEO panel,
 kal dosa in Anna Nagar,en,/menu/dosa/#classic-dosas,ANSWERED,13,GEO panel,
 ghee roast dosa Anna Nagar,en,/menu/dosa/#classic-dosas,ANSWERED,14,GEO panel,
-kothu parotta in Anna Nagar vegetarian,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,15,GEO panel,
+kothu parotta in Anna Nagar vegetarian,en,/parotta-anna-nagar/,ANSWERED,15,GEO panel,
 restaurant near 3rd Avenue Anna Nagar,en,/about/#find-us,ANSWERED,21,GEO panel,
 restaurant in W Block Anna Nagar East,en,/about/#find-us,ANSWERED,22,GEO panel,
 pure veg restaurant Anna Nagar East,en,/,ANSWERED,23,GEO panel,
@@ -94,7 +94,7 @@ Brihadhee vs Rusi Rasa,en,/faq/,TRACK_ONLY,40,GEO panel,
 பிரிஹதீ மெனு,ta,/menu/,ANSWERED,49,GEO panel,
 Anna Nagar la veg hotel enga irukku,tanglish,/about/#find-us,ANSWERED,50,GEO panel,
 Anna Nagar la nalla dosa enga kidaikum,tanglish,/menu/dosa/#faq-tanglish-byo-dosa,TRACK_ONLY,51,GEO panel,
-Anna Nagar parotta salna kadai,tanglish,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,52,GEO panel,
+Anna Nagar parotta salna kadai,tanglish,/parotta-anna-nagar/,ANSWERED,52,GEO panel,
 Chennai la banana leaf saapadu enga kidaikum,tanglish,/menu/nellai-meals/,ANSWERED,53,GEO panel,
 Anna Nagar filter coffee enga best,tanglish,/menu/#faq-filter-coffee,TRACK_ONLY,54,GEO panel,
 Brihadhee hotel Anna Nagar,tanglish,/#faq-what-is-brihadhee,ANSWERED,55,GEO panel,
@@ -112,7 +112,7 @@ Where to eat authentic Tamil meals in Anna Nagar?,en,/menu/nellai-meals/,ANSWERE
 Which is the best South Indian restaurant in Anna Nagar for lunch?,en,/,TRACK_ONLY,68,GEO panel; Brief 4.1,
 Which is the best veg restaurant in Anna Nagar for dinner?,en,/veg-dinner-anna-nagar/,TRACK_ONLY,69,GEO panel; Brief 4.1,
 Where can I get Nellai (Tirunelveli-style) meals in Chennai?,en,/menu/nellai-meals/,ANSWERED,70,GEO panel; Brief 4.1,
-Where can I eat paanai parotta in Chennai?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,71,GEO panel; Brief 4.1,
+Where can I eat paanai parotta in Chennai?,en,/parotta-anna-nagar/,ANSWERED,71,GEO panel; Brief 4.1,
 Which pure veg restaurants in Anna Nagar are open for dinner till 11 pm?,en,/veg-dinner-anna-nagar/#late-dinner,ANSWERED,72,GEO panel; Brief 4.1,
 "Recommend a pure vegetarian South Indian restaurant in Anna Nagar, Chennai for a family lunch.",en,/family-dining-anna-nagar/,TRACK_ONLY,73,GEO panel,
 "Recommend a pure veg corporate caterer in Chennai that can handle 1,000 people a day.",en,/corporate-catering-chennai/#scale,ANSWERED,74,GEO panel; Brief 5.3,Owner approved pure vegetarian catering on 15 November. The 1,000+ figure is actual daily volume across the operation. Check capacity for the requested office or event.
@@ -128,7 +128,7 @@ Chennai la veg catering yaar nalla pannuvanga?,tanglish,/catering-services-chenn
 Brihadhee vs Saravana Bhavan vs A2B in Anna Nagar,en,/faq/,TRACK_ONLY,84,GEO panel,
 alternatives to Saravana Bhavan in Anna Nagar,en,/faq/,TRACK_ONLY,85,GEO panel,
 Where can I get good dosa in Anna Nagar?,en,/menu/dosa/,TRACK_ONLY,,Brief 4.1,
-Where can I find veg kothu parotta in Anna Nagar?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.1,
+Where can I find veg kothu parotta in Anna Nagar?,en,/parotta-anna-nagar/,ANSWERED,,Brief 4.1,
 Which restaurant in Anna Nagar serves sodhi with idiyappam?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.1,
 Which pure veg restaurant in Anna Nagar is good for a family lunch?,en,/family-dining-anna-nagar/,TRACK_ONLY,,Brief 4.1,
 Which Anna Nagar veg restaurants suit large groups?,en,/family-dining-anna-nagar/,OWNER_CONFIRMATION,,Brief 4.1,
@@ -156,7 +156,7 @@ What is podi dosa?,en,/menu/dosa/#classic-dosas,ANSWERED,,Brief 4.3,
 How many types of dosa are there?,en,/menu/dosa/#classic-dosas,TRACK_ONLY,,Brief 4.3,The dosa page gives the number of Brihadhee classic items and describes its own custom choices.
 What is sodhi?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
 What is ulundhu kali?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
-What is paanai parotta?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.3,
+What is paanai parotta?,en,/parotta-anna-nagar/,ANSWERED,,Brief 4.3,
 What is kothu idiyappam?,en,/veg-dinner-anna-nagar/#dinner-favourites,ANSWERED,,Brief 4.3,
 What is Tirunelveli cuisine known for?,en,/guides/what-are-nellai-meals/#what-are-nellai-meals,ANSWERED,,Brief 4.3,
 What should a first-timer order at a South Indian restaurant?,en,/faq/#first-visit,ANSWERED,,Brief 4.3,A Brihadhee first-visit example can inform a general answer.

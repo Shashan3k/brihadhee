@@ -18,7 +18,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
 import { BYO_DEFINITION, CATERING_ID, RESTAURANT_ID, FACTS, SITE_ORIGIN, cateringContacts, getFact, isConfirmed, toE164 } from "../src/data/entity-truth.ts";
-import { MENU_NOTES } from "../src/data/menu-canonical.ts";
+import { MENU, MENU_NOTES } from "../src/data/menu-canonical.ts";
 import { CATERING_DIET } from "../config/seo-gates.ts";
 import { firstAnswerSentence } from "../src/lib/answers.js";
 import { cateringRelationshipProblems, factProblems, readPageCopy } from "./aeo-rules.mjs";
@@ -230,7 +230,7 @@ for (const { name, html, nodes } of pages) {
   const wp = nodes.find((n) => typeOf(n).includes("WebPage"));
   const sharedCatering = nodes.find((n) => n["@id"] === CATERING_ID);
   const pageService = nodes.find((n) => n["@id"] === `${canonical}#service`);
-  const primaryContent = nodes.find((n) => typeOf(n).some((type) => ["Menu", "Article"].includes(type)));
+  const primaryContent = nodes.find((n) => typeOf(n).some((type) => ["Menu", "ItemList", "Article"].includes(type)));
   const subjectId = CATERING_PAGES.includes(name) ? (pageService?.["@id"] ?? CATERING_ID) : RESTAURANT_ID;
   const expectedPrimary = primaryContent ?? pageService ?? (name === QUOTE_PATH ? sharedCatering : null) ??
     (["/", "/about/", "/book-a-table/"].includes(name) ? r : null);
@@ -357,6 +357,26 @@ for (const { name, html, nodes } of pages) {
     if (f.about?.["@id"] !== subjectId) err(name, `FAQPage.about must reference ${subjectId}`);
     if (f.isPartOf?.["@id"] !== wp?.["@id"] || wp?.hasPart?.["@id"] !== f["@id"]) err(name, "FAQPage and WebPage must have reciprocal part links");
     if (!/^\d{4}-\d{2}-\d{2}$/.test(f.dateModified ?? "")) err(name, "FAQPage missing dateModified (YYYY-MM-DD)");
+  }
+
+  /* Focused dish guides must agree with the full menu and visible content. */
+  for (const list of nodes.filter((n) => typeOf(n).includes("ItemList"))) {
+    const entries = list.itemListElement ?? [];
+    const dishText = visibleText(html);
+    if (list.numberOfItems !== entries.length) err(name, "Dish list count differs from its entries");
+    for (const [index, entry] of entries.entries()) {
+      const item = entry.item;
+      const approved = MENU.flatMap((category) => category.items).find((dish) => dish.name === item?.name);
+      if (!approved || !typeOf(item).includes("MenuItem")) { err(name, "Dish list contains an unknown menu item"); continue; }
+      if (entry.position !== index + 1) err(name, "Dish list positions must follow the visible order");
+      if (!dishText.includes(item.name) || !dishText.includes(`₹${approved.price}`)) err(name, `Dish list item missing from visible content: ${item.name}`);
+      if (Number(item.offers?.price) !== approved.price || item.offers?.priceCurrency !== "INR") err(name, `Dish list price mismatch: ${item.name}`);
+      if ((item.description ?? "") !== approved.description) err(name, `Dish list description mismatch: ${item.name}`);
+      if (item.suitableForDiet !== "https://schema.org/VegetarianDiet") err(name, `Dish list diet mismatch: ${item.name}`);
+      const menu = pages.find((p) => p.name === MENU_PATH);
+      const original = [...objects(menu?.nodes ?? [])].find((node) => typeOf(node).includes("MenuItem") && node.name === item.name);
+      if (JSON.stringify(original) !== JSON.stringify(item)) err(name, `Dish identity differs from the canonical menu: ${item.name}`);
+    }
   }
 
   /* Menu: every MenuItem declares the vegetarian diet */

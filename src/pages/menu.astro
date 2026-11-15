@@ -13,7 +13,7 @@ import { menuFaq } from "../data/faq.js";
 import { getFact, openingTimes } from "../data/entity-truth.ts";
 import { ROUTES, href } from "../data/site.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
-import { pageGraph, menuSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
+import { pageGraph, menuSchema, menuItemAnchor, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import {
   categories,
   byo,
@@ -61,7 +61,7 @@ const schema = pageGraph({
         <p class="section__lead">
           See <a href={href(ROUTES.dosa)}>how to order a customized dosa</a>,
           <a href={href(ROUTES.lunch)}>Nellai meals and lunch combos</a>, or
-          <a href={`${href(ROUTES.dinner)}#dinner-favourites`}>Paanai Parotta and kothu parotta at dinner</a>.
+          <a href={href(ROUTES.parotta)}>Paanai Parotta, kothu parotta and salna varieties</a>.
           Planning a visit? <a href={href(ROUTES.book)}>Book a table</a> or
           <a href={`${href(ROUTES.about)}#find-us`}>get directions to Brihadhee</a>.
         </p>
@@ -119,9 +119,10 @@ const schema = pageGraph({
             <h2 class="section__title" id={`${c.id}-title`}>{c.name}</h2>
             {c.blurb && <p class="section__lead">{c.blurb}</p>}
             {c.id === "beverages" && <p class="section__lead">Filter coffee and other hot drinks are served at the <a href={`${href(ROUTES.home)}#coffee-bar`}>Brihadhee Coffee Bar</a> during lunch and dinner.</p>}
+            {c.id === "parotta" && <p class="section__lead">Compare <a href={href(ROUTES.parotta)}>vegetarian parotta varieties at Brihadhee</a>, from kothu and Paanai Parotta to parotta with salna, and plan your visit to Anna Nagar East.</p>}
             <ul class="menu-page__list" role="list">
               {c.items.map((item) => (
-                <li class="menu-page__item">
+                <li class="menu-page__item" id={menuItemAnchor(item)}>
                   <p class="menu-page__row">
                     <strong class="menu-page__name">{item.name}</strong>
                     <span class="menu-page__price">{rupees(item.price)}</span>

@@ -1,0 +1,83 @@
+{
+  "sourceHashes": {
+    "src/data/catering.js": "3d9d2fcf0aa993b18a34e8702e11e8b5b5e7ea3eb8c0a12942759d58a042ea1a",
+    "src/pages/[slug].astro": "014301836751fbb070b065213e1bd9749d00a39f0fb6fcd315dee8cfacc7f1c0",
+    "src/components/CorporateShowcase.astro": "30cd52c68e2775809dd1f2ca0811730a23592a4266dad37d120e8b485a5d3e2b",
+    "src/styles/global.css": "70999b5832581a1ec83d2d12f99ba21cd9a60c7dc98e38142063567e7a4bbbfc"
+  },
+  "corporateMain": "7926d42c0ff3316b80e818c00db8fcf8d9808ef0e85f3bc3c19f69d0579aca85",
+  "pages": [
+    {
+      "path": "/",
+      "title": "Brihadhee | Pure Veg South Indian Restaurant, Anna Nagar"
+    },
+    {
+      "path": "/about/",
+      "title": "Brihadhee Anna Nagar: Address, Timings &amp; Contact"
+    },
+    {
+      "path": "/book-a-table/",
+      "title": "Book a Table at Brihadhee, Anna Nagar East"
+    },
+    {
+      "path": "/catering-quote-chennai/",
+      "title": "Catering Quote in Chennai for 50+ Guests | Brihadhee"
+    },
+    {
+      "path": "/catering-services-chennai/",
+      "title": "Pure Veg Event &amp; Wedding Catering in Chennai | Brihadhee"
+    },
+    {
+      "path": "/corporate-catering-chennai/",
+      "title": "Pure Veg Corporate Catering in Chennai | Brihadhee"
+    },
+    {
+      "path": "/event-planner-catering-partner/",
+      "title": "Catering Partner for Event Planners in Chennai | Brihadhee"
+    },
+    {
+      "path": "/family-dining-anna-nagar/",
+      "title": "Pure Veg Family Restaurant in Anna Nagar | Brihadhee"
+    },
+    {
+      "path": "/faq/",
+      "title": "Brihadhee FAQ: Timings, Dosa, Catering | Anna Nagar"
+    },
+    {
+      "path": "/guides/what-are-nellai-meals/",
+      "title": "What Are Nellai Meals? Sodhi, Ulundhu Kali, Tirunelveli Food"
+    },
+    {
+      "path": "/menu/",
+      "title": "Brihadhee Menu and Prices | Anna Nagar East"
+    },
+    {
+      "path": "/menu/dosa/",
+      "title": "Build Your Own Dosa in Chennai | Brihadhee, Anna Nagar"
+    },
+    {
+      "path": "/menu/nellai-meals/",
+      "title": "Veg Lunch &amp; Nellai Meals in Anna Nagar | Brihadhee"
+    },
+    {
+      "path": "/privacy/",
+      "title": "Privacy Policy | Brihadhee, Anna Nagar East"
+    },
+    {
+      "path": "/seasonal/karthigai-ayyappa-pure-veg/",
+      "title": "Karthigai &amp; Ayyappa Mala Pure Veg Food, Chennai | Brihadhee"
+    },
+    {
+      "path": "/small-function-catering-chennai/",
+      "title": "Small Function Catering in Chennai, 50+ Guests | Brihadhee"
+    },
+    {
+      "path": "/veg-dinner-anna-nagar/",
+      "title": "Veg Dinner in Anna Nagar, Open Till 11 PM | Brihadhee"
+    },
+    {
+      "path": "/whats-new/",
+      "title": "What&#39;s New at Brihadhee \u2014 November 2026 | Anna Nagar"
+    }
+  ]
+}

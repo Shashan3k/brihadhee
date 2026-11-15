@@ -1,7 +1,7 @@
 ---
 /**
  * /veg-dinner-anna-nagar/: vegetarian dinner, open until 11 PM (P1, new route).
- * Holds the parotta content until /menu/parotta-kothu/ exists. All copy and
+ * Links to /parotta-anna-nagar/ for dish comparisons and parotta answers. All copy and
  * prices come from src/data/pages.js and menu-canonical.ts. The last-order time
  * is not confirmed (entity-truth.ts lastOrderTime), so the page never states one.
  */
@@ -54,6 +54,7 @@ const schema = pageGraph({
         <h2 class="section__title" id="more-title">More from Brihadhee</h2>
         <ul class="link-list" role="list">
           <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
+          <li><a href={href(ROUTES.parotta)}>Vegetarian parotta, kothu parotta and salna</a></li>
           <li><a href={href(ROUTES.dosa)}>Build your own dosa</a></li>
           <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
           <li><a href={`${href(ROUTES.about)}#find-us`}>Directions to Brihadhee</a></li>

@@ -27,6 +27,7 @@ const MONEY_PAGES = [
   "/menu/",
   "/menu/dosa/",
   "/menu/nellai-meals/",
+  "/parotta-anna-nagar/",
   "/veg-dinner-anna-nagar/",
   "/corporate-catering-chennai/",
   "/catering-services-chennai/",

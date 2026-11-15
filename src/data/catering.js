@@ -386,7 +386,7 @@ export const corporateMeta = {
 export const corporatePage = corporateEnabled
   ? {
       path: CORPORATE_PATH,
-      intro: `Brihadhee supplies ${CD} office lunches and recurring employee meals across Chennai. For a one-off packed bulk lunch or a staffed office event, share the date and headcount so the team can discuss what you need.`,
+      intro: `Brihadhee plans ${CD} office lunches, recurring employee meals and catering for team celebrations in Chennai. Choose a regional menu, packed meals or an event setup to suit your workplace. Share your location, headcount and date for a tailored quote.`,
       glance: [
         ["Who", `The Brihadhee restaurant team in ${NEAR}`],
         ["Daily corporate volume", `${DAILY} people served per day across the corporate catering operation`],
@@ -417,9 +417,7 @@ export const corporatePage = corporateEnabled
         ? {
             id: "clients",
             title: "Companies We Have Catered For",
-            lead:
-              `Brihadhee has catered corporate events and office meals for ${corpClients.length} companies` +
-              (clientLead.length ? `, including ${clientLead.join(", ")} and ${corpClients.length - clientLead.length} more.` : "."),
+            lead: "These organizations were named by the Brihadhee team as past catering customers. Ask us about the service and menu that fit your own office.",
             names: corpClients,
           }
         : null,

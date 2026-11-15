@@ -1,0 +1,145 @@
+---
+import { responsive } from "../data/site.js";
+import Icon from "./Icon.astro";
+
+// These are restaurant photographs. They illustrate menu options; they are not
+// presented as photographs of a particular corporate order or event.
+const slides = [
+  {
+    image: "meals",
+    alt: "Brihadhee South Indian meal with rice, accompaniments and papad",
+    label: "Everyday office lunches",
+    text: "Plan a rotating vegetarian lunch menu around the number of meals and delivery days your office needs.",
+  },
+  {
+    image: "meal-box-rice",
+    alt: "Brihadhee packed rice meal with a vegetarian side dish",
+    label: "Packed meals for workdays",
+    text: "Discuss packed lunches for meetings, training days or a larger team order, with the delivery window agreed in advance.",
+  },
+  {
+    image: "dosa",
+    alt: "Brihadhee dosa served with chutneys and sambar",
+    label: "Food for office celebrations",
+    text: "Ask about regional dishes and live counter options for an office event or team gathering.",
+  },
+  {
+    image: "coffee",
+    alt: "Brihadhee South Indian filter coffee in a steel tumbler and dabara",
+    label: "A coffee bar for your event",
+    text: "Add South Indian filter coffee to an office meal or discuss a coffee service for your meeting.",
+  },
+];
+---
+
+<section class="section showcase" id="catering-presentation" aria-labelledby="showcase-title" data-corporate-showcase>
+  <div class="container">
+    <div class="showcase__heading">
+      <div>
+        <p class="eyebrow">Brihadhee for business</p>
+        <h2 class="section__title" id="showcase-title">A closer look at the menu</h2>
+        <p class="section__lead">From regular lunches to team celebrations, Brihadhee can discuss a pure vegetarian menu around your headcount, schedule and service needs.</p>
+      </div>
+      <div class="showcase__controls" data-showcase-controls hidden>
+        <span class="showcase__count" aria-live="polite" data-showcase-count>1 / {slides.length}</span>
+        <button type="button" data-showcase-prev aria-label="Previous catering slide" aria-controls="showcase-track"><Icon name="chevronLeft" size={20} /></button>
+        <button type="button" data-showcase-next aria-label="Next catering slide" aria-controls="showcase-track"><Icon name="chevronRight" size={20} /></button>
+      </div>
+    </div>
+    <p class="showcase__note">Photographs show food served at the Brihadhee restaurant. The catering menu and format are agreed for each enquiry.</p>
+    <div class="showcase__track" id="showcase-track" role="region" aria-roledescription="carousel" aria-label="Corporate catering menu presentation" tabindex="0" data-showcase-track>
+      {slides.map((slide, index) => (
+        <article class="showcase__slide" aria-roledescription="slide" aria-label={`${index + 1} of ${slides.length}`} data-showcase-slide>
+          <img {...responsive(slide.image, 1200)} sizes="(max-width: 700px) 92vw, 55vw" width="1200" height="900" loading="lazy" decoding="async" alt={slide.alt} />
+          <div class="showcase__copy">
+            <span class="showcase__number">{String(index + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</span>
+            <h3>{slide.label}</h3>
+            <p>{slide.text}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+    <div class="showcase__footer">
+      <p>Tell us your office location, headcount and preferred dates. The team will discuss the menu and prepare a quote.</p>
+      <a class="btn btn--primary" href="#enquiry">Request a corporate quote <Icon name="arrowRight" size={17} /></a>
+    </div>
+  </div>
+</section>
+
+<script>
+  const showcase = document.querySelector("[data-corporate-showcase]");
+  if (showcase) {
+    const track = showcase.querySelector("[data-showcase-track]");
+    const slides = [...showcase.querySelectorAll("[data-showcase-slide]")];
+    const controls = showcase.querySelector("[data-showcase-controls]");
+    const count = showcase.querySelector("[data-showcase-count]");
+    const prev = showcase.querySelector("[data-showcase-prev]");
+    const next = showcase.querySelector("[data-showcase-next]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let current = 0;
+
+    const update = () => {
+      count.textContent = `${current + 1} / ${slides.length}`;
+      prev.disabled = current === 0;
+      next.disabled = current === slides.length - 1;
+    };
+    const goTo = (index) => {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      track.scrollTo({ left: slides[current].offsetLeft - slides[0].offsetLeft, behavior: reducedMotion.matches ? "instant" : "smooth" });
+      update();
+    };
+    prev.addEventListener("click", () => goTo(current - 1));
+    next.addEventListener("click", () => goTo(current + 1));
+    track.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        goTo(current + (event.key === "ArrowRight" ? 1 : -1));
+      }
+    });
+    let frame = 0;
+    track.addEventListener("scroll", () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        current = slides.reduce((best, slide, index) =>
+          Math.abs(slide.offsetLeft - slides[0].offsetLeft - track.scrollLeft) < Math.abs(slides[best].offsetLeft - slides[0].offsetLeft - track.scrollLeft) ? index : best, 0);
+        update();
+      });
+    }, { passive: true });
+    controls.hidden = false;
+    update();
+  }
+</script>
+
+<style>
+  .showcase { background: var(--ink); color: var(--cream); }
+  .showcase .eyebrow { color: var(--turmeric); }
+  .showcase .section__lead { color: #e4d7c9; }
+  .showcase__heading { display: flex; justify-content: space-between; align-items: end; gap: 2rem; }
+  .showcase__heading > div:first-child { max-width: 45rem; }
+  .showcase__note { margin: 1.4rem 0 1.2rem; color: #d2c2b2; font-size: .9rem; }
+  .showcase__controls { display: flex; align-items: center; gap: .55rem; flex: none; }
+  .showcase__controls[hidden] { display: none; }
+  .showcase__count { min-width: 3.8rem; text-align: right; margin-right: .55rem; font-size: .9rem; font-variant-numeric: tabular-nums; }
+  .showcase__controls button { display: grid; place-items: center; width: 2.8rem; height: 2.8rem; border: 1px solid #8d7665; border-radius: 50%; color: var(--cream); }
+  .showcase__controls button:hover:not(:disabled) { background: #5b3d2c; }
+  .showcase__controls button:disabled { opacity: .4; cursor: default; }
+  .showcase__track { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: #9b7961 transparent; padding-bottom: .6rem; }
+  .showcase__slide { flex: 0 0 100%; display: grid; grid-template-columns: 57% 43%; min-width: 0; background: #fff8ee; color: var(--ink); scroll-snap-align: start; border-radius: var(--radius-lg); overflow: hidden; }
+  .showcase__slide img { width: 100%; height: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+  .showcase__copy { display: flex; flex-direction: column; justify-content: center; padding: clamp(1.5rem, 4vw, 3.5rem); }
+  .showcase__number { color: var(--orange); font-size: .8rem; font-weight: 700; letter-spacing: .15em; }
+  .showcase__copy h3 { font-size: clamp(1.6rem, 3vw, 2.6rem); margin: 1rem 0; }
+  .showcase__copy p { color: var(--ink-3); max-width: 28rem; }
+  .showcase__footer { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-top: 1.5rem; }
+  .showcase__footer p { max-width: 40rem; color: #e4d7c9; }
+  .showcase__footer .btn { flex: none; }
+  @media (max-width: 760px) {
+    .showcase__heading { display: block; }
+    .showcase__controls { justify-content: flex-end; margin-top: 1.5rem; }
+    .showcase__slide { display: block; }
+    .showcase__slide img { height: auto; aspect-ratio: 4 / 3; }
+    .showcase__copy { min-height: 13rem; }
+    .showcase__footer { align-items: flex-start; flex-direction: column; }
+  }
+  @media (prefers-reduced-motion: reduce) { .showcase__track { scroll-behavior: auto; } }
+</style>

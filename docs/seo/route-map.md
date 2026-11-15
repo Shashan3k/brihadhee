@@ -10,6 +10,8 @@ The canonical origin is `https://www.brihadhee.com`. Phase 2 observed a live ape
 
 ## Routes
 
+The 15 November parotta candidate adds `/parotta-anna-nagar/` for dish comparisons and moves the three parotta-specific questions out of the dinner FAQ. It preserves existing URLs and redirects. This is a local implementation, not evidence of deployment or indexing. See the [audit and measurement plan](../audits/2026-11-15-parotta/PAROTTA-SEO-REPORT.md).
+
 | Route | Primary keyword cluster | Intent | JSON-LD types (one @graph) | Render mode |
 |---|---|---|---|---|
 | `/` | Brand / navigational ("brihadhee anna nagar", "brihadhee restaurant", "pure veg restaurant in Anna Nagar") | Brand hub: who, what, where, both pillars | Restaurant, WebSite, WebPage, FAQPage, shared catering Service | Static |
@@ -17,6 +19,7 @@ The canonical origin is `https://www.brihadhee.com`. Phase 2 observed a live ape
 | `/about/` | "brihadhee address", "brihadhee timings", "near Anna Nagar Tower", local area terms | Location, hours, directions, founders | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
 | `/book-a-table/` | Brihadhee table booking, reserve a table in Anna Nagar | Choose a verified booking partner or call about a group | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static |
 | `/menu/dosa/` (legacy `/best-dosa-parotta-anna-nagar/` redirects here) | Build your own dosa Chennai, customizable dosa, best dosa in Anna Nagar, classic dosas | Learn how the kitchen prepares custom orders and choose a dosa for a visit | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
+| `/parotta-anna-nagar/` | Vegetarian parotta Anna Nagar, veg kothu parotta, Paanai Parotta, vegetarian salna; best phrases tracked without claims | Compare seven parotta dishes and prices; get directions | Restaurant, WebSite, WebPage, BreadcrumbList, ItemList with shared MenuItem identities, FAQPage | Static (local candidate 2026-11-15) |
 | `/menu/nellai-meals/` (legacy `/nellai-meals-south-indian-veg-anna-nagar/` redirects here) | Nellai meals Anna Nagar, veg lunch Anna Nagar, Nellai Special Sodhi Meals, home-style Tamil lunch | Choose a dine-in lunch, including meals with colleagues, and book or visit | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (blueprint 2026-11-11) |
 | `/veg-dinner-anna-nagar/` | Veg dinner Anna Nagar, dinner open till 11 pm Anna Nagar, dosa or parotta for dinner | Check evening dishes, hours and booking | Restaurant, WebSite, WebPage, BreadcrumbList, FAQPage | Static (built 2026-11-11) |
 | `/corporate-catering-chennai/` | Corporate catering Chennai, vegetarian corporate catering, office lunch catering, bulk lunch catering, approved service areas | HR, admin and facilities buyers evaluating recurring meals or corporate events | Restaurant, WebSite, WebPage, BreadcrumbList, Service, FAQPage | Static (built 2026-11-12, catering gate) |

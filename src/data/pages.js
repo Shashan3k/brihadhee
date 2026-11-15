@@ -57,8 +57,6 @@ const kali = item("Karuppatti Ulundhu Kali");
 const poppers = item("Karaikudi Paneer Poppers");
 const kothu = item("Special Kothu Parotta");
 const kothuChapathi = item("Special Kothu Chapathi");
-const parottaSalna = item("Parotta Salna (2 pcs)");
-const maduraiSalna = item("Madurai Salna Parotta");
 const idiCoconut = item("Idiyappam Coconut Milk");
 const idiLemon = item("Lemon Kothu Idiyappam");
 const idiTomato = item("Tomato Kothu Idiyappam");
@@ -120,7 +118,10 @@ export const homePage = {
     eyebrow: "Dinner",
     title: `Dinner Until ${CLOSE}`,
     lead: `For dinner at ${name}, choose customized dosa, ${paanai.name} (${rupees(paanai.price)}), veg kothu parotta, idiyappam or ${poppers.name}, with filter coffee to finish. The restaurant closes at ${CLOSE} daily.`,
-    links: [{ label: "Explore the dinner menu", href: href(ROUTES.dinner), primary: true }],
+    links: [
+      { label: "Explore the dinner menu", href: href(ROUTES.dinner), primary: true },
+      { label: "Parotta varieties and prices", href: href(ROUTES.parotta) },
+    ],
   },
   coffeeBar: {
     id: "coffee-bar",
@@ -427,6 +428,7 @@ export const dinnerPage = {
       {
         title: "Paanai Parotta",
         text: `${name}'s ${paanai.name} costs ${rupees(paanai.price)}: ${lc(paanai.description)}.`,
+        link: { label: "Compare our parotta dishes", href: href(ROUTES.parotta) },
       },
       {
         title: "Veg Kothu Parotta & Paneer Kothu Parotta",
@@ -467,22 +469,8 @@ export const dinnerPage = {
   },
   faq: qaRoute(ROUTES.dinner, [
     qa(
-      "Where can I get Paanai Parotta in Chennai?",
-      `${name} in Anna Nagar East, Chennai, lists Paanai Parotta (claypot parotta) for ${rupees(paanai.price)}. The restaurant is near ${landmark}.`
-    ),
-    qa(
-      `What is Paanai Parotta at ${name}?`,
-      `At ${name}, ${paanai.name} (${rupees(paanai.price)}) is ${lc(paanai.description)}. ` +
-        `The salna is cooked into the pot; for parotta with salna on the side, order ${parottaSalna.name.replace(/ \(2 pcs\)$/, "")} (2 pcs, ${rupees(parottaSalna.price)}) or ${maduraiSalna.name} (${rupees(maduraiSalna.price)}).`
-    ),
-    qa(
-      "Where can I get veg kothu parotta in Anna Nagar?",
-      `${name} in Anna Nagar East serves veg kothu parotta as the ${kothu.name} (${rupees(kothu.price)}): ${lc(kothu.description)}. ` +
-        `At lunch, the ${combo.name} costs ${rupees(combo.price)}.`
-    ),
-    qa(
       `What does ${name} serve with idiyappam?`,
-      `${name} serves idiyappam with sweet coconut milk as ${idiCoconut.name} (${rupees(idiCoconut.price)}), or with sodhi, a coconut milk stew, as ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}). ` +
+      `${name} in Anna Nagar East serves idiyappam with sweet coconut milk as ${idiCoconut.name} (${rupees(idiCoconut.price)}). For a coconut milk stew, choose ${idiyappamSodhi.name} (${rupees(idiyappamSodhi.price)}). ` +
         `For a fuller plate, order kothu idiyappam: ${list(kothuIdiyappam.map((i) => i.name))} (${priceRange(summarise(kothuIdiyappam))}).`
     ),
     qa(

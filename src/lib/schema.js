@@ -314,7 +314,7 @@ export function articleSchema({ path, headline, description, datePublished, imag
 
 /** Graph for a page: Restaurant + WebSite + WebPage + BreadcrumbList (+ extras). */
 export function pageGraph({ path, title, description, crumbs, extras = [] }) {
-  const primaryContent = extras.find((node) => ["Menu", "Service", "Article"].includes(node?.["@type"]));
+  const primaryContent = extras.find((node) => ["Menu", "ItemList", "Service", "Article"].includes(node?.["@type"]));
   const isCateringPage = verification.offer_catering === true && (primaryContent?.["@type"] === "Service" || path === ROUTES.cateringQuote);
   const includeCatering = isCateringPage || (path === ROUTES.home && verification.offer_catering === true);
   const subjectId = isCateringPage ? (primaryContent?.["@id"] ?? CATERING_ID) : ids.restaurant;
@@ -348,6 +348,37 @@ export function homeSchema({ title, description }) {
  * Build-your-own options show the batter price or the price of one add-on.
  * Signature extras without a listed price are MenuItems without an offer.
  */
+/** Stable dish identities are shared by the full menu and focused dish guides. */
+export const menuItemAnchor = (item) => `dish-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+export function menuItemSchema(item) {
+  const url = `${pageUrl(ROUTES.menu)}#${menuItemAnchor(item)}`;
+  return {
+    "@type": "MenuItem",
+    "@id": url,
+    url,
+    name: item.name,
+    ...(item.description ? { description: item.description } : {}),
+    suitableForDiet: "https://schema.org/VegetarianDiet",
+    offers: { "@type": "Offer", price: String(item.price), priceCurrency: "INR" },
+  };
+}
+
+/** A dining guide describes a selection from the existing menu, not a new restaurant. */
+export function dishListSchema({ path, name, items }) {
+  return {
+    "@context": CONTEXT,
+    "@type": "ItemList",
+    "@id": `${pageUrl(path)}#dishes`,
+    name,
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: menuItemSchema(item),
+    })),
+  };
+}
+
 export function menuSchema({ categories, extras = [], byo = null }) {
   const path = ROUTES.menu;
   return {
@@ -364,13 +395,7 @@ export function menuSchema({ categories, extras = [], byo = null }) {
         "@type": "MenuSection",
         name: c.name,
         ...(c.blurb ? { description: c.blurb } : {}),
-        hasMenuItem: c.items.map((i) => ({
-          "@type": "MenuItem",
-          name: i.name,
-          ...(i.description ? { description: i.description } : {}),
-          suitableForDiet: "https://schema.org/VegetarianDiet",
-          offers: { "@type": "Offer", price: String(i.price), priceCurrency: "INR" },
-        })),
+        hasMenuItem: c.items.map(menuItemSchema),
       })),
       ...(byo
         ? [

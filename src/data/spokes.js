@@ -600,6 +600,7 @@ function buildFaqHub() {
       topic("Menu, prices and filter coffee", ROUTES.menu),
       topic("Build your own dosa", ROUTES.dosa),
       topic("Nellai meals and veg lunch", ROUTES.lunch),
+      topic("Parotta varieties, kothu parotta and vegetarian salna", ROUTES.parotta),
       { label: "What Nellai meals are", href: `${href(ROUTES.nellaiGuide)}#what-are-nellai-meals` },
       topic(`Dinner until ${CLOSE}`, ROUTES.dinner),
       topic("Family dining", ROUTES.familyDining),

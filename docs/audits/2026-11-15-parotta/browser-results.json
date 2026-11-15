@@ -1,0 +1,76 @@
+{
+  "checkedAt": "2026-11-15T11:16:46.492Z",
+  "viewports": [
+    {
+      "width": 390,
+      "viewport": 390,
+      "h1": 1,
+      "dishes": 7,
+      "canonical": "https://www.brihadhee.com/parotta-anna-nagar/",
+      "images": [
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        },
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        }
+      ],
+      "allControlsFit": true
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "h1": 1,
+      "dishes": 7,
+      "canonical": "https://www.brihadhee.com/parotta-anna-nagar/",
+      "images": [
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        },
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        }
+      ],
+      "allControlsFit": true
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "h1": 1,
+      "dishes": 7,
+      "canonical": "https://www.brihadhee.com/parotta-anna-nagar/",
+      "images": [
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        },
+        {
+          "loaded": true,
+          "hasSize": true,
+          "alt": "Brihadhee"
+        }
+      ],
+      "allControlsFit": true
+    }
+  ],
+  "tests": [
+    "Home link, dish content and native FAQ work without JavaScript",
+    "Visible menu section link reaches the parotta page",
+    "Corporate navigation, carousel buttons, keyboard and reduced motion at 390px",
+    "Corporate navigation, carousel buttons, keyboard and reduced motion at 1440px",
+    "Phase 1 source hashes and rendered corporate main content unchanged",
+    "All 18 existing page titles preserved",
+    "Mobile Lighthouse audit completed for home, menu and parotta"
+  ],
+  "consoleErrors": [],
+  "passed": true
+}

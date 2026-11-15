@@ -15,6 +15,7 @@ export function GET() {
     { path: "/", priority: "1.0" },
     { path: "/menu/", priority: "0.9" },
     { path: ROUTES.dosa, priority: "0.9" },
+    { path: ROUTES.parotta, priority: "0.8" },
     { path: ROUTES.lunch, priority: "0.8" },
     { path: ROUTES.dinner, priority: "0.8" },
     { path: ROUTES.familyDining, priority: "0.8" },

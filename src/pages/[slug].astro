@@ -21,6 +21,7 @@ import Icon from "../components/Icon.astro";
 import ContentSection from "../components/ContentSection.astro";
 import LeadForm from "../components/LeadForm.astro";
 import ClientLogos from "../components/ClientLogos.astro";
+import CorporateShowcase from "../components/CorporateShowcase.astro";
 import { site, responsive } from "../data/site.js";
 import { getFact } from "../data/entity-truth.ts";
 import { CATERING_DIET, CATERING_DIET_TA, CATERING_MIN_GUESTS, ENABLE_NO_ONION_NO_GARLIC_CLUSTER } from "../../config/seo-gates.ts";
@@ -131,6 +132,7 @@ const cp = corporatePage;
   {isCorporate ? (
   <main id="main" tabindex="-1">
     <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} primaryAction={quoteAction} showDirections={false} />
+    <div class="container corporate-presentation-link"><a href="#catering-presentation">View the catering presentation <Icon name="arrowRight" size={17} /></a></div>
     <AtAGlance title="Brihadhee corporate catering: summary" rows={cp.glance} />
     <ContentSection {...cp.scale} />
     {cp.clients && <ClientLogos {...cp.clients} />}
@@ -141,6 +143,7 @@ const cp = corporatePage;
     {cp.checklist && <ContentSection {...cp.checklist} />}
     {cp.safety && <ContentSection {...cp.safety} />}
     {cp.areas && <ContentSection {...cp.areas} />}
+    <CorporateShowcase />
     <LeadForm
       variant="corporate"
       page={path}

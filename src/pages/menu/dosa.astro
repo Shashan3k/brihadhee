@@ -1,7 +1,7 @@
 ---
 /**
  * /menu/dosa/: Build Your Own Dosa (P1). Replaces /best-dosa-parotta-anna-nagar/
- * (301 in vercel.json); parotta moved to /veg-dinner-anna-nagar/. All copy and
+ * (301 in vercel.json); parotta now has /parotta-anna-nagar/. All copy and
  * prices come from src/data/pages.js and menu-canonical.ts.
  */
 import Base from "../../layouts/Base.astro";
@@ -57,6 +57,7 @@ const schema = pageGraph({
           <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
           <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
           <li><a href={href(ROUTES.dinner)}>Dinner, Paanai Parotta and kothu parotta</a></li>
+          <li><a href={href(ROUTES.parotta)}>Explore vegetarian parotta varieties</a></li>
           <li><a href={href(ROUTES.book)}>Book a table for dosa</a></li>
           <li><a href={`${href(ROUTES.about)}#find-us`}>Directions to Brihadhee in Anna Nagar East</a></li>
         </ul>

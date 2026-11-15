@@ -1,0 +1,71 @@
+---
+import Base from "../layouts/Base.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import PageHeader from "../components/PageHeader.astro";
+import Faq from "../components/Faq.astro";
+import Icon from "../components/Icon.astro";
+import { parottaPage as page, parottaDishes, parottaLunchCombo } from "../data/parotta.js";
+import { site, ROUTES, href, telHref } from "../data/site.js";
+import { openingTimes, getFact } from "../data/entity-truth.ts";
+import { rupees, menuNotes } from "../lib/menu-facts.js";
+import { pageGraph, dishListSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
+
+const { range } = openingTimes();
+const schema = pageGraph({
+  path: page.path, title: page.title, description: page.description,
+  crumbs: [...HOME_CRUMBS, { name: "Menu", path: ROUTES.menu }, { name: "Vegetarian parotta", path: page.path }],
+  extras: [dishListSchema({ path: page.path, name: "Brihadhee vegetarian parotta dishes", items: parottaDishes.items }), faqPageSchema(page.path, page.faq)],
+});
+---
+
+<Base title={page.title} description={page.description} path={page.path} schema={schema}>
+  <Nav homeBase={href("/")} />
+  <main id="main" tabindex="-1">
+    <PageHeader eyebrow="From the Brihadhee menu" h1={page.h1} intro={page.intro} primaryAction={{ label: "Explore parotta and prices", href: "#parotta-menu" }} showDirections={true} />
+
+    <section class="section section--tint menu-page__cat" id="parotta-menu" aria-labelledby="parotta-menu-title">
+      <div class="container">
+        <h2 class="section__title" id="parotta-menu-title">Explore our vegetarian parotta varieties</h2>
+        <p class="section__lead">Choose salna served alongside your parotta, a shredded kothu preparation or a sealed-pot Paanai Parotta. These are the dishes and prices on Brihadhee’s current menu.</p>
+        <p class="menu-page__note">{menuNotes.gst} {menuNotes.parcel}</p>
+        <ul class="menu-page__list" role="list">
+          {parottaDishes.items.map((dish) => (
+            <li class="menu-page__item">
+              <div class="menu-page__row">
+                <h3 class="menu-page__name">{dish.name}</h3>
+                <span class="menu-page__price">{rupees(dish.price)}</span>
+              </div>
+              <p class="menu-page__desc">{dish.category === "Starters" && "From our starters menu. "}{dish.description || "Ask the restaurant about this dish’s preparation and ingredients before ordering."}</p>
+            </li>
+          ))}
+        </ul>
+        <p class="section__lead">For chapathi and other dishes, see the <a href={`${href(ROUTES.menu)}#parotta`}>full Parotta &amp; Chapathi menu</a>.</p>
+      </div>
+    </section>
+
+    <section class="section" id="vegetarian-salna" aria-labelledby="salna-title">
+      <div class="container">
+        <h2 class="section__title" id="salna-title">Parotta with vegetarian salna</h2>
+        <p class="section__lead">Brihadhee is a {getFact("type")}; the salna served with its parotta is vegetarian. Parotta Salna (2 pcs) comes with salna and thokku, while Madurai Salna Parotta is served with spicy Madurai-style salna.</p>
+        <p class="section__lead">Paanai Parotta combines parotta, salna, paneer and mushroom in a sealed pot. Special Kothu Parotta is shredded and tossed with paneer, mushroom and special masala. If you have an allergy or a dietary requirement, call the restaurant to check the dish before ordering.</p>
+        {parottaLunchCombo && <p class="section__lead">At lunch, the <a href={`${href(ROUTES.menu)}#combos`}>{parottaLunchCombo.name}</a> is {rupees(parottaLunchCombo.price)} before GST. Dine-in combos are available only for lunch.</p>}
+      </div>
+    </section>
+
+    <section class="section section--tint" id="visit" aria-labelledby="visit-title">
+      <div class="container">
+        <h2 class="section__title" id="visit-title">Find parotta in Anna Nagar East</h2>
+        <p class="section__lead">Visit Brihadhee on 3rd Avenue, near {getFact("landmarks")[0]} (Anna Tower), Chennai. The restaurant is open {range} every day for lunch and dinner. Call ahead to check a dish’s availability or the last-order time if you are arriving late.</p>
+        <p class="section__lead">Use <a href={`${href(ROUTES.about)}#find-us`}>directions from nearby landmarks</a> to plan your journey. For a meal with family or friends, explore the <a href={href(ROUTES.dinner)}>vegetarian dinner menu</a> or <a href={href(ROUTES.book)}>table booking options</a>.</p>
+        <div class="page-head__actions">
+          <a class="btn btn--primary" href={site.maps.directions} target="_blank" rel="noopener"><Icon name="navigation" size={17} /> Get directions</a>
+          <a class="btn btn--ghost" href={telHref}><Icon name="phone" size={17} /> Call {getFact("phone")}</a>
+        </div>
+      </div>
+    </section>
+
+    <Faq items={page.faq} title="Frequently asked questions about our parotta" eyebrow="Parotta questions" lead="" />
+  </main>
+  <Footer homeBase={href("/")} />
+</Base>

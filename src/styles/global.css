@@ -2850,6 +2850,8 @@ a.contact__channel:hover {
 .page-head__title { max-width: 24ch; }
 .page-head__intro { max-width: 46rem; }
 .page-head__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+.corporate-presentation-link { margin-top: -2.2rem; padding-bottom: 2rem; }
+.corporate-presentation-link a { display: inline-flex; align-items: center; gap: .45rem; color: var(--orange); font-weight: 700; text-underline-offset: .3em; }
 .glance__box { border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.25rem, 3vw, 2rem); background: var(--paper); }
 .glance__title { margin: 0; font-size: 1.15rem; }
 .compare__wrap { overflow-x: auto; margin-top: 1.25rem; }

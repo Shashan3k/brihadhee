@@ -9,6 +9,7 @@ import { getFact, factOr, FACTS, canonicalAnswerLines, landmarkSentence, opening
 import { faqItems, aboutFaq, menuFaq, bookingFaq } from "../data/faq.js";
 import { homePage, dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
 import { nellaiGuide } from "../data/guides.js";
+import { parottaPage } from "../data/parotta.js";
 import { categories, priceRange, itemCount, allVegetarian, rupees, byo, menuNotes } from "./menu-facts.js";
 import { UNPRICED_SIGNATURES } from "../data/menu-canonical.ts";
 import {
@@ -79,6 +80,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- [Address, timings and contact](${u("/about/")}): address, directions from Anna Nagar landmarks, hours, founders and the name story`);
   push(`- [Book a table](${u("/book-a-table/")}): choose a dining partner and check booking status in its app`);
   push(`- [Build your own dosa](${u(dosaPage.path)}): how it works, chef's combinations, classic dosas`);
+  push(`- [Vegetarian parotta in Anna Nagar](${u(parottaPage.path)}): parotta varieties and prices, vegetarian salna, kothu and Paanai Parotta, and directions`);
   push(`- [Lunch and Nellai meals](${u(nellaiPage.path)}): Nellai Special Sodhi Meals, Tamil home-style lunch, office lunch`);
   push(`- [Dinner until ${openingTimes().close}](${u(dinnerPage.path)}): Paanai Parotta, veg kothu parotta, idiyappam, Karaikudi Paneer Poppers`);
   push(`- [Family dining](${u(familyPage.path)}): family lunch after a temple visit, birthday and anniversary dinners, table booking`);
@@ -143,6 +145,7 @@ export function buildLlms({ full = false } = {}) {
   qa("Build your own dosa questions", dosaPage.faq.filter((i) => !i.lang || i.lang === "en"));
   qa("Lunch and Nellai meals questions", nellaiPage.faq);
   qa("Dinner questions", dinnerPage.faq);
+  qa("Parotta questions", parottaPage.faq);
   qa("What's new", whatsNewPage.faq);
   qa("Karthigai and Ayyappa mala questions", seasonalPage.faq);
   qa("Family dining questions", familyPage.faq);
