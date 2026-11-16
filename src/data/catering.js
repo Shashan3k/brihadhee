@@ -112,7 +112,7 @@ export const contact = {
 /* ---- Section data (null/empty = section hidden) ----------------------- */
 
 export const opening = eventIds.length
-  ? `Brihadhee’s Anna Nagar East team provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and marriage functions, " : ""}${eventIds.includes("birthday") ? "birthday parties and " : ""}family functions across ${joinNatural(areas.length ? areas : ["Chennai"])}. The team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
+  ? `Brihadhee’s Anna Nagar East team provides ${CD} catering for ${joinNatural([eventIds.includes("wedding") && "weddings and marriage functions", eventIds.includes("birthday") && "birthday parties", "family functions"].filter(Boolean))} across ${joinNatural(areas.length ? areas : ["Chennai"])}. The team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
   : null;
 
 export const entityLine = cateringEnabled
@@ -630,7 +630,7 @@ export const endToEnd = cateringEnabled && eventService
   ? {
       id: "end-to-end",
       title: "What Does Brihadhee's End-to-End Event Catering Cover?",
-      lead: `Brihadhee's end-to-end event catering covers ${eventService.replace(/^end-to-end service: /, "")} for weddings and family functions across Chennai${guests ? `, from ${fmt(guests.min)} to ${fmt(guests.max)} guests at one event` : ""}. The Anna Nagar East restaurant team plans and cooks the dishes, every item served is ${CD}, and you agree which of these services your quote includes.`,
+      lead: `Brihadhee's end-to-end event catering covers ${eventService.replace(/^end-to-end service: /, "")} for ${eventIds.includes("wedding") ? "weddings and family functions" : "family functions"} across Chennai${guests ? `, from ${fmt(guests.min)} to ${fmt(guests.max)} guests at one event` : ""}. The Anna Nagar East restaurant team plans and cooks the dishes, every item served is ${CD}, and you agree which of these services your quote includes.`,
       items: [
         steps4.includes("menu planning") && { title: "Menu planning", text: `Choose a regional menu with the team: Tirunelveli and Karaikudi dishes, South Indian meals, North Indian and Indo-Chinese options, and the live counters you want, all ${CD}.` },
         steps4.includes("cooking") && { title: "Cooking", text: `The team that runs the restaurant on ${STREET} cooks the dishes from the same recipes guests eat there. Every item served, including anything sourced from elsewhere for your order, is ${CD}.` },

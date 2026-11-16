@@ -18,7 +18,7 @@
  * menu-canonical.ts, and every claim the client has not confirmed behind a gate in
  * config/seo-gates.ts. No competitor names; no "best" claims outside question headings.
  */
-import { getFact, openingTimes, RESTAURANT_DIET as PV } from "./entity-truth.ts";
+import { getFact, openingTimes, RESTAURANT_DIET as PV, FACTS_LAST_CONFIRMED } from "./entity-truth.ts";
 import * as GATES from "../../config/seo-gates.ts";
 import { ROUTES, href, telHref } from "./site.js";
 import { qa, qaRoute, claimQuestion, list } from "../lib/answers.js";
@@ -111,7 +111,7 @@ const smallEvents = cateringEnabled ? SMALL_IDS.filter((id) => eventIds.includes
 const hasBirthday = smallEvents.some((e) => e.id === "birthday");
 /* "Last checked" on catering fact tables: owner confirmations of 2026-11-11 (guests, area, events)
  * and the pure vegetarian wording approved for every catering order on 2026-11-15 (Q20). */
-const CATERING_CHECKED = "2026-11-15";
+const CATERING_CHECKED = FACTS_LAST_CONFIRMED;
 const serviceArea = list(verification.service_area?.length ? verification.service_area : ["Chennai"]);
 
 function buildSmallFunctions() {

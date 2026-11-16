@@ -15,6 +15,7 @@ import { getFact, factOr, openingTimes, monthYear, RESTAURANT_DIET as PV, FACTS 
 import { ROUTES, href, telHref } from "./site.js";
 import { cateringEnabled, corporate, corporatePage, guests, liveCounters } from "./catering.js";
 import { qa, qaRoute, list } from "../lib/answers.js";
+import { MENU_SOURCE } from "./menu-canonical.ts";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
 import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedLabel } from "../lib/menu-facts.js";
@@ -27,7 +28,7 @@ const phone = getFact("phone");
 const recipeStory = getFact("recipeStory");
 const { open: OPEN, close: CLOSE, range: HOURS } = openingTimes();
 /* "Last checked" dates on fact tables: the verification date of the facts shown, never the build date. */
-const MENU_CHECKED = "2026-11-11"; // MENU_SOURCE in menu-canonical.ts: new menu.pdf received 2026-11-11
+const MENU_CHECKED = MENU_SOURCE.match(/\d{4}-\d{2}-\d{2}/)[0]; // the date in MENU_SOURCE (menu-canonical.ts): new menu.pdf received
 const HOURS_CHECKED = FACTS.hours.verifiedOn;
 const offers = getFact("offers");
 const offer = (id) => {
@@ -234,7 +235,7 @@ export const dosaPage = {
       ["Step 1: batter", `${batters.length} batters, ${batterRange}`],
       ...byo.steps.filter((s) => s.name !== "Batter").map((s, i) => [`Step ${i + 2}: ${s.label.toLowerCase()}`, `${s.options.length} options, from +${stepFrom(s.name)} each`]),
       ["What you pay", `The batter plus each add-on you pick. ${menuNotes.gst}`],
-      ["How it works", "Mix and match the four choices into one personalised, customizable dosa, cooked to order"],
+      ["How it works", `Mix and match the ${byo.steps.length} choices into one personalised, customizable dosa, cooked to order`],
       ["Where and when", `${STREET}, Chennai ${postal}, near ${landmark}. ${HOURS} daily, lunch and dinner`],
     ],
     checked: MENU_CHECKED,

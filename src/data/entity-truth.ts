@@ -132,7 +132,7 @@ export const FACTS = {
   brandDescription: verified(
     {
       short:
-        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals and Paanai Parotta. Its catering service is pure vegetarian for every order.",
+        `Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals and Paanai Parotta. Its catering service is ${CATERING_DIET} for every order.`,
       long:
         "Brihadhee is a pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
@@ -501,14 +501,16 @@ export function toE164(phone: string): string {
   return `+${phone.replace(/\D/g, "")}`;
 }
 
-/** The reference files and their linter share the same answer block. */
 /**
  * Most recent owner confirmation behind the published facts: the catering diet
  * wording (Q20, docs/seo/client-confirmations.md section L). Shown as "last confirmed"
  * on /about/#facts and in llms.txt; each fact keeps its own verifiedOn date.
  */
 export const FACTS_LAST_CONFIRMED = "2026-11-15";
+/** Owner-confirmed catering range, area and events: config/client-verification.json "_readme" (as of 2026-11-11). */
+export const CATERING_CONFIRMED = "2026-11-11";
 
+/** The reference files and their linter share the same answer block. */
 export function canonicalAnswerLines(): string[] {
   const name = getFact("name");
   const address = getFact("address");

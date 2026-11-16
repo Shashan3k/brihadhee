@@ -74,7 +74,6 @@ export function pageContentUpdated(path) {
     : CONTENT_UPDATED;
 }
 
-/** Site-relative href for a route (respects the build base path). */
 /**
  * Spellings guests use for the name. Shown on /about/ ("The Meaning Behind the Name")
  * and used as Restaurant.alternateName, so the markup only names what the page shows.
@@ -82,6 +81,7 @@ export function pageContentUpdated(path) {
 export const NAME_SPELLINGS = ["Brihadee", "Brihadhi", "Brahadhee", "Bruhadhee"];
 export const NAME_TAMIL_VARIANT = "பிரிஹாதீ";
 
+/** Site-relative href for a route (respects the build base path). */
 export const href = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;
 
 /**
