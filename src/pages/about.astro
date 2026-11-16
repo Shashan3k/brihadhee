@@ -145,11 +145,12 @@ const schema = pageGraph({
         ["Name", `${name} (${getFact("nameTamil")}) · verified ${longDate(FACTS.name.verifiedOn)}`],
         ["Location", `${street}, Chennai ${site.address.postalCode}, near ${landmark}. [Full postal address and directions](#find-us) · verified ${longDate(FACTS.address.verifiedOn)}`],
         ["Restaurant phone", `${phone} · verified ${longDate(FACTS.phone.verifiedOn)}`],
-        ...(cateringContacts().phone ? [["Catering phone", `${cateringContacts().phone} · confirmed 11 November 2026`]] : []),
+        // Both numbers were set by the same owner direction (client-confirmations.md §J, 2026-11-12), which is FACTS.phone.verifiedOn.
+        ...(cateringContacts().phone ? [["Catering phone", `${cateringContacts().phone} · confirmed ${longDate(FACTS.phone.verifiedOn)}`]] : []),
         ["Hours", `Open every day, ${range}, for ${getFact("mealTimes")} only · verified ${longDate(FACTS.hours.verifiedOn)}`],
         ["Cuisine", `${getFact("cuisine")} · verified ${longDate(FACTS.cuisine.verifiedOn)}`],
         ["Food", `A ${getFact("dietary")} restaurant: no meat, egg or fish is cooked in its kitchen, and alcohol is ${getFact("alcohol")} · verified ${longDate(FACTS.dietary.verifiedOn)}`],
-        ...(cateringEnabled ? [["Catering", `${CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1)} catering for every order, ${verification.min_guests.toLocaleString("en-IN")} to ${verification.max_guests.toLocaleString("en-IN")} guests per event, across ${verification.service_area.join(", ")}; ${FACTS.corporateCatering.value.dailyCovers.toLocaleString("en-IN")}+ corporate meals a day · confirmed ${longDate(FACTS_LAST_CONFIRMED)}`]] : []),
+        ...(cateringEnabled ? [["Catering", `${CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1)} catering for every order, ${verification.min_guests.toLocaleString("en-IN")} to ${verification.max_guests.toLocaleString("en-IN")} guests per event, across ${verification.service_area.join(", ")}; ${FACTS.corporateCatering.value.dailyCovers.toLocaleString("en-IN")}+ corporate meals a day · range, area and corporate scale confirmed ${longDate(FACTS.corporateCatering.verifiedOn)}; pure vegetarian wording approved ${longDate(FACTS_LAST_CONFIRMED)}`]] : []),
         ["Table booking", `${getFact("bookingLinks").map((b) => b.label).join(", ")}, or call ${phone}. [Booking options](${href(ROUTES.book)}) · verified ${longDate(FACTS.bookingLinks.verifiedOn)}`],
         ["Anything else", `This list holds confirmed facts only. For dietary preparations, delivery, parking or group seating, call ${phone} before you visit.`],
       ]}
