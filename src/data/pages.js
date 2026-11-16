@@ -84,7 +84,7 @@ const stepFrom = (step) => {
 /* ---- Home / ------------------------------------------------------------- */
 export const homePage = {
   path: ROUTES.home,
-  title: `${name} | Pure Veg South Indian Restaurant, Anna Nagar`,
+  title: `${name} Anna Nagar | Pure Veg South Indian Dosa Restaurant`,
   description: `${name}, Anna Nagar East: pure veg South Indian lunch and dinner, customized dosa and Nellai meals. Open ${OPEN}–${CLOSE} daily. See menu or book a table.`,
   /* The hero combines the restaurant name and category in one H1. */
   h1: "Pure Veg South Indian Restaurant in Anna Nagar East",
