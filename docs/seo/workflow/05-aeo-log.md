@@ -17,6 +17,8 @@ Step 5, 16 November 2026, branch `seo-aeo-geo`. Not deployed.
 | `8e3f5fb` | `ContentSection` gets `facts` (a short label/value table, reusing the at-a-glance styling) and `checked` (a visible "Last checked" date). The date is always the fact's verification date, never the build date. A sitewide footer line explains the three Tamil terms: sodhi (a Tirunelveli coconut milk stew), ulundhu kali (a sweet made with palm jaggery), paanai parotta (parotta and salna slow-cooked in a sealed pot). |
 | `0283572` | Question headings and 40–60-word answer-first leads on the target blocks below. |
 
+> **Correction (final review, 16 Nov 2026).** The Build Your Own Dosa fact table and its "Last checked" line described below were **not rendered** when Step 5 was committed. `/menu/dosa/` renders that section with the `BuildYourOwnDosa` component, which didn't accept `facts` or `checked`. The final review found this, and commit `13a2488` fixed it. The other fact tables and dates in this log were re-checked and do render.
+
 ## Recorded failures, fixed first
 
 1. **AI-058 "Where can I build my own dosa in Chennai?"** On 12 Nov, the AI Overview cited Instagram, not this page. `/menu/dosa/#how-it-works` now opens with the H2 **"How Do You Build Your Own Dosa at Brihadhee?"** and this lead:

@@ -79,3 +79,15 @@ All 251 gated rows are covered: 191 OWNER_CONFIRMATION and 60 APPROVAL_GATED, of
 Total: 37 + 27 + 42 + 10 + 28 + 28 + 1 + 3 + 4 + 4 + 1 + 10 + 1 + 11 + 4 + 2 + 8 + 1 + 2 + 3 + 13 + 6 + 2 + 2 + 1 = **251**.
 
 **Send first:** Q26 and Q28 (live pages already depend on them), Q31, Q32 and Q37 (the only P1 rows), then Q11–Q14 and Q16 (125 rows between them, but they all depend on one kitchen conversation).
+
+## C. Raised in the final review (16 Nov 2026)
+
+These items are already live on `main`; this branch didn't introduce them. Each needs an owner or SEO-lead decision, not a code fix.
+
+| # | Item | Where | Question | Default until answered |
+|---|---|---|---|---|
+| R1 | **Beyond Curry FAQ** ("What is Beyond Curry by Brihadhee?") | Home FAQ, `llms-full.txt` | Same as **Q26**. The review hid it behind `ENABLE_SUB_BRAND = false` (commit `c473761`), because CLAUDE.md gates the sub-brand. Turn it on only after Q26 is a yes. | Hidden |
+| R2 | **"Which restaurant serves the best dosa in Anna Nagar?"** Q&A | `/menu/dosa/` FAQ, `llms-full.txt` | The question targets a TRACK_ONLY query (AI-001) and uses "best". The answer makes no "best" claim; it lists the dosas and prices. Keep it as a factual answer, or remove it to keep TRACK_ONLY strictly measure-only? | Kept (the answer is factual) |
+| R3 | **"What is the difference between ghee roast, paper roast and podi dosa?"** | `/menu/dosa/` FAQ | It mentions paper roast (EXCLUDED) only to say the menu doesn't list it, which stops engines inventing one. Keep the clarification, or drop the question? | Kept |
+| R4 | **Seasonal page** (`/seasonal/karthigai-ayyappa-pure-veg/`) | Live page | Same as **Q28**. It mentions the 41-day Ayyappa mala vratham and lists dishes with onion or garlic. It claims no fasting menu, but "seasonal or fasting menus" are gated. Keep the page live? | Live, unchanged |
+| R5 | **"Is Brihadhee on Swiggy or Zomato? Yes…"** and **"Does Brihadhee deliver food?"** (tells visitors to call; "Parcel charges are extra") | `/faq/`, `llms-full.txt` | Swiggy, Zomato, delivery and takeaway are gated (**Q25**). The answers state verified listings and tell visitors to call, and make no delivery claim. Confirm this wording may stay. | Kept |
