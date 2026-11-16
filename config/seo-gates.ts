@@ -60,6 +60,12 @@ export const ENABLE_HINDI_COPY = false;
  */
 export const ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS = false;
 
+/**
+ * Q26: the Beyond Curry sub-brand. CLAUDE.md gates it until the owner confirms the relationship
+ * (Justdial lists "Beyond Curry By Brihadhee" at a different street). Off: no page, FAQ, schema or llms mention.
+ */
+export const ENABLE_SUB_BRAND = false;
+
 /** Q22: may the site call Brihadhee "premium"? */
 export const ENABLE_PREMIUM_WORDING = false;
 
@@ -128,6 +134,7 @@ export const GATE_SUMMARY = {
   ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS: "Q23",
   ENABLE_PREMIUM_WORDING: "Q22",
   ENABLE_NAMED_TEMPLE: "Q24",
+  ENABLE_SUB_BRAND: "Q26",
 } as const;
 
 /** "vegetarian" until Q20 is answered, then "pure vegetarian". */

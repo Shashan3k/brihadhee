@@ -16,7 +16,7 @@
 import { getFact, FACTS, openingTimes, longDate, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taHome, taMenu } from "./faq-ta.js";
-import { CATERING_DIET, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
+import { CATERING_DIET, CATERING_MIN_GUESTS, ENABLE_SUB_BRAND } from "../../config/seo-gates.ts";
 import {
   categories,
   category,
@@ -102,12 +102,17 @@ export const faqItems = qaRoute("/", [
     { id: "what-to-order" }
   ),
   /* "Is Brihadhee good for families and groups?" lives on /family-dining-anna-nagar/ (src/data/spokes.js). */
-  qa(
-    `What is ${getFact("subBrand").name}?`,
-    `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
-      `The restaurant itself serves South Indian food, led by customized dosa and Tirunelveli and Karaikudi dishes.`,
-    { id: "beyond-curry" }
-  ),
+  /* Gated (Q26, config/seo-gates.ts ENABLE_SUB_BRAND): published only after the owner confirms the sub-brand. */
+  ...(ENABLE_SUB_BRAND
+    ? [
+        qa(
+          `What is ${getFact("subBrand").name}?`,
+          `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
+            `The restaurant itself serves South Indian food, led by customized dosa and Tirunelveli and Karaikudi dishes.`,
+          { id: "beyond-curry" }
+        ),
+      ]
+    : []),
   qa(
     `How much do dishes cost at ${name}?`,
     `Dishes at ${name} cost ${rupees(minPrice)} to ${rupees(maxPrice)} on the current menu, before ${gst}. ` +
