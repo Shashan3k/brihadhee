@@ -23,7 +23,7 @@
  * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
-import { site, ROUTES, hasHours, assetUrl, pageContentUpdated } from "../data/site.js";
+import { site, ROUTES, hasHours, assetUrl, pageContentUpdated, NAME_SPELLINGS, NAME_TAMIL_VARIANT } from "../data/site.js";
 import { getFact, factOr, RESTAURANT_ID, CATERING_ID, cateringContacts, toE164, BYO_DEFINITION } from "../data/entity-truth.ts";
 import verification from "../../config/client-verification.json";
 import { MENU_NOTES } from "../data/menu-canonical.ts";
@@ -63,10 +63,11 @@ export function restaurantSchema() {
       else hours.push({ "@type": "OpeningHoursSpecification", dayOfWeek: [day], opens: d.open, closes: d.close });
     }
   }
-  const alternateNames = [getFact("nameTamil"), ...getFact("alternateNames")];
+  // Only names a visitor can read on the site: the Tamil name (hero, about) and the
+  // spellings listed on /about/. Listing names such as "Brihadhee Hotels" are not shown, so they stay out.
+  const alternateNames = [getFact("nameTamil"), NAME_TAMIL_VARIANT, ...NAME_SPELLINGS];
   const founders = factOr("founders");
   const reservations = factOr("acceptsReservations");
-  const subBrand = factOr("subBrand");
   const sameAs = factOr("sameAs", []);
 
   return {
@@ -77,6 +78,7 @@ export function restaurantSchema() {
     alternateName: alternateNames,
     description: `${getFact("name")} is a ${getFact("typeLong")} on ${getFact("street")}, ${site.address.city}. It serves ${getFact("mealTimes")}.`,
     url: `${site.url}/`,
+    logo: assetUrl("images/logo.webp"), // the logo shown in the header and footer
     image: [site.media.hero.src, site.media.about.src, site.media.signature.src].map(
       (src) => assetUrl(src)
     ),
@@ -102,13 +104,13 @@ export function restaurantSchema() {
     email: getFact("email"),
     ...(sameAs.length ? { sameAs } : {}),
     hasMenu: pageUrl(ROUTES.menu),
+    // `menu` is the property Google documents for food establishments; hasMenu is its schema.org successor.
+    menu: pageUrl(ROUTES.menu),
     ...(reservations?.value ? { acceptsReservations: true } : {}),
     ...(founders
       ? { founder: founders.names.map((name) => ({ "@type": "Person", name })) }
       : {}),
-    ...(subBrand
-      ? { brand: { "@type": "Brand", name: subBrand.name, description: subBrand.description } }
-      : {}),
+    // No brand: the Beyond Curry sub-brand stays out of markup until the owner answers Q26.
     amenityFeature: [
       ...(getFact("dineIn")
         ? [{ "@type": "LocationFeatureSpecification", name: "Dine-in", value: true }]

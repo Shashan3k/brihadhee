@@ -18,7 +18,7 @@ import { getFact, landmarkSentence, clock, openingTimes } from "../data/entity-t
 import { aboutFaq } from "../data/faq.js";
 import { cateringEnabled } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href } from "../data/site.js";
+import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href, NAME_SPELLINGS, NAME_TAMIL_VARIANT } from "../data/site.js";
 
 const name = getFact("name");
 const street = getFact("street");
@@ -142,7 +142,7 @@ const schema = pageGraph({
         <h2 class="section__title" id="name-title">The Meaning Behind the Name {name}</h2>
         <p class="section__lead">{getFact("nameStory")}</p>
         <p class="tamil" lang="ta">{getFact("nameTamil")}: அண்ணா நகர் கிழக்கு, சுத்த சைவ உணவகம்.</p>
-        <p class="section__lead">Guests sometimes spell the name Brihadee, Brihadhi, Brahadhee or Bruhadhee, or write it <span lang="ta">பிரிஹாதீ</span> in Tamil. All refer to {name} on 3rd Avenue, Anna Nagar East.</p>
+        <p class="section__lead">Guests sometimes spell the name {NAME_SPELLINGS.slice(0, -1).join(", ")} or {NAME_SPELLINGS.at(-1)}, or write it <span lang="ta">{NAME_TAMIL_VARIANT}</span> in Tamil. All refer to {name} on 3rd Avenue, Anna Nagar East.</p>
       </div>
     </section>
 
