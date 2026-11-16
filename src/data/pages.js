@@ -334,6 +334,7 @@ export const nellaiPage = {
     id: "sodhi-meals",
     title: `What Is in ${name}'s ${sodhiMeals.name}?`,
     lead: `${name}'s ${sodhiMeals.name} (${rupees(sodhiMeals.price)}) are a Tirunelveli (Nellai) banana-leaf lunch served daily from ${OPEN}. The plate has ${lc(sodhiParts)}. Sodhi is a coconut milk stew; ${kali.name} is a sweet made with palm jaggery.`,
+    checked: MENU_CHECKED,
     image: { name: "meals", alt: "Rice, papad and small bowls of sides on a banana-leaf plate", caption: "A banana-leaf lunch at Brihadhee" },
     items: [
       {

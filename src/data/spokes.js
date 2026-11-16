@@ -372,6 +372,7 @@ function buildQuote() {
       {
         id: "price-factors",
         title: "What Shapes Your Per-Plate Quote",
+        checked: CATERING_CHECKED,
         lead: "The guest count, menu, live counters and service requirements all affect the quote. Share your planned spend per guest if you have one so the team can discuss suitable options.",
         items: [
           {

@@ -66,7 +66,7 @@ const schema = pageGraph({
             {site.address.line2}<br />
             {site.address.city}, {site.address.state} {site.address.postalCode}
           </address>
-          <p class="field__hint">Last checked: <time datetime={FACTS.address.verifiedOn}>{longDate(FACTS.address.verifiedOn)}</time></p>
+          <p class="field__hint">Address last checked: <time datetime={FACTS.address.verifiedOn}>{longDate(FACTS.address.verifiedOn)}</time></p>
           <ul class="link-list" role="list">
             {getFact("directionLandmarks").map(({ label, query, travelMode }) => (
               <li>
@@ -79,6 +79,7 @@ const schema = pageGraph({
           <p>
             Restaurant phone: <a href={telHref}>{phone}</a> · Email: <a href={emailHref}>{email}</a>
           </p>
+          <p class="field__hint">Phone last checked: <time datetime={FACTS.phone.verifiedOn}>{longDate(FACTS.phone.verifiedOn)}</time></p>
           {cateringEnabled && <p>For off-site events, <a href={href(ROUTES.eventCatering)}>contact the catering team</a>.</p>}
           <div class="page-head__actions">
             <a class="btn btn--primary" href={site.maps.directions} target="_blank" rel="noopener">

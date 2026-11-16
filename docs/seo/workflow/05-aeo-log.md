@@ -109,8 +109,12 @@ Blocks rewritten: 31 of 51; prompts covered: 171
 | Build Your Own Dosa | `/menu/dosa/#how-it-works` | 11 Nov 2026 (menu source) |
 | Catering capacity, area and diet | `/small-function-catering-chennai/#from-50-guests` | 15 Nov 2026 (Q20) |
 | Late dinner | `/veg-dinner-anna-nagar/#late-dinner` | 11 Nov 2026 |
+| Phone | `/about/#find-us` | 12 Nov 2026 (`FACTS.phone.verifiedOn`) *(follow-up commit)* |
+| Booking partners | `/book-a-table/#how-to-book` | 12 Nov 2026 (`FACTS.bookingLinks.verifiedOn`) *(follow-up)* |
+| Nellai meals and sodhi | `/menu/nellai-meals/#sodhi-meals` | 11 Nov 2026 (menu source) *(follow-up)* |
+| What moves the catering price | `/catering-quote-chennai/#price-factors` | 15 Nov 2026 (catering confirmations, Q20) *(follow-up)* |
 
-The existing lists were left as they were: the quote page's "50–1,500 guests per event", the "What Shapes Your Per-Plate Quote" factors, the Nellai meal contents and the guide's sodhi and ulundhu kali sections.
+The existing lists were kept, with dates added in the follow-up commit: the quote page's "50–1,500 guests per event", the "What Shapes Your Per-Plate Quote" factors and the Nellai meal contents. The guide's sodhi and ulundhu kali sections were left as they were.
 
 ## LOCATION_DEPENDENT prompts (10)
 
