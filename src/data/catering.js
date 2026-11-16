@@ -110,7 +110,7 @@ export const contact = {
 /* ---- Section data (null/empty = section hidden) ----------------------- */
 
 export const opening = eventIds.length
-  ? `Brihadhee’s Anna Nagar East team provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and family functions" : "family functions"} across ${joinNatural(areas.length ? areas : ["Chennai"])}. The team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
+  ? `Brihadhee’s Anna Nagar East team provides ${CD} catering for ${eventIds.includes("wedding") ? "weddings and marriage functions, " : ""}${eventIds.includes("birthday") ? "birthday parties and " : ""}family functions across ${joinNatural(areas.length ? areas : ["Chennai"])}. The team plans regional South Indian menus around Tirunelveli and Karaikudi dishes${liveCounters.length ? ", with live counters available to discuss for your event" : ""}.`
   : null;
 
 export const entityLine = cateringEnabled
@@ -282,8 +282,8 @@ export const plannerFaqs = qaRoute(PLANNER_PATH, plannerFaq);
 
 /* ---- Page metadata ----------------------------------------------------- */
 export const meta = {
-  title: `${titleDiet} Event & Wedding Catering in Chennai | Brihadhee`,
-  description: `${CDcap} event and wedding catering in Chennai with regional South Indian menus, live counters and per-plate quotes from Brihadhee.`,
+  title: `${titleDiet} Wedding & Event Caterers in Chennai | Brihadhee`,
+  description: `${CDcap} wedding and event caterers in Chennai, based in Anna Nagar East: regional South Indian menus, live counters and per-plate quotes.`,
   h1: `${CDcap} Event and Wedding Catering in Chennai`,
 };
 
