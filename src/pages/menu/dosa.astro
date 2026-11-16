@@ -42,7 +42,7 @@ const schema = pageGraph({
       {...page.definition}
       image={{ name: "dosa", alt: "Golden dosa with sambar and chutneys on a banana leaf", caption: "A dosa from the Brihadhee kitchen" }}
     />
-    <BuildYourOwnDosa id={page.howItWorks.id} title={page.howItWorks.title} lead={page.howItWorks.lead} show="steps" tint />
+    <BuildYourOwnDosa id={page.howItWorks.id} title={page.howItWorks.title} lead={page.howItWorks.lead} facts={page.howItWorks.facts} checked={page.howItWorks.checked} show="steps" tint />
     <BuildYourOwnDosa id={page.combinations.id} suggestionsTitle={page.combinations.title} lead={page.combinations.lead} show="suggestions" />
     <ContentSection {...page.classics} tint />
     {page.liveCounter && <ContentSection {...page.liveCounter} tint={false} />}
