@@ -45,6 +45,11 @@ const isCateringPage = Boolean(Astro.locals.contact);
           />
         </a>
         <p>{site.shortDescription}</p>
+        {/* One-line English explanations of the Tamil dish terms used across the site. */}
+        <p class="footer__glossary">
+          <span lang="ta-Latn">Sodhi</span>: a Tirunelveli coconut milk stew. <span lang="ta-Latn">Ulundhu kali</span>: a sweet
+          made with palm jaggery. <span lang="ta-Latn">Paanai parotta</span>: parotta and salna slow-cooked in a sealed pot.
+        </p>
 
         {
           socialLinks.length > 0 && (

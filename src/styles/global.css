@@ -2833,6 +2833,10 @@ a.contact__channel:hover {
 .glance__row { padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
 .glance__row dt { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
 .glance__row dd { margin: 0.2rem 0 0; font-weight: 500; }
+.footer__glossary { font-size: 0.85rem; opacity: 0.85; }
+/* Fact table inside a content section (ContentSection `facts`). */
+.content__facts { margin: 1.25rem 0 0.5rem; }
+.content__checked { margin-top: 0.25rem; }
 
 /* ---- /menu page ---- */
 .menu-page__head { padding-top: clamp(7rem, 14vw, 10rem); }
