@@ -12,7 +12,7 @@
  *   prep_mode:        restaurant_delivered | on_site
  *   pricing_model:    per_plate | on_request
  *
- * Corporate catering (daily office catering, 1,000+ people a day) is a client service
+ * Corporate catering (daily office catering, 1,000+ meals a day) is a client service
  * since 2026-11-11 (keyword plan, client W13). Client names need permission first.
  */
 import verification from "../../config/client-verification.json";
@@ -391,7 +391,7 @@ export const corporatePage = corporateEnabled
       intro: `Brihadhee plans ${CD} office lunches, recurring employee meals and catering for team celebrations in Chennai. Choose a regional menu, packed meals or an event setup to suit your workplace. Share your location, headcount and date for a tailored quote.`,
       glance: [
         ["Who", `The Brihadhee restaurant team in ${NEAR}`],
-        ["Daily corporate volume", `${DAILY} people served per day across the corporate catering operation`],
+        ["Daily corporate volume", `${DAILY} meals a day across the corporate catering operation`],
         ["Services", corpServices.join(", ")],
         ["Areas", joinNatural(corpAreas)],
         ...(corpClients.length ? [["Clients", `Companies Brihadhee has catered for include ${joinNatural(corpClients)}`]] : []),
@@ -531,12 +531,12 @@ export const corporatePage = corporateEnabled
         qa(
           "Does Brihadhee do corporate catering?",
           `Yes. Brihadhee provides ${CD} corporate catering across Chennai from its kitchen in ${NEAR}. ` +
-            `Its office catering operation serves more than ${fmt(corporate.dailyCovers)} people daily. It also accepts bulk and office event enquiries.`
+            `Its office catering operation serves ${DAILY} meals a day. It also accepts bulk and office event enquiries.`
         ),
         /* Scale distinction (AEO audit 2026-11-12, 4.2 and 4.4): daily corporate volume is not single-event capacity. */
         qa(
           "How many people can Brihadhee cater for?",
-          `Brihadhee serves ${DAILY} people per day across its corporate catering operation. ` +
+          `Brihadhee serves ${DAILY} meals a day across its corporate catering operation. ` +
             (guests ? `A single event has a separate guest range of ${fmt(guests.min)} to ${fmt(guests.max)}. ` : "") +
             "Share your office headcount to check capacity for your site."
         ),
@@ -616,7 +616,7 @@ export function corporateSchema() {
         path: CORPORATE_PATH,
         serviceType: "Corporate catering",
         name: `Brihadhee ${CDcap} Corporate Catering`,
-        description: `${CDcap} corporate catering in Chennai: daily office lunches, bulk lunch catering, employee meal programmes and corporate events. Brihadhee serves ${DAILY} people per day across its corporate catering operation.`,
+        description: `${CDcap} corporate catering in Chennai: daily office lunches, bulk lunch catering, employee meal programmes and corporate events. Brihadhee serves ${DAILY} meals a day across its corporate catering operation.`,
         audience: [{ "@type": "BusinessAudience", audienceType: "Companies, HR and office administration teams" }],
       }),
       faqPageSchema(CORPORATE_PATH, corporatePage.faq),
@@ -630,10 +630,10 @@ export const endToEnd = cateringEnabled && eventService
   ? {
       id: "end-to-end",
       title: "What Does Brihadhee's End-to-End Event Catering Cover?",
-      lead: `Brihadhee's end-to-end event catering covers ${eventService.replace(/^end-to-end service: /, "")} for weddings and family functions across Chennai${guests ? `, from ${fmt(guests.min)} to ${fmt(guests.max)} guests at one event` : ""}. The food is cooked by the team that runs the Anna Nagar East restaurant, and you agree which of these services your quote includes.`,
+      lead: `Brihadhee's end-to-end event catering covers ${eventService.replace(/^end-to-end service: /, "")} for weddings and family functions across Chennai${guests ? `, from ${fmt(guests.min)} to ${fmt(guests.max)} guests at one event` : ""}. The Anna Nagar East restaurant team plans and cooks the dishes, every item served is ${CD}, and you agree which of these services your quote includes.`,
       items: [
         steps4.includes("menu planning") && { title: "Menu planning", text: `Choose a regional menu with the team: Tirunelveli and Karaikudi dishes, South Indian meals, North Indian and Indo-Chinese options, and the live counters you want, all ${CD}.` },
-        steps4.includes("cooking") && { title: "Cooking", text: `The food is cooked by the team that runs the restaurant on ${STREET}, from the same recipes guests eat there.` },
+        steps4.includes("cooking") && { title: "Cooking", text: `The team that runs the restaurant on ${STREET} cooks the dishes from the same recipes guests eat there. Every item served, including anything sourced from elsewhere for your order, is ${CD}.` },
         steps4.includes("serving") && { title: "Serving", text: "Discuss how food should be served at the function, and whether your event needs serving staff or live counter service." },
         steps4.includes("setup") && { title: "Setup", text: "Tell the team about your venue so you can agree the serving area, counter setup and access arrangements." },
       ].filter(Boolean),

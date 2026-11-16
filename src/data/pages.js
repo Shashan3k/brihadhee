@@ -146,13 +146,13 @@ export const homePage = {
           id: "home-catering",
           eyebrow: "Catering",
           title: "Catering for Offices and Events",
-          lead: `${name}'s kitchen caters ${CATERING_DIET} food for offices and events across Chennai: corporate catering for more than ${num(corporate.dailyCovers)} meals a day, end-to-end event catering for ${num(guests.min)} to ${num(guests.max)} guests, and [small function catering from ${CATERING_MIN_GUESTS} guests](${ROUTES.smallFunctions}). Event management companies can also book ${name} as a [catering partner for event planners](${ROUTES.plannerPartner}).`,
+          lead: `${name}'s kitchen caters ${CATERING_DIET} food for offices and events across Chennai: corporate catering for ${num(corporate.dailyCovers)}+ meals a day, end-to-end event catering for ${num(guests.min)} to ${num(guests.max)} guests, and [small function catering from ${CATERING_MIN_GUESTS} guests](${ROUTES.smallFunctions}). Event management companies can also book ${name} as a [catering partner for event planners](${ROUTES.plannerPartner}).`,
           tint: true,
           cards: true,
           items: [
             {
               title: "Corporate catering for offices",
-              text: `Daily ${CATERING_DIET} office meals for more than ${num(corporate.dailyCovers)} people a day, cooked in the same kitchen as the restaurant.`,
+              text: `Daily ${CATERING_DIET} office meals, ${num(corporate.dailyCovers)}+ a day, cooked in the same kitchen as the restaurant.`,
               link: { label: "Corporate catering", href: href(ROUTES.corporateCatering) },
             },
             {
@@ -532,8 +532,8 @@ export const whatsNewPage = {
       ? [
           {
             id: "new-corporate",
-            title: `Corporate Catering for ${num(corporate.dailyCovers)}+ People a Day`,
-            lead: `${name}'s kitchen supplies ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} people every day across Chennai: daily office lunches, bulk meals, employee meal programmes and office events.`,
+            title: `Corporate Catering: ${num(corporate.dailyCovers)}+ Meals a Day`,
+            lead: `${name}'s kitchen supplies ${CATERING_DIET} corporate catering, ${num(corporate.dailyCovers)}+ meals a day across Chennai: daily office lunches, bulk meals, employee meal programmes and office events.`,
             links: [{ label: "Corporate catering", href: href(ROUTES.corporateCatering), primary: true }],
             tint: true,
           },

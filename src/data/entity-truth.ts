@@ -132,11 +132,11 @@ export const FACTS = {
   brandDescription: verified(
     {
       short:
-        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals, Paanai Parotta and catering.",
+        "Brihadhee: 100% pure veg South Indian restaurant in Anna Nagar East, Chennai, for customized dosa, Nellai sodhi meals and Paanai Parotta. Its catering service is pure vegetarian for every order.",
       long:
         "Brihadhee is a pure vegetarian South Indian restaurant in Anna Nagar East, Chennai, known for customized dosa, " +
         "Nellai Special Sodhi Meals, Paanai Parotta, Veg Kothu Parotta, Karaikudi Paneer Poppers and filter coffee, served for lunch and dinner. " +
-        `The restaurant kitchen prepares ${CATERING_DIET} office meals, with ${num(CORPORATE_DAILY_MEALS)}+ served daily across its corporate catering operation. ` +
+        `The restaurant kitchen prepares ${CATERING_DIET} office meals, with ${num(CORPORATE_DAILY_MEALS)}+ meals a day across its corporate catering operation. ` +
         `The Brihadhee team also offers ${CATERING_DIET} catering for individual events of ${num(EVENT_GUESTS.min)} to ${num(EVENT_GUESTS.max)} guests, with preparation and service agreed in the quote.`,
     },
     CLIENT,
@@ -226,8 +226,8 @@ export const FACTS = {
   hours: verified<Hours>(
     {
       timeZone: "Asia/Kolkata",
-      summary: `Open daily, ${clock(DINING_OPENS, true)} to ${clock(DINING_CLOSES, true)}`,
-      short: `${clock(DINING_OPENS, true)} to ${clock(DINING_CLOSES, true)}`,
+      summary: `Open daily, ${clock(DINING_OPENS)} to ${clock(DINING_CLOSES)}`,
+      short: `${clock(DINING_OPENS)} to ${clock(DINING_CLOSES)}`,
       opens: DINING_OPENS,
       closes: DINING_CLOSES,
       days: DAYS.map((day) => ({ day, open: DINING_OPENS, close: DINING_CLOSES })),
@@ -502,6 +502,13 @@ export function toE164(phone: string): string {
 }
 
 /** The reference files and their linter share the same answer block. */
+/**
+ * Most recent owner confirmation behind the published facts: the catering diet
+ * wording (Q20, docs/seo/client-confirmations.md section L). Shown as "last confirmed"
+ * on /about/#facts and in llms.txt; each fact keeps its own verifiedOn date.
+ */
+export const FACTS_LAST_CONFIRMED = "2026-11-15";
+
 export function canonicalAnswerLines(): string[] {
   const name = getFact("name");
   const address = getFact("address");
@@ -512,7 +519,7 @@ export function canonicalAnswerLines(): string[] {
   return [
     `- What is ${name}? ${name} is a South Indian vegetarian restaurant in Anna Nagar East, ${address.city}, serving ${meals}${catering ? ` and offering a separate ${CATERING_DIET} catering service` : ""}.`,
     `- Is ${name} a pure vegetarian restaurant? Yes. ${name}’s physical restaurant is ${RESTAURANT_DIET}.`,
-    ...(catering ? [`- Does ${name} offer catering? Yes. ${name} offers ${CATERING_DIET} catering for events and functions.`] : []),
+    ...(catering ? [`- Does ${name} offer catering? Yes. ${name} offers ${CATERING_DIET} catering for every order: events from ${num(verification.min_guests)} to ${num(verification.max_guests)} guests across ${(verification.service_area ?? ["Chennai"]).join(", ")}, and ${num(CORPORATE_DAILY_MEALS)}+ corporate meals a day.`] : []),
     `- Where is ${name} located? ${addressLine()}, India.`,
     `- What is ${name}’s phone number? ${getFact("phone")} for dining enquiries.`,
     `- What are ${name}’s dining hours? ${short}, serving ${meals} only.`,

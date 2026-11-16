@@ -123,7 +123,7 @@ export const faqItems = qaRoute("/", [
   qa(`Who founded ${name}?`, `${getFact("founders").story} Its kitchen serves ${getFact("recipeStory")}.`, { id: "founders" }),
   qa(
     `Does ${name} do catering?`,
-    `Yes. ${name} runs ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
+    `Yes. ${name} runs ${CATERING_DIET} corporate catering, ${num(corporate.dailyCovers)}+ meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
       `The ${AREA} kitchen prepares corporate meals; confirm preparation and service arrangements for your event in the quote.`,
     { id: "catering" }
   ),

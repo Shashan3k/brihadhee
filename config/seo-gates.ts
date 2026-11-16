@@ -78,7 +78,7 @@ export const QUOTE_WHATSAPP_NUMBER: string | null = null;
 export const CATERING_MIN_GUESTS = 50;
 
 /** Corporate catering scale (client W13). Must match entity-truth.ts corporateCatering. */
-export const CORPORATE_DAILY_SCALE = "1,000+ people served every day";
+export const CORPORATE_DAILY_SCALE = "1,000+ meals a day"; // owner-approved phrasing (client-confirmations F)
 export const CORPORATE_DAILY_COVERS = 1000;
 
 /* ---- Restaurant ------------------------------------------------------------ */
