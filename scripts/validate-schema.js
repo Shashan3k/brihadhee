@@ -251,6 +251,8 @@ for (const { name, html, nodes } of pages) {
     const bc = nodes.find((n) => n["@id"] === bcId && typeOf(n).includes("BreadcrumbList"));
     if (name === "/") {
       if (wp.breadcrumb || nodes.some((n) => typeOf(n).includes("BreadcrumbList"))) err(name, "homepage should omit its one-item breadcrumb trail");
+    } else if (name === "/404.html") {
+      // The error page has no place in the hierarchy, so it carries no trail.
     } else if (!bc) err(name, "WebPage.breadcrumb does not resolve to a BreadcrumbList");
     else {
       const items = bc.itemListElement ?? [];

@@ -1,5 +1,6 @@
 ---
 import Icon from "./Icon.astro";
+import Breadcrumbs from "./Breadcrumbs.astro";
 import { site, pageContact } from "../data/site.js";
 
 // Top of every inner page: eyebrow, the single H1, an answer-first intro and
@@ -10,6 +11,7 @@ const { phone, telHref, hasPhone } = pageContact(Astro);
 
 <header class="section page-head" id="top">
   <div class="container">
+    <Breadcrumbs />
     {eyebrow && <p class="eyebrow">{eyebrow}</p>}
     <h1 class="section__title page-head__title">{h1}</h1>
     {intro && <p class="section__lead page-head__intro">{intro}</p>}
