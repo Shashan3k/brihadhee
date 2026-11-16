@@ -14,7 +14,7 @@ import AtAGlance from "../components/AtAGlance.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import LeadForm from "../components/LeadForm.astro";
-import { getFact, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
+import { getFact, landmarkSentence, clock, openingTimes, FACTS, longDate } from "../data/entity-truth.ts";
 import { aboutFaq } from "../data/faq.js";
 import { cateringEnabled } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
@@ -27,7 +27,7 @@ const phone = getFact("phone");
 const email = getFact("email");
 const founders = getFact("founders");
 const landmark = getFact("landmarks")[0];
-const { range } = openingTimes();
+const { range, open: OPEN, close: CLOSE } = openingTimes();
 const path = ROUTES.about;
 const title = `${name} Address, Timings & Contact | Anna Nagar East`;
 const description = `Visit ${name} on ${street}, near ${landmark}. Open daily ${range}. Get directions or call ${phone}.`;
@@ -55,16 +55,18 @@ const schema = pageGraph({
     <section class="section" id="find-us" aria-labelledby="find-us-title">
       <div class="container dish-page__grid">
         <div>
-          <h2 class="section__title" id="find-us-title">Address and Directions from Anna Nagar Landmarks</h2>
+          <h2 class="section__title" id="find-us-title">Where Is {name} in Anna Nagar?</h2>
           <p class="section__lead">
-            {name} is near {landmark}. Pick the landmark you are starting from for Google Maps directions.
+            {name} is on {street}, Chennai, near {landmarkSentence()}. It is open every day from {range} for lunch
+            and dinner. Pick the landmark you are starting from below for Google Maps directions, or call
+            <a href={telHref}>{phone}</a>.
           </p>
           <address class="catering__address">
             {site.address.line1}<br />
             {site.address.line2}<br />
             {site.address.city}, {site.address.state} {site.address.postalCode}
           </address>
-          <p>Landmarks: {landmarkSentence()}.</p>
+          <p class="field__hint">Last checked: <time datetime={FACTS.address.verifiedOn}>{longDate(FACTS.address.verifiedOn)}</time></p>
           <ul class="link-list" role="list">
             {getFact("directionLandmarks").map(({ label, query, travelMode }) => (
               <li>
@@ -104,11 +106,14 @@ const schema = pageGraph({
 
     <section class="section section--tint" id="hours" aria-labelledby="hours-title">
       <div class="container">
-        <h2 class="section__title" id="hours-title">Opening Hours</h2>
+        <h2 class="section__title" id="hours-title">What Are {name}'s Opening Hours?</h2>
         <p class="section__lead">
-          {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")}. For a table, call
-          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>.
-          If you're arriving late, call ahead to check when the kitchen takes its last orders.
+          {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")} only.
+          Lunch starts at {OPEN} and the restaurant closes at {CLOSE}. For a table, call
+          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>; if you're
+          arriving late, call ahead to check the kitchen's last order time.
+        </p>
+        <p>
           Filter coffee from the <a href={`${href(ROUTES.home)}#coffee-bar`}>{name} Coffee Bar</a> is served during lunch and dinner.
           See <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for recent changes.
         </p>
@@ -122,6 +127,7 @@ const schema = pageGraph({
             </tbody>
           </table>
         )}
+        <p class="field__hint">Last checked: <time datetime={FACTS.hours.verifiedOn}>{longDate(FACTS.hours.verifiedOn)}</time></p>
       </div>
     </section>
 

@@ -63,10 +63,11 @@ const schema = pageGraph({
 
     <section class="section section--tint" id="how-to-book" aria-labelledby="how-title">
       <div class="container">
-        <h2 class="section__title" id="how-title">How to book a table</h2>
+        <h2 class="section__title" id="how-title">How Do I Book a Table at {name}?</h2>
         <p class="section__lead">
-          Book {name} in Anna Nagar East through {partnerList}. Choose your date, time and party size, then
-          check your booking status in the app before you travel. Show the booking at the counter when you arrive.
+          Book a table at {name} in Anna Nagar East through {partnerList}: choose your date, time and party size,
+          then check your booking status in the app before you travel. For a group table, call <a href={telHref}>{phone}</a>
+          so the restaurant can check seating. Show the booking at the counter when you arrive.
         </p>
         <div class="page-head__actions">
           {links.map((l) => (

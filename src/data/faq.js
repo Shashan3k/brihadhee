@@ -147,7 +147,7 @@ export const aboutFaq = qaRoute("/about/", [
   ),
   qa(
     `Is ${name} open on Sundays?`,
-    `Yes. ${name} is open on Sundays from ${HOURS}, like every other day of the week. ` + `Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
+    `Yes. ${name} is open on Sundays from ${HOURS}, like every other day of the week. ` + `It serves lunch and dinner on Sundays, as on weekdays. Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
     { id: "sundays" }
   ),
   qa(
@@ -159,7 +159,7 @@ export const aboutFaq = qaRoute("/about/", [
   qa(
     `How do I contact ${name}?`,
     `Call or WhatsApp the ${name} restaurant on ${phone}, or email ${email}. ` +
-      `Use this number for restaurant enquiries if an older dining listing shows a different one. Brihadhee has a separate contact for catering.`,
+      `Use this number for restaurant enquiries if an older dining listing shows a different one. The restaurant is open daily from ${HOURS}, and Brihadhee has a separate contact for catering.`,
     { id: "contact" }
   ),
 ]);
@@ -175,12 +175,12 @@ export const menuFaq = qaRoute("/menu/", [
   qa(
     `Does ${name} serve filter coffee?`,
     `Yes. ${name} serves South Indian filter coffee for ${rupees(filterCoffee.price)} near ${getFact("landmarks")[0]} in ${AREA}. ` +
-      `It is on the lunch and dinner menu. ${list(otherDrinks)} are also available.`,
+      `It is on the lunch and dinner menu, served daily from ${HOURS}. ${list(otherDrinks)} are also available.`,
     { id: "filter-coffee" }
   ),
   qa(
     `How much does a meal cost at ${name}?`,
-    `Meals at ${name} cost ${priceRange(meals)}, from ${meals.cheapest.name} to ${meals.dearest.name}. ` + `Rice dishes such as ${list(riceDishes)} are listed separately.`,
+    `Meals at ${name} cost ${priceRange(meals)}, from ${meals.cheapest.name} to ${meals.dearest.name}. ` + `Rice dishes such as ${list(riceDishes)} are listed separately. All prices are before ${gst}.`,
     { id: "meal-cost" }
   ),
   qa(

@@ -109,6 +109,10 @@ const corp = corporateEnabled ? getFact("corporateCatering") : null;
 const SMALL_IDS = ["birthday", "get_together", "housewarming", "baby_shower", "ear_piercing", "engagement", "house_function", "small_events", "small_wedding"];
 const smallEvents = cateringEnabled ? SMALL_IDS.filter((id) => eventIds.includes(id)).map((id) => ({ id, ...EVENTS[id] })) : [];
 const hasBirthday = smallEvents.some((e) => e.id === "birthday");
+/* "Last checked" on catering fact tables: owner confirmations of 2026-11-11 (guests, area, events)
+ * and the pure vegetarian wording approved for every catering order on 2026-11-15 (Q20). */
+const CATERING_CHECKED = "2026-11-15";
+const serviceArea = list(verification.service_area?.length ? verification.service_area : ["Chennai"]);
 
 function buildSmallFunctions() {
   const path = ROUTES.smallFunctions;
@@ -183,8 +187,19 @@ function buildSmallFunctions() {
     sections: [
       {
         id: "from-50-guests",
-        title: `Planning a Function for ${MIN} Guests`,
-        lead: `For a family function from ${MIN} guests, start with the date, venue and estimated headcount. If you are planning a smaller celebration, [ask about family dining and group seating](${ROUTES.familyDining}).`,
+        title: `Does ${name} Cater Functions for ${MIN} Guests?`,
+        /* Recorded result (AI-062, Gemini, 14 Nov): the engine added an unsupported purity claim. State only
+         * the confirmed facts: minimum, maximum, area, diet wording approved under Q20, how the quote works. */
+        lead: `Yes. ${name} caters ${CD} functions in ${serviceArea} from ${MIN} guests, and up to ${num(guests.max)} guests at a single event. Its ${NEAR} team plans a South Indian menu for ${list(smallEvents.slice(0, 3).map((e) => e.inline))}. Share your date, venue and headcount for a per-plate quote.`,
+        facts: [
+          ["Minimum order", `${MIN} guests per event`],
+          ["Largest single event", `${num(guests.max)} guests`],
+          ["Area served", serviceArea],
+          ["Food", `${cap(CD)} catering for every order, with South Indian menus`],
+          ["Price", `A per-plate quote after you share the date, venue, headcount, menu and service needed. [What shapes the quote](${ROUTES.cateringQuote}#price-factors)`],
+          ["Catering phone", cPhone],
+        ],
+        checked: CATERING_CHECKED,
         items: [
           {
             title: "At home or in a hall",
@@ -202,7 +217,7 @@ function buildSmallFunctions() {
       },
       ...(hasRegionalMenu ? [{
         id: "menu-for-50-guests",
-        title: `${CDtitle} Catering Menu Ideas for ${MIN} Guests`,
+        title: `What Goes on a ${CDtitle} Catering Menu for ${MIN} Guests?`,
         lead: `Start with a South Indian meal for your private function and tell ${name} which dishes or live counters you want. Use these menu ideas to brief the catering team, then confirm the dishes and service in your quote.`,
         items: [
           {
@@ -222,8 +237,8 @@ function buildSmallFunctions() {
       }] : []),
       {
         id: "occasions",
-        title: "Small Functions We Cater",
-        lead: `${name} caters ${joinNatural(smallEvents.map((e) => e.inline))} across Chennai, from ${MIN} guests.`,
+        title: `Which Small Functions Does ${name} Cater?`,
+        lead: `${name} caters ${joinNatural(smallEvents.map((e) => e.inline))} across ${serviceArea}, from ${MIN} guests up to ${num(guests.max)} at one event. Each function gets a South Indian menu planned with the ${NEAR} team; the occasions below are the ones the team has confirmed.`,
         tint: true,
         items: smallEvents.map((e) => ({ title: e.label, text: e.text })),
       },
@@ -526,7 +541,7 @@ function buildFaqHub() {
   const faq = qaRoute(path, [
     /* The single permitted mention of the retired service: the exact question in
        config/seo-gates.ts, answered without repeating the word. */
-    qa(GATES.NEGATIVE_FAQ_QUESTION, `No. ${name} serves lunch and dinner only, from ${HOURS} every day.`, { id: GATES.NEGATIVE_FAQ_ID }),
+    qa(GATES.NEGATIVE_FAQ_QUESTION, `No. ${name} serves lunch and dinner only, from ${HOURS} every day. Lunch starts at ${OPEN} and dinner is served until ${CLOSE}, so plan a late-morning visit. For a table, see the booking options or call ${phone}.`, { id: GATES.NEGATIVE_FAQ_ID }),
     qa(
       `Does ${name} serve non-veg food?`,
       `No. ${name}'s restaurant is ${PV}: no meat, egg or fish is cooked in its kitchen, and alcohol is not served. ` +
@@ -570,8 +585,8 @@ function buildFaqHub() {
     sections: [
       {
         id: "first-visit",
-        title: `A First Visit to ${name}: What to Order`,
-        lead: `On a first visit to ${name}, order by meal: the ${sodhiMeals.name} at lunch, and build-your-own dosa or ${paanai.name} at dinner. Everything below is on the current menu, with its price.`,
+        title: `What Should I Order on a First Visit to ${name}?`,
+        lead: `On a first visit to ${name}, order by meal: the ${sodhiMeals.name} at lunch, with sodhi (a coconut milk stew), and build-your-own dosa or ${paanai.name} (parotta and salna slow-cooked in a sealed pot) at dinner. Everything below is on the current menu, with its price.`,
         items: [
           {
             title: "Lunch",

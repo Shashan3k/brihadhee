@@ -38,11 +38,11 @@ const fallbackText = encodeURIComponent("Hi Brihadhee, I'd like an event caterin
 <section class="section section--tint" id={id} aria-labelledby={`${id}-title`}>
   <div class="container contact__grid">
     <div>
-      <h2 class="section__title" id={`${id}-title`}>Request an event catering quote</h2>
+      <h2 class="section__title" id={`${id}-title`}>How Do I Request a Catering Quote from Brihadhee?</h2>
       <p class="section__lead">
         {waDigits
           ? "Fill in the details, and the form opens WhatsApp with a message ready to send to the Brihadhee catering team."
-          : "Share the occasion, estimated guest count and venue area. The Brihadhee team uses these details to discuss availability, menu options and what to include in your quote."}
+          : `Send Brihadhee your occasion, event date, Chennai venue area and estimated guest count (from ${min}) with the form below${hasPhone ? `, or call the catering team on ${phone}` : ""}. The team follows up by phone to discuss availability, the menu and service you need, then agrees a per-plate quote with you.`}
       </p>
       <ul class="dish-list" role="list">
         <li><strong>{min}–{QUOTE_MAX_GUESTS.toLocaleString("en-IN")} guests per event</strong></li>

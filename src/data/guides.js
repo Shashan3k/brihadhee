@@ -53,7 +53,7 @@ export const nellaiGuide = {
     {
       id: "what-are-nellai-meals",
       title: q("What Are Nellai Meals?"),
-      answer: `Nellai meals are Tirunelveli-style meals. At ${name} in Chennai, the [${sodhiMeals.name}](${ROUTES.lunch}) is a vegetarian banana-leaf lunch with rice, sodhi (a coconut milk stew), sambar, rasam, kootu, poriyal and ulundhu kali. It costs ${rupees(sodhiMeals.price)} before GST.`,
+      answer: `Nellai meals are Tirunelveli-style meals. At ${name} in Chennai, the [${sodhiMeals.name}](${ROUTES.lunch}) is a vegetarian banana-leaf lunch with rice, sodhi (a coconut milk stew), sambar, rasam, kootu, poriyal and ulundhu kali (a sweet made with palm jaggery). It costs ${rupees(sodhiMeals.price)} before GST and is served at lunch every day.`,
       paras: [
         `The menu lists ${lc(sodhiMeals.description)}. At ${name}, the coconut milk in the sodhi, the tart rasam and the palm jaggery in the kali give you distinct flavours in one lunch.`,
         `${name} serves this meal from ${OPEN} daily at its pure vegetarian restaurant in Anna Nagar East. The [lunch menu](${ROUTES.lunch}) also lists the Tamil Nadu meals.`,
