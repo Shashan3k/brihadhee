@@ -225,7 +225,7 @@ export const dosaPage = {
   howItWorks: {
     id: "how-it-works",
     title: "How to Order a Customized Dosa",
-    lead: `Ordering a build-your-own dosa at ${name} takes ${byo.steps.length} steps: a base, podi and toppings, a filling and a roast, each listed below with its price.`,
+    lead: `Ordering a build-your-own dosa at ${name} takes ${byo.steps.length} steps: a base, podi and toppings, a filling and a roast, each listed below with its price. Every step is customizable, so you mix and match the four choices into your own personalised dosa.`,
   },
   combinations: {
     id: "combinations",
