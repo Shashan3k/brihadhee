@@ -31,7 +31,7 @@ import { join, resolve, relative } from "node:path";
 import { answerProblems, questionKey } from "../src/lib/answers.js";
 import { addressLine, BYO_DEFINITION, canonicalAnswerLines, cateringContacts, FACTS, getFact, pendingFacts, SITE_ORIGIN } from "../src/data/entity-truth.ts";
 import { MENU } from "../src/data/menu-canonical.ts";
-import { stripPermittedNegatives } from "../config/seo-gates.ts";
+import { stripPermittedNegatives, EMIT_FAQPAGE } from "../config/seo-gates.ts";
 import { decodeHtml as decode, llmsProblems, normalizeText, pageCopyProblems, readPageCopy } from "./aeo-rules.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
@@ -214,9 +214,10 @@ for (const p of pages) {
         err("faq_equal", name, `rendered and schema languages must agree for "${v.q}"`);
       }
     });
-  } else if (visible.length) {
+  } else if (visible.length && EMIT_FAQPAGE) {
     err("faq_equal", name, "FAQ visible on the page but no FAQPage JSON-LD");
   }
+  if (faqNode && !EMIT_FAQPAGE) err("faq_equal", name, "FAQPage JSON-LD present while EMIT_FAQPAGE is off");
   if (visible.length && !/Last updated:\s*[A-Z][a-z]+ \d{4}/.test(text)) err("faq_route", name, 'Q&A shown without a visible "Last updated: Month YYYY" line');
   for (const { q, a, answerLang, kind, location } of visible) {
     registerQuestion(name, q, location);

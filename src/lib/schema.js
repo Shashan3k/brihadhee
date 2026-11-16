@@ -7,6 +7,7 @@
  *   WebPage (<page>#webpage)       isPartOf WebSite; mainEntity points at the page's subject
  *                                  when modeled; breadcrumb links to a real trail on inner pages
  *   FAQPage (<page>#faq)           isPartOf its WebPage; built from the SAME data as the visible FAQ
+ *                                  (only while EMIT_FAQPAGE is on; off since 16 Nov 2026)
  *   Service (#catering)           shared catering identity, provider -> Restaurant
  *   Service (<page>#service)      page-specific offer, related to #catering
  * Restaurant is already a schema.org FoodEstablishment subtype, so no second
@@ -29,7 +30,7 @@ import verification from "../../config/client-verification.json";
 import { MENU_NOTES } from "../data/menu-canonical.ts";
 
 import { faqItems } from "../data/faq.js";
-import { CATERING_DIET } from "../../config/seo-gates.ts";
+import { CATERING_DIET, EMIT_FAQPAGE } from "../../config/seo-gates.ts";
 
 const CATERING_DIET_CAP = CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1);
 
@@ -263,9 +264,12 @@ function cateringEntitySchema() {
   };
 }
 
-/** FAQPage for a page. `items` = [{ question, answer, lang? }]; returns null if empty. */
+/**
+ * FAQPage for a page. `items` = [{ question, answer, lang? }]; returns null if empty
+ * or while EMIT_FAQPAGE is off (config/seo-gates.ts). The visible FAQ is unaffected.
+ */
 export function faqPageSchema(path, items) {
-  if (!items?.length) return null;
+  if (!EMIT_FAQPAGE || !items?.length) return null;
   const pid = pageIds(path);
   return {
     "@context": CONTEXT,

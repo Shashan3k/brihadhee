@@ -16,6 +16,16 @@
  * Astro/Vite can bundle it. No imports: this file is the root of the gate graph.
  */
 
+/* ---- Structured data ----------------------------------------------------- */
+
+/**
+ * FAQPage JSON-LD. Google stopped showing FAQ rich results on 7 May 2026 and removed
+ * the FAQPage documentation on 15 June 2026 (Search Central changelog, checked
+ * 16 Nov 2026). The visible Q&A stays on every page; only the markup is off.
+ * Set to true to emit FAQPage again: every check still validates it when present.
+ */
+export const EMIT_FAQPAGE = false;
+
 /* ---- Dietary and positioning -------------------------------------------- */
 
 /** Q20: the owner approved pure vegetarian wording for all catering orders,
