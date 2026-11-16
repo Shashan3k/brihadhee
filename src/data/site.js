@@ -67,8 +67,31 @@ const revisedPages = new Set([
   ROUTES.cateringQuote,
 ]);
 
+/*
+ * SEO/AEO/GEO revision (branch seo-aeo-geo, 16 Nov 2026): pages whose titles, headings,
+ * answers or facts changed materially. Pages touched only by the shared footer keep their
+ * date. If this ships much later, set the date to the release day.
+ */
+const SEO_AEO_GEO_REVISION = "2026-11-16";
+const aeoRevisedPages = new Set([
+  ROUTES.home,
+  ROUTES.menu,
+  ROUTES.dosa,
+  ROUTES.lunch,
+  ROUTES.dinner,
+  ROUTES.about,
+  ROUTES.book,
+  ROUTES.faq,
+  ROUTES.nellaiGuide,
+  ROUTES.eventCatering,
+  ROUTES.corporateCatering,
+  ROUTES.smallFunctions,
+  ROUTES.cateringQuote,
+]);
+
 export function pageContentUpdated(path) {
   const canonicalPath = path.endsWith("/") ? path : `${path}/`;
+  if (aeoRevisedPages.has(canonicalPath)) return SEO_AEO_GEO_REVISION;
   return revisedPages.has(canonicalPath) && KEYWORD_CONTENT_REVISION > CONTENT_UPDATED
     ? KEYWORD_CONTENT_REVISION
     : CONTENT_UPDATED;
