@@ -477,7 +477,7 @@ function buildFamily() {
         dishes: [paanai, poppers, filterCoffee].map(dish),
         links: [
           { label: "Build your own dosa", href: href(ROUTES.dosa) },
-          { label: "Full menu with prices", href: href(ROUTES.menu) },
+          { label: "Full Brihadhee menu with prices", href: href(ROUTES.menu) },
         ],
       },
       {
@@ -588,7 +588,7 @@ function buildFaqHub() {
             text: `${filterCoffee.name} (${rupees(filterCoffee.price)}), or ${kali.name} (${rupees(kali.price)}) if you skipped the Nellai meal. ${menuNotes.gst}`,
           },
         ],
-        links: [{ label: "Full menu with prices", href: href(ROUTES.menu), primary: true }],
+        links: [{ label: "Full Brihadhee menu with prices", href: href(ROUTES.menu), primary: true }],
       },
     ],
     faqTitle: `${name}: quick answers`,
