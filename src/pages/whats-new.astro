@@ -13,8 +13,11 @@ import Faq from "../components/Faq.astro";
 import { whatsNewPage as page } from "../data/pages.js";
 import { longDate } from "../data/entity-truth.ts";
 import { pageGraph, faqPageSchema, articleSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { ROUTES, href } from "../data/site.js";
+import { ROUTES, href, pageContentUpdated } from "../data/site.js";
 
+/* Same value as Article.dateModified, so the visible date and the markup agree. */
+const modified = pageContentUpdated(page.path);
+const updated = modified > page.published ? modified : page.published;
 const schema = pageGraph({
   path: page.path,
   title: page.title,
@@ -30,8 +33,8 @@ const schema = pageGraph({
 <Base title={page.title} description={page.description} path={page.path} schema={schema}>
   <Nav homeBase={href("/")} />
   <main id="main" tabindex="-1">
-    <PageHeader eyebrow={`Updated ${longDate(page.published)}`} h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
-    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
+    <PageHeader eyebrow={`Updated ${longDate(updated)}`} h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
+    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time>{updated > page.published && <> · Updated <time datetime={updated}>{longDate(updated)}</time></>}</p>
     {page.sections.map((sec) => <ContentSection {...sec} />)}
     <Faq items={page.faq} title="What's new: quick answer" lead="" eyebrow="Questions" />
   </main>
