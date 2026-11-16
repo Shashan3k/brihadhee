@@ -4,8 +4,8 @@
  * (computed prices), the page Q&A arrays and the gated catering data.
  * The short file is a directory. The full file includes menus, offers and FAQs.
  */
-import { site } from "../data/site.js";
-import { getFact, factOr, FACTS, canonicalAnswerLines, landmarkSentence, openingTimes } from "../data/entity-truth.ts";
+import { site, NAME_SPELLINGS, NAME_TAMIL_VARIANT } from "../data/site.js";
+import { getFact, factOr, FACTS, canonicalAnswerLines, landmarkSentence, openingTimes, FACTS_LAST_CONFIRMED, longDate } from "../data/entity-truth.ts";
 import { faqItems, aboutFaq, menuFaq, bookingFaq } from "../data/faq.js";
 import { homePage, dosaPage, nellaiPage, dinnerPage, whatsNewPage, seasonalPage } from "../data/pages.js";
 import { nellaiGuide } from "../data/guides.js";
@@ -45,7 +45,6 @@ export function buildLlms({ full = false } = {}) {
   const name = getFact("name");
   const offers = factOr("offers", []);
   const founders = factOr("founders");
-  const sub = factOr("subBrand");
   const out = [];
   const push = (...l) => out.push(...l);
 
@@ -54,11 +53,11 @@ export function buildLlms({ full = false } = {}) {
     `> ${name} (${getFact("nameTamil")}) is a South Indian vegetarian restaurant in Anna Nagar East, Chennai, serving ${getFact("mealTimes")}. It is known for Build Your Own Dosa and Nellai meals.`,
     ""
   );
-  push("**Canonical answers**", "", ...canonicalAnswerLines(), "");
+  push("**Canonical answers**", "", ...canonicalAnswerLines(), "", `Facts last confirmed with the owner: ${longDate(FACTS_LAST_CONFIRMED)}. Full verified list: ${u("/about/#facts")}`, "");
 
   if (full) {
     push("## Facts", "");
-    push(`- Also known as: ${getFact("alternateNames").join(" and ")}`);
+    push(`- Also spelt: ${[...NAME_SPELLINGS, NAME_TAMIL_VARIANT].join(", ")}`);
     push(`- Cuisine: ${getFact("cuisine")}`);
     push(`- Landmarks: ${landmarkSentence()}`);
     push(`- Email: ${getFact("email")}`);
@@ -67,7 +66,7 @@ export function buildLlms({ full = false } = {}) {
     push(`- Alcohol: ${getFact("alcohol")}`);
     push(`- Food: ${getFact("recipeStory")}.`);
     if (founders) push(`- Founders: ${founders.story}`);
-    if (sub) push(`- Sub-brand: ${sub.name} (${sub.description})`);
+    // No sub-brand line: Beyond Curry stays out of machine-readable files until the owner answers Q26.
     push(`- Menu: ${itemCount} items${allVegetarian ? ", all vegetarian" : ""}`, "");
     push(getFact("nameStory"), "");
   }
@@ -78,6 +77,7 @@ export function buildLlms({ full = false } = {}) {
   push(`- [Coffee Bar](${u(`/#${homePage.coffeeBar.id}`)}): drinks at the restaurant${corporatePage ? " and a link for office events" : ""}`);
   push(`- [Menu as JSON](${u("/menu.json")}): machine-readable menu with prices in INR`);
   push(`- [Address, timings and contact](${u("/about/")}): address, directions from Anna Nagar landmarks, hours, founders and the name story`);
+  push(`- [Verified facts](${u("/about/#facts")}): name, address, phones, hours, food, catering range and area, booking, with verification dates`);
   push(`- [Book a table](${u("/book-a-table/")}): choose a dining partner and check booking status in its app`);
   push(`- [Build your own dosa](${u(dosaPage.path)}): how it works, chef's combinations, classic dosas`);
   push(`- [Vegetarian parotta in Anna Nagar](${u(parottaPage.path)}): parotta varieties and prices, vegetarian salna, kothu and Paanai Parotta, and directions`);

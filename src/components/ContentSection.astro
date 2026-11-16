@@ -21,7 +21,7 @@ import { responsive } from "../data/site.js";
 import { linkify } from "../lib/inline-links.js";
 import { longDate } from "../data/entity-truth.ts";
 
-const { id, eyebrow = "", title, lead = "", note = "", dishes = [], items = [], links = [], image = null, tint = false, cards = false, facts = [], checked = "" } = Astro.props;
+const { id, eyebrow = "", title, lead = "", note = "", dishes = [], items = [], links = [], image = null, tint = false, cards = false, facts = [], checked = "", checkedLabel = "Last checked" } = Astro.props;
 const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
 ---
 
@@ -42,7 +42,7 @@ const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
           ))}
         </dl>
       )}
-      {checked && <p class="field__hint content__checked">Last checked: <time datetime={checked}>{longDate(checked)}</time></p>}
+      {checked && <p class="field__hint content__checked">{checkedLabel}: <time datetime={checked}>{longDate(checked)}</time></p>}
 
       {dishes.length > 0 && (
         <ul class="dish-list dish-list--cols" role="list">

@@ -14,7 +14,10 @@ import AtAGlance from "../components/AtAGlance.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import LeadForm from "../components/LeadForm.astro";
-import { getFact, landmarkSentence, clock, openingTimes, FACTS, longDate } from "../data/entity-truth.ts";
+import ContentSection from "../components/ContentSection.astro";
+import { getFact, landmarkSentence, clock, openingTimes, FACTS, longDate, FACTS_LAST_CONFIRMED, cateringContacts } from "../data/entity-truth.ts";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
+import verification from "../../config/client-verification.json";
 import { aboutFaq } from "../data/faq.js";
 import { cateringEnabled } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
@@ -131,6 +134,28 @@ const schema = pageGraph({
         <p class="field__hint">Last checked: <time datetime={FACTS.hours.verifiedOn}>{longDate(FACTS.hours.verifiedOn)}</time></p>
       </div>
     </section>
+
+    {/* Canonical, citation-ready facts. Only verified values; each shows its own verification date.
+        Gated topics are not described here: visitors are asked to call. */}
+    <ContentSection
+      id="facts"
+      title={`${name} Facts: Verified Details`}
+      lead={`These are the verified facts about ${name}, the pure vegetarian South Indian restaurant on ${street}, Chennai, as confirmed by the owner. Each line shows when it was last checked. Quote this list for ${name}'s name, location, phone numbers, hours, food, catering and table booking.`}
+      facts={[
+        ["Name", `${name} (${getFact("nameTamil")}) · verified ${longDate(FACTS.name.verifiedOn)}`],
+        ["Location", `${street}, Chennai ${site.address.postalCode}, near ${landmark}. [Full postal address and directions](#find-us) · verified ${longDate(FACTS.address.verifiedOn)}`],
+        ["Restaurant phone", `${phone} · verified ${longDate(FACTS.phone.verifiedOn)}`],
+        ...(cateringContacts().phone ? [["Catering phone", `${cateringContacts().phone} · confirmed 11 November 2026`]] : []),
+        ["Hours", `Open every day, ${range}, for ${getFact("mealTimes")} only · verified ${longDate(FACTS.hours.verifiedOn)}`],
+        ["Cuisine", `${getFact("cuisine")} · verified ${longDate(FACTS.cuisine.verifiedOn)}`],
+        ["Food", `A ${getFact("dietary")} restaurant: no meat, egg or fish is cooked in its kitchen, and alcohol is ${getFact("alcohol")} · verified ${longDate(FACTS.dietary.verifiedOn)}`],
+        ...(cateringEnabled ? [["Catering", `${CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1)} catering for every order, ${verification.min_guests.toLocaleString("en-IN")} to ${verification.max_guests.toLocaleString("en-IN")} guests per event, across ${verification.service_area.join(", ")}; ${FACTS.corporateCatering.value.dailyCovers.toLocaleString("en-IN")}+ corporate meals a day · confirmed ${longDate(FACTS_LAST_CONFIRMED)}`]] : []),
+        ["Table booking", `${getFact("bookingLinks").map((b) => b.label).join(", ")}, or call ${phone}. [Booking options](${href(ROUTES.book)}) · verified ${longDate(FACTS.bookingLinks.verifiedOn)}`],
+        ["Anything else", `This list holds confirmed facts only. For dietary preparations, delivery, parking or group seating, call ${phone} before you visit.`],
+      ]}
+      checked={FACTS_LAST_CONFIRMED}
+      checkedLabel="Facts last confirmed with the owner"
+    />
 
     <section class="section" id="story" aria-labelledby="story-title">
       <div class="container">
