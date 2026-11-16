@@ -84,7 +84,7 @@ export function restaurantSchema() {
       (src) => assetUrl(src)
     ),
     servesCuisine: getFact("cuisines"),
-    ...(site.priceRange ? { priceRange: site.priceRange } : {}),
+    // No priceRange: the owner-verified "₹₹" is not shown on any page, and markup must match visible content.
     currenciesAccepted: "INR",
     address: {
       "@type": "PostalAddress",
