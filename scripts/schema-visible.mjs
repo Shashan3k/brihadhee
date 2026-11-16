@@ -13,8 +13,10 @@
  *   4. No AggregateRating, Review or Rating nodes and no aggregateRating, review
  *      or award(s) properties anywhere (CLAUDE.md ground rules).
  *   5. The Restaurant's name, street address, postal code, city, telephone and
- *      opening hours appear in the page's visible text (scripts, styles and
- *      <template> content removed), and every alternateName is visible on /about/.
+ *      opening hours appear in the page's visible text (the same reader as aeo-lint:
+ *      script, style, template, svg and iframe content and anything hidden, aria-hidden,
+ *      .visually-hidden/.sr-only or display:none are excluded), and every alternateName
+ *      is visible on /about/.
  *
  *   node scripts/schema-visible.mjs [dist]
  *
@@ -23,7 +25,7 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative, sep } from "node:path";
 import { pathToFileURL } from "node:url";
-import { decodeHtml } from "./aeo-rules.mjs";
+import { readPageCopy } from "./aeo-rules.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const TERMS = JSON.parse(readFileSync(join(ROOT, "scripts", "data", "schemaorg-terms.json"), "utf8"));
@@ -43,14 +45,13 @@ const JSONLD_KEYWORDS = new Set(["@context", "@type", "@id", "@graph", "@languag
 const asArray = (v) => (v == null ? [] : Array.isArray(v) ? v : [v]);
 const typesOf = (node) => asArray(node?.["@type"]);
 
-/** Visible text: no script, style or template content, tags removed, entities decoded. */
+/**
+ * Visible text, read with aeo-rules.mjs readPageCopy(): non-content elements and
+ * authored-hidden content (hidden, aria-hidden, .visually-hidden, .sr-only,
+ * display:none) do not count. Closed <details> count, since a visitor can open them.
+ */
 export function visibleText(html) {
-  const body = html
-    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
-    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
-    .replace(/<template\b[\s\S]*?<\/template>/gi, " ")
-    .replace(/<[^>]+>/g, " ");
-  return decodeHtml(body).replace(/\s+/g, " ").trim();
+  return readPageCopy(html).text.replace(/\s+/g, " ").trim();
 }
 
 /** Lowercase words only, so "3rd Avenue, Ward 100" matches "3rd Avenue Ward 100". */
@@ -155,14 +156,17 @@ export function restaurantVisibilityProblems(nodes, text) {
     }
     if (!r.telephone) problems.push("Restaurant.telephone is missing");
     else {
-      const shown = [...text.matchAll(/\+?\d[\d\s-]{8,16}\d/g)].map((m) => digits(m[0]));
-      const want = digits(r.telephone);
-      if (!shown.some((d) => d === want || `91${d}` === want)) problems.push(`Restaurant.telephone ${r.telephone} is not visible`);
+      // Indian mobile/landline shapes only (+91 / 0 prefix optional), so a neighbouring
+      // postcode or price is never merged into the number. Compare the last 10 digits.
+      const shown = [...text.matchAll(/(?<![\d+])(?:\+?91[\s-]?|0)?\d{5}[\s-]?\d{5}(?!\d)/g)].map((m) => digits(m[0]).slice(-10));
+      const want = digits(r.telephone).slice(-10);
+      if (!shown.includes(want)) problems.push(`Restaurant.telephone ${r.telephone} is not visible`);
     }
     for (const spec of asArray(r.openingHoursSpecification)) {
       const opens = clockForms(spec.opens ?? "");
       const closes = clockForms(spec.closes ?? "");
-      const range = opens.some((o) => closes.some((c) => new RegExp(`${o}\\s*(?:to|–|-|—)\\s*${c}`).test(text)));
+      // Digit boundaries: "2 PM" must not match inside "12 PM", nor "1 AM" inside "11 AM".
+      const range = opens.some((o) => closes.some((c) => new RegExp(`(?<![\\d:])${o}\\s*(?:to|–|-|—)\\s*${c}(?![\\d:])`).test(text)));
       if (!range) problems.push(`opening hours ${spec.opens}–${spec.closes} are not visible as "${opens[0]} to ${closes[0]}"`);
       const days = asArray(spec.dayOfWeek).map((d) => String(d).replace(/^https?:\/\/schema\.org\//, ""));
       const everyDay = ALL_DAYS.every((d) => days.includes(d));

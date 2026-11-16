@@ -86,6 +86,26 @@ test("markup in scripts or templates does not count as visible", () => {
   assert.ok(problems.some((p) => p.includes("opening hours")), problems.join("\n"));
 });
 
+test("hidden text does not count as visible", () => {
+  const hiddenBody = `<p>Brihadhee</p><p hidden>${VISIBLE}</p><div class="visually-hidden">Call +91 73587 14113</div><span aria-hidden="true">11 AM to 11 PM daily</span>`;
+  const problems = check(page([restaurant], hiddenBody));
+  assert.ok(problems.some((p) => p.includes("telephone")), problems.join("\n"));
+  assert.ok(problems.some((p) => p.includes("opening hours")), problems.join("\n"));
+});
+
+test("hours need digit boundaries: 2 PM in the markup does not match a visible 12 PM", () => {
+  const wrong = { ...restaurant, openingHoursSpecification: [{ ...restaurant.openingHoursSpecification[0], opens: "14:00" }] };
+  const body = VISIBLE.replace("11:00 AM to 11:00 PM", "12 PM to 11 PM");
+  const problems = check(page([wrong], body));
+  assert.ok(problems.some((p) => p.includes("opening hours 14:00")), problems.join("\n"));
+});
+
+test("a postcode next to the phone, or a 0-prefixed number, still reads as the phone", () => {
+  const body = VISIBLE.replace("Call +91 73587 14113.", "Chennai 600040 73587 14113, or 073587 14113.");
+  const problems = check(page([restaurant], body));
+  assert.ok(!problems.some((p) => p.includes("telephone")), problems.join("\n"));
+});
+
 test("clock forms cover both visible styles", () => {
   assert.deepEqual(clockForms("11:00"), ["11 AM", "11:00 AM"]);
   assert.deepEqual(clockForms("23:00"), ["11 PM", "11:00 PM"]);
