@@ -109,6 +109,7 @@ const schema = pageGraph({
           {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")}. For a table, call
           <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>.
           If you're arriving late, call ahead to check when the kitchen takes its last orders.
+          Filter coffee from the <a href={`${href(ROUTES.home)}#coffee-bar`}>{name} Coffee Bar</a> is served during lunch and dinner.
           See <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for recent changes.
         </p>
         {hasHours && (

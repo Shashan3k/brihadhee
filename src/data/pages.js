@@ -125,7 +125,7 @@ export const homePage = {
   },
   coffeeBar: {
     id: "coffee-bar",
-    title: "Coffee Bar",
+    title: "Brihadhee Coffee Bar, Anna Nagar",
     lead: `Find South Indian filter coffee at ${name}'s Coffee Bar near ${landmark} in Anna Nagar East. We brew it with a traditional filter and serve it during lunch and dinner. ${menuNotes.gst}`,
     dishes: category("beverages").items.map(dish),
     links: [
