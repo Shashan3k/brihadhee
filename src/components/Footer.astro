@@ -67,6 +67,7 @@ const isCateringPage = Boolean(Astro.locals.contact);
       <nav id="footer-explore" aria-labelledby="footer-explore-title" tabindex="-1">
         <p class="footer__title" id="footer-explore-title">Explore</p>
         <ul class="footer__links" role="list">
+          <li><a href={href(ROUTES.home)}>{site.name} restaurant, Anna Nagar East</a></li>
           {site.footerLinks.map((item) => (
             <li><a href={link(item.href)}>{item.label}</a></li>
           ))}
