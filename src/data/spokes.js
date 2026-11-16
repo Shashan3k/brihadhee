@@ -44,6 +44,8 @@ export const gatePreview =
   Boolean(import.meta.env?.DEV) || (typeof process !== "undefined" && process.env?.SEO_GATES_PREVIEW === "1");
 
 const CD = GATES.CATERING_DIET;
+/** Title-case form for headings and H1s ("Pure Vegetarian"). */
+const CDtitle = CD.replace(/\b\w/g, (ch) => ch.toUpperCase());
 const MIN = GATES.CATERING_MIN_GUESTS;
 const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 const name = getFact("name");
@@ -200,7 +202,7 @@ function buildSmallFunctions() {
       },
       ...(hasRegionalMenu ? [{
         id: "menu-for-50-guests",
-        title: `${cap(CD)} Catering Menu Ideas for ${MIN} Guests`,
+        title: `${CDtitle} Catering Menu Ideas for ${MIN} Guests`,
         lead: `Start with a South Indian meal for your private function and tell ${name} which dishes or live counters you want. Use these menu ideas to brief the catering team, then confirm the dishes and service in your quote.`,
         items: [
           {
@@ -330,7 +332,7 @@ function buildQuote() {
     path,
     title,
     description,
-    h1: `Get a ${cap(CD)} Catering Quote in Chennai`,
+    h1: `Get a ${CDtitle} Catering Quote in Chennai`,
     eyebrow: "Catering quote · Chennai",
     intro: `Share your event date, Chennai venue and estimated headcount from ${MIN} guests. Brihadhee ${reply} to discuss the ${CD} menu, service requirements and per-plate quote.`,
     cta: "quote",

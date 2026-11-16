@@ -24,6 +24,8 @@ import { CATERING_DIET, ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS, IS_CATERING_PURE_VEG
 const STREET = getFact("street");
 const CD = CATERING_DIET;
 const CDcap = CD.charAt(0).toUpperCase() + CD.slice(1);
+/** Title-case form for headings and H1s ("Pure Vegetarian"). Body copy keeps CDcap. */
+const CDtitle = CD.replace(/\b\w/g, (ch) => ch.toUpperCase());
 const titleDiet = IS_CATERING_PURE_VEG ? "Pure Veg" : CDcap;
 import { pageGraph, cateringServiceSchema, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 
@@ -284,7 +286,7 @@ export const plannerFaqs = qaRoute(PLANNER_PATH, plannerFaq);
 export const meta = {
   title: `${titleDiet} Wedding & Event Caterers in Chennai | Brihadhee`,
   description: `${CDcap} wedding and event caterers in Chennai, based in Anna Nagar East: regional South Indian menus, live counters and per-plate quotes.`,
-  h1: `${CDcap} Event and Wedding Catering in Chennai`,
+  h1: `${CDtitle} Event and Wedding Catering in Chennai`,
 };
 
 export const plannerMeta = {
@@ -380,7 +382,7 @@ export const corporateEnabled = Boolean(cateringEnabled && corporate);
 export const corporateMeta = {
   title: `${titleDiet} Corporate Catering in Chennai | Brihadhee`,
   description: `${CDcap} office lunch catering, bulk meals and recurring employee meal programmes in Chennai. Share your office location and headcount for a quote.`,
-  h1: `${CDcap} Corporate Catering and Office Lunches in Chennai`,
+  h1: `${CDtitle} Corporate Catering and Office Lunches in Chennai`,
 };
 
 export const corporatePage = corporateEnabled
@@ -468,7 +470,7 @@ export const corporatePage = corporateEnabled
       },
       menus: {
         id: "menus",
-        title: `Sample ${CDcap} Corporate Menus`,
+        title: `Sample ${CDtitle} Corporate Menus`,
         lead: "These sample menus are built from dishes Brihadhee already serves at its restaurant; your final menu, portions and per-plate price are agreed with your team before the trial week.",
         items: [
           {
