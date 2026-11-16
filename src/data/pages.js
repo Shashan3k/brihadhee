@@ -322,7 +322,7 @@ export const nellaiPage = {
   title: `Veg Lunch & Nellai Meals in Anna Nagar | ${name}`,
   description: `See prices for ${sodhiMeals.name}, Tamil Nadu meals and dine-in lunch combos at ${name}, Anna Nagar East. Lunch starts at ${OPEN} daily.`,
   h1: "Veg Lunch and Nellai Meals in Anna Nagar",
-  intro: `${name} serves a ${PV} lunch every day from ${OPEN} on ${STREET}: the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), a Tirunelveli-style meal, and Tamil Nadu meals, all ${recipeStory}.`,
+  intro: `${name} serves a ${PV} lunch every day from ${OPEN} on ${STREET}: the ${sodhiMeals.name} (${rupees(sodhiMeals.price)}), a Tirunelveli-style meal, and Tamil Nadu meals, all ${recipeStory}. For a quicker lunch, ${combos.count} dine-in combos cost ${priceRange(combos)}.`,
   glance: [
     ["Who", `${name}, a South Indian vegetarian restaurant in Anna Nagar East`],
     ["Lunch from", `${OPEN}, every day`],

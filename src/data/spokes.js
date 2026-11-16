@@ -452,7 +452,7 @@ function buildFamily() {
     description,
     h1: "A Pure Veg Family Restaurant in Anna Nagar East",
     eyebrow: "Family dining · Anna Nagar East",
-    intro: `${name} is a ${PV} family restaurant in ${NEAR}, open every day from ${HOURS} for lunch and dinner. No meat, egg or fish is cooked in its kitchen and alcohol is not served, so vegetarian families can order anything on the menu.`,
+    intro: `${name} is a ${PV} family restaurant in ${NEAR}, open every day from ${HOURS} for lunch and dinner. No meat, egg or fish is cooked in its kitchen and alcohol is not served, so vegetarian families can order anything on the menu. For a group table, call ${phone} so the restaurant can check seating.`,
     menuHref: href(ROUTES.menu),
     primaryAction: { label: "Book a family table", href: href(ROUTES.book) },
     glanceTitle: `Family dining at ${name}: summary`,
