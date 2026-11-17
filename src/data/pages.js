@@ -18,7 +18,7 @@ import { qa, qaRoute, list } from "../lib/answers.js";
 import { MENU_SOURCE } from "./menu-canonical.ts";
 import { taDosa, taNellai } from "./faq-ta.js";
 import { CATERING_DIET, CATERING_MIN_GUESTS, MEAL_FRAMING } from "../../config/seo-gates.ts";
-import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedLabel } from "../lib/menu-facts.js";
+import { category, findItems, rupees, priceRange, summarise, allItems, byo, filterCoffee, BYO_DEFINITION, menuNotes, customizedLabel, meals } from "../lib/menu-facts.js";
 
 const name = getFact("name");
 const STREET = getFact("street");
@@ -77,6 +77,9 @@ const batterBy = (re) => {
 const batterRange = priceRange(summarise(batters));
 const dearestSuggestion = [...byo.suggestions].sort((a, b) => b.price - a.price)[0];
 const suggestionRange = `${rupees(byo.suggestionMin)} to ${rupees(byo.suggestionMax)}`;
+const dishPrices = allItems.map((i) => i.price);
+/** "5% GST", worded as in the dish-prices FAQ. */
+const gst = menuNotes.gst.replace(/^Prices exclude /, "").replace(/\.$/, "");
 const counterHasDosa = liveCounters.some((c) => /build your own dosa/i.test(c));
 /** Cheapest option of a Build Your Own Dosa step ("Topping", "Stuffing", "Garnish"), as "₹15". */
 const stepFrom = (step) => {
@@ -88,13 +91,18 @@ const stepFrom = (step) => {
 /* ---- Home / ------------------------------------------------------------- */
 export const homePage = {
   path: ROUTES.home,
-  title: `${name} Anna Nagar | Pure Veg South Indian Dosa Restaurant`,
+  /* Kept as live since 14 Nov: in Search Console (12-15 Nov 2026) this wording sat at positions 1-2.6 for
+     brand + Anna Nagar queries and 4.2-8 for "south indian restaurant(s) anna nagar". Do not reword without data. */
+  title: `${name} | Pure Veg South Indian Restaurant, Anna Nagar`,
   description: `${name}, Anna Nagar East: pure veg South Indian lunch and dinner, customized dosa and Nellai meals. Open ${OPEN}–${CLOSE} daily. See menu or book a table.`,
   /* The hero combines the restaurant name and category in one H1. */
   h1: "Pure Veg South Indian Restaurant in Anna Nagar East",
   glance: [
     ["Open", `${HOURS} daily · ${MEAL_FRAMING}`],
     ["Food", "100% pure veg South Indian"],
+    /* In Search Console (12-15 Nov 2026) the home page appeared in almost every search, price-qualified
+       ones included ("with price", "meals under 200"), so the price range sits in the top answer box. */
+    ["Prices", `Dishes ${rupees(Math.min(...dishPrices))} to ${rupees(Math.max(...dishPrices))} on the current menu, meals ${priceRange(meals)}, before ${gst}`],
     ["Location", `${STREET}, near ${landmark}`],
     ["Famous for", getFact("knownFor").join(", ")],
   ],
