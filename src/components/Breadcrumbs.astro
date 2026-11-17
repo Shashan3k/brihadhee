@@ -1,0 +1,25 @@
+---
+/**
+ * Visible breadcrumb trail. It renders the SAME trail as the page's BreadcrumbList
+ * JSON-LD: Base.astro reads that node from the page graph into Astro.locals.breadcrumb,
+ * so the markup never describes a trail the visitor cannot see.
+ * Renders nothing on the home page (a one-item trail).
+ */
+const crumbs = Astro.locals.breadcrumb ?? [];
+---
+
+{
+  crumbs.length > 1 && (
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        {crumbs.map((c, i) =>
+          i < crumbs.length - 1 ? (
+            <li><a href={c.href}>{c.name}</a></li>
+          ) : (
+            <li aria-current="page">{c.name}</li>
+          )
+        )}
+      </ol>
+    </nav>
+  )
+}

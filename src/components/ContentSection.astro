@@ -10,14 +10,18 @@
  *   links:   [{ label, href, primary?, external? }]          calls to action
  *   image:   { name, alt, caption }                         photo in public/images
  *   note:    a short line after the dish list
+ *   facts:   [[label, value]]                              a short fact table after the lead
+ *   checked: "YYYY-MM-DD"                                 "Last checked" date for those facts (the fact's
+ *            verifiedOn in entity-truth.ts or the owner confirmation date, never the build date)
  * `lead` and item `text` may contain contextual links as [anchor](/path/)
  * (src/lib/inline-links.js).
  */
 import Icon from "./Icon.astro";
 import { responsive } from "../data/site.js";
 import { linkify } from "../lib/inline-links.js";
+import { longDate } from "../data/entity-truth.ts";
 
-const { id, eyebrow = "", title, lead = "", note = "", dishes = [], items = [], links = [], image = null, tint = false, cards = false } = Astro.props;
+const { id, eyebrow = "", title, lead = "", note = "", dishes = [], items = [], links = [], image = null, tint = false, cards = false, facts = [], checked = "", checkedLabel = "Last checked" } = Astro.props;
 const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
 ---
 
@@ -27,6 +31,18 @@ const ext = (l) => (l.external ? { target: "_blank", rel: "noopener" } : {});
       {eyebrow && <p class="eyebrow">{eyebrow}</p>}
       <h2 class="section__title" id={`${id}-title`}>{title}</h2>
       {lead && <p class="section__lead" set:html={linkify(lead)} />}
+
+      {facts.length > 0 && (
+        <dl class="glance__list content__facts">
+          {facts.map(([term, value]) => (
+            <div class="glance__row">
+              <dt>{term}</dt>
+              <dd set:html={linkify(value)} />
+            </div>
+          ))}
+        </dl>
+      )}
+      {checked && <p class="field__hint content__checked">{checkedLabel}: <time datetime={checked}>{longDate(checked)}</time></p>}
 
       {dishes.length > 0 && (
         <ul class="dish-list dish-list--cols" role="list">

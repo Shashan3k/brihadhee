@@ -29,6 +29,11 @@ const canonical = `${site.url}${path}`;
 
 // One JSON-LD @graph per page: a single @context, nodes linked by stable @ids.
 const nodes = schema ?? homeSchema({ title, description });
+// The visible breadcrumb (Breadcrumbs.astro) renders this same BreadcrumbList.
+const crumbNode = nodes.find((n) => n?.["@type"] === "BreadcrumbList");
+Astro.locals.breadcrumb = crumbNode
+  ? crumbNode.itemListElement.map((i) => ({ name: i.name, href: new URL(i.item).pathname }))
+  : null;
 const graph = {
   "@context": "https://schema.org",
   "@graph": nodes.map(({ "@context": _ctx, ...node }) => node),

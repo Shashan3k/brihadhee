@@ -7,6 +7,7 @@
  *   WebPage (<page>#webpage)       isPartOf WebSite; mainEntity points at the page's subject
  *                                  when modeled; breadcrumb links to a real trail on inner pages
  *   FAQPage (<page>#faq)           isPartOf its WebPage; built from the SAME data as the visible FAQ
+ *                                  (only while EMIT_FAQPAGE is on; off since 16 Nov 2026)
  *   Service (#catering)           shared catering identity, provider -> Restaurant
  *   Service (<page>#service)      page-specific offer, related to #catering
  * Restaurant is already a schema.org FoodEstablishment subtype, so no second
@@ -23,13 +24,13 @@
  * Facts come from src/data/entity-truth.ts through src/data/site.js; nothing is typed
  * here by hand.
  */
-import { site, ROUTES, hasHours, assetUrl, pageContentUpdated } from "../data/site.js";
+import { site, ROUTES, hasHours, assetUrl, pageContentUpdated, NAME_SPELLINGS, NAME_TAMIL_VARIANT } from "../data/site.js";
 import { getFact, factOr, RESTAURANT_ID, CATERING_ID, cateringContacts, toE164, BYO_DEFINITION } from "../data/entity-truth.ts";
 import verification from "../../config/client-verification.json";
 import { MENU_NOTES } from "../data/menu-canonical.ts";
 
 import { faqItems } from "../data/faq.js";
-import { CATERING_DIET } from "../../config/seo-gates.ts";
+import { CATERING_DIET, EMIT_FAQPAGE } from "../../config/seo-gates.ts";
 
 const CATERING_DIET_CAP = CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1);
 
@@ -63,10 +64,11 @@ export function restaurantSchema() {
       else hours.push({ "@type": "OpeningHoursSpecification", dayOfWeek: [day], opens: d.open, closes: d.close });
     }
   }
-  const alternateNames = [getFact("nameTamil"), ...getFact("alternateNames")];
+  // Only names a visitor can read on the site: the Tamil name (hero, about) and the
+  // spellings listed on /about/. Listing names such as "Brihadhee Hotels" are not shown, so they stay out.
+  const alternateNames = [getFact("nameTamil"), NAME_TAMIL_VARIANT, ...NAME_SPELLINGS];
   const founders = factOr("founders");
   const reservations = factOr("acceptsReservations");
-  const subBrand = factOr("subBrand");
   const sameAs = factOr("sameAs", []);
 
   return {
@@ -77,11 +79,12 @@ export function restaurantSchema() {
     alternateName: alternateNames,
     description: `${getFact("name")} is a ${getFact("typeLong")} on ${getFact("street")}, ${site.address.city}. It serves ${getFact("mealTimes")}.`,
     url: `${site.url}/`,
+    logo: assetUrl("images/logo.webp"), // the logo shown in the header and footer
     image: [site.media.hero.src, site.media.about.src, site.media.signature.src].map(
       (src) => assetUrl(src)
     ),
     servesCuisine: getFact("cuisines"),
-    ...(site.priceRange ? { priceRange: site.priceRange } : {}),
+    // No priceRange: the owner-verified "₹₹" is not shown on any page, and markup must match visible content.
     currenciesAccepted: "INR",
     address: {
       "@type": "PostalAddress",
@@ -102,13 +105,13 @@ export function restaurantSchema() {
     email: getFact("email"),
     ...(sameAs.length ? { sameAs } : {}),
     hasMenu: pageUrl(ROUTES.menu),
+    // `menu` is the property Google documents for food establishments; hasMenu is its schema.org successor.
+    menu: pageUrl(ROUTES.menu),
     ...(reservations?.value ? { acceptsReservations: true } : {}),
     ...(founders
       ? { founder: founders.names.map((name) => ({ "@type": "Person", name })) }
       : {}),
-    ...(subBrand
-      ? { brand: { "@type": "Brand", name: subBrand.name, description: subBrand.description } }
-      : {}),
+    // No brand: the Beyond Curry sub-brand stays out of markup until the owner answers Q26.
     amenityFeature: [
       ...(getFact("dineIn")
         ? [{ "@type": "LocationFeatureSpecification", name: "Dine-in", value: true }]
@@ -261,9 +264,12 @@ function cateringEntitySchema() {
   };
 }
 
-/** FAQPage for a page. `items` = [{ question, answer, lang? }]; returns null if empty. */
+/**
+ * FAQPage for a page. `items` = [{ question, answer, lang? }]; returns null if empty
+ * or while EMIT_FAQPAGE is off (config/seo-gates.ts). The visible FAQ is unaffected.
+ */
 export function faqPageSchema(path, items) {
-  if (!items?.length) return null;
+  if (!EMIT_FAQPAGE || !items?.length) return null;
   const pid = pageIds(path);
   return {
     "@context": CONTEXT,

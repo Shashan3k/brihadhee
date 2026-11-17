@@ -13,9 +13,11 @@ import PageHeader from "../../components/PageHeader.astro";
 import { nellaiGuide as page } from "../../data/guides.js";
 import { longDate } from "../../data/entity-truth.ts";
 import { pageGraph, articleSchema, HOME_CRUMBS } from "../../lib/schema.js";
-import { ROUTES, href, responsive } from "../../data/site.js";
+import { ROUTES, href, responsive, pageContentUpdated } from "../../data/site.js";
 import { linkify } from "../../lib/inline-links.js";
 
+/* Same value as Article.dateModified, so the visible date and the markup agree. */
+const modified = pageContentUpdated(page.path);
 const schema = pageGraph({
   path: page.path,
   title: page.title,
@@ -38,7 +40,7 @@ const schema = pageGraph({
   <Nav homeBase={href("/")} />
   <main id="main" tabindex="-1">
     <PageHeader eyebrow="Guide · Tirunelveli food" h1={page.h1} intro={page.intro} menuHref={href(ROUTES.menu)} />
-    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time></p>
+    <p class="container page-head__date">Published <time datetime={page.published}>{longDate(page.published)}</time>{modified > page.published && <> · Updated <time datetime={modified}>{longDate(modified)}</time></>}</p>
 
     <article class="guide">
       {page.sections.map((sec, i) => (

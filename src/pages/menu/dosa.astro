@@ -42,7 +42,7 @@ const schema = pageGraph({
       {...page.definition}
       image={{ name: "dosa", alt: "Golden dosa with sambar and chutneys on a banana leaf", caption: "A dosa from the Brihadhee kitchen" }}
     />
-    <BuildYourOwnDosa id={page.howItWorks.id} title={page.howItWorks.title} lead={page.howItWorks.lead} show="steps" tint />
+    <BuildYourOwnDosa id={page.howItWorks.id} title={page.howItWorks.title} lead={page.howItWorks.lead} facts={page.howItWorks.facts} checked={page.howItWorks.checked} show="steps" tint />
     <BuildYourOwnDosa id={page.combinations.id} suggestionsTitle={page.combinations.title} lead={page.combinations.lead} show="suggestions" />
     <ContentSection {...page.classics} tint />
     {page.liveCounter && <ContentSection {...page.liveCounter} tint={false} />}
@@ -54,7 +54,7 @@ const schema = pageGraph({
       <div class="container">
         <h2 class="section__title" id="more-title">More from Brihadhee</h2>
         <ul class="link-list" role="list">
-          <li><a href={href(ROUTES.menu)}>Full menu with prices</a></li>
+          <li><a href={href(ROUTES.menu)}>Full Brihadhee menu with prices</a></li>
           <li><a href={href(ROUTES.lunch)}>Veg lunch and Nellai meals</a></li>
           <li><a href={href(ROUTES.dinner)}>Dinner, Paanai Parotta and kothu parotta</a></li>
           <li><a href={href(ROUTES.parotta)}>Explore vegetarian parotta varieties</a></li>

@@ -9,6 +9,7 @@
  *   show="suggestions"  heading and suggestions only (/menu/dosa/ combinations)
  */
 import { byo, rupees, BYO_DEFINITION } from "../lib/menu-facts.js";
+import { longDate } from "../data/entity-truth.ts";
 
 const {
   id = "build-your-own-dosa",
@@ -18,6 +19,8 @@ const {
   show = "all",
   suggestionsTitle = "Chef's suggestions",
   tint = false,
+  facts = [], // [[label, value]] short fact table after the lead (plain text), as in ContentSection
+  checked = "", // "YYYY-MM-DD": the facts' verification date, shown as "Last checked"
 } = Astro.props;
 const H = `h${headingLevel}`;
 const Sub = `h${headingLevel + 1}`;
@@ -34,6 +37,17 @@ const SuggestionHeading = show === "suggestions" ? H : Sub;
       <H class="section__title" id={`${id}-title`}>{title}</H>
     )}
     {lead && <p class="section__lead">{lead}</p>}
+    {facts.length > 0 && (
+      <dl class="glance__list content__facts">
+        {facts.map(([term, value]) => (
+          <div class="glance__row">
+            <dt>{term}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    )}
+    {checked && <p class="field__hint content__checked">Last checked: <time datetime={checked}>{longDate(checked)}</time></p>}
 
     {showSteps && (
       <ol class="byo__steps">

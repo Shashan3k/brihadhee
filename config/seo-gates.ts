@@ -16,6 +16,16 @@
  * Astro/Vite can bundle it. No imports: this file is the root of the gate graph.
  */
 
+/* ---- Structured data ----------------------------------------------------- */
+
+/**
+ * FAQPage JSON-LD. Google stopped showing FAQ rich results on 7 May 2026 and removed
+ * the FAQPage documentation on 15 June 2026 (Search Central changelog, checked
+ * 16 Nov 2026). The visible Q&A stays on every page; only the markup is off.
+ * Set to true to emit FAQPage again: every check still validates it when present.
+ */
+export const EMIT_FAQPAGE = false;
+
 /* ---- Dietary and positioning -------------------------------------------- */
 
 /** Q20: the owner approved pure vegetarian wording for all catering orders,
@@ -50,6 +60,12 @@ export const ENABLE_HINDI_COPY = false;
  */
 export const ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS = false;
 
+/**
+ * Q26: the Beyond Curry sub-brand. CLAUDE.md gates it until the owner confirms the relationship
+ * (Justdial lists "Beyond Curry By Brihadhee" at a different street). Off: no page, FAQ, schema or llms mention.
+ */
+export const ENABLE_SUB_BRAND = false;
+
 /** Q22: may the site call Brihadhee "premium"? */
 export const ENABLE_PREMIUM_WORDING = false;
 
@@ -68,7 +84,7 @@ export const QUOTE_WHATSAPP_NUMBER: string | null = null;
 export const CATERING_MIN_GUESTS = 50;
 
 /** Corporate catering scale (client W13). Must match entity-truth.ts corporateCatering. */
-export const CORPORATE_DAILY_SCALE = "1,000+ people served every day";
+export const CORPORATE_DAILY_SCALE = "1,000+ meals a day"; // owner-approved phrasing (client-confirmations F)
 export const CORPORATE_DAILY_COVERS = 1000;
 
 /* ---- Restaurant ------------------------------------------------------------ */
@@ -118,6 +134,7 @@ export const GATE_SUMMARY = {
   ENABLE_BRAHMIN_RELIGIOUS_FUNCTIONS: "Q23",
   ENABLE_PREMIUM_WORDING: "Q22",
   ENABLE_NAMED_TEMPLE: "Q24",
+  ENABLE_SUB_BRAND: "Q26",
 } as const;
 
 /** "vegetarian" until Q20 is answered, then "pure vegetarian". */

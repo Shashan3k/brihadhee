@@ -16,7 +16,7 @@
 import { getFact, FACTS, openingTimes, longDate, RESTAURANT_DIET as PV } from "./entity-truth.ts";
 import { qa, qaRoute, list } from "../lib/answers.js";
 import { taHome, taMenu } from "./faq-ta.js";
-import { CATERING_DIET, CATERING_MIN_GUESTS } from "../../config/seo-gates.ts";
+import { CATERING_DIET, CATERING_MIN_GUESTS, ENABLE_SUB_BRAND } from "../../config/seo-gates.ts";
 import {
   categories,
   category,
@@ -102,12 +102,17 @@ export const faqItems = qaRoute("/", [
     { id: "what-to-order" }
   ),
   /* "Is Brihadhee good for families and groups?" lives on /family-dining-anna-nagar/ (src/data/spokes.js). */
-  qa(
-    `What is ${getFact("subBrand").name}?`,
-    `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
-      `The restaurant itself serves South Indian food, led by customized dosa and Tirunelveli and Karaikudi dishes.`,
-    { id: "beyond-curry" }
-  ),
+  /* Gated (Q26, config/seo-gates.ts ENABLE_SUB_BRAND): published only after the owner confirms the sub-brand. */
+  ...(ENABLE_SUB_BRAND
+    ? [
+        qa(
+          `What is ${getFact("subBrand").name}?`,
+          `${getFact("subBrand").name} is ${name}'s brand for ${getFact("subBrand").description}. ` +
+            `The restaurant itself serves South Indian food, led by customized dosa and Tirunelveli and Karaikudi dishes.`,
+          { id: "beyond-curry" }
+        ),
+      ]
+    : []),
   qa(
     `How much do dishes cost at ${name}?`,
     `Dishes at ${name} cost ${rupees(minPrice)} to ${rupees(maxPrice)} on the current menu, before ${gst}. ` +
@@ -123,7 +128,7 @@ export const faqItems = qaRoute("/", [
   qa(`Who founded ${name}?`, `${getFact("founders").story} Its kitchen serves ${getFact("recipeStory")}.`, { id: "founders" }),
   qa(
     `Does ${name} do catering?`,
-    `Yes. ${name} runs ${CATERING_DIET} corporate catering for more than ${num(corporate.dailyCovers)} meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
+    `Yes. ${name} runs ${CATERING_DIET} corporate catering, ${num(corporate.dailyCovers)}+ meals a day, and event catering for functions from a minimum of ${CATERING_MIN_GUESTS} guests. ` +
       `The ${AREA} kitchen prepares corporate meals; confirm preparation and service arrangements for your event in the quote.`,
     { id: "catering" }
   ),
@@ -147,7 +152,7 @@ export const aboutFaq = qaRoute("/about/", [
   ),
   qa(
     `Is ${name} open on Sundays?`,
-    `Yes. ${name} is open on Sundays from ${HOURS}, like every other day of the week. ` + `Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
+    `Yes. ${name} is open on Sundays from ${HOURS}, like every other day of the week. ` + `It serves lunch and dinner on Sundays, as on weekdays. Weekend tables can be pre-booked on ${bookingApps}, or you can walk in.`,
     { id: "sundays" }
   ),
   qa(
@@ -159,7 +164,7 @@ export const aboutFaq = qaRoute("/about/", [
   qa(
     `How do I contact ${name}?`,
     `Call or WhatsApp the ${name} restaurant on ${phone}, or email ${email}. ` +
-      `Use this number for restaurant enquiries if an older dining listing shows a different one. Brihadhee has a separate contact for catering.`,
+      `Use this number for restaurant enquiries if an older dining listing shows a different one. The restaurant is open daily from ${HOURS}, and Brihadhee has a separate contact for catering.`,
     { id: "contact" }
   ),
 ]);
@@ -175,12 +180,12 @@ export const menuFaq = qaRoute("/menu/", [
   qa(
     `Does ${name} serve filter coffee?`,
     `Yes. ${name} serves South Indian filter coffee for ${rupees(filterCoffee.price)} near ${getFact("landmarks")[0]} in ${AREA}. ` +
-      `It is on the lunch and dinner menu. ${list(otherDrinks)} are also available.`,
+      `It is on the lunch and dinner menu, served daily from ${HOURS}. ${list(otherDrinks)} are also available.`,
     { id: "filter-coffee" }
   ),
   qa(
     `How much does a meal cost at ${name}?`,
-    `Meals at ${name} cost ${priceRange(meals)}, from ${meals.cheapest.name} to ${meals.dearest.name}. ` + `Rice dishes such as ${list(riceDishes)} are listed separately.`,
+    `Meals at ${name} cost ${priceRange(meals)}, from ${meals.cheapest.name} to ${meals.dearest.name}. ` + `Rice dishes such as ${list(riceDishes)} are listed separately. All prices are before ${gst}.`,
     { id: "meal-cost" }
   ),
   qa(

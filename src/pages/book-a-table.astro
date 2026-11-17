@@ -13,7 +13,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import PageHeader from "../components/PageHeader.astro";
 import Icon from "../components/Icon.astro";
-import { getFact } from "../data/entity-truth.ts";
+import { getFact, FACTS, longDate } from "../data/entity-truth.ts";
 import Faq from "../components/Faq.astro";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
 import { ROUTES, href, telHref } from "../data/site.js";
@@ -39,7 +39,7 @@ const unlinked = partners.filter((p) => !linked.has(p));
 const partnerList = `${partners.slice(0, -1).join(", ")} or ${partners.at(-1)}`;
 
 const path = "/book-a-table/";
-const title = `Book a Table at ${name}, Anna Nagar East`;
+const title = `${name} Table Booking | Pure Veg Restaurant, Anna Nagar`;
 const description = `Book lunch or dinner at ${name}, Anna Nagar East, through Swiggy Dineout, EazyDiner or District. Call the restaurant for group seating.`;
 const schema = pageGraph({
   path,
@@ -63,10 +63,11 @@ const schema = pageGraph({
 
     <section class="section section--tint" id="how-to-book" aria-labelledby="how-title">
       <div class="container">
-        <h2 class="section__title" id="how-title">How to book a table</h2>
+        <h2 class="section__title" id="how-title">How Do I Book a Table at {name}?</h2>
         <p class="section__lead">
-          Book {name} in Anna Nagar East through {partnerList}. Choose your date, time and party size, then
-          check your booking status in the app before you travel. Show the booking at the counter when you arrive.
+          Book a table at {name} in Anna Nagar East through {partnerList}: choose your date, time and party size,
+          then check your booking status in the app before you travel. For a group table, call <a href={telHref}>{phone}</a>
+          so the restaurant can check seating. Show the booking at the counter when you arrive.
         </p>
         <div class="page-head__actions">
           {links.map((l) => (
@@ -78,6 +79,7 @@ const schema = pageGraph({
             <Icon name="phone" size={17} /> Call {phone}
           </a>
         </div>
+        <p class="field__hint">Booking partners last checked: <time datetime={FACTS.bookingLinks.verifiedOn}>{longDate(FACTS.bookingLinks.verifiedOn)}</time></p>
         {unlinked.length > 0 && (
           <p>Also available on {unlinked.join(" and ")}: search for {name} in the app.</p>
         )}

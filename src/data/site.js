@@ -67,12 +67,42 @@ const revisedPages = new Set([
   ROUTES.cateringQuote,
 ]);
 
+/*
+ * SEO/AEO/GEO revision (branch seo-aeo-geo, released 17 Nov 2026): pages whose titles, headings,
+ * answers or facts changed materially. Pages touched only by the shared footer keep their
+ * date. If this ships much later, set the date to the release day.
+ */
+const SEO_AEO_GEO_REVISION = "2026-11-17";
+const aeoRevisedPages = new Set([
+  ROUTES.home,
+  ROUTES.menu,
+  ROUTES.dosa,
+  ROUTES.lunch,
+  ROUTES.dinner,
+  ROUTES.about,
+  ROUTES.book,
+  ROUTES.faq,
+  ROUTES.nellaiGuide,
+  ROUTES.eventCatering,
+  ROUTES.corporateCatering,
+  ROUTES.smallFunctions,
+  ROUTES.cateringQuote,
+]);
+
 export function pageContentUpdated(path) {
   const canonicalPath = path.endsWith("/") ? path : `${path}/`;
+  if (aeoRevisedPages.has(canonicalPath)) return SEO_AEO_GEO_REVISION;
   return revisedPages.has(canonicalPath) && KEYWORD_CONTENT_REVISION > CONTENT_UPDATED
     ? KEYWORD_CONTENT_REVISION
     : CONTENT_UPDATED;
 }
+
+/**
+ * Spellings guests use for the name. Shown on /about/ ("The Meaning Behind the Name")
+ * and used as Restaurant.alternateName, so the markup only names what the page shows.
+ */
+export const NAME_SPELLINGS = ["Brihadee", "Brihadhi", "Brahadhee", "Bruhadhee"];
+export const NAME_TAMIL_VARIANT = "பிரிஹாதீ";
 
 /** Site-relative href for a route (respects the build base path). */
 export const href = (path) => `${BASE_URL}${path.replace(/^\//, "")}`;

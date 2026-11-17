@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL :
 const name = getFact("name");
 const title = `Page not found | ${name}, Anna Nagar East`;
 const description = `This page does not exist. See the ${name} menu, location and booking pages.`;
-const schema = pageGraph({ path: "/404/", title, description, crumbs: [...HOME_CRUMBS, { name: "Page not found", path: "/404/" }] });
+const schema = pageGraph({ path: "/404/", title, description, crumbs: HOME_CRUMBS }); // no trail: /404/ is not a real URL
 ---
 
 <Base title={title} description={description} path="/404/" schema={schema} noindex>

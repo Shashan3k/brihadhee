@@ -19,9 +19,9 @@ import { readFileSync, readdirSync, statSync, existsSync } from "node:fs";
 import { join, resolve, relative } from "node:path";
 import { BYO_DEFINITION, CATERING_ID, RESTAURANT_ID, FACTS, SITE_ORIGIN, cateringContacts, getFact, isConfirmed, toE164 } from "../src/data/entity-truth.ts";
 import { MENU, MENU_NOTES } from "../src/data/menu-canonical.ts";
-import { CATERING_DIET } from "../config/seo-gates.ts";
+import { CATERING_DIET, EMIT_FAQPAGE } from "../config/seo-gates.ts";
 import { firstAnswerSentence } from "../src/lib/answers.js";
-import { cateringRelationshipProblems, factProblems, readPageCopy } from "./aeo-rules.mjs";
+import { cateringRelationshipProblems, factProblems, normalizeText, readPageCopy } from "./aeo-rules.mjs";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const dist = resolve(process.argv[2] ?? join(ROOT, "dist"));
@@ -251,6 +251,8 @@ for (const { name, html, nodes } of pages) {
     const bc = nodes.find((n) => n["@id"] === bcId && typeOf(n).includes("BreadcrumbList"));
     if (name === "/") {
       if (wp.breadcrumb || nodes.some((n) => typeOf(n).includes("BreadcrumbList"))) err(name, "homepage should omit its one-item breadcrumb trail");
+    } else if (name === "/404.html") {
+      // The error page has no place in the hierarchy, so it carries no trail.
     } else if (!bc) err(name, "WebPage.breadcrumb does not resolve to a BreadcrumbList");
     else {
       const items = bc.itemListElement ?? [];
@@ -337,7 +339,18 @@ for (const { name, html, nodes } of pages) {
   }
 
   /* FAQPage */
-  for (const f of nodes.filter((n) => typeOf(n).includes("FAQPage"))) {
+  const faqNodes = nodes.filter((n) => typeOf(n).includes("FAQPage"));
+  if (faqNodes.length && !EMIT_FAQPAGE) err(name, "FAQPage present while EMIT_FAQPAGE is off");
+  if (!faqNodes.length && name === CATERING_PATH) {
+    // Markup off: the visible catering FAQ must still be confirmed target questions only.
+    const targets = TARGET_QUESTIONS.map(normalizeText);
+    for (const { q } of readPageCopy(html).faqs) {
+      const i = targets.indexOf(normalizeText(q));
+      if (i < 0) err(name, `visible FAQ question is not one of the catering targets: ${q}`);
+      else if (!GATES[TARGET_QUESTIONS[i]]()) err(name, `visible FAQ question not confirmed in config: ${q}`);
+    }
+  }
+  for (const f of faqNodes) {
     const { text } = readPageCopy(html);
     const qs = f.mainEntity ?? [];
     if (!qs.length) err(name, "FAQPage has no mainEntity");

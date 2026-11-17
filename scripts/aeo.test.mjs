@@ -120,7 +120,7 @@ test("llms checks reject stale or misplaced canonical answers, broken and missin
   const config = { expectedAnswers: answerLines, knownLinks: new Set([url]), requiredLinks: [url] };
   const body = `# Brihadhee\n\n> South Indian restaurant in Anna Nagar East.\n\n**Canonical answers**\n\n${answerLines.join("\n")}\n\n## Pages\n\n- [Home](${url})\n`;
   assert.deepEqual(llmsProblems(body, config), []);
-  assert.match(llmsProblems(body.replace("11:00 AM", "10:00 AM"), config).join(" "), /canonical answers are stale/);
+  assert.match(llmsProblems(body.replace("11 AM to 11 PM", "10 AM to 11 PM"), config).join(" "), /canonical answers are stale/);
   assert.match(llmsProblems(body.replace("**Canonical answers**", "## Pages"), config).join(" "), /canonical answers label/);
   assert.match(llmsProblems(body.replace(`[Home](${url})`, `[Home](${url}old/)`), config).join(" "), /built canonical page.*missing canonical link/);
   assert.match(llmsProblems(`${body}- Dining hours: open 24/7.\n`, config).join(" "), /round-the-clock/);

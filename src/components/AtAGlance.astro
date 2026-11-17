@@ -1,6 +1,6 @@
 ---
 import { getFact } from "../data/entity-truth.ts";
-import { site, pageContact } from "../data/site.js";
+import { site, pageContact, ROUTES, href } from "../data/site.js";
 import { CATERING_DIET } from "../../config/seo-gates.ts";
 
 // Summary callout: a visible definition list of confirmed facts, placed near
@@ -43,6 +43,7 @@ const phoneLabel = Astro.locals.contact ? "Catering phone" : "Restaurant phone";
           </div>
         )}
       </dl>
+      <p class="glance__more"><a href={`${href(ROUTES.about)}#facts`}>All verified {getFact("name")} facts, with dates</a></p>
     </aside>
   </div>
 </section>

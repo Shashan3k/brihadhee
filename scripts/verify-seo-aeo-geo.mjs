@@ -12,7 +12,7 @@
  *   2. Every indexable page shows the NAP (name, phone, postal code) in raw HTML
  *   3. /menu/ lists every dish in menu-canonical.ts with its exact price; the home
  *      page lists every dish name; Build Your Own Dosa options and prices match
- *   4. Pages with Q&A show them in raw HTML and carry a matching FAQPage
+ *   4. Pages with Q&A show them in raw HTML and, while EMIT_FAQPAGE is on, carry a matching FAQPage
  *   5. Unique, non-empty title and description; self-referencing canonical on the
  *      production origin; og:title, og:description, og:url (= canonical), og:image
  *   6. JSON-LD parses; required nodes per page; Restaurant NAP/geo equal
@@ -43,6 +43,7 @@ const PORT = 4329;
 
 const { FACTS, pendingFacts, SITE_ORIGIN, getFact } = await import(pathToFileURL(join(ROOT, "src", "data", "entity-truth.ts")).href);
 const { MENU, BUILD_YOUR_OWN_DOSA } = await import(pathToFileURL(join(ROOT, "src", "data", "menu-canonical.ts")).href);
+const { EMIT_FAQPAGE } = await import(pathToFileURL(join(ROOT, "config", "seo-gates.ts")).href);
 
 if (!existsSync(DIST)) {
   console.error(`✖ ${DIST} not found. Run "npm run build:site" first.`);
@@ -153,7 +154,8 @@ pass("3 Menu in HTML");
 for (const p of pages) {
   const visible = [...p.body.matchAll(/<details class="faq__item"[\s\S]*?<h3[^>]*>([\s\S]*?)<\/h3>/g)].map((m) => strip(m[1]));
   const faq = byType(p, "FAQPage")[0];
-  if (visible.length && !faq) fail("4 Q&A", `${p.path}: ${visible.length} visible Q&As but no FAQPage`);
+  if (visible.length && !faq && EMIT_FAQPAGE) fail("4 Q&A", `${p.path}: ${visible.length} visible Q&As but no FAQPage`);
+  if (faq && !EMIT_FAQPAGE) fail("4 Q&A", `${p.path}: FAQPage present while EMIT_FAQPAGE is off`);
   if (faq) {
     const qs = (faq.mainEntity ?? []).map((q) => q.name);
     if (qs.length !== visible.length) fail("4 Q&A", `${p.path}: FAQPage has ${qs.length} questions, page shows ${visible.length}`);

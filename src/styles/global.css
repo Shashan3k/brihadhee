@@ -2833,6 +2833,11 @@ a.contact__channel:hover {
 .glance__row { padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
 .glance__row dt { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.7; }
 .glance__row dd { margin: 0.2rem 0 0; font-weight: 500; }
+.glance__more { margin: 1rem 0 0; font-size: 0.9rem; }
+.footer__glossary { font-size: 0.85rem; opacity: 0.85; }
+/* Fact table inside a content section (ContentSection `facts`). */
+.content__facts { margin: 1.25rem 0 0.5rem; }
+.content__checked { margin-top: 0.25rem; }
 
 /* ---- /menu page ---- */
 .menu-page__head { padding-top: clamp(7rem, 14vw, 10rem); }
@@ -2848,6 +2853,12 @@ a.contact__channel:hover {
 /* ---- inner pages: header, summary box, comparison, dish lists, offers ---- */
 .page-head { padding-top: clamp(7rem, 14vw, 10rem); }
 .page-head__title { max-width: 24ch; }
+/* Visible breadcrumb: mirrors the page's BreadcrumbList JSON-LD (Breadcrumbs.astro). */
+.breadcrumb { margin-bottom: 0.9rem; font-size: 0.875rem; color: var(--ink-3); }
+.breadcrumb ol { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; margin: 0; padding: 0; list-style: none; }
+.breadcrumb li + li::before { content: "›"; margin-right: 0.5rem; color: var(--line-strong); }
+.breadcrumb a { color: var(--ink-2); text-underline-offset: 0.2em; }
+.breadcrumb [aria-current="page"] { color: var(--ink-3); }
 .page-head__intro { max-width: 46rem; }
 .page-head__actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
 .corporate-presentation-link { margin-top: -2.2rem; padding-bottom: 2rem; }

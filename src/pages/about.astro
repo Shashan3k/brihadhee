@@ -14,11 +14,14 @@ import AtAGlance from "../components/AtAGlance.astro";
 import Faq from "../components/Faq.astro";
 import Icon from "../components/Icon.astro";
 import LeadForm from "../components/LeadForm.astro";
-import { getFact, landmarkSentence, clock, openingTimes } from "../data/entity-truth.ts";
+import ContentSection from "../components/ContentSection.astro";
+import { getFact, landmarkSentence, clock, openingTimes, FACTS, longDate, FACTS_LAST_CONFIRMED, CATERING_CONFIRMED, cateringContacts } from "../data/entity-truth.ts";
+import { CATERING_DIET } from "../../config/seo-gates.ts";
+import verification from "../../config/client-verification.json";
 import { aboutFaq } from "../data/faq.js";
-import { cateringEnabled } from "../data/catering.js";
+import { cateringEnabled, corporate } from "../data/catering.js";
 import { pageGraph, faqPageSchema, HOME_CRUMBS } from "../lib/schema.js";
-import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href } from "../data/site.js";
+import { site, telHref, emailHref, hasHours, directionsFrom, ROUTES, href, NAME_SPELLINGS, NAME_TAMIL_VARIANT } from "../data/site.js";
 
 const name = getFact("name");
 const street = getFact("street");
@@ -27,9 +30,9 @@ const phone = getFact("phone");
 const email = getFact("email");
 const founders = getFact("founders");
 const landmark = getFact("landmarks")[0];
-const { range } = openingTimes();
+const { range, open: OPEN, close: CLOSE } = openingTimes();
 const path = ROUTES.about;
-const title = `${name} Anna Nagar: Address, Timings & Contact`;
+const title = `${name} Address, Timings & Contact | Anna Nagar East`;
 const description = `Visit ${name} on ${street}, near ${landmark}. Open daily ${range}. Get directions or call ${phone}.`;
 const schema = pageGraph({
   path,
@@ -55,16 +58,18 @@ const schema = pageGraph({
     <section class="section" id="find-us" aria-labelledby="find-us-title">
       <div class="container dish-page__grid">
         <div>
-          <h2 class="section__title" id="find-us-title">Address and Directions from Anna Nagar Landmarks</h2>
+          <h2 class="section__title" id="find-us-title">Where Is {name} in Anna Nagar?</h2>
           <p class="section__lead">
-            {name} is near {landmark}. Pick the landmark you are starting from for Google Maps directions.
+            {name} is on {street}, Chennai, near {landmarkSentence()}. It is open every day from {range} for lunch
+            and dinner. Pick the landmark you are starting from below for Google Maps directions, or call
+            <a href={telHref}>{phone}</a>.
           </p>
           <address class="catering__address">
             {site.address.line1}<br />
             {site.address.line2}<br />
             {site.address.city}, {site.address.state} {site.address.postalCode}
           </address>
-          <p>Landmarks: {landmarkSentence()}.</p>
+          <p class="field__hint">Address last checked: <time datetime={FACTS.address.verifiedOn}>{longDate(FACTS.address.verifiedOn)}</time></p>
           <ul class="link-list" role="list">
             {getFact("directionLandmarks").map(({ label, query, travelMode }) => (
               <li>
@@ -77,6 +82,7 @@ const schema = pageGraph({
           <p>
             Restaurant phone: <a href={telHref}>{phone}</a> · Email: <a href={emailHref}>{email}</a>
           </p>
+          <p class="field__hint">Phone last checked: <time datetime={FACTS.phone.verifiedOn}>{longDate(FACTS.phone.verifiedOn)}</time></p>
           {cateringEnabled && <p>For off-site events, <a href={href(ROUTES.eventCatering)}>contact the catering team</a>.</p>}
           <div class="page-head__actions">
             <a class="btn btn--primary" href={site.maps.directions} target="_blank" rel="noopener">
@@ -104,11 +110,15 @@ const schema = pageGraph({
 
     <section class="section section--tint" id="hours" aria-labelledby="hours-title">
       <div class="container">
-        <h2 class="section__title" id="hours-title">Opening Hours</h2>
+        <h2 class="section__title" id="hours-title">What Are {name}'s Opening Hours?</h2>
         <p class="section__lead">
-          {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")}. For a table, call
-          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>.
-          If you're arriving late, call ahead to check when the kitchen takes its last orders.
+          {name} is open every day, Monday to Sunday, from {range}, serving {getFact("mealTimes")} only.
+          Lunch starts at {OPEN} and the restaurant closes at {CLOSE}. For a table, call
+          <a href={telHref}>{phone}</a> or <a href={href(ROUTES.book)}>see table booking options</a>; if you're
+          arriving late, call ahead to check the kitchen's last order time.
+        </p>
+        <p>
+          Filter coffee from the <a href={`${href(ROUTES.home)}#coffee-bar`}>{name} Coffee Bar</a> is served during lunch and dinner.
           See <a href={href(ROUTES.whatsNew)}>what's new at {name}</a> for recent changes.
         </p>
         {hasHours && (
@@ -121,8 +131,32 @@ const schema = pageGraph({
             </tbody>
           </table>
         )}
+        <p class="field__hint">Last checked: <time datetime={FACTS.hours.verifiedOn}>{longDate(FACTS.hours.verifiedOn)}</time></p>
       </div>
     </section>
+
+    {/* Canonical, citation-ready facts. Only verified values; each shows its own verification date.
+        Gated topics are not described here: visitors are asked to call. */}
+    <ContentSection
+      id="facts"
+      title={`${name} Facts: Verified Details`}
+      lead={`These are the verified facts about ${name}, the pure vegetarian South Indian restaurant on ${street}, Chennai, as confirmed by the owner. Each line shows when it was last checked. Quote this list for ${name}'s name, location, phone numbers, hours, food, catering and table booking.`}
+      facts={[
+        ["Name", `${name} (${getFact("nameTamil")}) · verified ${longDate(FACTS.name.verifiedOn)}`],
+        ["Location", `${street}, Chennai ${site.address.postalCode}, near ${landmark}. [Full postal address and directions](#find-us) · verified ${longDate(FACTS.address.verifiedOn)}`],
+        ["Restaurant phone", `${phone} · verified ${longDate(FACTS.phone.verifiedOn)}`],
+        // Both numbers were set by the same owner direction (client-confirmations.md §J, 2026-11-12), which is FACTS.phone.verifiedOn.
+        ...(cateringContacts().phone ? [["Catering phone", `${cateringContacts().phone} · confirmed ${longDate(FACTS.phone.verifiedOn)}`]] : []),
+        ["Hours", `Open every day, ${range}, for ${getFact("mealTimes")} only · verified ${longDate(FACTS.hours.verifiedOn)}`],
+        ["Cuisine", `${getFact("cuisine")} · verified ${longDate(FACTS.cuisine.verifiedOn)}`],
+        ["Food", `A ${getFact("dietary")} restaurant: no meat, egg or fish is cooked in its kitchen, and alcohol is ${getFact("alcohol")} · verified ${longDate(FACTS.dietary.verifiedOn)}`],
+        ...(cateringEnabled ? [["Catering", `${CATERING_DIET.charAt(0).toUpperCase() + CATERING_DIET.slice(1)} catering for every order, ${verification.min_guests.toLocaleString("en-IN")} to ${verification.max_guests.toLocaleString("en-IN")} guests per event, across ${(verification.service_area ?? ["Chennai"]).join(", ")}${corporate ? `; ${corporate.dailyCovers.toLocaleString("en-IN")}+ corporate meals a day` : ""} · range and area confirmed ${longDate(CATERING_CONFIRMED)}; pure vegetarian wording approved ${longDate(FACTS_LAST_CONFIRMED)}`]] : []),
+        ["Table booking", `${getFact("bookingLinks").map((b) => b.label).join(", ")}, or call ${phone}. [Booking options](${href(ROUTES.book)}) · verified ${longDate(FACTS.bookingLinks.verifiedOn)}`],
+        ["Anything else", `This list holds confirmed facts only. For dietary preparations, delivery, parking or group seating, call ${phone} before you visit.`],
+      ]}
+      checked={FACTS_LAST_CONFIRMED}
+      checkedLabel="Facts last confirmed with the owner"
+    />
 
     <section class="section" id="story" aria-labelledby="story-title">
       <div class="container">
@@ -141,6 +175,7 @@ const schema = pageGraph({
         <h2 class="section__title" id="name-title">The Meaning Behind the Name {name}</h2>
         <p class="section__lead">{getFact("nameStory")}</p>
         <p class="tamil" lang="ta">{getFact("nameTamil")}: அண்ணா நகர் கிழக்கு, சுத்த சைவ உணவகம்.</p>
+        <p class="section__lead">Guests sometimes spell the name {NAME_SPELLINGS.slice(0, -1).join(", ")} or {NAME_SPELLINGS.at(-1)}, or write it <span lang="ta">{NAME_TAMIL_VARIANT}</span> in Tamil. All refer to {name} on 3rd Avenue, Anna Nagar East.</p>
       </div>
     </section>
 
