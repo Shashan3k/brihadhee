@@ -193,3 +193,13 @@ test("missing Resend config and provider failure offer a suitable telephone fall
   assert.deepEqual(await jsonError.json(), { ok: false, error: "send_failed" });
   assert.equal(fetch.mock.callCount(), 2);
 });
+
+test("the Function's plain-JS phone numbers match entity-truth.ts", async () => {
+  // api/lead.js may not import entity-truth.ts (Vercel cannot load .ts imports in a Function),
+  // so it reads src/data/contact-numbers.js. This keeps the two sources equal.
+  const { cateringContacts, getFact } = await import("../src/data/entity-truth.ts");
+  const numbers = await import("../src/data/contact-numbers.js");
+  assert.equal(numbers.DINING_PHONE, getFact("phone"));
+  assert.equal(numbers.cateringPhone(), cateringContacts().phone);
+  assert.equal(numbers.cateringPhone(), verification.enquiry_channels.phone);
+});

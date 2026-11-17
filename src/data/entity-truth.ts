@@ -18,6 +18,9 @@
 
 import verification from "../../config/client-verification.json" with { type: "json" };
 import { CATERING_DIET } from "../../config/seo-gates.ts";
+/* Plain-JS home of the dining number and toE164, shared with api/lead.js (contact-numbers.js explains why). */
+import { DINING_PHONE, toE164 } from "./contact-numbers.js";
+export { toE164 };
 
 export type Status = "verified" | "unverified";
 
@@ -112,7 +115,6 @@ export const SITE_ORIGIN = "https://www.brihadhee.com";
 export const RESTAURANT_ID = `${SITE_ORIGIN}/#restaurant`;
 export const CATERING_ID = `${SITE_ORIGIN}/#catering`;
 export const RESTAURANT_DIET = "100% pure vegetarian";
-const DINING_PHONE = "+91 73587 14113";
 export const BYO_DEFINITION =
   "Build Your Own Dosa at Brihadhee lets guests choose their dosa batter and ingredients. Kitchen staff prepare the customized dosa to order and serve it at the table. It is not a self-service cooking station.";
 /** Date the site content was last reviewed; used for dateModified and sitemap lastmod. */
@@ -494,11 +496,6 @@ export function landmarkSentence(): string {
 /** Absolute URL on the canonical origin. `path` must start with "/". */
 export function absoluteUrl(path: string): string {
   return `${SITE_ORIGIN}${path}`;
-}
-
-/** Format a verified international phone number for links and structured data. */
-export function toE164(phone: string): string {
-  return `+${phone.replace(/\D/g, "")}`;
 }
 
 /** The reference files and their linter share the same answer block. */
