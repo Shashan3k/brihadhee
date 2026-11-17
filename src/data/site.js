@@ -68,11 +68,11 @@ const revisedPages = new Set([
 ]);
 
 /*
- * SEO/AEO/GEO revision (branch seo-aeo-geo, 16 Nov 2026): pages whose titles, headings,
+ * SEO/AEO/GEO revision (branch seo-aeo-geo, released 17 Nov 2026): pages whose titles, headings,
  * answers or facts changed materially. Pages touched only by the shared footer keep their
  * date. If this ships much later, set the date to the release day.
  */
-const SEO_AEO_GEO_REVISION = "2026-11-16";
+const SEO_AEO_GEO_REVISION = "2026-11-17";
 const aeoRevisedPages = new Set([
   ROUTES.home,
   ROUTES.menu,
