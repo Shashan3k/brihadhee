@@ -91,8 +91,9 @@ const stepFrom = (step) => {
 /* ---- Home / ------------------------------------------------------------- */
 export const homePage = {
   path: ROUTES.home,
-  /* Kept as live since 14 Nov: in Search Console (12-15 Nov 2026) this wording sat at positions 1-2.6 for
-     brand + Anna Nagar queries and 4.2-8 for "south indian restaurant(s) anna nagar". Do not reword without data. */
+  /* The live title since commit 2c738f8 (12 Nov, 09:31 IST; deploy time not verified). In Search Console
+     (12-15 Nov 2026) it sat at positions 1-2.6 for brand + Anna Nagar queries and 4.2-8 for
+     "south indian restaurant(s) anna nagar". Do not reword it without new data. */
   title: `${name} | Pure Veg South Indian Restaurant, Anna Nagar`,
   description: `${name}, Anna Nagar East: pure veg South Indian lunch and dinner, customized dosa and Nellai meals. Open ${OPEN}–${CLOSE} daily. See menu or book a table.`,
   /* The hero combines the restaurant name and category in one H1. */

@@ -87,7 +87,7 @@ npm run verify      # 8 groups; on slow disks check 8 may time out, so re-run
 ```
 
 On the Vercel preview of this branch:
-1. **/** — title "Brihadhee | Pure Veg South Indian Restaurant, Anna Nagar" (the live wording, kept on 17 Nov; see `11-gsc-baseline.md`). The at-a-glance box has a "Prices" row: "Dishes ₹35 to ₹315 on the current menu, meals ₹150 to ₹240, before 5% GST". H2 "Brihadhee Coffee Bar, Anna Nagar". No "Beyond Curry" FAQ. The footer has "Verified Brihadhee facts" and the glossary line.
+1. **/** — title "Brihadhee | Pure Veg South Indian Restaurant, Anna Nagar" (the live wording since 12 Nov, kept on 17 Nov; see `11-gsc-baseline.md`). The at-a-glance box has a "Prices" row: "Dishes ₹35 to ₹315 on the current menu, meals ₹150 to ₹240, before 5% GST". H2 "Brihadhee Coffee Bar, Anna Nagar". No "Beyond Curry" FAQ. The footer has "Verified Brihadhee facts" and the glossary line.
 2. **/about/#facts** — 10 rows, each with a date. Catering phone "confirmed 12 November 2026". "Facts last confirmed with the owner: 15 November 2026".
 3. **/menu/dosa/#how-it-works** — question H2, a 51-word lead, a fact table, "Last checked: 11 November 2026".
 4. **/small-function-catering-chennai/#from-50-guests** — "Yes. Brihadhee caters pure vegetarian functions in Chennai from 50 guests, and up to 1,500…", fact table, "Last checked: 15 November 2026". Nothing about staff, lead time or Jain.
