@@ -133,9 +133,9 @@ const cp = corporatePage;
   <main id="main" tabindex="-1">
     <PageHeader eyebrow="Corporate catering · Chennai" h1={m.h1} intro={cp.intro} primaryAction={quoteAction} showDirections={false} />
     <div class="container corporate-presentation-link"><a href="#catering-presentation">View the catering presentation <Icon name="arrowRight" size={17} /></a></div>
+    {cp.clients && <ClientLogos {...cp.clients} />}
     <AtAGlance title="Brihadhee corporate catering: summary" rows={cp.glance} />
     <ContentSection {...cp.scale} />
-    {cp.clients && <ClientLogos {...cp.clients} />}
     <ContentSection {...cp.services} />
     {cp.coffeeBar && <ContentSection {...cp.coffeeBar} />}
     <ContentSection {...cp.menus} />
