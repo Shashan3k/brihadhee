@@ -6,8 +6,8 @@
  *
  * Logos: drop a file named after the company's slug into public/images/clients/
  * (svg preferred, then png or webp), e.g. public/images/clients/prodapt.svg.
- * A company with no logo file yet shows its name as a text tile, so a new
- * client can be added to the fact before its logo arrives.
+ * Only clients with logo files appear in this visual strip. The complete
+ * verified client list remains in the page summary.
  *
  * Motion: the list is rendered twice and the track slides by exactly one copy,
  * so the loop is seamless. The copy is aria-hidden, so screen readers hear each
@@ -40,7 +40,7 @@ const logoFor = (name) => {
   }
   return null;
 };
-const clients = names.map((name) => ({ name, logo: logoFor(name) }));
+const clients = names.map((name) => ({ name, logo: logoFor(name) })).filter((client) => client.logo);
 /* About 3.2 s per tile keeps the pace readable whatever the list length. */
 const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
 ---
@@ -56,14 +56,7 @@ const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
         <ul class="clients__list" role="list" aria-label={copy === 0 ? title : undefined} aria-hidden={copy === 1 ? "true" : undefined}>
           {clients.map((c) => (
             <li class={`clients__item${c.name === "Bi3 Technologies" && c.logo ? " clients__item--dark" : ""}`}>
-              {c.logo ? (
-                <>
-                  <img src={c.logo} alt={copy === 0 ? `${c.name} logo` : `${c.name} logo, repeated for scrolling`} loading="lazy" decoding="async" />
-                  <span class="clients__label">{c.name}</span>
-                </>
-              ) : (
-                <span class="clients__name">{c.name}</span>
-              )}
+              <img class={c.name === "Freehand" ? "clients__logo--freehand" : undefined} src={c.logo} alt={copy === 0 ? `${c.name} logo` : `${c.name} logo, repeated for scrolling`} loading="lazy" decoding="async" />
             </li>
           ))}
         </ul>
@@ -119,26 +112,15 @@ const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
   .clients__item img {
     display: block;
     max-width: 100%;
-    max-height: 2.7rem;
+    max-height: 3.8rem;
     width: auto;
     height: auto;
     object-fit: contain;
   }
-  .clients__label {
-    color: var(--ink-2);
-    font-size: 0.78rem;
-    font-weight: 600;
-    line-height: 1.1;
-  }
-  .clients__item--dark .clients__label {
-    color: #fff;
-  }
-  .clients__name {
-    font-family: var(--ff-display);
-    font-size: 1.05rem;
-    font-weight: 600;
-    line-height: 1.25;
-    color: var(--ink-2);
+  .clients__item img.clients__logo--freehand {
+    width: 100%;
+    height: 3.8rem;
+    object-fit: cover;
   }
   @keyframes clients-scroll {
     to {
