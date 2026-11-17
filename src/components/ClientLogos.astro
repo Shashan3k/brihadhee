@@ -55,7 +55,7 @@ const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
       {[0, 1].map((copy) => (
         <ul class="clients__list" role="list" aria-label={copy === 0 ? title : undefined} aria-hidden={copy === 1 ? "true" : undefined}>
           {clients.map((c) => (
-            <li class={`clients__item${c.name === "Bi3 Technologies" && c.logo ? " clients__item--dark" : ""}`}>
+            <li class={`clients__item${c.name === "Bi3 Technologies" ? " clients__item--dark" : ""}${c.name === "Stark Event Management" ? " clients__item--stark" : ""}`}>
               <img class={c.name === "Freehand" ? "clients__logo--freehand" : undefined} src={c.logo} alt={copy === 0 ? `${c.name} logo` : `${c.name} logo, repeated for scrolling`} loading="lazy" decoding="async" />
             </li>
           ))}
@@ -109,6 +109,11 @@ const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
   .clients__item--dark {
     background: #202a39;
   }
+  .clients__item--stark {
+    background: #050505;
+    border-color: #262018;
+    padding: 0.35rem;
+  }
   .clients__item img {
     display: block;
     max-width: 100%;
@@ -121,6 +126,9 @@ const duration = `${Math.max(24, clients.length * 3.2).toFixed(1)}s`;
     width: 100%;
     height: 3.8rem;
     object-fit: cover;
+  }
+  .clients__item--stark img {
+    max-height: 5.4rem;
   }
   @keyframes clients-scroll {
     to {

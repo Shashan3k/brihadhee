@@ -16,5 +16,4 @@ These files are shown on `/corporate-catering-chennai/#clients`. The first eight
 | Freehand | `public/images/clients/freehand.png` | Client-supplied image, 2026-11-17 |
 | Nestlé | `public/images/clients/nestle.png` | Client-supplied image, 2026-11-17; checkerboard background removed with imagegen |
 | NDR | `public/images/clients/ndr.png` | Client-supplied image, 2026-11-17 |
-
-Still needs a logo file: Stark Event Management.
+| Stark Event Management | `public/images/clients/stark.png` | Client-supplied image, 2026-11-17 |
