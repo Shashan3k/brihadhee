@@ -62,7 +62,7 @@
 
 Search Console data and a production check on 17 Nov changed what has to ship first. Details: [`11-gsc-baseline.md`](11-gsc-baseline.md).
 
-1. **Ship `hotfix/lead-function` to `main` first.** It's 2 commits on `origin/main`: the `/api/lead` fix and the logo compression. Production `/api/lead` has returned 500 on every request since the 14 Nov release, so no enquiry form works. After the deploy:
+1. **Done 17 Nov 2026, 21:12 IST** (`main` = `4de5d17`, verified live: `/api/lead` GET 405, `{}` POST 422). ~~Ship `hotfix/lead-function` to `main` first.~~ It's 2 commits on `origin/main`: the `/api/lead` fix and the logo compression. Production `/api/lead` has returned 500 on every request since the 14 Nov release, so no enquiry form works. After the deploy:
    - `curl -i https://www.brihadhee.com/api/lead` must return **405**;
    - one owner-approved test enquiry must arrive by email (`owner-questions.md` D1, D2).
 2. **Bring this branch up to date.** It is 7 commits behind `origin/main` (client logos, favicons).
