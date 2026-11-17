@@ -20,6 +20,25 @@ Prepared 16 November 2026. "Current" values come from `docs/geo/presence-audit.c
 - **Owner + support:** submit a correction through the platform's business support.
 - **Dev:** a website change.
 
+## Re-check of 17 November 2026
+
+Method: curl with a Chrome user agent, reading server HTML and JSON-LD. No logins. Full notes: [`../evidence/2026-11-17/listings.md`](../evidence/2026-11-17/listings.md). Dated rows: `docs/geo/corrections-log.csv`.
+
+| Row | Status on 17 Nov |
+|---|---|
+| #1 Instagram 95661 35405 | **Still seen** in an "Order Now" post caption. Seen only through a summarising fetch; the raw page was blocked. |
+| #3 Justdial | **Changed.** A "Brihadhee" listing now exists, with 11 AM–11 PM hours but address typos ("New Now, 41( Old Now 124"), breakfast in its boilerplate, and no website. The Beyond Curry listing still says "18th Main Road" (Q26, don't edit). |
+| #4 Zomato | **Still wrong:** call number `tel:+919444224999`; highlights now also say "Brunch" besides "Breakfast". Address, hours and "Vegetarian only" match. |
+| #5 District | **Still wrong:** call number 94442 24999. The "6 PM–6 AM" window wasn't in today's HTML, but that's not confirmed fixed. |
+| #6 Swiggy Dineout | **Still wrong:** address. **New:** phone 94442 24999, and "Parking available" (gated, Q27). |
+| #7 magicpin | **Still wrong:** hours "11:30 AM – 2:00 PM" and phone 94442 24999. |
+| #8 EazyDiner | **Still wrong:** "serves both veg and non veg food" and 06:30 AM. **New:** its schema telephone is EazyDiner's own number. |
+| #9 Apple Maps | **Still wrong:** name and phone (94442 24999 shown). The address is now full, but adds an unverified landmark, "Opposite Sea Shell". |
+| #10, 13, 14 Bing Places, TripAdvisor, HappyCow | Not observable (JavaScript shells or blocked) |
+| **All** | **No listing links to https://www.brihadhee.com/**, and none shows +91 73587 14113 as its call number. Add the website everywhere. |
+
+Before changing call numbers, see `owner-questions.md` D8: older notes called 94442 24999 "primary"; direction J (12 Nov) made 73587 14113 the main number.
+
 ## Fix table (priority order)
 
 | # | Profile | Field | Current value (if known) | Correct value | Who |
