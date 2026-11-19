@@ -33,7 +33,11 @@ Branch `seo-next-2026-11-21`, cut from `main` at `0d706c1`. This is Phase 1 of `
 | `restaurant_enquiry_submit` | A successful general-form submit (`main.js:594`) | Lead |
 | `catering_quote_submit` | A successful catering-form submit, with a headcount band (`main.js:595`) | Lead |
 
-**Minor finding.** The comment in `src/components/CallBar.astro:6` names `book_table_view_click`, but the code sends `book_table_click`. It's a comment only, with no effect on tracking, so I didn't change it.
+**Two supporting events (not key events):**
+- `book_table_view_click`: fires on taps on links to the site's own `/book-a-table/` page (`main.js:648`, the CallBar "Book" button). It is separate from `book_table_click`, which counts taps that go to a booking partner.
+- `quote_cta_click`: fires on "Get a quote" buttons (CallBar, `[slug].astro`, `spokes.js`).
+
+Keep both as ordinary events. They show intent, but they aren't bookings or enquiries.
 
 ## Still open: owner and account actions
 

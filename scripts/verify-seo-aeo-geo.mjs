@@ -286,7 +286,8 @@ async function serverChecks() {
   const base = `http://localhost:${PORT}`;
   try {
     let up = false;
-    for (let i = 0; i < 60 && !up; i++) {
+    // 120 x 500 ms = 60 s: the preview server needs about 40 s on /mnt/c (09-final-review.md item 6).
+    for (let i = 0; i < 120 && !up; i++) {
       await new Promise((r) => setTimeout(r, 500));
       try {
         up = (await fetch(base + "/", { redirect: "manual" })).ok;
